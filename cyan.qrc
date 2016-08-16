@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cyan-display.png</file>
+        <file>cyan-wheel.png</file>
+        <file>cyan.png</file>
+    </qresource>
+</RCC>
