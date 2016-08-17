@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 #include <QSettings>
 #include <QTimer>
+#include <QDebug>
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent) {
 }
@@ -160,19 +161,25 @@ Cyan::Cyan(QWidget *parent)
 
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
+    convertBar->addSeparator();
     convertBar->addWidget(outputLabel);
     convertBar->addWidget(outputProfile);
+    convertBar->addSeparator();
     convertBar->addWidget(renderLabel);
     convertBar->addWidget(renderingIntent);
+    convertBar->addSeparator();
     convertBar->addWidget(blackLabel);
     convertBar->addWidget(blackPoint);
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
+    profileBar->addSeparator();
     profileBar->addWidget(cmykLabel);
     profileBar->addWidget(cmykProfile);
+    profileBar->addSeparator();
     profileBar->addWidget(grayLabel);
     profileBar->addWidget(grayProfile);
+    profileBar->addSeparator();
     profileBar->addWidget(monitorLabel);
     profileBar->addWidget(monitorProfile);
 
@@ -213,46 +220,53 @@ Cyan::Cyan(QWidget *parent)
 
     QAction *aboutAction = new QAction(tr("About ")+qApp->applicationName(), this);
     aboutAction->setIcon(QIcon(":/cyan.png"));
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutCyan()));
     helpMenu->addAction(aboutAction);
 
     QAction *aboutQtAction = new QAction(tr("About Qt"), this);
-    connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     helpMenu->addAction(aboutQtAction);
 
     openImageAction = new QAction(tr("Open image"), this);
     openImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_O));
-    connect(openImageAction, SIGNAL(triggered()), this, SLOT(openImageDialog()));
     fileMenu->addAction(openImageAction);
 
     saveImageAction = new QAction(tr("Save image"), this);
     saveImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_S));
     saveImageAction->setDisabled(true);
-    connect(saveImageAction, SIGNAL(triggered()), this, SLOT(saveImageDialog()));
     fileMenu->addAction(saveImageAction);
 
     quitAction = new QAction(tr("Quit"),this);
     quitAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Q));
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     fileMenu->addAction(quitAction);
 
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutCyan()));
+    connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(openImageAction, SIGNAL(triggered()), this, SLOT(openImageDialog()));
+    connect(saveImageAction, SIGNAL(triggered()), this, SLOT(saveImageDialog()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    connect(rgbProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRgbDefaultProfile(int)));
+    connect(cmykProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmykDefaultProfile(int)));
+    connect(grayProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(updateGrayDefaultProfile(int)));
+    connect(monitorProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(updateMonitorDefaultProfile(int)));
+
+    setStyleSheet("QLabel {margin-left:10px;}");
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
 
 Cyan::~Cyan()
 {
-
+    writeConfig();
 }
 
 void Cyan::readConfig()
 {
-
+    loadDefaultProfiles();
 }
 
 void Cyan::writeConfig()
 {
-
+    saveDefaultProfiles();
 }
 
 void Cyan::aboutCyan()
@@ -268,4 +282,145 @@ void Cyan::openImageDialog()
 void Cyan::saveImageDialog()
 {
 
+}
+
+void Cyan::openImage(QString file)
+{
+    Q_UNUSED(file)
+}
+
+void Cyan::saveImage(QString file)
+{
+    Q_UNUSED(file)
+}
+
+void Cyan::getColorProfiles(int colorspace, QComboBox *box, bool isMonitor)
+{
+    QString defaultProfile;
+    int defaultIndex = -1;
+    QSettings settings;
+    settings.beginGroup("profiles");
+    QString profileType;
+    if (isMonitor) {
+        profileType = "monitor";
+    } else {
+        profileType = QString::number(colorspace);
+    }
+    if (!settings.value(profileType).isNull()) {
+        defaultProfile = settings.value(profileType).toString();
+    }
+    settings.endGroup();
+
+    QStringList profiles = cms.genProfiles(colorspace);
+    if (profiles.size()>0) {
+        box->clear();
+        for (int i = 0; i < profiles.size(); ++i) {
+            QStringList profile = profiles.at(i).split("|");
+            QString file;
+            QString desc;
+            if (!profile.isEmpty()) {
+                file = profile.takeFirst();
+                if (!profile.isEmpty()) {
+                    desc = profile.takeFirst();
+                }
+            }
+            if (!file.isEmpty()&&!desc.isEmpty()) {
+                box->addItem(desc,file);
+                if (file == defaultProfile) {
+                    defaultIndex = i;
+                }
+            }
+        }
+        if (defaultIndex >= 0) {
+            box->setCurrentIndex(defaultIndex);
+        }
+    }
+}
+
+void Cyan::loadDefaultProfiles()
+{
+    getColorProfiles(1, rgbProfile, false);
+    getColorProfiles(2, cmykProfile, false);
+    getColorProfiles(3, grayProfile, false);
+    getColorProfiles(1, monitorProfile, true);
+}
+
+void Cyan::saveDefaultProfiles()
+{
+    QSettings settings;
+    settings.beginGroup("profiles");
+    if (rgbProfile->count()>0) {
+        settings.setValue("1", rgbProfile->itemData(rgbProfile->currentIndex()));
+    }
+    if (cmykProfile->count()>0) {
+        settings.setValue("2", cmykProfile->itemData(cmykProfile->currentIndex()));
+    }
+    if (grayProfile->count()>0) {
+        settings.setValue("3", grayProfile->itemData(grayProfile->currentIndex()));
+    }
+    if (monitorProfile->count()>0) {
+        settings.setValue("monitor", monitorProfile->itemData(monitorProfile->currentIndex()));
+    }
+    settings.endGroup();
+    settings.sync();
+}
+
+void Cyan::updateRgbDefaultProfile(int index)
+{
+    QSettings settings;
+    settings.beginGroup("profiles");
+    if (!rgbProfile->itemData(index).isNull()) {
+        QString currentProfile = rgbProfile->itemData(index).toString();
+        QString savedProfile = settings.value("1").toString();
+        if (currentProfile != savedProfile) {
+            settings.setValue("1", currentProfile);
+        }
+    }
+    settings.endGroup();
+    settings.sync();
+}
+
+void Cyan::updateCmykDefaultProfile(int index)
+{
+    QSettings settings;
+    settings.beginGroup("profiles");
+    if (!cmykProfile->itemData(index).isNull()) {
+        QString currentProfile = cmykProfile->itemData(index).toString();
+        QString savedProfile = settings.value("2").toString();
+        if (currentProfile != savedProfile) {
+            settings.setValue("2", currentProfile);
+        }
+    }
+    settings.endGroup();
+    settings.sync();
+}
+
+void Cyan::updateGrayDefaultProfile(int index)
+{
+    QSettings settings;
+    settings.beginGroup("profiles");
+    if (!grayProfile->itemData(index).isNull()) {
+        QString currentProfile = grayProfile->itemData(index).toString();
+        QString savedProfile = settings.value("3").toString();
+        if (currentProfile != savedProfile) {
+            settings.setValue("3", currentProfile);
+        }
+    }
+    settings.endGroup();
+    settings.sync();
+}
+
+void Cyan::updateMonitorDefaultProfile(int index)
+{
+    QSettings settings;
+    settings.beginGroup("profiles");
+    if (!monitorProfile->itemData(index).isNull()) {
+        QString currentProfile = monitorProfile->itemData(index).toString();
+        QString savedProfile = settings.value("monitor").toString();
+        if (currentProfile != savedProfile) {
+            settings.setValue("monitor", currentProfile);
+        }
+    }
+    settings.endGroup();
+    settings.sync();
 }

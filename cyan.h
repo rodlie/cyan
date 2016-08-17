@@ -35,6 +35,8 @@
 #include <QMenuBar>
 #include <QAction>
 
+#include "yellow.h"
+
 class CyanView : public QGraphicsView
 {
 Q_OBJECT
@@ -63,6 +65,7 @@ public:
     ~Cyan();
 
 private:
+    Yellow cms;
     QGraphicsScene *scene;
     CyanView *view;
     QToolBar *mainBar;
@@ -95,6 +98,15 @@ private slots:
     void aboutCyan();
     void openImageDialog();
     void saveImageDialog();
+    void openImage(QString file);
+    void saveImage(QString file);
+    void getColorProfiles(int colorspace, QComboBox *box, bool isMonitor);
+    void loadDefaultProfiles();
+    void saveDefaultProfiles();
+    void updateRgbDefaultProfile(int index);
+    void updateCmykDefaultProfile(int index);
+    void updateGrayDefaultProfile(int index);
+    void updateMonitorDefaultProfile(int index);
 };
 
 #endif // CYAN_H
