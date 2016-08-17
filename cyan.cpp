@@ -20,6 +20,8 @@
 #include <QCoreApplication>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QSettings>
+#include <QTimer>
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent) {
 }
@@ -74,6 +76,14 @@ Cyan::Cyan(QWidget *parent)
     , brightDial(0)
     , hueDial(0)
     , satDial(0)
+    , mainBarLoadButton(0)
+    , mainBarSaveButton(0)
+    , menuBar(0)
+    , fileMenu(0)
+    , helpMenu(0)
+    , openImageAction(0)
+    , saveImageAction(0)
+    , quitAction(0)
 {
     Magick::InitializeMagick(NULL);
 
@@ -180,9 +190,82 @@ Cyan::Cyan(QWidget *parent)
     QWidget *modulateWidget = new QWidget();
     modulateWidget->setLayout(modulateLayout);
     modulateDock->setWidget(modulateWidget);
+
+    mainBarLoadButton = new QPushButton();
+    mainBarSaveButton = new QPushButton();
+
+    mainBarLoadButton->setText(tr("Load"));
+    connect(mainBarLoadButton, SIGNAL(released()), this, SLOT(openImageDialog()));
+    mainBarSaveButton->setText(tr("Save"));
+    mainBarSaveButton->setDisabled(true);
+    connect(mainBarSaveButton, SIGNAL(released()), this, SLOT(saveImageDialog()));
+
+    mainBar->addWidget(mainBarLoadButton);
+    mainBar->addWidget(mainBarSaveButton);
+
+    menuBar = new QMenuBar();
+    setMenuBar(menuBar);
+
+    fileMenu = new QMenu(tr("File"));
+    helpMenu = new QMenu(tr("Help"));
+    menuBar->addMenu(fileMenu);
+    menuBar->addMenu(helpMenu);
+
+    QAction *aboutAction = new QAction(tr("About ")+qApp->applicationName(), this);
+    aboutAction->setIcon(QIcon(":/cyan.png"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutCyan()));
+    helpMenu->addAction(aboutAction);
+
+    QAction *aboutQtAction = new QAction(tr("About Qt"), this);
+    connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    helpMenu->addAction(aboutQtAction);
+
+    openImageAction = new QAction(tr("Open image"), this);
+    openImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_O));
+    connect(openImageAction, SIGNAL(triggered()), this, SLOT(openImageDialog()));
+    fileMenu->addAction(openImageAction);
+
+    saveImageAction = new QAction(tr("Save image"), this);
+    saveImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_S));
+    saveImageAction->setDisabled(true);
+    connect(saveImageAction, SIGNAL(triggered()), this, SLOT(saveImageDialog()));
+    fileMenu->addAction(saveImageAction);
+
+    quitAction = new QAction(tr("Quit"),this);
+    quitAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Q));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    fileMenu->addAction(quitAction);
+
+
+    QTimer::singleShot(0, this, SLOT(readConfig()));
 }
 
 Cyan::~Cyan()
+{
+
+}
+
+void Cyan::readConfig()
+{
+
+}
+
+void Cyan::writeConfig()
+{
+
+}
+
+void Cyan::aboutCyan()
+{
+
+}
+
+void Cyan::openImageDialog()
+{
+
+}
+
+void Cyan::saveImageDialog()
 {
 
 }

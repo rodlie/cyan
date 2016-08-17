@@ -30,6 +30,10 @@
 #include <QScrollBar>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QPushButton>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 
 class CyanView : public QGraphicsView
 {
@@ -57,6 +61,7 @@ class Cyan : public QMainWindow
 public:
     Cyan(QWidget *parent = 0);
     ~Cyan();
+
 private:
     QGraphicsScene *scene;
     CyanView *view;
@@ -75,6 +80,21 @@ private:
     QDial *brightDial;
     QDial *hueDial;
     QDial *satDial;
+    QPushButton *mainBarLoadButton;
+    QPushButton *mainBarSaveButton;
+    QMenuBar *menuBar;
+    QMenu *fileMenu;
+    QMenu *helpMenu;
+    QAction *openImageAction;
+    QAction *saveImageAction;
+    QAction *quitAction;
+
+private slots:
+    void readConfig();
+    void writeConfig();
+    void aboutCyan();
+    void openImageDialog();
+    void saveImageDialog();
 };
 
 #endif // CYAN_H

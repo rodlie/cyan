@@ -3,5 +3,6 @@
         <file>cyan-display.png</file>
         <file>cyan-wheel.png</file>
         <file>cyan.png</file>
+        <file>cyan-header.png</file>
     </qresource>
 </RCC>
