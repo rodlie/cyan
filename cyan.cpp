@@ -343,7 +343,7 @@ void Cyan::openImage(QString file)
         adjust.hue = 100;
         adjust.intent = 0;
         adjust.saturation = 100;
-        proc.requestImage(0 , 0, file, empty, empty, empty, empty, adjust);
+        proc.requestImage(false , false, file, empty, empty, empty, empty, adjust);
     }
 }
 
@@ -575,7 +575,7 @@ void Cyan::updateImage()
         if (monitorCheckBox->isChecked()) {
             proof = getMonitorProfile();
         }
-        proc.requestImage(2, 0, "", currentImageData, currentInputProfile, getOutputProfile(), proof, adjust);
+        proc.requestImage(true, false, "", currentImageData, currentInputProfile, getOutputProfile(), proof, adjust);
     }
 }
 

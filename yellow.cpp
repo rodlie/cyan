@@ -19,7 +19,6 @@
 #include <QDirIterator>
 #include <QDir>
 #include <QFile>
-#include <QDebug>
 #include <QSettings>
 
 Yellow::Yellow(QObject *parent) :
@@ -72,11 +71,11 @@ int Yellow::profileColorSpaceFromFile(QString file)
         cmsHPROFILE lcmsProfile;
         lcmsProfile = cmsOpenProfileFromFile(file.toAscii(), "r");
         if (lcmsProfile) {
-            if(cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
+            if (cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
                 status = 1;
-            } else if(cmsGetColorSpace(lcmsProfile) == cmsSigCmykData) {
+            } else if (cmsGetColorSpace(lcmsProfile) == cmsSigCmykData) {
                 status = 2;
-            } else if(cmsGetColorSpace(lcmsProfile) == cmsSigGrayData) {
+            } else if (cmsGetColorSpace(lcmsProfile) == cmsSigGrayData) {
                 status = 3;
             }
         }
@@ -92,11 +91,11 @@ int Yellow::profileColorSpaceFromData(QByteArray data)
         cmsHPROFILE lcmsProfile;
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
-            if(cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
+            if (cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
                 status = 1;
-            } else if(cmsGetColorSpace(lcmsProfile) == cmsSigCmykData) {
+            } else if (cmsGetColorSpace(lcmsProfile) == cmsSigCmykData) {
                 status = 2;
-            } else if(cmsGetColorSpace(lcmsProfile) == cmsSigGrayData) {
+            } else if (cmsGetColorSpace(lcmsProfile) == cmsSigGrayData) {
                 status = 3;
             }
         }
@@ -110,6 +109,8 @@ QStringList Yellow::genProfiles(int colorspace)
     QStringList output;
     QStringList folders;
     folders << QDir::rootPath()+"/WINDOWS/System32/spool/drivers/color";
+    folders << "/Library/ColorSync/Profiles";
+    folders << QDir::homePath()+"/Library/ColorSync/Profiles";
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath()+"/.color/icc";
@@ -142,7 +143,6 @@ QByteArray Yellow::profileDefault(int colorspace)
             fileName = settings.value(QString::number(colorspace)).toString();
         }
         settings.endGroup();
-        qDebug() << "default profile" << fileName << "for colorspace" << colorspace;
         if (!fileName.isEmpty()) {
             QFile proFile(fileName);
             if (proFile.exists()) {
