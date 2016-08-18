@@ -34,8 +34,10 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QAction>
+#include <QByteArray>
 
 #include "yellow.h"
+#include "magenta.h"
 
 class CyanView : public QGraphicsView
 {
@@ -66,6 +68,7 @@ public:
 
 private:
     Yellow cms;
+    Magenta proc;
     QGraphicsScene *scene;
     CyanView *view;
     QToolBar *mainBar;
@@ -91,6 +94,11 @@ private:
     QAction *openImageAction;
     QAction *saveImageAction;
     QAction *quitAction;
+    QByteArray currentImageData;
+    QByteArray currentImageProfile;
+    QByteArray currentImageNewProfile;
+    QCheckBox *monitorCheckBox;
+
 
 private slots:
     void readConfig();
@@ -107,6 +115,17 @@ private slots:
     void updateCmykDefaultProfile(int index);
     void updateGrayDefaultProfile(int index);
     void updateMonitorDefaultProfile(int index);
+    void getImage(magentaImage result);
+    void imageClear();
+    void resetImageZoom();
+    void setImage(QByteArray image);
+    void updateImage();
+    QByteArray getMonitorProfile();
+    QByteArray getOutputProfile();
+    void getConvertProfiles();
+    void inputProfileChanged(int index);
+    void outputProfileChanged(int index);
+    void monitorCheckBoxChanged(bool triggered);
 };
 
 #endif // CYAN_H

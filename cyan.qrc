@@ -4,5 +4,8 @@
         <file>cyan-wheel.png</file>
         <file>cyan.png</file>
         <file>cyan-header.png</file>
+        <file>COPYING</file>
+        <file>cyan-icc2.png</file>
+        <file>cyan-icc4.png</file>
     </qresource>
 </RCC>

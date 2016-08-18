@@ -20,8 +20,8 @@ TARGET = cyan
 VERSION = 1.0.0-alpha1
 TEMPLATE = app
 
-SOURCES += main.cpp cyan.cpp yellow.cpp
-HEADERS  += cyan.h yellow.h
+SOURCES += main.cpp cyan.cpp magenta.cpp yellow.cpp
+HEADERS  += cyan.h magenta.h yellow.h
 RESOURCES += cyan.qrc
 
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
