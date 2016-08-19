@@ -279,7 +279,7 @@ Cyan::Cyan(QWidget *parent)
     connect(view, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
     connect(view, SIGNAL(proof()), this, SLOT(triggerMonitor()));
 
-    setStyleSheet("QLabel {margin-left:10px;}");
+    //setStyleSheet("QLabel {margin-left:10px;}");
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
@@ -904,7 +904,7 @@ void Cyan::exportEmbeddedProfile(QString file)
                 QMessageBox::warning(this, tr("Unable to save profile"), tr("Unable to save profile, please check write permissions."));
             } else {
                 QFileInfo proFileInfo(file);
-                QMessageBox::information(this, tr("Color profile save"), proFileInfo.completeBaseName() + tr(" Saved to disk."));
+                QMessageBox::information(this, tr("Color profile saved"), proFileInfo.completeBaseName() + tr(" Saved to disk."));
             }
             proFile.close();
         } else {

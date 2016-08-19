@@ -16,6 +16,7 @@
 */
 
 #include "magenta.h"
+#include <QCoreApplication>
 
 Magenta::Magenta(QObject *parent) :
     QObject(parent)
@@ -126,6 +127,8 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 
         if (doSave) {
             image.magick("TIF");
+            QString comment = QCoreApplication::applicationName() + " " + QCoreApplication::applicationVersion() + " https://github.com/olear/cyan";
+            image.comment(comment.toStdString());
             image.write(file.toUtf8().data());
             result.saved = true;
         } else {
