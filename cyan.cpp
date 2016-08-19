@@ -350,16 +350,55 @@ void Cyan::aboutCyan()
 
 void Cyan::openImageDialog()
 {
+    QSettings settings;
+    settings.beginGroup("default");
+
     QString file;
-    file = QFileDialog::getOpenFileName(this, tr("Open image"), QDir::homePath(), tr("Image files (*.png *.jpg *.jpeg *.tif *.tiff)"));
+    QString dir;
+
+    if (settings.value("lastDir").isValid()) {
+        dir = settings.value("lastDir").toString();
+    } else {
+        dir = QDir::homePath();
+    }
+
+    file = QFileDialog::getOpenFileName(this, tr("Open image"), dir, tr("Image files (*.psd *.png *.jpg *.jpeg *.tif *.tiff)"));
     if (!file.isEmpty()) {
         openImage(file);
+        QFileInfo imageFile(file);
+        settings.setValue("lastDir", imageFile.absoluteDir().absolutePath());
     }
+
+    settings.endGroup();
+    settings.sync();
 }
 
 void Cyan::saveImageDialog()
 {
+    QSettings settings;
+    settings.beginGroup("default");
 
+    QString file;
+    QString dir;
+
+    if (settings.value("lastSaveDir").isValid()) {
+        dir = settings.value("lastSaveDir").toString();
+    } else {
+        dir = QDir::homePath();
+    }
+
+    file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif)"));
+    if (!file.isEmpty()) {
+        QFileInfo imageFile(file);
+        if (imageFile.suffix().isEmpty()) {
+            file.append(".tif");
+        }
+        saveImage(file);
+        settings.setValue("lastSaveDir", imageFile.absoluteDir().absolutePath());
+    }
+
+    settings.endGroup();
+    settings.sync();
 }
 
 void Cyan::openImage(QString file)
@@ -379,7 +418,24 @@ void Cyan::openImage(QString file)
 
 void Cyan::saveImage(QString file)
 {
-    Q_UNUSED(file)
+    if (!file.isEmpty()) {
+        disableUI();
+        QByteArray empty;
+        magentaAdjust adjust;
+        adjust.black = blackPoint->isChecked();
+        adjust.brightness = 100;
+        adjust.hue = 100;
+        adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
+        adjust.saturation = 100;
+        QByteArray currentInputProfile;
+        QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
+        if (!selectedInputProfile.isEmpty()) {
+            currentInputProfile = currentImageNewProfile;
+        } else {
+            currentInputProfile = currentImageProfile;
+        }
+        proc.requestImage(false , true, file, currentImageData, currentInputProfile, getOutputProfile(), empty, adjust);
+    }
 }
 
 void Cyan::getColorProfiles(int colorspace, QComboBox *box, bool isMonitor)
@@ -521,6 +577,14 @@ void Cyan::updateMonitorDefaultProfile(int index)
 void Cyan::getImage(magentaImage result)
 {
     enableUI();
+    if (result.saved && result.error.isEmpty() && result.warning.isEmpty()) {
+        QFileInfo imageFile(result.filename);
+        if (imageFile.exists()) {
+            QMessageBox::information(this, tr("Image saved"), imageFile.baseName() + tr(" saved to disk."));
+        } else {
+            QMessageBox::warning(this, tr("Failed to save image"), tr("Failed to save image to disk"));
+        }
+    }
     if (result.error.isEmpty() && result.warning.isEmpty() && result.data.length()>0 && result.profile.length()>0) {
         if (!result.preview) {
             imageClear();
@@ -553,7 +617,9 @@ void Cyan::getImage(magentaImage result)
         if (!result.warning.isEmpty()) {
             QMessageBox::warning(this,tr("Cyan Warning"), result.warning);
         }
-        imageClear();
+        if (!result.saved) {
+            imageClear();
+        }
     }
 }
 
@@ -720,6 +786,13 @@ void Cyan::inputProfileChanged(int index)
 void Cyan::outputProfileChanged(int index)
 {
     Q_UNUSED(index)
+    if (outputProfile->itemData(outputProfile->currentIndex()).toString().isEmpty()) {
+        saveImageAction->setDisabled(true);
+        mainBarSaveButton->setDisabled(true);
+    } else {
+        saveImageAction->setEnabled(true);
+        mainBarSaveButton->setEnabled(true);
+    }
     updateImage();
 }
 
