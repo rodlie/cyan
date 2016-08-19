@@ -1,7 +1,7 @@
 Summary: Prepress viewer and converter
 Name: cyan
 
-Version: 1.0.0.RC1
+Version: 1.0.0.RC2
 Release: 1%{dist}
 License: GPLv2
 

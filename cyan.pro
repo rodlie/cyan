@@ -17,12 +17,13 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cyan
-VERSION = 1.0.0.RC1
+VERSION = 1.0.0.RC2
 TEMPLATE = app
 
 SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
 HEADERS  += src/cyan.h src/magenta.h src/yellow.h
 RESOURCES += res/cyan.qrc
+OTHER_FILES += res/cyan.spec
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
