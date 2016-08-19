@@ -27,6 +27,7 @@
 #include <QMatrix>
 #include <QMessageBox>
 #include <QIcon>
+#include <QKeySequence>
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent) {
 }
@@ -89,6 +90,7 @@ Cyan::Cyan(QWidget *parent)
     , currentImageProfile(0)
     , currentImageNewProfile(0)
     , monitorCheckBox(0)
+    , exportEmbeddedProfileAction(0)
 {
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
@@ -236,6 +238,16 @@ Cyan::Cyan(QWidget *parent)
     saveImageAction->setDisabled(true);
     fileMenu->addAction(saveImageAction);
 
+    fileMenu->addSeparator();
+
+    exportEmbeddedProfileAction = new QAction(tr("Export image profile"), this);
+    exportEmbeddedProfileAction->setIcon(QIcon(":/cyan-save.png"));
+    exportEmbeddedProfileAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+    exportEmbeddedProfileAction->setDisabled(true);
+    fileMenu->addAction(exportEmbeddedProfileAction);
+
+    fileMenu->addSeparator();
+
     quitAction = new QAction(tr("Quit"),this);
     quitAction->setIcon(QIcon(":/cyan-quit.png"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
@@ -252,6 +264,7 @@ Cyan::Cyan(QWidget *parent)
     connect(saveImageAction, SIGNAL(triggered()), this, SLOT(saveImageDialog()));
     connect(mainBarLoadButton, SIGNAL(released()), this, SLOT(openImageDialog()));
     connect(mainBarSaveButton, SIGNAL(released()), this, SLOT(saveImageDialog()));
+    connect(exportEmbeddedProfileAction, SIGNAL(triggered()), this, SLOT(exportEmbeddedProfileDialog()));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     connect(rgbProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRgbDefaultProfile(int)));
@@ -595,12 +608,12 @@ void Cyan::getImage(magentaImage result)
     if (result.saved && result.error.isEmpty() && result.warning.isEmpty()) {
         QFileInfo imageFile(result.filename);
         if (imageFile.exists()) {
-            QMessageBox::information(this, tr("Image saved"), imageFile.baseName() + tr(" saved to disk."));
+            QMessageBox::information(this, tr("Image saved"), imageFile.completeBaseName() + tr(" saved to disk."));
         } else {
             QMessageBox::warning(this, tr("Failed to save image"), tr("Failed to save image to disk"));
         }
     }
-    if (result.error.isEmpty() && result.warning.isEmpty() && result.data.length()>0 && result.profile.length()>0) {
+    if (result.error.isEmpty() && result.warning.isEmpty() && result.data.length() > 0 && result.profile.length() > 0) {
         if (!result.preview) {
             imageClear();
             currentImageData = result.data;
@@ -621,6 +634,7 @@ void Cyan::getImage(magentaImage result)
             QString newWindowTitle = qApp->applicationName() + " - " + imageFile.fileName() + " [ " + imageColorspace+" ]" + " [ " + cms.profileDescFromData(currentImageProfile) + " ] [ " + QString::number(result.width) + "x" + QString::number(result.height) + " ]";
             setWindowTitle(newWindowTitle);
             getConvertProfiles();
+            exportEmbeddedProfileAction->setEnabled(true);
             updateImage();
         } else {
             setImage(result.data);
@@ -648,6 +662,7 @@ void Cyan::imageClear()
     resetImageZoom();
     mainBarSaveButton->setDisabled(true);
     saveImageAction->setDisabled(true);
+    exportEmbeddedProfileAction->setDisabled(true);
 }
 
 void Cyan::resetImageZoom()
@@ -847,5 +862,53 @@ void Cyan::triggerMonitor()
         monitorCheckBox->setChecked(false);
     } else {
         monitorCheckBox->setChecked(true);
+    }
+}
+
+void Cyan::exportEmbeddedProfileDialog()
+{
+    QSettings settings;
+    settings.beginGroup("default");
+
+    QString file;
+    QString dir;
+
+    if (settings.value("lastSaveDir").isValid()) {
+        dir = settings.value("lastSaveDir").toString();
+    } else {
+        dir = QDir::homePath();
+    }
+
+    dir.append("/" + cms.profileDescFromData(currentImageProfile) + ".icc");
+
+    file = QFileDialog::getSaveFileName(this, tr("Save profile"), dir, tr("Color Profiles (*.icc)"));
+    if (!file.isEmpty()) {
+        QFileInfo proFile(file);
+        if (proFile.suffix().isEmpty()) {
+            file.append(".icc");
+        }
+        exportEmbeddedProfile(file);
+        settings.setValue("lastSaveDir", proFile.absoluteDir().absolutePath());
+    }
+
+    settings.endGroup();
+    settings.sync();
+}
+
+void Cyan::exportEmbeddedProfile(QString file)
+{
+    if (!file.isEmpty() && currentImageProfile.length() > 0) {
+        QFile proFile(file);
+        if (proFile.open(QIODevice::WriteOnly)) {
+            if (proFile.write(currentImageProfile) == -1) {
+                QMessageBox::warning(this, tr("Unable to save profile"), tr("Unable to save profile, please check write permissions."));
+            } else {
+                QFileInfo proFileInfo(file);
+                QMessageBox::information(this, tr("Color profile save"), proFileInfo.completeBaseName() + tr(" Saved to disk."));
+            }
+            proFile.close();
+        } else {
+            QMessageBox::warning(this, tr("Unable to save profile"), tr("Unable to save profile, please check write permissions."));
+        }
     }
 }

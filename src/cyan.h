@@ -92,6 +92,7 @@ private:
     QByteArray currentImageProfile;
     QByteArray currentImageNewProfile;
     QCheckBox *monitorCheckBox;
+    QAction *exportEmbeddedProfileAction;
 
 private slots:
     void readConfig();
@@ -122,6 +123,8 @@ private slots:
     void enableUI();
     void disableUI();
     void triggerMonitor();
+    void exportEmbeddedProfileDialog();
+    void exportEmbeddedProfile(QString file);
 };
 
 #endif // CYAN_H
