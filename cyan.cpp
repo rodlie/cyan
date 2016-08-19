@@ -362,7 +362,7 @@ void Cyan::openImageDialog()
         dir = QDir::homePath();
     }
 
-    file = QFileDialog::getOpenFileName(this, tr("Open image"), dir, tr("Image files (*.psd *.png *.jpg *.jpeg *.tif *.tiff)"));
+    file = QFileDialog::getOpenFileName(this, tr("Open image"), dir, tr("Image files (*.png *.jpg *.jpeg *.tif *.tiff)"));
     if (!file.isEmpty()) {
         openImage(file);
         QFileInfo imageFile(file);

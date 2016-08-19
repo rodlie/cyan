@@ -7,9 +7,9 @@ Cyan is free software: you can redistribute it and/or modify it under the terms 
 
 # Features
 
-* Supports CMYK/RGB/GRAY 8/16/32 bit images
+* Supports RGB/CMYK/GRAY 8/16/32 bit images
 * Supports ICC v2/v4 color profiles
-* Supports PSD/PNG/JPEG/TIFF images
+* Supports PNG/JPEG/TIFF images
 
 # Requirements
 
