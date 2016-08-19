@@ -137,6 +137,11 @@ Cyan::Cyan(QWidget *parent)
     monitorProfile->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     renderingIntent->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
+    renderingIntent->addItem("Undefined",0);
+    renderingIntent->addItem("Saturation",1);
+    renderingIntent->addItem("Perceptual",2);
+    renderingIntent->addItem("Absolute",3);
+
     QLabel *inputLabel = new QLabel();
     QLabel *outputLabel = new QLabel();
     QLabel *monitorLabel = new QLabel();
@@ -267,11 +272,57 @@ Cyan::~Cyan()
 
 void Cyan::readConfig()
 {
+    QSettings settings;
+
+    settings.beginGroup("color");
+    monitorCheckBox->setChecked(settings.value("proof").toBool());
+    blackPoint->setChecked(settings.value("black").toBool());
+    if (settings.value("render").isValid()) {
+        renderingIntent->setCurrentIndex(settings.value("render").toInt());
+    }
+    settings.endGroup();
+
+    settings.beginGroup("ui");
+    if (settings.value("state").isValid()) {
+        restoreState(settings.value("state").toByteArray());
+    }
+    if (settings.value("size").isValid()) {
+        resize(settings.value("size",QSize(320,256)).toSize());
+    }
+    if (settings.value("pos").isValid()) {
+        move(settings.value("pos",QPoint(0,0)).toPoint());
+    }
+    if (settings.value("max").toBool() == true) {
+        this->showMaximized();
+    }
+    settings.endGroup();
+
     loadDefaultProfiles();
 }
 
 void Cyan::writeConfig()
 {
+    QSettings settings;
+
+    settings.beginGroup("color");
+    settings.setValue("proof", monitorCheckBox->isChecked());
+    settings.setValue("black", blackPoint->isChecked());
+    settings.setValue("render", renderingIntent->itemData(renderingIntent->currentIndex()).toInt());
+    settings.endGroup();
+
+    settings.beginGroup("ui");
+    settings.setValue( "state",saveState());
+    settings.setValue("size",size());
+    settings.setValue("pos",pos());
+    if (this->isMaximized()) {
+        settings.setValue("max","true");
+    } else {
+        settings.setValue("max","false");
+    }
+    settings.endGroup();
+
+    settings.sync();
+
     saveDefaultProfiles();
 }
 
@@ -514,6 +565,8 @@ void Cyan::imageClear()
     currentImageNewProfile.clear();
     scene->clear();
     resetImageZoom();
+    mainBarSaveButton->setDisabled(true);
+    saveImageAction->setDisabled(true);
 }
 
 void Cyan::resetImageZoom()
@@ -543,7 +596,7 @@ void Cyan::updateImage()
         adjust.black = blackPoint->isChecked();
         adjust.brightness = 100;
         adjust.hue = 100;
-        adjust.intent = 0;
+        adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
