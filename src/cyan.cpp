@@ -795,6 +795,14 @@ void Cyan::inputProfileChanged(int index)
         currentImageNewProfile = inputProfileName.readAll();
         inputProfileName.close();
     }
+    if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
+        if (!saveImageAction->isEnabled()) {
+            saveImageAction->setEnabled(true);
+        }
+        if (!mainBarSaveButton->isEnabled()) {
+            mainBarSaveButton->setEnabled(true);
+        }
+    }
     updateImage();
 }
 
