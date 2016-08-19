@@ -13,15 +13,29 @@ Prepress viewer and converter.
 
 # Requirements
 
-* RGB/CMYK/GRAY ICC color profiles
-* Color calibrated monitor with profile recommended
+* RGB/CMYK/GRAY ICC color profiles installed
+* Color calibrated monitor (with profile) recommended
+
+# Usage
+
+On first run make sure to select the default profiles for images without an embedded color profile, this is important or else color convertion will not work properly on images without an embedded color profile. 
+
+Then open your image, either push the 'Load' button, or select 'Open image' from the 'File' menu or use the CTRL+O shortcut. 
+
+If you just want to change the image profile, select a new color profile from the 'Input' list, then save the image using the 'Save' button, or select 'Save image' from the 'File' menu or use the CTRL+S shortcut. 
+
+If you want to change the colorspace (RGB to CMYK), use the 'Output' list, this will convert the image from the existing colorspace to the new colorspace defined in the selected color profile in the 'Output' list. Then save the image. 
+
+If you want to "proof" the convertion make sure to select a profile in the 'Monitor' list and tick the checkbox on the right (can be toggled on/off using right mouse button in the viewer). 
+
+Images are viewed at 100% in the viewer, you can zoom in/out using the mouse wheel, third mouse button will reset zoom to 100%.
 
 # Build
 
 Build requirements:
 * ImageMagick (Q32 HDRI with PNG/JPEG/TIFF/LCMS)
 * LCMS 2+
-* Qt 4.8+
+* Qt 4+ (with PNG and TIFF support)
 
 ```
 qmake PREFIX=XXX (/usr/local is default install path)
