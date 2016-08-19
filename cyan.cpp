@@ -137,10 +137,11 @@ Cyan::Cyan(QWidget *parent)
     monitorProfile->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     renderingIntent->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-    renderingIntent->addItem("Undefined",0);
-    renderingIntent->addItem("Saturation",1);
-    renderingIntent->addItem("Perceptual",2);
-    renderingIntent->addItem("Absolute",3);
+    QIcon renderIcon(":/cyan-display.png");
+    renderingIntent->addItem(renderIcon, "Undefined",0);
+    renderingIntent->addItem(renderIcon, "Saturation",1);
+    renderingIntent->addItem(renderIcon, "Perceptual",2);
+    renderingIntent->addItem(renderIcon, "Absolute",3);
 
     QLabel *inputLabel = new QLabel();
     QLabel *outputLabel = new QLabel();
@@ -200,8 +201,10 @@ Cyan::Cyan(QWidget *parent)
     mainBarLoadButton = new QPushButton();
     mainBarSaveButton = new QPushButton();
 
-    mainBarLoadButton->setText(tr("Load"));
-    mainBarSaveButton->setText(tr("Save"));
+    mainBarLoadButton->setToolTip(tr("Open image"));
+    mainBarLoadButton->setIcon(QIcon(":/cyan-open.png"));
+    mainBarSaveButton->setToolTip(tr("Save image"));
+    mainBarSaveButton->setIcon(QIcon(":/cyan-save.png"));
     mainBarSaveButton->setDisabled(true);
 
     mainBar->addWidget(mainBarLoadButton);
@@ -223,15 +226,18 @@ Cyan::Cyan(QWidget *parent)
     helpMenu->addAction(aboutQtAction);
 
     openImageAction = new QAction(tr("Open image"), this);
+    openImageAction->setIcon(QIcon(":/cyan-open.png"));
     openImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_O));
     fileMenu->addAction(openImageAction);
 
     saveImageAction = new QAction(tr("Save image"), this);
+    saveImageAction->setIcon(QIcon(":/cyan-save.png"));
     saveImageAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_S));
     saveImageAction->setDisabled(true);
     fileMenu->addAction(saveImageAction);
 
     quitAction = new QAction(tr("Quit"),this);
+    quitAction->setIcon(QIcon(":/cyan-quit.png"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Q));
     fileMenu->addAction(quitAction);
 
@@ -340,7 +346,7 @@ void Cyan::aboutCyan()
 
     QFile license(":/COPYING");
     if (license.open(QIODevice::ReadOnly)) {
-        detailedText.append(QString::fromAscii(license.readAll()));
+        detailedText.append(QString::fromUtf8(license.readAll()));
         license.close();
     }
 
