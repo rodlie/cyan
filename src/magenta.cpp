@@ -45,7 +45,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
     Magick::Image image;
     try {
         if (!file.isEmpty() && !doSave ) {
-            image.read(file.toAscii().data());
+            image.read(file.toUtf8().data());
         } else {
             Magick::Blob imageData(data.data(),data.length());
             image.read(imageData);
@@ -126,7 +126,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 
         if (doSave) {
             image.magick("TIF");
-            image.write(file.toAscii().data());
+            image.write(file.toUtf8().data());
             result.saved = true;
         } else {
             result.saved = false;

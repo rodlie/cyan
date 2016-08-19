@@ -37,10 +37,10 @@ QString Yellow::profileDescFromFile(QString file)
     if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
         cmsHPROFILE lcmsProfile;
         char buffer[500];
-        lcmsProfile = cmsOpenProfileFromFile(file.toAscii(), "r");
+        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
         if (lcmsProfile) {
             cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, 500);
-            output=QString::fromAscii(buffer);
+            output=QString::fromUtf8(buffer);
         }
         cmsCloseProfile(lcmsProfile);
     }
@@ -56,7 +56,7 @@ QString Yellow::profileDescFromData(QByteArray data)
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
             cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, 500);
-            output=QString::fromAscii(buffer);
+            output=QString::fromUtf8(buffer);
         }
         cmsCloseProfile(lcmsProfile);
     }
@@ -69,7 +69,7 @@ int Yellow::profileColorSpaceFromFile(QString file)
     QFileInfo iccFile(file);
     if (iccFile.suffix().contains(QRegExp("(icc|icm)", Qt::CaseInsensitive)) && iccFile.exists()) {
         cmsHPROFILE lcmsProfile;
-        lcmsProfile = cmsOpenProfileFromFile(file.toAscii(), "r");
+        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
         if (lcmsProfile) {
             if (cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
                 status = 1;
