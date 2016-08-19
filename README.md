@@ -1,9 +1,6 @@
-![cyan](https://github.com/olear/cyan/raw/master/cyan-header.png)
+![cyan](https://github.com/olear/cyan/raw/master/res/cyan-header.png)
 # Cyan
 Prepress viewer and converter.
-
-# License
-Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
 
 # Features
 
@@ -28,3 +25,7 @@ qmake PREFIX=XXX (/usr/local is default install path)
 make
 make install (optional, use INSTALL_ROOT for packaging)
 ```
+
+# License
+Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
+
