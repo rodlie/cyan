@@ -119,6 +119,9 @@ private slots:
     void inputProfileChanged(int index);
     void outputProfileChanged(int index);
     void monitorCheckBoxChanged(bool triggered);
+    void enableUI();
+    void disableUI();
+    void triggerMonitor();
 };
 
 #endif // CYAN_H

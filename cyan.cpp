@@ -252,6 +252,9 @@ Cyan::Cyan(QWidget *parent)
     connect(outputProfile, SIGNAL(currentIndexChanged(int)), this, SLOT(outputProfileChanged(int)));
     connect(monitorCheckBox, SIGNAL(toggled(bool)), this, SLOT(monitorCheckBoxChanged(bool)));
 
+    connect(view, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
+    connect(view, SIGNAL(proof()), this, SLOT(triggerMonitor()));
+
     setStyleSheet("QLabel {margin-left:10px;}");
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
@@ -311,6 +314,7 @@ void Cyan::saveImageDialog()
 void Cyan::openImage(QString file)
 {
     if (!file.isEmpty()) {
+        disableUI();
         QByteArray empty;
         magentaAdjust adjust;
         adjust.black = false;
@@ -465,6 +469,7 @@ void Cyan::updateMonitorDefaultProfile(int index)
 
 void Cyan::getImage(magentaImage result)
 {
+    enableUI();
     if (result.error.isEmpty() && result.warning.isEmpty() && result.data.length()>0 && result.profile.length()>0) {
         if (!result.preview) {
             imageClear();
@@ -533,6 +538,7 @@ void Cyan::setImage(QByteArray image)
 void Cyan::updateImage()
 {
     if (currentImageData.length()>0 && currentImageProfile.length()>0) {
+        disableUI();
         magentaAdjust adjust;
         adjust.black = blackPoint->isChecked();
         adjust.brightness = 100;
@@ -668,4 +674,29 @@ void Cyan::monitorCheckBoxChanged(bool triggered)
 {
     Q_UNUSED(triggered)
     updateImage();
+}
+
+void Cyan::enableUI()
+{
+    menuBar->setEnabled(true);
+    mainBar->setEnabled(true);
+    convertBar->setEnabled(true);
+    profileBar->setEnabled(true);
+}
+
+void Cyan::disableUI()
+{
+    menuBar->setDisabled(true);
+    mainBar->setDisabled(true);
+    convertBar->setDisabled(true);
+    profileBar->setDisabled(true);
+}
+
+void Cyan::triggerMonitor()
+{
+    if (monitorCheckBox->isChecked()) {
+        monitorCheckBox->setChecked(false);
+    } else {
+        monitorCheckBox->setChecked(true);
+    }
 }
