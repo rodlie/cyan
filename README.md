@@ -7,6 +7,9 @@ Prepress viewer and converter.
 * Supports RGB/CMYK/GRAY 8/16/32 bit images
 * Supports ICC v2/v4 color profiles
 * Supports PNG/JPEG/TIFF images
+* Add/Change color profile on images
+* Convert to/from RGB/CMYK/GRAY
+* Extract embedded color profile from images
 
 # Requirements
 
