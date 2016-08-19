@@ -75,7 +75,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         result.width = (int)image.columns();
         result.height = (int)image.rows();
 
-        if (edit.intent>0) {
+        if (edit.intent > 0) {
             switch(edit.intent) {
             case 1:
                 image.renderingIntent(Magick::SaturationIntent);
@@ -97,20 +97,20 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.modulate(edit.brightness,edit.saturation,edit.hue);
         }
 
-        if (inprofile.length()>0) {
-            Magick::Blob sourceProfile(inprofile.data(),inprofile.length());
+        if (inprofile.length() > 0) {
+            Magick::Blob sourceProfile(inprofile.data(), inprofile.length());
             image.profile("ICC",sourceProfile); // use ICM in GM and ICC in IM
         }
-        if (outprofile.length()>0) {
-            Magick::Blob destProfile(outprofile.data(),outprofile.length());
+        if (outprofile.length() > 0) {
+            Magick::Blob destProfile(outprofile.data(), outprofile.length());
             image.profile("ICC",destProfile); // use ICM in GM and ICC in IM
         }
-        if (monitorprofile.length()>0 && isPreview) {
-            Magick::Blob proofProfile(monitorprofile.data(),monitorprofile.length());
+        if (monitorprofile.length() > 0 && isPreview) {
+            Magick::Blob proofProfile(monitorprofile.data(), monitorprofile.length());
             image.profile("ICC",proofProfile); // use ICM in GM and ICC in IM
         }
 
-        outputProfile = QByteArray((char*)image.iccColorProfile().data(),image.iccColorProfile().length());
+        outputProfile = QByteArray((char*)image.iccColorProfile().data(), image.iccColorProfile().length());
 
         if (isPreview) {
             result.preview = true;
@@ -142,12 +142,12 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
     }
 
     if (!doSave) {
-        if (outputImage.length()>0) {
-            result.data = QByteArray((char*)outputImage.data(),outputImage.length());
+        if (outputImage.length() > 0) {
+            result.data = QByteArray((char*)outputImage.data(), outputImage.length());
         }
 
-        if (outputProfile.length()>0) {
-            result.profile = QByteArray((char*)outputProfile.data(),outputProfile.length());
+        if (outputProfile.length() > 0) {
+            result.profile = QByteArray((char*)outputProfile.data(), outputProfile.length());
         } else {
             result.profile = yellow.profileDefault(outputColorSpace);
         }

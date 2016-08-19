@@ -50,7 +50,7 @@ QString Yellow::profileDescFromFile(QString file)
 QString Yellow::profileDescFromData(QByteArray data)
 {
     QString output;
-    if (data.length()>0) {
+    if (data.length() > 0) {
         cmsHPROFILE lcmsProfile;
         char buffer[500];
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
@@ -87,7 +87,7 @@ int Yellow::profileColorSpaceFromFile(QString file)
 int Yellow::profileColorSpaceFromData(QByteArray data)
 {
     int status = 0;
-    if (data.length()>0) {
+    if (data.length() > 0) {
         cmsHPROFILE lcmsProfile;
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
@@ -108,12 +108,12 @@ QStringList Yellow::genProfiles(int colorspace)
 {
     QStringList output;
     QStringList folders;
-    folders << QDir::rootPath()+"/WINDOWS/System32/spool/drivers/color";
+    folders << QDir::rootPath() + "/WINDOWS/System32/spool/drivers/color";
     folders << "/Library/ColorSync/Profiles";
-    folders << QDir::homePath()+"/Library/ColorSync/Profiles";
+    folders << QDir::homePath() + "/Library/ColorSync/Profiles";
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
-    folders << QDir::homePath()+"/.color/icc";
+    folders << QDir::homePath() + "/.color/icc";
     for (int i = 0; i < folders.size(); ++i) {
         QStringList filter;
         filter << "*.icc";
@@ -123,8 +123,8 @@ QStringList Yellow::genProfiles(int colorspace)
             QString iccFile = it.next();
             QString profile = profileDescFromFile(iccFile);
             int profileColor = profileColorSpaceFromFile(iccFile);
-            if (profileColor==colorspace &&!profile.isEmpty()) {
-                output << iccFile+"|"+profile;
+            if (profileColor==colorspace && !profile.isEmpty()) {
+                output << iccFile + "|" + profile;
             }
         }
     }

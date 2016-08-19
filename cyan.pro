@@ -17,7 +17,7 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cyan
-VERSION = 1.0.0-alpha1
+VERSION = 1.0.0-RC1
 TEMPLATE = app
 
 SOURCES += main.cpp cyan.cpp magenta.cpp yellow.cpp
