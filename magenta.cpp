@@ -93,6 +93,10 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.blackPointCompensation(edit.black);
         }
 
+        if (edit.brightness!=100 || edit.saturation!=100 || edit.hue!=100) {
+            image.modulate(edit.brightness,edit.saturation,edit.hue);
+        }
+
         if (inprofile.length()>0) {
             Magick::Blob sourceProfile(inprofile.data(),inprofile.length());
             image.profile("ICC",sourceProfile); // use ICM in GM and ICC in IM
@@ -107,10 +111,6 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         }
 
         outputProfile = QByteArray((char*)image.iccColorProfile().data(),image.iccColorProfile().length());
-
-        if (edit.brightness!=100||edit.saturation!=100||edit.hue!=100) {
-            image.modulate(edit.brightness,edit.saturation,edit.hue);
-        }
 
         if (isPreview) {
             result.preview = true;

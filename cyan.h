@@ -23,8 +23,6 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QCheckBox>
-#include <QDockWidget>
-#include <QDial>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QScrollBar>
@@ -82,10 +80,6 @@ private:
     QComboBox *monitorProfile;
     QComboBox *renderingIntent;
     QCheckBox *blackPoint;
-    QDockWidget *modulateDock;
-    QDial *brightDial;
-    QDial *hueDial;
-    QDial *satDial;
     QPushButton *mainBarLoadButton;
     QPushButton *mainBarSaveButton;
     QMenuBar *menuBar;
@@ -98,7 +92,6 @@ private:
     QByteArray currentImageProfile;
     QByteArray currentImageNewProfile;
     QCheckBox *monitorCheckBox;
-
 
 private slots:
     void readConfig();

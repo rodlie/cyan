@@ -77,10 +77,6 @@ Cyan::Cyan(QWidget *parent)
     , monitorProfile(0)
     , renderingIntent(0)
     , blackPoint(0)
-    , modulateDock(0)
-    , brightDial(0)
-    , hueDial(0)
-    , satDial(0)
     , mainBarLoadButton(0)
     , mainBarSaveButton(0)
     , menuBar(0)
@@ -110,7 +106,6 @@ Cyan::Cyan(QWidget *parent)
     mainBar = new QToolBar();
     convertBar = new QToolBar();
     profileBar = new QToolBar();
-    modulateDock = new QDockWidget();
 
     mainBar->setObjectName("MainToolbar");
     mainBar->setWindowTitle(tr("Main Toolbar"));
@@ -121,14 +116,9 @@ Cyan::Cyan(QWidget *parent)
     profileBar->setObjectName("ProfileToolbar");
     profileBar->setWindowTitle(tr("Profiles Toolbar"));
 
-    modulateDock->setObjectName("ModulateDock");
-    modulateDock->setWindowTitle(tr("Adjust"));
-    modulateDock->setFeatures(QDockWidget::DockWidgetMovable);
-
     addToolBar(Qt::TopToolBarArea,mainBar);
     addToolBar(Qt::TopToolBarArea,convertBar);
     addToolBar(Qt::BottomToolBarArea,profileBar);
-    addDockWidget(Qt::RightDockWidgetArea,modulateDock);
 
     rgbProfile = new QComboBox();
     cmykProfile = new QComboBox();
@@ -201,21 +191,6 @@ Cyan::Cyan(QWidget *parent)
     profileBar->addSeparator();
     profileBar->addWidget(blackLabel);
     profileBar->addWidget(blackPoint);
-
-    brightDial = new QDial();
-    hueDial = new QDial();
-    satDial = new QDial();
-
-    QVBoxLayout *modulateLayout = new QVBoxLayout();
-
-    modulateLayout->addWidget(brightDial);
-    modulateLayout->addWidget(hueDial);
-    modulateLayout->addWidget(satDial);
-    modulateLayout->addStretch();
-
-    QWidget *modulateWidget = new QWidget();
-    modulateWidget->setLayout(modulateLayout);
-    modulateDock->setWidget(modulateWidget);
 
     mainBarLoadButton = new QPushButton();
     mainBarSaveButton = new QPushButton();
@@ -559,7 +534,7 @@ void Cyan::updateImage()
 {
     if (currentImageData.length()>0 && currentImageProfile.length()>0) {
         magentaAdjust adjust;
-        adjust.black = false;
+        adjust.black = blackPoint->isChecked();
         adjust.brightness = 100;
         adjust.hue = 100;
         adjust.intent = 0;
