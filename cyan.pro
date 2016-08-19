@@ -17,7 +17,7 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cyan
-VERSION = 1.0.0-RC1
+VERSION = 1.0.0.RC1
 TEMPLATE = app
 
 SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
@@ -37,6 +37,8 @@ QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016 Ole-André Rodlie <olear@fxarena.net
 
 CONFIG += link_pkgconfig
 PKGCONFIG += Magick++ lcms2
+
+LIBS += `pkg-config --libs --static Magick++`
 
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
