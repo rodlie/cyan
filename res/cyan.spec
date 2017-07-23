@@ -2,7 +2,7 @@ Summary: Prepress viewer and converter
 Name: cyan
 
 Version: 1.0.0
-Release: 1.el7
+Release: 1.el7.centos.fedora
 License: GPLv2
 
 Group: System Environment/Base
@@ -78,7 +78,7 @@ make INSTALL_ROOT=%{buildroot} install
 
 %files
 %defattr(-,root,root,-)
-/usr/bin/cyan
+/usr/bin/Cyan
 /usr/share/applications/cyan.desktop
 /usr/share/pixmaps/cyan.png
 %doc ImageMagick-6.9.0-0/LICENSE.ImageMagick COPYING README.md

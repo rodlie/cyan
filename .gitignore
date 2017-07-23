@@ -7,3 +7,7 @@ Makefile*
 *.exe
 *.rpm
 *.stash
+tmp
+sdk
+*.dmg
+*.app

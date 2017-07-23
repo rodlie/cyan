@@ -1113,42 +1113,41 @@ void Cyan::bitDepthChanged(int index)
 
 void Cyan::gimpPlugin()
 {
-    QDir gimpDir;
-    QString gimpPath;
-    gimpPath.append(QDir::homePath());
-    gimpPath.append(QDir::separator());
-    gimpPath.append(".gimp-2.8");
-    if (!gimpDir.exists(gimpPath)) {
-        gimpDir.mkdir(gimpPath);
+    QStringList versions,folders;
+    versions << "2.4" << "2.8" << "2.10";
+    foreach (QString version, versions) {
+        QDir gimpDir;
+        QString gimpPath;
+        gimpPath.append(QDir::homePath());
+        gimpPath.append(QDir::separator());
+#ifndef __APPLE__
+        gimpPath.append(".gimp"+version);
+        if (!gimpDir.exists(gimpPath)) {
+            gimpDir.mkdir(gimpPath);
+        }
+#else
+        gimpPath.append("Library/Application Support/GIMP");
+        if (!gimpDir.exists(gimpPath)) {
+            gimpDir.mkdir(gimpPath);
+        }
+        gimpPath.append("/"+version);
+        if (!gimpDir.exists(gimpPath)) {
+            gimpDir.mkdir(gimpPath);
+        }
+#endif
+        gimpPath.append(QDir::separator());
+        gimpPath.append("plug-ins");
+        if (!gimpDir.exists(gimpPath)) {
+            gimpDir.mkdir(gimpPath);
+        }
+        QString result = gimpPath;
+        result.append(QDir::separator());
+        result.append("cyan.py");
+        folders << result;
     }
-    gimpPath.append(QDir::separator());
-    gimpPath.append("plug-ins");
-    if (!gimpDir.exists(gimpPath)) {
-        gimpDir.mkdir(gimpPath);
-    }
-    QString gimp28 = gimpPath;
-    gimp28.append(QDir::separator());
-    gimp28.append("cyan.py");
 
-    gimpPath = QDir::homePath();
-    gimpPath.append(QDir::separator());
-    gimpPath.append(".gimp-2.4");
-    if (!gimpDir.exists(gimpPath)) {
-        gimpDir.mkdir(gimpPath);
-    }
-    gimpPath.append(QDir::separator());
-    gimpPath.append("plug-ins");
-    if (!gimpDir.exists(gimpPath)) {
-        gimpDir.mkdir(gimpPath);
-    }
-    QString gimp24 = gimpPath;
-    gimp24.append(QDir::separator());
-    gimp24.append("cyan.py");
-
-    QStringList dirs;
-    dirs << gimp28 << gimp24;
     QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
-    foreach (QString filepath, dirs) {
+    foreach (QString filepath, folders) {
         QFile file(filepath);
         if (file.exists(filepath)) {
             bool rmFile = false;

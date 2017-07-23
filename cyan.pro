@@ -16,7 +16,7 @@
 QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = cyan
+TARGET = Cyan
 VERSION = 1.0.0
 TEMPLATE = app
 
@@ -36,8 +36,18 @@ QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Prepress viewer and converter"
 QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016, 2017 Ole-Andre Rodlie <olear@fxarena.net>"
 
-CONFIG += link_pkgconfig
-PKGCONFIG += lcms2
+!mac {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += lcms2
+    CONFIG(gmagick) {
+        DEFINES += GMAGICK
+        PKGCONFIG += GraphicsMagick++
+        LIBS += `pkg-config --libs --static GraphicsMagick++`
+    } else {
+        PKGCONFIG += Magick++
+        LIBS += `pkg-config --libs --static Magick++`
+    }
+}
 
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
@@ -63,13 +73,13 @@ unix:!mac {
     INSTALLS += target target_icon target_desktop target_docs
 }
 
-CONFIG(gmagick) {
-    DEFINES += GMAGICK
-    PKGCONFIG += GraphicsMagick++
-    LIBS += `pkg-config --libs --static GraphicsMagick++`
-} else {
-    PKGCONFIG += Magick++
-    LIBS += `pkg-config --libs --static Magick++`
+unix:mac {
+    ICON = $$top_srcdir/res/Cyan.icns
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
+    DEFINES += MAGICKCORE_HDRI_ENABLE=1 MAGICKCORE_QUANTUM_DEPTH=32
+    INCLUDEPATH += $$top_srcdir/sdk/include $$top_srcdir/sdk/include/ImageMagick-6
+    LIBS += -L$$top_srcdir/sdk/lib -lMagickCore-6.Q32HDRI -lMagickWand-6.Q32HDRI -lMagick++-6.Q32HDRI \
+            -lz -llcms2 -ltiff -ljpeg -lpng16 -lbz2 -lz -lm
 }
 
 CONFIG(magick7) {
