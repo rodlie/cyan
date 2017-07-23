@@ -102,6 +102,7 @@ private:
     QByteArray currentImageNewProfile;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
+    QString lockedSaveFileName;
 
 private slots:
     void readConfig();
@@ -139,6 +140,8 @@ private slots:
     bool hasCMYK();
     bool hasGRAY();
     void bitDepthChanged(int index);
+    void gimpPlugin();
+
 };
 
 #endif // CYAN_H

@@ -12,5 +12,6 @@
         <file>sRGB.icc</file>
         <file>ISOcoated_v2_grey1c_bas.ICC</file>
         <file>ISOcoated_v2_bas.ICC</file>
+        <file>gimp.py</file>
     </qresource>
 </RCC>

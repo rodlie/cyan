@@ -219,17 +219,18 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     bitDepth->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    bitDepth->addItem(tr("Default"));
+    QIcon bitDepthIcon(":/cyan-display.png");
+    bitDepth->addItem(bitDepthIcon, tr("Default"));
     if (proc.quantumDepth()>=8) {
-        bitDepth->addItem(tr("8-bit"),8);
+        bitDepth->addItem(bitDepthIcon, tr("8-bit"),8);
     }
     if (proc.quantumDepth()>=16) {
-        bitDepth->addItem(tr("16-bit"),16);
+        bitDepth->addItem(bitDepthIcon, tr("16-bit"),16);
     }
     if (proc.quantumDepth()>=32) {
-        bitDepth->addItem(tr("32-bit"),32);
+        bitDepth->addItem(bitDepthIcon, tr("32-bit"),32);
     }
-    bitDepth->setMaximumWidth(100);
+    bitDepth->setMaximumWidth(150);
 
     QIcon renderIcon(":/cyan-display.png");
     renderingIntent->addItem(renderIcon, tr("Undefined"), 0);
@@ -417,17 +418,27 @@ void Cyan::readConfig()
     settings.endGroup();
 
     loadDefaultProfiles();
+    gimpPlugin();
 
     QStringList args = qApp->arguments();
+    bool foundArg1 = false;
     for (int i = 1; i < args.size(); ++i) {
         QString file = args.at(i);
         if (!file.isEmpty()) {
-            QFile isFile(file);
-            if (isFile.exists()) {
-                openImage(file);
-                break;
-            }
+            if (foundArg1) {
+                lockedSaveFileName = file;
+                foundArg1 = false;
+            } else if (file == "-o") {
+                foundArg1 = true;
+            } else {
+                QFile isFile(file);
+                if (isFile.exists()) {
+                    openImage(file);
+                    break;
+                }
         }
+        }
+
     }
 }
 
@@ -509,30 +520,34 @@ void Cyan::openImageDialog()
 
 void Cyan::saveImageDialog()
 {
-    QSettings settings;
-    settings.beginGroup("default");
-
-    QString file;
-    QString dir;
-
-    if (settings.value("lastSaveDir").isValid()) {
-        dir = settings.value("lastSaveDir").toString();
+    if (!lockedSaveFileName.isEmpty()) {
+        saveImage(lockedSaveFileName);
     } else {
-        dir = QDir::homePath();
-    }
+        QSettings settings;
+        settings.beginGroup("default");
 
-    file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif)"));
-    if (!file.isEmpty()) {
-        QFileInfo imageFile(file);
-        if (imageFile.suffix().isEmpty()) {
-            file.append(".tif");
+        QString file;
+        QString dir;
+
+        if (settings.value("lastSaveDir").isValid()) {
+            dir = settings.value("lastSaveDir").toString();
+        } else {
+            dir = QDir::homePath();
         }
-        saveImage(file);
-        settings.setValue("lastSaveDir", imageFile.absoluteDir().absolutePath());
-    }
 
-    settings.endGroup();
-    settings.sync();
+        file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif)"));
+        if (!file.isEmpty()) {
+            QFileInfo imageFile(file);
+            if (imageFile.suffix().isEmpty()) {
+                file.append(".tif");
+            }
+            saveImage(file);
+            settings.setValue("lastSaveDir", imageFile.absoluteDir().absolutePath());
+        }
+
+        settings.endGroup();
+        settings.sync();
+    }
 }
 
 void Cyan::openImage(QString file)
@@ -757,7 +772,11 @@ void Cyan::getImage(magentaImage result)
     if (result.saved && result.error.isEmpty() && result.warning.isEmpty()) {
         QFileInfo imageFile(result.filename);
         if (imageFile.exists()) {
-            QMessageBox::information(this, tr("Image saved"), imageFile.completeBaseName() + tr(" saved to disk."));
+            if (lockedSaveFileName.isEmpty()) {
+                QMessageBox::information(this, tr("Image saved"), imageFile.completeBaseName() + tr(" saved to disk."));
+            } else {
+                qApp->quit();
+            }
         } else {
             QMessageBox::warning(this, tr("Failed to save image"), tr("Failed to save image to disk"));
         }
@@ -1092,4 +1111,64 @@ void Cyan::bitDepthChanged(int index)
 {
     Q_UNUSED(index)
     handleSaveState();
+}
+
+void Cyan::gimpPlugin()
+{
+    QDir gimpDir;
+    QString gimpPath;
+    gimpPath.append(QDir::homePath());
+    gimpPath.append(QDir::separator());
+    gimpPath.append(".gimp-2.8");
+    if (!gimpDir.exists(gimpPath)) {
+        gimpDir.mkdir(gimpPath);
+    }
+    gimpPath.append(QDir::separator());
+    gimpPath.append("plug-ins");
+    if (!gimpDir.exists(gimpPath)) {
+        gimpDir.mkdir(gimpPath);
+    }
+    QString gimp28 = gimpPath;
+    gimp28.append(QDir::separator());
+    gimp28.append("cyan.py");
+
+    gimpPath = QDir::homePath();
+    gimpPath.append(QDir::separator());
+    gimpPath.append(".gimp-2.4");
+    if (!gimpDir.exists(gimpPath)) {
+        gimpDir.mkdir(gimpPath);
+    }
+    gimpPath.append(QDir::separator());
+    gimpPath.append("plug-ins");
+    if (!gimpDir.exists(gimpPath)) {
+        gimpDir.mkdir(gimpPath);
+    }
+    QString gimp24 = gimpPath;
+    gimp24.append(QDir::separator());
+    gimp24.append("cyan.py");
+
+    QStringList dirs;
+    dirs << gimp28 << gimp24;
+    foreach (QString filepath, dirs) {
+        QFile file(filepath);
+        if (!file.exists()) {
+            QFile sourcePy(":/gimp.py");
+            if (sourcePy.open(QIODevice::ReadOnly | QFile::Text)) {
+                QTextStream s(&sourcePy);
+                if (file.open(QIODevice::WriteOnly | QFile::Text)) {
+                    QTextStream o(&file);
+                    while (!s.atEnd()) {
+                        QString line = s.readLine();
+                        if (line.contains("cyanbin = \"cyan\"")) {
+                            line = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
+                        }
+                        o << line << "\n";
+                    }
+                    file.setPermissions(QFileDevice::ExeUser|QFileDevice::ExeGroup|QFileDevice::ExeOther|QFileDevice::ReadOwner|QFileDevice::ReadGroup|QFileDevice::ReadOther|QFileDevice::WriteUser);
+                    file.close();
+                }
+                sourcePy.close();
+            }
+        }
+    }
 }
