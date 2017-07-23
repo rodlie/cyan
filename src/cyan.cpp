@@ -376,14 +376,6 @@ Cyan::Cyan(QWidget *parent)
 
     setStyleSheet("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;}");
 
-    /*if (!hasProfiles()) {
-        QMessageBox::warning(this, tr("Missing Color Profile(s)"), tr("Unable to find any RGB color profiles, Cyan will not work without RGB color profiles installed."));
-        QTimer::singleShot(0, qApp, SLOT(quit()));
-    }
-    if (!hasCMYK()) {
-        QMessageBox::warning(this, tr("Missing Color Profile(s)"), tr("Unable to find any CMYK color profiles, Cyan will not work as intended without CMYK color profiles installed."));
-    }*/
-
     if (proc.quantumDepth()<32) {
         QMessageBox::warning(this, tr("Missing Quantum Depth"), tr("32-bit quantum depth is missing, you will not be able to handle 32-bit images."));
     }
