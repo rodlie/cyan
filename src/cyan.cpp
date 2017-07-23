@@ -1153,7 +1153,7 @@ void Cyan::gimpPlugin()
     QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
     foreach (QString filepath, dirs) {
         QFile file(filepath);
-        if (file.exists()) {
+        if (file.exists(filepath)) {
             bool rmFile = false;
             if (file.open(QIODevice::ReadOnly | QFile::Text)) {
                 QTextStream s(&file);
