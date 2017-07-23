@@ -1150,9 +1150,28 @@ void Cyan::gimpPlugin()
 
     QStringList dirs;
     dirs << gimp28 << gimp24;
+    QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
     foreach (QString filepath, dirs) {
         QFile file(filepath);
-        if (!file.exists()) {
+        if (file.exists()) {
+            bool rmFile = false;
+            if (file.open(QIODevice::ReadOnly | QFile::Text)) {
+                QTextStream s(&file);
+                while (!s.atEnd()) {
+                    QString line = s.readLine();
+                    if (line.contains("cyanbin =")) {
+                        if (line != appPath) {
+                            rmFile = true;
+                            break;
+                        }
+                    }
+                }
+                file.close();
+            }
+            if (rmFile) {
+                file.remove(filepath);
+            }
+        } else {
             QFile sourcePy(":/gimp.py");
             if (sourcePy.open(QIODevice::ReadOnly | QFile::Text)) {
                 QTextStream s(&sourcePy);
@@ -1161,7 +1180,7 @@ void Cyan::gimpPlugin()
                     while (!s.atEnd()) {
                         QString line = s.readLine();
                         if (line.contains("cyanbin = \"cyan\"")) {
-                            line = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
+                            line = appPath;
                         }
                         o << line << "\n";
                     }

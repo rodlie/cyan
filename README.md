@@ -31,6 +31,8 @@ make install (optional, use INSTALL_ROOT=XXX for packaging)
 # Roadmap
 
  * Batch converter
+ * Plug-ins
+ * MDI
 
 # License
 Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
