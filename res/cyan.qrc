@@ -3,12 +3,14 @@
         <file>cyan-display.png</file>
         <file>cyan-wheel.png</file>
         <file>cyan.png</file>
-        <file>cyan-header.png</file>
         <file>../COPYING</file>
         <file>cyan-icc2.png</file>
         <file>cyan-icc4.png</file>
         <file>cyan-open.png</file>
         <file>cyan-quit.png</file>
         <file>cyan-save.png</file>
+        <file>sRGB.icc</file>
+        <file>ISOcoated_v2_grey1c_bas.ICC</file>
+        <file>ISOcoated_v2_bas.ICC</file>
     </qresource>
 </RCC>

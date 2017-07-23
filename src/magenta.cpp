@@ -17,6 +17,15 @@
 
 #include "magenta.h"
 #include <QCoreApplication>
+#include <QDir>
+#include <magick/version.h>
+
+#ifdef GMAGICK
+#define PROFILE "ICM"
+#define NOBLACKPOINT
+#else
+#define PROFILE "ICC"
+#endif
 
 Magenta::Magenta(QObject *parent) :
     QObject(parent)
@@ -52,6 +61,26 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.read(imageData);
         }
 
+        if (image.iccColorProfile().length() > 0) {
+            result.hasProfile = true;
+        } else {
+            result.hasProfile = false;
+        }
+
+        if (edit.depth == 8 || edit.depth == 16 || edit.depth == 32) {
+            image.depth(edit.depth);
+        }
+
+#ifdef MAGICK7
+        if (!image.alpha()) {
+            image.alpha(true);
+        }
+#else
+        if (!image.matte()) {
+            image.matte(true);
+        }
+#endif
+
         switch(image.colorSpace()) {
         case Magick::CMYKColorspace:
             outputColorSpace=2;
@@ -76,6 +105,10 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         result.width = (int)image.columns();
         result.height = (int)image.rows();
 
+        if (edit.brightness!=100 || edit.saturation!=100 || edit.hue!=100) {
+            image.modulate(edit.brightness, edit.saturation, edit.hue);
+        }
+
         if (edit.intent > 0) {
             switch(edit.intent) {
             case 1:
@@ -90,33 +123,30 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             }
         }
 
+#ifndef NOBLACKPOINT
         if (edit.black) {
             image.blackPointCompensation(edit.black);
         }
-
-        if (edit.brightness!=100 || edit.saturation!=100 || edit.hue!=100) {
-            image.modulate(edit.brightness,edit.saturation,edit.hue);
-        }
+#endif
 
         if (inprofile.length() > 0) {
             Magick::Blob sourceProfile(inprofile.data(), inprofile.length());
-            image.profile("ICC",sourceProfile); // use ICM in GM and ICC in IM
+            image.profile(PROFILE,sourceProfile);
         }
         if (outprofile.length() > 0) {
             Magick::Blob destProfile(outprofile.data(), outprofile.length());
-            image.profile("ICC",destProfile); // use ICM in GM and ICC in IM
+            image.profile(PROFILE,destProfile);
         }
         if (monitorprofile.length() > 0 && isPreview) {
             Magick::Blob proofProfile(monitorprofile.data(), monitorprofile.length());
-            image.profile("ICC",proofProfile); // use ICM in GM and ICC in IM
+            image.profile(PROFILE,proofProfile);
         }
 
         outputProfile = QByteArray((char*)image.iccColorProfile().data(), image.iccColorProfile().length());
 
         if (isPreview) {
             result.preview = true;
-        }
-        else {
+        } else {
             result.preview = false;
         }
 
@@ -148,7 +178,6 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         if (outputImage.length() > 0) {
             result.data = QByteArray((char*)outputImage.data(), outputImage.length());
         }
-
         if (outputProfile.length() > 0) {
             result.profile = QByteArray((char*)outputProfile.data(), outputProfile.length());
         } else {
@@ -162,4 +191,60 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 
     emit returnImage(result);
     return result;
+}
+
+QString Magenta::version()
+{
+    QString result;
+    result.append("<p>Powered by ");
+    result.append("<a href='");
+#ifdef GMAGICK
+    result.append("http://www.graphicsmagick.org");
+#else
+    result.append("http://www.imagemagick.org");
+#endif
+    result.append("'>");
+    result.append(MagickPackageName);
+    result.append("</a> ");
+    result.append(MagickQuantumDepth);
+    result.append(" ");
+    result.append(MagickLibVersionText);
+    result.append("<br>");
+#ifndef GMAGICK
+    QString magickFeatures = QString::fromStdString(MagickCore::GetMagickFeatures());
+    QString magickDelegates = QString::fromStdString(MagickCore::GetMagickDelegates());
+    result.append("<small><i>" + magickFeatures + " " + magickDelegates + "</i></small><br>");
+#endif
+    result.append(MagickCopyright);
+    result.append("</p>");
+    result.append("<p>Powered by <a href=\"http://www.littlecms.com\">Little CMS</a> ");
+    result.append(QString::number(LCMS_VERSION).replace(1,1,".").replace(3,3,""));
+    result.append("<br>");
+    result.append("&copy; 2010-2016 Marti Maria Saguer. All rights reserved.");
+    result.append("</p>");
+
+    return result;
+}
+
+bool Magenta::supportBlackPoint()
+{
+#ifdef NOBLACKPOINT
+    return false;
+#else
+    return true;
+#endif
+}
+
+int Magenta::quantumDepth()
+{
+    QString depth = MagickQuantumDepth;
+    if (depth == "Q8") {
+        return 8;
+    } else if (depth == "Q16") {
+        return 16;
+    } else if (depth == "Q32") {
+        return 32;
+    } else {
+        return 0;
+    }
 }

@@ -41,19 +41,28 @@ class CyanView : public QGraphicsView
 {
 Q_OBJECT
 public:
-     explicit CyanView(QWidget* parent = NULL);
+    explicit CyanView(QWidget* parent = NULL);
+    bool fit;
 
 signals:
     void resetZoom();
     void myZoom(double scaleX, double scaleY);
     void proof();
+    void myFit(bool value);
+    void openImage(QString file);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
+    void setFit(bool value);
 
 protected:
-    virtual void wheelEvent(QWheelEvent* event);
-    virtual void mousePressEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent* event);
+    void mousePressEvent(QMouseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
+    void resizeEvent(QResizeEvent *event);
 };
 
 class Cyan : public QMainWindow
@@ -91,8 +100,8 @@ private:
     QByteArray currentImageData;
     QByteArray currentImageProfile;
     QByteArray currentImageNewProfile;
-    QCheckBox *monitorCheckBox;
     QAction *exportEmbeddedProfileAction;
+    QComboBox *bitDepth;
 
 private slots:
     void readConfig();
@@ -119,12 +128,17 @@ private slots:
     void getConvertProfiles();
     void inputProfileChanged(int index);
     void outputProfileChanged(int index);
-    void monitorCheckBoxChanged(bool triggered);
     void enableUI();
     void disableUI();
-    void triggerMonitor();
     void exportEmbeddedProfileDialog();
     void exportEmbeddedProfile(QString file);
+    bool imageModified();
+    void handleSaveState();
+    bool hasProfiles();
+    bool hasRGB();
+    bool hasCMYK();
+    bool hasGRAY();
+    void bitDepthChanged(int index);
 };
 
 #endif // CYAN_H

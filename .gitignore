@@ -1,5 +1,7 @@
 build
-*.pro.user*
-Makefile
+*.pro.*
+Makefile*
 .directory
-
+.qmake*
+*.bin
+*.exe

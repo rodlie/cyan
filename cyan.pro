@@ -17,7 +17,7 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cyan
-VERSION = 1.0.0.RC2
+VERSION = 1.0.0
 TEMPLATE = app
 
 SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
@@ -34,12 +34,10 @@ DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
 QMAKE_TARGET_COMPANY = "Cyan"
 QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Prepress viewer and converter"
-QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016 Ole-André Rodlie <olear@fxarena.net>"
+QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016, 2017 Ole-Andre Rodlie <olear@fxarena.net>"
 
 CONFIG += link_pkgconfig
-PKGCONFIG += Magick++ lcms2
-
-LIBS += `pkg-config --libs --static Magick++`
+PKGCONFIG += lcms2
 
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
@@ -59,4 +57,23 @@ unix:!mac {
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
     target_docs.files = COPYING README.md
     INSTALLS += target target_icon target_desktop target_docs
+}
+
+CONFIG(gmagick) {
+    DEFINES += GMAGICK
+    PKGCONFIG += GraphicsMagick++
+    LIBS += `pkg-config --libs --static GraphicsMagick++`
+} else {
+    PKGCONFIG += Magick++
+    LIBS += `pkg-config --libs --static Magick++`
+}
+
+CONFIG(magick7) {
+    DEFINES += MAGICK7
+}
+
+CONFIG(mxe) {
+    # Fix issues with static mxe
+    LIBS += -lpthread
+    #-lws2_32 -lole32
 }

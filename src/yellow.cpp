@@ -114,6 +114,11 @@ QStringList Yellow::genProfiles(int colorspace)
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
+    QString cyanICCPath = QDir::homePath() + "/.config/Cyan/icc";
+    QDir cyanICCDir(cyanICCPath);
+    if (cyanICCDir.exists(cyanICCPath)) {
+        folders << cyanICCPath;
+    }
     for (int i = 0; i < folders.size(); ++i) {
         QStringList filter;
         filter << "*.icc";

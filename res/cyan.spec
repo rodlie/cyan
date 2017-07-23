@@ -1,19 +1,19 @@
 Summary: Prepress viewer and converter
 Name: cyan
 
-Version: 1.0.0.RC2
+Version: 1.0.0
 Release: 1%{dist}
 License: GPLv2
 
 Group: System Environment/Base
-Packager: Ole-André Rodlie, <ole-andre.rodlie@inria.fr>
+Packager: Ole-André Rodlie, <olear@fxarena.net>
 URL: https://github.com/olear/cyan
 
 Source: %{version}/%{name}-%{version}.tar.gz
-Source1: ImageMagick-6.9.5-7.tar.xz
+Source1: ImageMagick-6.9.8-0.tar.xz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: zlib-devel lcms2-devel libpng-devel libtiff-devel libjpeg-turbo-devel gcc-c++ qt-devel
+BuildRequires: zlib-devel lcms2-devel libpng-devel libtiff-devel libjpeg-turbo-devel gcc-c++ qt-devel OpenEXR-devel openjpeg2-devel bzip2-devel
 
 %description
 Prepress viewer and converter
@@ -28,8 +28,8 @@ export PKG_CONFIG_PATH=$CYAN_TMP/lib/pkgconfig
 export LD_LIBRARY_PATH=$CYAN_TMP/lib:$LD_LIBRARY_PATH
 export PATH=$CYAN_TMP/bin:$PATH
 
-cd ImageMagick-6.9.5-7
-CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$CYAN_TMP --disable-docs --disable-deprecated --with-magick-plus-plus=yes --with-quantum-depth=32 --without-dps --without-djvu --without-fftw --without-fpx --without-gslib --without-gvc --without-jbig --with-jpeg --with-lcms --without-openjp2 --without-lqr --without-lzma --without-openexr --without-pango --with-png --without-rsvg --with-tiff --without-webp --without-xml --with-zlib --without-bzlib --enable-static --disable-shared --enable-hdri --without-freetype --without-fontconfig --without-x --without-modules
+cd ImageMagick-6.9.8-0
+CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=$CYAN_TMP --disable-docs --disable-deprecated --with-magick-plus-plus=yes --with-quantum-depth=32 --without-dps --without-djvu --without-fftw --without-fpx --without-gslib --without-gvc --without-jbig --with-jpeg --with-lcms --with-openjp2 --without-lqr --without-lzma --with-openexr --without-pango --with-png --without-rsvg --with-tiff --without-webp --without-xml --with-zlib --with-bzlib --enable-static --disable-shared --enable-hdri --without-freetype --without-fontconfig --without-x --without-modules
 make %{?_smp_mflags} install
 cp LICENSE LICENSE.ImageMagick
 cd ..
@@ -48,6 +48,6 @@ make INSTALL_ROOT=%{buildroot} install
 /usr/bin/cyan
 /usr/share/applications/cyan.desktop
 /usr/share/pixmaps/cyan.png
-%doc ImageMagick-6.9.5-7/LICENSE.ImageMagick
+%doc ImageMagick-6.9.8-0/LICENSE.ImageMagick COPYING README.md
 
 %changelog

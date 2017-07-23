@@ -35,6 +35,7 @@ struct magentaImage {
     QString filename;
     bool preview;
     bool saved;
+    bool hasProfile;
     int colorspace;
     int width;
     int height;
@@ -46,6 +47,7 @@ struct magentaAdjust {
     double hue;
     int intent;
     bool black;
+    int depth;
 };Q_DECLARE_METATYPE(magentaAdjust)
 
 class Magenta : public QObject
@@ -54,12 +56,18 @@ class Magenta : public QObject
 public:
     explicit Magenta(QObject *parent = 0);
     ~Magenta();
-    signals:
-    void returnImage(magentaImage result);
 
-    public slots:
+signals:
+    void returnImage(magentaImage result);
+    void returnColorPreview(magentaImage result);
+    void returnThumbnail(magentaImage result);
+
+public slots:
     void requestImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit);
     magentaImage readImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit);
+    QString version();
+    bool supportBlackPoint();
+    int quantumDepth();
 
 private:
     Yellow yellow;
