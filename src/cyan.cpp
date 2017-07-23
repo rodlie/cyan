@@ -1165,7 +1165,11 @@ void Cyan::gimpPlugin()
                         }
                         o << line << "\n";
                     }
+#if QT_VERSION >= 0x050000
                     file.setPermissions(QFileDevice::ExeUser|QFileDevice::ExeGroup|QFileDevice::ExeOther|QFileDevice::ReadOwner|QFileDevice::ReadGroup|QFileDevice::ReadOther|QFileDevice::WriteUser);
+#else
+                    file.setPermissions(QFile::ExeUser|QFile::ExeGroup|QFile::ExeOther|QFile::ReadOwner|QFile::ReadGroup|QFile::ReadOther|QFile::WriteUser);
+#endif
                     file.close();
                 }
                 sourcePy.close();
