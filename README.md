@@ -11,7 +11,7 @@ Prepress viewer and converter.
 * Modify/Add/Extract embedded ICC color profiles
 * Convert to/from RGB/CMYK/GRAY
 * Change image bit depth
-* GIMP integration
+* GIMP integration (Enables prepress workflow inside GIMP)
 
 # Build
 

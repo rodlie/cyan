@@ -33,9 +33,7 @@
 #include <QVBoxLayout>
 #include <QDirIterator>
 #include <QApplication>
-#if QT_VERSION >= 0x050000
 #include <QStyleFactory>
-#endif
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
@@ -150,8 +148,8 @@ Cyan::Cyan(QWidget *parent)
     , exportEmbeddedProfileAction(0)
     , bitDepth(0)
 {
-#if QT_VERSION >= 0x050000
     qApp->setStyle(QStyleFactory::create("fusion"));
+
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(53,53,53));
     palette.setColor(QPalette::WindowText, Qt::white);
@@ -171,7 +169,6 @@ Cyan::Cyan(QWidget *parent)
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
-#endif
 
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
