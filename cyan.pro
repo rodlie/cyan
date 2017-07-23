@@ -42,6 +42,10 @@ PKGCONFIG += lcms2
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
 
+release {
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 unix:!mac {
     isEmpty(PREFIX) {
         PREFIX = /usr/local

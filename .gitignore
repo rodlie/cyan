@@ -5,3 +5,5 @@ Makefile*
 .qmake*
 *.bin
 *.exe
+*.rpm
+*.stash

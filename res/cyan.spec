@@ -2,7 +2,7 @@ Summary: Prepress viewer and converter
 Name: cyan
 
 Version: 1.0.0
-Release: 1%{dist}
+Release: 1.el7
 License: GPLv2
 
 Group: System Environment/Base
@@ -29,12 +29,12 @@ export LD_LIBRARY_PATH=$CYAN_TMP/lib:$LD_LIBRARY_PATH
 export PATH=$CYAN_TMP/bin:$PATH
 
 cd ImageMagick-6.9.0-0
-CFLAGS="-fPIC -march=generic -mtune=corei7-avx" CXXFLAGS="-fPIC" ./configure --prefix=$CYAN_TMP --disable-docs --disable-deprecated --with-magick-plus-plus=yes --with-quantum-depth=32 --without-dps --without-djvu --without-fftw --without-fpx --without-gslib --without-gvc --without-jbig --with-jpeg --with-lcms --without-openjp2 --without-lqr --without-lzma --without-openexr --without-pango --with-png --without-rsvg --with-tiff --without-webp --without-xml --with-zlib --with-bzlib --enable-static --disable-shared --enable-hdri --without-freetype --without-fontconfig --without-x --without-modules
+CFLAGS="-fPIC -march=core2 -mtune=corei7-avx" CXXFLAGS="-fPIC" ./configure --prefix=$CYAN_TMP --disable-docs --disable-deprecated --with-magick-plus-plus=yes --with-quantum-depth=32 --without-dps --without-djvu --without-fftw --without-fpx --without-gslib --without-gvc --without-jbig --with-jpeg --with-lcms --without-openjp2 --without-lqr --without-lzma --without-openexr --without-pango --with-png --without-rsvg --with-tiff --without-webp --without-xml --with-zlib --with-bzlib --enable-static --disable-shared --enable-hdri --without-freetype --without-fontconfig --without-x --without-modules
 make %{?_smp_mflags} install
 cp LICENSE LICENSE.ImageMagick
 cd ..
 
-qmake-qt4 PREFIX=/usr
+qmake-qt4 PREFIX=/usr CONFIG+=release
 make
 
 %install

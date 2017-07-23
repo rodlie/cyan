@@ -5,6 +5,7 @@ if [ ! -f "$CWD/cyan.pro" ]; then
   echo "Can't find cyan.pro"
 fi
 
+VERSION=`cat $CWD/cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
 MXE=/opt/mxe
 
 MINGW=${MXE}/usr/i686-w64-mingw32.static
@@ -21,7 +22,7 @@ make || exit 1
 strip -s build/cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  cyan_resource.rc debug release .qmake.stash || true
-mv build/cyan.exe Cyan32.exe
+mv build/cyan.exe Cyan-$VERSION-i686.exe
 rm -rf build || true
 
 MINGW=${MXE}/usr/x86_64-w64-mingw32.static
@@ -37,6 +38,6 @@ make || exit 1
 strip -s build/cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  cyan_resource.rc debug release .qmake.stash || true
-mv build/cyan.exe Cyan.exe
+mv build/cyan.exe Cyan-$VERSION.exe
 rm -rf build || true
 

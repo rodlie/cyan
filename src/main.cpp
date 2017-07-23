@@ -45,7 +45,9 @@ void msgLog(QtMsgType type, const QMessageLogContext &context, const QString &ms
 int main(int argc, char *argv[])
 {
 #if QT_VERSION >= 0x050000
+#ifdef QT_DEBUG
     qInstallMessageHandler(msgLog);
+#endif
 #endif
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Cyan");
