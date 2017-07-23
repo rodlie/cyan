@@ -1121,7 +1121,7 @@ void Cyan::gimpPlugin()
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
 #ifndef __APPLE__
-        gimpPath.append(".gimp"+version);
+        gimpPath.append(".gimp-"+version);
         if (!gimpDir.exists(gimpPath)) {
             gimpDir.mkdir(gimpPath);
         }
