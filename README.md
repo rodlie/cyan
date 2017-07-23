@@ -4,13 +4,14 @@ Prepress viewer and converter.
 
 # Features
 
-* Supports RGB/CMYK/GRAY 8/16/32 bit PNG/JPEG/TIFF/PSD images
-* Supports ICC/ICM v2 and v4 color profiles
-* Add/Change ICC color profiles on images
+* Supports RGB/CMYK/GRAY 8/16/32 bit images
+* Supports ICC/ICM v2/v4 color profiles
+* Supports PNG/JPEG/TIFF/PSD input
+* Supports TIFF and PSD output
+* Modify/Add/Extract embedded ICC color profiles
 * Convert to/from RGB/CMYK/GRAY
-* Extract ICC color profiles from images
-* Change bit depth
-* GIMP integration (Import/Export CMYK/GRAY)
+* Change image bit depth
+* GIMP integration
 
 # Build
 
@@ -30,7 +31,6 @@ make install (optional, use INSTALL_ROOT=XXX for packaging)
 # Roadmap
 
  * Batch converter
- * view/edit ICC profile info
 
 # License
 Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.

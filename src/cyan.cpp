@@ -535,11 +535,12 @@ void Cyan::saveImageDialog()
             dir = QDir::homePath();
         }
 
-        file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif)"));
+        file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif *.psd)"));
         if (!file.isEmpty()) {
             QFileInfo imageFile(file);
             if (imageFile.suffix().isEmpty()) {
-                file.append(".tif");
+                QMessageBox::warning(this, tr("File suffix is missing"), tr("File suffix is missing, please add .tif or .psd after your filename."));
+                return;
             }
             saveImage(file);
             settings.setValue("lastSaveDir", imageFile.absoluteDir().absolutePath());
