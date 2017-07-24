@@ -44,7 +44,7 @@ mkdir -p "$SDK" || exit 1
 if [ "$OS" = "Darwin" ]; then
     cd $WRK || exit 1
     rm -rf zlib-$ZLIB || true
-    tar xvf $CWD/3rdparty/zlib-$ZLIB.tar.gz || exit 1
+    tar xvf $CWD/3rdparty/zlib-$ZLIB.tar.gz || (cd $CWD/3rdparty; curl -L -O http://zlib.net/zlib-${ZLIB}.tar.gz) && tar xvf $CWD/3rdparty/zlib-$ZLIB.tar.gz || exit 1
     cd zlib-$ZLIB || exit 1
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" CPPFLAGS="$DEFAULT_FLAGS" ./configure  --prefix=$SDK || exit 1
     make || exit
