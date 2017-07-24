@@ -11,7 +11,7 @@ Prepress viewer and converter.
 * Modify/Add/Extract embedded ICC color profiles
 * Convert to/from RGB/CMYK/GRAY
 * Change image bit depth
-* GIMP integration (Enables prepress workflow inside GIMP)
+* GIMP 2.x integration
 
 # Build
 
@@ -19,6 +19,7 @@ Build requirements:
 * ImageMagick/GraphicsMagick (Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
   * Add CONFIG+=gmagick to build against GraphicsMagick (missing black point support)
   * Add CONFIG+=magick7 to build against ImageMagick 7 (only for testing)
+  * Note that ImageMagick 6.9.0-0 is currently the only certified version compatible with Cyan.
 * LCMS 2.x
 * Qt 4/5 (Core/GUI with PNG/TIFF support)
 
@@ -27,6 +28,10 @@ qmake PREFIX=XXX (/usr/local is default install path)
 make
 make install (optional, use INSTALL_ROOT=XXX for packaging)
 ```
+
+# Issues
+
+ * Mac OS X binaries does not support multi-threading
 
 # Roadmap
 

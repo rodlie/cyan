@@ -2,7 +2,7 @@ Summary: Prepress viewer and converter
 Name: cyan
 
 Version: 1.0.0
-Release: 1.el7.centos.fedora
+Release: 1.el7.centos7.fedora19
 License: GPLv2
 
 Group: System Environment/Base
@@ -16,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: zlib-devel lcms2-devel libpng-devel libtiff-devel libjpeg-turbo-devel gcc-c++ qt-devel bzip2-devel
 
 %description
-Prepress viewer and converter
+Prepress viewer and converter.
 
 %prep
 %setup

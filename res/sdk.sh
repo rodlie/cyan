@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Build SDK for Linux/MacOSX/MinGW(MXE)
+# Build SDK for Linux/Mac OS X
 #
 
 ZLIB=1.2.11
@@ -49,6 +49,7 @@ if [ "$OS" = "Darwin" ]; then
     make install || exit 1
     rm -f $SDK/lib/*.dylib || true
 fi
+
 cd $WRK || exit 1
 tar xvf $CWD/3rdparty/libjpeg-turbo-$JPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$JPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$JPEG.tar.gz || exit 1
 cd libjpeg-turbo-$JPEG || exit 1
