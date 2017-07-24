@@ -19,7 +19,7 @@ Build requirements:
 * ImageMagick/GraphicsMagick (Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
   * Add CONFIG+=gmagick to build against GraphicsMagick (missing black point support)
   * Add CONFIG+=magick7 to build against ImageMagick 7 (only for testing)
-  * Note that ImageMagick 6.9.0-0 is currently the only certified version compatible with Cyan.
+  * Note that ImageMagick 6.9.0-0 is currently the only certified backend compatible with Cyan.
 * LCMS 2.x
 * Qt 4/5 (Core/GUI with PNG/TIFF support)
 
