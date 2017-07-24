@@ -5,7 +5,7 @@
 
 ZLIB=1.2.11
 TJPEG=1.5.2
-JPEG=9
+JPEG=9b
 TIFF=4.0.8
 PNG=1.6.30
 LCMS=2.8
@@ -13,6 +13,7 @@ MAGICK=6.9.0-0
 QT=5.6.2
 OSX_MIN=10.9
 JOBS=4
+JTYPE=turbo
 
 CWD=`pwd`
 WRK=$CWD/tmp
@@ -30,7 +31,7 @@ DEFAULT_CONFIGURE="--prefix=${SDK} --disable-shared --enable-static"
 export PKG_CONFIG_PATH="$SDK/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PATH=$SDK/bin:$PATH
 
-if [ ! -d "$HOME/pkg/bin" ]; then
+if [ -d "$HOME/pkg/bin" ] && [ "$OS" = "Darwin" ]; then
     export PATH=$HOME/pkg/bin:$PATH
 fi
 
@@ -51,12 +52,21 @@ if [ "$OS" = "Darwin" ]; then
     rm -f $SDK/lib/*.dylib || true
 fi
 
-cd $WRK || exit 1
-tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$TJPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || exit 1
-cd libjpeg-turbo-$TJPEG || exit 1
-CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE --with-jpeg8 --without-turbojpeg --with-12bit || exit 1
-make -j$JOBS || exit 1
-make install || exit 1
+if [ "$JTYPE" = "turbo" ]; then
+    cd $WRK || exit 1
+    tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$TJPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || exit 1
+    cd libjpeg-turbo-$TJPEG || exit 1
+    CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE --with-jpeg8 --without-turbojpeg --with-12bit || exit 1
+    make -j$JOBS || exit 1
+    make install || exit 1
+else
+    cd $WRK || exit 1
+    tar xvf $CWD/3rdparty/jpegsrc.v${JPEG}.tar.gz || (cd $CWD/3rdparty; curl -L -O http://www.ijg.org/files/jpegsrc.v${JPEG}.tar.gz) && tar xvf $CWD/3rdparty/jpegsrc.v${JPEG}.tar.gz || exit 1
+    cd jpeg-$JPEG || exit 1
+    CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE || exit 1
+    make -j$JOBS || exit
+    make install || exit 1
+fi
 
 cd $WRK || exit 1
 tar xvf $CWD/3rdparty/tiff-$TIFF.tar.gz || (cd $CWD/3rdparty; curl -L -O http://download.osgeo.org/libtiff/tiff-$TIFF.tar.gz) && tar xvf $CWD/3rdparty/tiff-$TIFF.tar.gz || exit 1

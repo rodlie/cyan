@@ -6,7 +6,7 @@
 CWD=`pwd`
 
 if [ ! -f "$CWD/cyan.pro" ]; then
-  echo "Can't find cyan.pro"
+  echo "Can't find cyan.pro" || exit 1
 fi
 VERSION=`cat $CWD/cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
 
