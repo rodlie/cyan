@@ -22,7 +22,7 @@ import sys
 import time
 import shutil
 import os.path
-from sys import platform
+import tempfile
 
 cyanversion = "1.0.0"
 cyanbin = "cyan"
@@ -35,11 +35,10 @@ def plugin_maketempfile( image, src ):
         print "Could not create temporary image file."
         return None, None, None
 
-    if platform == "darwin":
-        tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.tif")
-    else:
-        tempfilename = pdb.gimp_temp_name( "tif" )
+    tempfilename = pdb.gimp_temp_name( "tif" )
 
+    if sys.platform == "darwin":
+        tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.tif")
 
     if sys.platform.startswith( "win" ):
         tempfilename = tempfilename.replace( "\\", "/" )
