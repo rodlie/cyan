@@ -2,7 +2,7 @@ build
 *.pro.*
 Makefile*
 .directory
-.qmake*
+*.stash
 *.bin
 *.exe
 *.rpm
