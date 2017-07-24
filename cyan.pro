@@ -23,7 +23,7 @@ TEMPLATE = app
 SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
 HEADERS  += src/cyan.h src/magenta.h src/yellow.h
 RESOURCES += res/cyan.qrc
-OTHER_FILES += res/cyan.spec res/mxe.sh
+OTHER_FILES += res/cyan.spec res/mxe.sh res/osx.sh res/osx-sdk.sh
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
