@@ -1120,7 +1120,7 @@ void Cyan::bitDepthChanged(int index)
 void Cyan::gimpPlugin()
 {
     QStringList versions,folders;
-    versions << "2.4" << "2.8" << "2.10";
+    versions << "2.4" << "2.6" << "2.8" << "2.9" << "2.10";
     foreach (QString version, versions) {
         QDir gimpDir;
         QString gimpPath;
