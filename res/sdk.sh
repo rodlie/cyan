@@ -4,7 +4,8 @@
 #
 
 ZLIB=1.2.11
-JPEG=1.5.2
+TJPEG=1.5.2
+JPEG=9
 TIFF=4.0.8
 PNG=1.6.30
 LCMS=2.8
@@ -51,8 +52,8 @@ if [ "$OS" = "Darwin" ]; then
 fi
 
 cd $WRK || exit 1
-tar xvf $CWD/3rdparty/libjpeg-turbo-$JPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$JPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$JPEG.tar.gz || exit 1
-cd libjpeg-turbo-$JPEG || exit 1
+tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$TJPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || exit 1
+cd libjpeg-turbo-$TJPEG || exit 1
 CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE --with-jpeg8 --without-turbojpeg --with-12bit || exit 1
 make -j$JOBS || exit 1
 make install || exit 1
