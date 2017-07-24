@@ -5,6 +5,10 @@
 
 CWD=`pwd`
 
+if [ ! -d "$CWD/sdk" ]; then
+    sh $CWD/res/sdk.sh || exit 1
+fi
+
 if [ ! -f "$CWD/cyan.pro" ]; then
   echo "Can't find cyan.pro" || exit 1
 fi
