@@ -210,17 +210,20 @@ QString Magenta::version()
     result.append(" ");
     result.append(MagickLibVersionText);
     result.append("<br>");
+    result.append(MagickCopyright);
+    result.append("<br>");
 #ifndef GMAGICK
+    result.append("ImageMagick is licenced under the <a href=\"https://www.imagemagick.org/script/license.php\">Apache 2.0 license</a>.<br>");
     QString magickFeatures = QString::fromStdString(MagickCore::GetMagickFeatures());
     QString magickDelegates = QString::fromStdString(MagickCore::GetMagickDelegates());
-    result.append("<small><i>" + magickFeatures + " " + magickDelegates + "</i></small><br>");
+    result.append("<small><i>" + magickFeatures + " " + magickDelegates + "</i></small>");
 #endif
-    result.append(MagickCopyright);
     result.append("</p>");
     result.append("<p>Powered by <a href=\"http://www.littlecms.com\">Little CMS</a> ");
     result.append(QString::number(LCMS_VERSION).replace(1,1,".").replace(3,3,""));
     result.append("<br>");
-    result.append("&copy; 2010-2016 Marti Maria Saguer. All rights reserved.");
+    result.append("&copy; 2010-2016 Marti Maria Saguer. All rights reserved.<br>");
+    result.append("LCMS is distributed under the <a href=\"http://www.opensource.org/licenses/mit-license.php\">MIT license</a>.");
     result.append("</p>");
 
     return result;

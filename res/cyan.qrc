@@ -9,9 +9,9 @@
         <file>cyan-open.png</file>
         <file>cyan-quit.png</file>
         <file>cyan-save.png</file>
-        <file>sRGB.icc</file>
-        <file>ISOcoated_v2_grey1c_bas.ICC</file>
-        <file>ISOcoated_v2_bas.ICC</file>
+        <file>icc/sRGB.icc</file>
+        <file>icc/ISOcoated_v2_grey1c_bas.ICC</file>
+        <file>icc/ISOcoated_v2_bas.ICC</file>
         <file>gimp.py</file>
     </qresource>
 </RCC>

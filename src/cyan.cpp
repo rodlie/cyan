@@ -661,19 +661,19 @@ void Cyan::loadDefaultProfiles()
     if (!hasRGB()) {
         QFile defRGB(cyanICC3+"/sRGB.icc");
         if (!defRGB.exists()) {
-            QFile::copy(":/sRGB.icc", cyanICC3+"/sRGB.icc");
+            QFile::copy(":/icc/sRGB.icc", cyanICC3+"/sRGB.icc");
         }
     }
     if (!hasCMYK()) {
         QFile defCMYK(cyanICC3+"/ISOcoated_v2_bas.ICC");
         if (!defCMYK.exists()) {
-            QFile::copy(":/ISOcoated_v2_bas.ICC", cyanICC3+"/ISOcoated_v2_bas.ICC");
+            QFile::copy(":/icc/ISOcoated_v2_bas.ICC", cyanICC3+"/ISOcoated_v2_bas.ICC");
         }
     }
     if (!hasGRAY()) {
         QFile defGRAY(cyanICC3+"/ISOcoated_v2_grey1c_bas.ICC");
         if (!defGRAY.exists()) {
-            QFile::copy(":/ISOcoated_v2_grey1c_bas.ICC", cyanICC3+"/ISOcoated_v2_grey1c_bas.ICC");
+            QFile::copy(":/icc/ISOcoated_v2_grey1c_bas.ICC", cyanICC3+"/ISOcoated_v2_grey1c_bas.ICC");
         }
     }
 
