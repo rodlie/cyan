@@ -486,6 +486,11 @@ void Cyan::aboutCyan()
         detailedText.append(QString::fromUtf8(license.readAll()));
         license.close();
     }
+    QFile licenseOther(":/3rdparty.txt");
+    if (licenseOther.open(QIODevice::ReadOnly)) {
+        detailedText.append(QString::fromUtf8(licenseOther.readAll()));
+        licenseOther.close();
+    }
     aboutCyan.setDetailedText(detailedText);
 
     aboutCyan.exec();
