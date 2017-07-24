@@ -89,7 +89,7 @@ void CyanView::dropEvent(QDropEvent *event)
     if (!event->mimeData()->urls().at(0).isEmpty()) {
         QUrl url = event->mimeData()->urls().at(0);
         QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
-        if (suffix=="PNG"
+        if (suffix == "PNG"
             || suffix == "JPG"
             || suffix == "JPEG"
             || suffix == "TIF"
@@ -288,6 +288,7 @@ Cyan::Cyan(QWidget *parent)
     profileBar->addWidget(renderLabel);
     profileBar->addWidget(renderingIntent);
     profileBar->addSeparator();
+
     if (proc.supportBlackPoint()) {
         profileBar->addWidget(blackLabel);
         profileBar->addWidget(blackPoint);
@@ -374,10 +375,6 @@ Cyan::Cyan(QWidget *parent)
 
     setStyleSheet("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;}");
 
-    if (proc.quantumDepth()<32) {
-        QMessageBox::warning(this, tr("Missing Quantum Depth"), tr("32-bit quantum depth is missing, you will not be able to handle 32-bit images."));
-    }
-
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
 
@@ -416,6 +413,10 @@ void Cyan::readConfig()
 
     loadDefaultProfiles();
     gimpPlugin();
+
+    if (proc.quantumDepth() < 32) {
+        QMessageBox::warning(this, tr("Cyan Quantum Depth"), tr("Quantum depth 32 is missing from backend, you will not be able to handle 32-bit images."));
+    }
 
     QStringList args = qApp->arguments();
     bool foundArg1 = false;
