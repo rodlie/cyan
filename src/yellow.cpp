@@ -201,7 +201,15 @@ bool Yellow::editProfile(QString file, QString output, QString description, QStr
     QFileInfo profile(file);
     if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
         cmsHPROFILE lcmsProfile;
-        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
+        QByteArray data;
+        QFile inFile(file);
+        if (inFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
+            data = inFile.readAll();
+            inFile.close();
+        }
+        if (data.length()>0) {
+            lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
+        }
         if (lcmsProfile) {
             cmsContext ContextID = cmsGetProfileContextID(lcmsProfile);
             bool modified = false;

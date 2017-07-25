@@ -169,9 +169,11 @@ CyanProfile::CyanProfile(QWidget *parent)
     profileCopyright->setMinimumWidth(400);
 
     profileSaveButton = new QPushButton();
-    profileSaveButton->setText(tr("Save As ..."));
+    profileSaveButton->setText(tr("Save"));
+    profileSaveButton->setIcon(QIcon(":/cyan-save.png"));
+
     profileCloseButton = new QPushButton();
-    profileCloseButton->setText(tr("Close"));
+    profileCloseButton->setText(tr("Cancel"));
 
     mainLayout->addWidget(profileLabel);
     mainLayout->addWidget(containerFrame);
@@ -189,8 +191,8 @@ CyanProfile::CyanProfile(QWidget *parent)
     descriptionLayout->addWidget(profileDescription);
 
     buttonLayout->addStretch();
-    buttonLayout->addWidget(profileSaveButton);
     buttonLayout->addWidget(profileCloseButton);
+    buttonLayout->addWidget(profileSaveButton);
 
     connect(profileCloseButton, SIGNAL(released()), this, SLOT(closeDialog()));
 }
@@ -758,23 +760,20 @@ void Cyan::loadDefaultProfiles()
     if (!cyanDir.exists(cyanICC3)) {
         cyanDir.mkdir(cyanICC3);
     }
-    if (!hasRGB()) {
-        QFile defRGB(cyanICC3+"/sRGB.icc");
-        if (!defRGB.exists()) {
-            QFile::copy(":/icc/sRGB.icc", cyanICC3+"/sRGB.icc");
-        }
+
+    QFile defRGB(cyanICC3+"/rgb.icc");
+    if (!defRGB.exists()) {
+        QFile::copy(":/icc/rgb.icc", cyanICC3+"/rgb.icc");
     }
-    if (!hasCMYK()) {
-        QFile defCMYK(cyanICC3+"/ISOcoated_v2_bas.ICC");
-        if (!defCMYK.exists()) {
-            QFile::copy(":/icc/ISOcoated_v2_bas.ICC", cyanICC3+"/ISOcoated_v2_bas.ICC");
-        }
+
+    QFile defCMYK(cyanICC3+"/cmyk.icc");
+    if (!defCMYK.exists()) {
+        QFile::copy(":/icc/cmyk.icc", cyanICC3+"/cmyk.icc");
     }
-    if (!hasGRAY()) {
-        QFile defGRAY(cyanICC3+"/ISOcoated_v2_grey1c_bas.ICC");
-        if (!defGRAY.exists()) {
-            QFile::copy(":/icc/ISOcoated_v2_grey1c_bas.ICC", cyanICC3+"/ISOcoated_v2_grey1c_bas.ICC");
-        }
+
+    QFile defGRAY(cyanICC3+"/gray.icc");
+    if (!defGRAY.exists()) {
+        QFile::copy(":/icc/gray.icc", cyanICC3+"/gray.icc");
     }
 
     getColorProfiles(1, rgbProfile, false);
@@ -1316,7 +1315,18 @@ void Cyan::openProfile(QString file)
 void Cyan::saveProfile()
 {
     if (!profileDialog.profileDescription->text().isEmpty() && !profileDialog.profileFileName->text().isEmpty()) {
-        QString output = QFileDialog::getSaveFileName(this, tr("Save Color Profile"), QDir::homePath(), tr("Color profiles (*.icc)"));
+        QSettings settings;
+        settings.beginGroup("default");
+
+        QString file;
+        QString dir;
+
+        if (settings.value("lastSaveDir").isValid()) {
+            dir = settings.value("lastSaveDir").toString();
+        } else {
+            dir = QDir::homePath();
+        }
+        QString output = QFileDialog::getSaveFileName(this, tr("Save Color Profile"), dir, tr("Color profiles (*.icc)"));
         if (!output.isEmpty()) {
             QFileInfo outFile(output);
             if (outFile.suffix().isEmpty() || outFile.suffix() != "icc") {
@@ -1331,7 +1341,10 @@ void Cyan::saveProfile()
             } else {
                 QMessageBox::warning(this, tr("Unable to save"), tr("Failed to save color profile."));
             }
+            settings.setValue("lastSaveDir", outFile.absoluteDir().absolutePath());
         }
+        settings.endGroup();
+        settings.sync();
     } else {
         QMessageBox::warning(this, tr("Unable to save"), tr("Nothing to save, please check the profile information."));
     }
