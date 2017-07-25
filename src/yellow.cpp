@@ -207,9 +207,10 @@ bool Yellow::editProfile(QString file, QString output, QString description, QStr
             data = inFile.readAll();
             inFile.close();
         }
-        if (data.length()>0) {
-            lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
+        if (data.length()==0) {
+            return false;
         }
+        lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
             cmsContext ContextID = cmsGetProfileContextID(lcmsProfile);
             bool modified = false;
@@ -240,7 +241,7 @@ bool Yellow::editProfile(QString file, QString output, QString description, QStr
                 }
             }
             if (modified) {
-                if (cmsSaveProfileToFile( lcmsProfile, output.toUtf8().data())) {
+                if (cmsSaveProfileToFile(lcmsProfile, output.toUtf8().data())) {
                     result = true;
                 }
             }
