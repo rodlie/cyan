@@ -33,13 +33,13 @@ make install (optional, use INSTALL_ROOT=XXX for packaging)
 
  * Mac OS X binaries does not support multi-threading
 
-# Roadmap
+# Roadmap/TODO
 
  * Batch converter
  * Plug-ins
  * MDI
  * Search for profile (yellow)
- * cleanup
+ * view/edit profile (yellow)
 
 # License
 Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.

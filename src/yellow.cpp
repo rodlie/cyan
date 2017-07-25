@@ -36,11 +36,17 @@ QString Yellow::profileDescFromFile(QString file)
     QFileInfo profile(file);
     if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
         cmsHPROFILE lcmsProfile;
-        char buffer[500];
         lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
         if (lcmsProfile) {
-            cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, 500);
-            output=QString::fromUtf8(buffer);
+            cmsUInt32Number size = 0;
+            size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", NULL, 0);
+            if (size > 0) {
+                char buffer[size+1];
+                size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, size);
+                if (size > 0) {
+                    output=QString::fromUtf8(buffer);
+                }
+            }
         }
         cmsCloseProfile(lcmsProfile);
     }
@@ -52,11 +58,17 @@ QString Yellow::profileDescFromData(QByteArray data)
     QString output;
     if (data.length() > 0) {
         cmsHPROFILE lcmsProfile;
-        char buffer[500];
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
-            cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, 500);
-            output=QString::fromUtf8(buffer);
+            cmsUInt32Number size = 0;
+            size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", NULL, 0);
+            if (size > 0) {
+                char buffer[size+1];
+                size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoDescription, "en", "US", buffer, size);
+                if (size > 0) {
+                    output=QString::fromUtf8(buffer);
+                }
+            }
         }
         cmsCloseProfile(lcmsProfile);
     }

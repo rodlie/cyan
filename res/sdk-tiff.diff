@@ -1,0 +1,11 @@
+--- qtimageformats/src/plugins/imageformats/tiff/tiff.pro.orig	2017-07-25 00:14:03.615647328 +0200
++++ qtimageformats/src/plugins/imageformats/tiff/tiff.pro	2017-07-25 00:14:32.997712784 +0200
+@@ -6,7 +6,7 @@
+ OTHER_FILES += tiff.json
+ 
+ config_libtiff {
+-    unix|mingw: LIBS += -ltiff
++    unix|mingw: LIBS += -ltiff -llzma
+     else:win32: LIBS += libtiff.lib
+ } else {
+     include($$PWD/../../../3rdparty/libtiff.pri)

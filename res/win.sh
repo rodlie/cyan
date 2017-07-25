@@ -27,7 +27,7 @@ make || exit 1
 strip -s build/Cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  Cyan_resource.rc debug release .qmake.stash || true
-mv build/Cyan.exe Cyan-$VERSION-x86.exe
+mv build/Cyan.exe Cyan-$VERSION-win32.exe
 rm -rf build || true
 
 MINGW=${MXE}/usr/x86_64-w64-mingw32.static
@@ -45,5 +45,5 @@ make || exit 1
 strip -s build/Cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  Cyan_resource.rc debug release .qmake.stash || true
-mv build/Cyan.exe Cyan-$VERSION-x64.exe
+mv build/Cyan.exe Cyan-$VERSION-win64.exe
 rm -rf build || true

@@ -13,7 +13,7 @@ MAGICK=6.9.0-0
 QT=5.6.2
 OSX_MIN=10.9
 JOBS=4
-JTYPE=turbo
+JTYPE="turbo"
 
 CWD=`pwd`
 WRK=$CWD/tmp
@@ -23,7 +23,7 @@ OS=`uname -s`
 if [ "$OS" = "Darwin" ]; then
     DEFAULT_FLAGS="-mmacosx-version-min=${OSX_MIN} -I$SDK/include -L$SDK/lib"
 else
-    DEFAULT_FLAGS="-fPIC -march=core2 -mtune=corei7-avx"
+    DEFAULT_FLAGS="-fPIC -march=core2 -mtune=corei7-avx" # -I$SDK/include -L$SDK/lib"
 fi
 
 DEFAULT_CONFIGURE="--prefix=${SDK} --disable-shared --enable-static"
@@ -130,7 +130,8 @@ if [ "$OS" = "Linux" ]; then
     cd $WRK || exit 1
     tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || (cd $CWD/3rdparty; curl -L -O http://download.qt.io/official_releases/qt/5.6/$QT/single/qt-everywhere-opensource-src-$QT.tar.xz) && tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || exit 1
     cd $WRK/qt-everywhere-opensource-src-$QT || exit 1
-    LIBS="-llzma" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure \
+    patch -p0< $CWD/res/sdk-tiff.diff || exit 1
+    CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure \
     -prefix $SDK \
     -release \
     -opensource \
