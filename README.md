@@ -8,7 +8,8 @@ Prepress viewer and converter.
 * Supports ICC/ICM v2/v4 color profiles
 * Supports PNG/JPEG/TIFF/PSD input
 * Supports TIFF and PSD output
-* Modify/Add/Extract embedded ICC color profiles
+* Add/Change/Save embedded ICC color profiles
+* View/Edit ICC color profiles
 * Convert to/from RGB/CMYK/GRAY
 * Change image bit depth
 * GIMP 2.x integration

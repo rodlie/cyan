@@ -75,6 +75,52 @@ QString Yellow::profileDescFromData(QByteArray data)
     return output;
 }
 
+QString Yellow::profileManufacturerFromFile(QString file)
+{
+    QString output;
+    QFileInfo profile(file);
+    if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
+        cmsHPROFILE lcmsProfile;
+        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
+        if (lcmsProfile) {
+            cmsUInt32Number size = 0;
+            size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoManufacturer, "en", "US", NULL, 0);
+            if (size > 0) {
+                char buffer[size+1];
+                size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoManufacturer, "en", "US", buffer, size);
+                if (size > 0) {
+                    output=QString::fromUtf8(buffer);
+                }
+            }
+        }
+        cmsCloseProfile(lcmsProfile);
+    }
+    return output;
+}
+
+QString Yellow::profileCopyrightFromFile(QString file)
+{
+    QString output;
+    QFileInfo profile(file);
+    if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
+        cmsHPROFILE lcmsProfile;
+        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
+        if (lcmsProfile) {
+            cmsUInt32Number size = 0;
+            size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoCopyright, "en", "US", NULL, 0);
+            if (size > 0) {
+                char buffer[size+1];
+                size = cmsGetProfileInfoASCII(lcmsProfile, cmsInfoCopyright, "en", "US", buffer, size);
+                if (size > 0) {
+                    output=QString::fromUtf8(buffer);
+                }
+            }
+        }
+        cmsCloseProfile(lcmsProfile);
+    }
+    return output;
+}
+
 int Yellow::profileColorSpaceFromFile(QString file)
 {
     int status = 0;
@@ -147,6 +193,53 @@ QStringList Yellow::genProfiles(int colorspace)
     }
     output.removeDuplicates();
     return output;
+}
+
+bool Yellow::editProfile(QString file, QString output, QString description, QString copyright)
+{
+    bool result = false;
+    QFileInfo profile(file);
+    if (profile.suffix().contains(QRegExp("(icc|icm)",Qt::CaseInsensitive)) && profile.exists()) {
+        cmsHPROFILE lcmsProfile;
+        lcmsProfile = cmsOpenProfileFromFile(file.toUtf8(), "r");
+        if (lcmsProfile) {
+            cmsContext ContextID = cmsGetProfileContextID(lcmsProfile);
+            bool modified = false;
+            if (!description.isEmpty()) {
+                cmsMLU *DescriptionMLU;
+                DescriptionMLU  = cmsMLUalloc(ContextID, 1);
+                if (!cmsMLUsetWide(DescriptionMLU,  "en", "US", description.toStdWString().c_str())) {
+                    result = false;
+                }
+                if (cmsWriteTag(lcmsProfile, cmsSigProfileDescriptionTag,  DescriptionMLU)) {
+                    modified = true;
+                }
+                if (DescriptionMLU) {
+                    cmsMLUfree(DescriptionMLU);
+                }
+            }
+            if (!copyright.isEmpty()) {
+                cmsMLU *CopyrightMLU;
+                CopyrightMLU  = cmsMLUalloc(ContextID, 1);
+                if (!cmsMLUsetWide(CopyrightMLU,  "en", "US", copyright.toStdWString().c_str())) {
+                    result = false;
+                }
+                if (cmsWriteTag(lcmsProfile, cmsSigCopyrightTag,  CopyrightMLU)) {
+                    modified = true;
+                }
+                if (CopyrightMLU) {
+                    cmsMLUfree(CopyrightMLU);
+                }
+            }
+            if (modified) {
+                if (cmsSaveProfileToFile( lcmsProfile, output.toUtf8().data())) {
+                    result = true;
+                }
+            }
+        }
+        cmsCloseProfile(lcmsProfile);
+    }
+    return result;
 }
 
 QByteArray Yellow::profileDefault(int colorspace)

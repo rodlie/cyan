@@ -33,6 +33,9 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QByteArray>
+#include <QDialog>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include "yellow.h"
 #include "magenta.h"
@@ -50,6 +53,7 @@ signals:
     void proof();
     void myFit(bool value);
     void openImage(QString file);
+    void openProfile(QString file);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -63,6 +67,25 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     void resizeEvent(QResizeEvent *event);
+};
+
+class CyanProfile : public QDialog
+{
+    Q_OBJECT
+
+public:
+    CyanProfile(QWidget *parent = 0);
+    ~CyanProfile();
+    QLineEdit *profileFileName;
+    QLineEdit *profileDescription;
+    QLineEdit *profileManufacturer;
+    QLineEdit *profileCopyright;
+    QLineEdit *profileColorspace;
+    QPushButton *profileSaveButton;
+    QPushButton *profileCloseButton;
+
+private slots:
+    void closeDialog();
 };
 
 class Cyan : public QMainWindow
@@ -103,6 +126,7 @@ private:
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
+    CyanProfile profileDialog;
 
 private slots:
     void readConfig();
@@ -141,6 +165,8 @@ private slots:
     bool hasGRAY();
     void bitDepthChanged(int index);
     void gimpPlugin();
+    void openProfile(QString file);
+    void saveProfile();
 
 };
 

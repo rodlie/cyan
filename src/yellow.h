@@ -34,9 +34,12 @@ public slots:
     QByteArray profileDefault(int colorspace);
     QString profileDescFromFile(QString file);
     QString profileDescFromData(QByteArray data);
+    QString profileManufacturerFromFile(QString file);
+    QString profileCopyrightFromFile(QString file);
     int profileColorSpaceFromFile(QString file);
     int profileColorSpaceFromData(QByteArray data);
     QStringList genProfiles(int colorspace);
+    bool editProfile(QString file, QString output, QString description, QString copyright);
 };
 
 #endif // YELLOW_H
