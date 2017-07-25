@@ -78,9 +78,7 @@ public:
     ~CyanProfile();
     QLineEdit *profileFileName;
     QLineEdit *profileDescription;
-    QLineEdit *profileManufacturer;
     QLineEdit *profileCopyright;
-    QLineEdit *profileColorspace;
     QPushButton *profileSaveButton;
     QPushButton *profileCloseButton;
 

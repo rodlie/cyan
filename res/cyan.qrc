@@ -14,5 +14,6 @@
         <file>icc/ISOcoated_v2_bas.ICC</file>
         <file>gimp.py</file>
         <file>3rdparty.txt</file>
+        <file>profile.png</file>
     </qresource>
 </RCC>

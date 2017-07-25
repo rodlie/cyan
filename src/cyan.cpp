@@ -126,36 +126,71 @@ CyanProfile::CyanProfile(QWidget *parent)
     : QDialog(parent)
     , profileFileName(0)
     , profileDescription(0)
-    , profileManufacturer(0)
     , profileCopyright(0)
-    , profileColorspace(0)
     , profileSaveButton(0)
     , profileCloseButton(0)
 {
-    setWindowTitle(tr("Cyan Color Profile"));
+    setWindowTitle(tr("Edit Color Profile"));
     setWindowIcon(QIcon(":/cyan.png"));
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QFrame *containerFrame = new QFrame();
+    QFrame *buttonFrame = new QFrame();
+    QFrame *descriptionFrame = new QFrame();
+    QFrame *copyrightFrame = new QFrame();
 
-    profileFileName = new QLineEdit(this);
-    profileDescription = new QLineEdit(this);
-    profileManufacturer = new QLineEdit(this);
-    profileCopyright = new QLineEdit(this);
-    profileColorspace = new QLineEdit(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    QVBoxLayout *containerLayout = new QVBoxLayout(containerFrame);
+    QHBoxLayout *buttonLayout = new QHBoxLayout(buttonFrame);
+    QHBoxLayout *descriptionLayout = new QHBoxLayout(descriptionFrame);
+    QHBoxLayout *copyrightLayout = new QHBoxLayout(copyrightFrame);
 
-    profileSaveButton = new QPushButton(this);
-    profileSaveButton->setText(tr("Save"));
-    profileCloseButton = new QPushButton(this);
+    descriptionLayout->setContentsMargins(0,0,0,0);
+    copyrightLayout->setContentsMargins(0,0,0,0);
+
+    QLabel *profileLabel = new QLabel();
+    profileLabel->setPixmap(QPixmap::fromImage(QImage(":/profile.png")));
+    profileLabel->setAlignment(Qt::AlignTop);
+
+    QLabel *descriptionLabel = new QLabel();
+    descriptionLabel->setText(tr("Description"));
+    descriptionLabel->setMinimumWidth(100);
+
+    QLabel *copyrightLabel = new QLabel();
+    copyrightLabel->setText(tr("Copyright"));
+    copyrightLabel->setMinimumWidth(100);
+
+    profileFileName = new QLineEdit();
+    profileFileName->hide();
+    profileFileName->setReadOnly(true);
+
+    profileDescription = new QLineEdit();
+    profileDescription->setMinimumWidth(400);
+    profileCopyright = new QLineEdit();
+    profileCopyright->setMinimumWidth(400);
+
+    profileSaveButton = new QPushButton();
+    profileSaveButton->setText(tr("Save As ..."));
+    profileCloseButton = new QPushButton();
     profileCloseButton->setText(tr("Close"));
-    profileCloseButton->setFocus();
 
-    mainLayout->addWidget(profileFileName);
-    mainLayout->addWidget(profileDescription);
-    mainLayout->addWidget(profileManufacturer);
-    mainLayout->addWidget(profileCopyright);
-    mainLayout->addWidget(profileColorspace);
-    mainLayout->addWidget(profileSaveButton);
-    mainLayout->addWidget(profileCloseButton);
+    mainLayout->addWidget(profileLabel);
+    mainLayout->addWidget(containerFrame);
+
+    containerLayout->addWidget(profileFileName);
+    containerLayout->addWidget(descriptionFrame);
+    containerLayout->addWidget(copyrightFrame);
+    containerLayout->addWidget(buttonFrame);
+    containerLayout->addStretch();
+
+    copyrightLayout->addWidget(copyrightLabel);
+    copyrightLayout->addWidget(profileCopyright);
+
+    descriptionLayout->addWidget(descriptionLabel);
+    descriptionLayout->addWidget(profileDescription);
+
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(profileSaveButton);
+    buttonLayout->addWidget(profileCloseButton);
 
     connect(profileCloseButton, SIGNAL(released()), this, SLOT(closeDialog()));
 }
@@ -166,11 +201,9 @@ CyanProfile::~CyanProfile()
 
 void CyanProfile::closeDialog()
 {
-    profileColorspace->clear();
     profileCopyright->clear();
     profileDescription->clear();
     profileFileName->clear();
-    profileManufacturer->clear();
     hide();
 }
 
@@ -1264,19 +1297,15 @@ void Cyan::gimpPlugin()
 void Cyan::openProfile(QString file)
 {
     if (!file.isEmpty()) {
-        profileDialog.profileColorspace->clear();
         profileDialog.profileCopyright->clear();
         profileDialog.profileDescription->clear();
         profileDialog.profileFileName->clear();
-        profileDialog.profileManufacturer->clear();
 
-        profileDialog.profileColorspace->setText(QString::number(cms.profileColorSpaceFromFile(file)));
         profileDialog.profileCopyright->setText(cms.profileCopyrightFromFile(file));
         profileDialog.profileDescription->setText(cms.profileDescFromFile(file));
         profileDialog.profileFileName->setText(file);
-        profileDialog.profileManufacturer->setText(cms.profileManufacturerFromFile(file));
 
-        if (!profileDialog.profileDescription->text().isEmpty() && !profileDialog.profileColorspace->text().isEmpty()) {
+        if (!profileDialog.profileDescription->text().isEmpty()) {
             profileDialog.show();
         } else {
             QMessageBox::warning(this, tr("Unsupported Color Profile"), tr("Unable to read the requested color profile."));
@@ -1286,16 +1315,18 @@ void Cyan::openProfile(QString file)
 
 void Cyan::saveProfile()
 {
-    if (!profileDialog.profileDescription->text().isEmpty() && !profileDialog.profileColorspace->text().isEmpty()) {
-        QString output = QFileDialog::getSaveFileName(this, tr("Save Color Profile"), QDir::homePath(), tr("Color profiles (*.icc *.icm)"));
+    if (!profileDialog.profileDescription->text().isEmpty() && !profileDialog.profileFileName->text().isEmpty()) {
+        QString output = QFileDialog::getSaveFileName(this, tr("Save Color Profile"), QDir::homePath(), tr("Color profiles (*.icc)"));
         if (!output.isEmpty()) {
+            QFileInfo outFile(output);
+            if (outFile.suffix().isEmpty() || outFile.suffix() != "icc") {
+                output.append(".icc");
+            }
             if (cms.editProfile(profileDialog.profileFileName->text(), output, profileDialog.profileDescription->text(), profileDialog.profileCopyright->text())) {
                 QMessageBox::information(this, tr("Saved Color Profile"), tr("Color profile saved to disk."));
-                profileDialog.profileColorspace->clear();
                 profileDialog.profileCopyright->clear();
                 profileDialog.profileDescription->clear();
                 profileDialog.profileFileName->clear();
-                profileDialog.profileManufacturer->clear();
                 profileDialog.hide();
             } else {
                 QMessageBox::warning(this, tr("Unable to save"), tr("Failed to save color profile."));
