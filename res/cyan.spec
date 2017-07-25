@@ -1,5 +1,5 @@
 Summary: Prepress viewer and converter
-Name: cyan
+Name: Cyan
 
 Version: 1.0.0
 Release: 1.el7.centos7.fedora19
@@ -9,7 +9,7 @@ Group: System Environment/Base
 Packager: Ole-André Rodlie, <olear@fxarena.net>
 URL: https://github.com/olear/cyan
 
-Source: %{version}/%{name}-%{version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 Source1: ImageMagick-6.9.0-0.tar.xz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
