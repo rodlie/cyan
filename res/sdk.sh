@@ -13,7 +13,7 @@ MAGICK=6.9.0-0
 QT=5.6.2
 OSX_MIN=10.9
 JOBS=4
-JTYPE="turbo"
+JTYPE="" #"turbo"
 
 CWD=`pwd`
 WRK=$CWD/tmp
@@ -41,6 +41,10 @@ mkdir -p "$WRK" || exit 1
 rm -rf "$SDK" || true
 mkdir -p "$SDK" || exit 1
 
+if [ ! -d "$CWD/3rdparty" ]; then
+  mkdir -p "$CWD/3rdparty" || exit 1
+fi
+
 if [ "$OS" = "Darwin" ]; then
     cd $WRK || exit 1
     rm -rf zlib-$ZLIB || true
@@ -54,7 +58,7 @@ fi
 
 if [ "$JTYPE" = "turbo" ]; then
     cd $WRK || exit 1
-    tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$TJPEG/libjpeg-turbo-$JPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || exit 1
+    tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || (cd $CWD/3rdparty; curl -L -O http://downloads.sourceforge.net/project/libjpeg-turbo/$TJPEG/libjpeg-turbo-$TJPEG.tar.gz) && tar xvf $CWD/3rdparty/libjpeg-turbo-$TJPEG.tar.gz || exit 1
     cd libjpeg-turbo-$TJPEG || exit 1
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE --with-jpeg8 --without-turbojpeg --with-12bit || exit 1
     make -j$JOBS || exit 1
