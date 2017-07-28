@@ -73,7 +73,7 @@ unix:!mac {
     INSTALLS += target target_icon target_desktop target_docs
 }
 
-unix:mac {
+mac {
     ICON = $$top_srcdir/res/Cyan.icns
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     DEFINES += MAGICKCORE_HDRI_ENABLE=1 MAGICKCORE_QUANTUM_DEPTH=32
