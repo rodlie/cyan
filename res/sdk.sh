@@ -147,8 +147,7 @@ if [ "$OS" = "Linux" ]; then
     cd $WRK || exit 1
     tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || (cd $CWD/3rdparty; curl -L -O http://download.qt.io/official_releases/qt/5.6/$QT/single/qt-everywhere-opensource-src-$QT.tar.xz) && tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || exit 1
     cd $WRK/qt-everywhere-opensource-src-$QT || exit 1
-    patch -p0< $CWD/res/sdk-tiff.diff || exit 1
-    patch -p0< $CWD/res/sdk-qt-02.diff || exit 1
+    patch -p0< $CWD/res/qt5.diff || exit 1
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure \
     -prefix $SDK \
     -release \

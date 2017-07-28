@@ -1,0 +1,47 @@
+--- qtimageformats/src/plugins/imageformats/tiff/tiff.pro.orig	2017-07-25 00:14:03.615647328 +0200
++++ qtimageformats/src/plugins/imageformats/tiff/tiff.pro	2017-07-25 00:14:32.997712784 +0200
+@@ -6,7 +6,7 @@
+ OTHER_FILES += tiff.json
+ 
+ config_libtiff {
+-    unix|mingw: LIBS += -ltiff
++    unix|mingw: LIBS += -ltiff -llzma
+     else:win32: LIBS += libtiff.lib
+ } else {
+     include($$PWD/../../../3rdparty/libtiff.pri)
+--- qtimageformats/qtimageformats.pro.orig	2017-07-28 21:38:50.155595208 +0200
++++ qtimageformats/qtimageformats.pro	2017-07-28 21:38:57.759660682 +0200
+@@ -1,9 +1,6 @@
+ requires(qtHaveModule(gui))
+ 
+ load(configure)
+-qtCompileTest(jasper)
+-qtCompileTest(libmng)
+ qtCompileTest(libtiff)
+-qtCompileTest(libwebp)
+ 
+ load(qt_parts)
+--- qtimageformats/src/plugins/imageformats/imageformats.pro.orig	2017-07-28 21:39:08.575762912 +0200
++++ qtimageformats/src/plugins/imageformats/imageformats.pro	2017-07-28 21:39:18.807859620 +0200
+@@ -1,20 +1,3 @@
+ TEMPLATE = subdirs
+ SUBDIRS = \
+-    dds \
+-    icns \
+-    tga \
+-    tiff \
+-    wbmp \
+-    webp
+-
+-config_jasper: SUBDIRS += jp2
+-config_libmng: SUBDIRS += mng
+-
+-wince:SUBDIRS -= jp2
+-
+-winrt {
+-    SUBDIRS -= tiff \
+-               tga
+-}
+-
+-winrt: SUBDIRS -= webp
++    tiff
