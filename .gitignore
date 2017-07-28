@@ -16,5 +16,6 @@ sdk
 *.deb
 *.tgz
 *.txz
+*.zip
 CHANGES
 ChangeLog

@@ -1,7 +1,18 @@
 #!/bin/sh
+# Cyan <https://github.com/olear/cyan>,
+# Copyright (C) 2016, 2017 Ole-André Rodlie <olear@fxarena.net>
 #
-# Build SDK for Linux/Mac OS X
+# Cyan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as published
+# by the Free Software Foundation.
 #
+# Cyan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 
 ZLIB=1.2.11
 TJPEG=1.5.2
@@ -13,17 +24,18 @@ MAGICK=6.9.0-0
 QT=5.6.2
 OSX_MIN=10.9
 JOBS=4
-JTYPE="" #"turbo"
+JTYPE="" #"turbo" # has issues on macosx, so use vanilla jpeg on all platforms.
 
 CWD=`pwd`
 WRK=$CWD/tmp
 SDK=$CWD/sdk
 
 OS=`uname -s`
+DEFAULT_FLAGS="-I$SDK/include -L$SDK/lib"
 if [ "$OS" = "Darwin" ]; then
-    DEFAULT_FLAGS="-mmacosx-version-min=${OSX_MIN} -I$SDK/include -L$SDK/lib"
+    DEFAULT_FLAGS="-mmacosx-version-min=${OSX_MIN} $DEFAULT_FLAGS"
 else
-    DEFAULT_FLAGS="-fPIC -march=core2 -mtune=corei7-avx" # -I$SDK/include -L$SDK/lib"
+    DEFAULT_FLAGS="-fPIC -march=core2 -mtune=corei7-avx $DEFAULT_FLAGS"
 fi
 
 DEFAULT_CONFIGURE="--prefix=${SDK} --disable-shared --enable-static"
@@ -32,6 +44,7 @@ export PKG_CONFIG_PATH="$SDK/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PATH=$SDK/bin:$PATH
 
 if [ -d "$HOME/pkg/bin" ] && [ "$OS" = "Darwin" ]; then
+    # Use pkg-config from pkgsrc on macosx
     export PATH=$HOME/pkg/bin:$PATH
 fi
 
@@ -135,6 +148,7 @@ if [ "$OS" = "Linux" ]; then
     tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || (cd $CWD/3rdparty; curl -L -O http://download.qt.io/official_releases/qt/5.6/$QT/single/qt-everywhere-opensource-src-$QT.tar.xz) && tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || exit 1
     cd $WRK/qt-everywhere-opensource-src-$QT || exit 1
     patch -p0< $CWD/res/sdk-tiff.diff || exit 1
+    patch -p0< $CWD/res/sdk-qt-02.diff || exit 1
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure \
     -prefix $SDK \
     -release \

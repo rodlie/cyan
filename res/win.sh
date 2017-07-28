@@ -1,7 +1,18 @@
 #!/bin/sh
+# Cyan <https://github.com/olear/cyan>,
+# Copyright (C) 2016, 2017 Ole-André Rodlie <olear@fxarena.net>
 #
-# Build Cyan for Windows using MXE
+# Cyan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as published
+# by the Free Software Foundation.
 #
+# Cyan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 
 CWD=`pwd`
 
@@ -27,8 +38,9 @@ make || exit 1
 strip -s build/Cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  Cyan_resource.rc debug release .qmake.stash || true
-mv build/Cyan.exe Cyan-$VERSION-win32.exe
-rm -rf build || true
+mv build/Cyan.exe Cyan.exe || exit 1
+zip Cyan-$VERSION-Win32.zip Cyan.exe || exit 1
+rm -rf build Cyan.exe|| exit 1
 
 MINGW=${MXE}/usr/x86_64-w64-mingw32.static
 QT=${MINGW}/qt5
@@ -45,5 +57,6 @@ make || exit 1
 strip -s build/Cyan.exe
 rm -rf Makefile* || true
 rm -rf cyan_plugin_import.cpp  Cyan_resource.rc debug release .qmake.stash || true
-mv build/Cyan.exe Cyan-$VERSION-win64.exe
-rm -rf build || true
+mv build/Cyan.exe Cyan.exe || exit 1
+zip Cyan-$VERSION-Win64.zip Cyan.exe || exit 1
+rm -rf build Cyan.exe|| exit 1
