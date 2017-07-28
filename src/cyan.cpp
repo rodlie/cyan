@@ -1214,36 +1214,35 @@ void Cyan::bitDepthChanged(int index)
 void Cyan::gimpPlugin()
 {
     QStringList versions,folders;
-    versions << "2.4" << "2.6" << "2.8" << "2.9" << "2.10";
+    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10";
     foreach (QString version, versions) {
+        bool hasDir = false;
         QDir gimpDir;
         QString gimpPath;
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
 #ifndef __APPLE__
         gimpPath.append(".gimp-"+version);
-        if (!gimpDir.exists(gimpPath)) {
-            gimpDir.mkdir(gimpPath);
+        if (gimpDir.exists(gimpPath)) {
+            hasDir = true;
         }
 #else
-        gimpPath.append("Library/Application Support/GIMP");
-        if (!gimpDir.exists(gimpPath)) {
-            gimpDir.mkdir(gimpPath);
-        }
-        gimpPath.append("/"+version);
-        if (!gimpDir.exists(gimpPath)) {
-            gimpDir.mkdir(gimpPath);
+        gimpPath.append("Library/Application Support/GIMP/"+version);
+        if (gimpDir.exists(gimpPath)) {
+            hasDir = true;
         }
 #endif
-        gimpPath.append(QDir::separator());
-        gimpPath.append("plug-ins");
-        if (!gimpDir.exists(gimpPath)) {
-            gimpDir.mkdir(gimpPath);
+        if (hasDir) {
+            gimpPath.append(QDir::separator());
+            gimpPath.append("plug-ins");
+            if (!gimpDir.exists(gimpPath)) {
+                gimpDir.mkdir(gimpPath);
+            }
+            QString result = gimpPath;
+            result.append(QDir::separator());
+            result.append("cyan.py");
+            folders << result;
         }
-        QString result = gimpPath;
-        result.append(QDir::separator());
-        result.append("cyan.py");
-        folders << result;
     }
 
     QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
