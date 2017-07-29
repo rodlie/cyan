@@ -109,7 +109,7 @@ make install || exit 1
 cd $WRK || exit 1
 tar xvf $CWD/3rdparty/ImageMagick-$MAGICK.tar.xz || (cd $CWD/3rdparty; curl -L -O http://www.imagemagick.org/download/releases/ImageMagick-$MAGICK.tar.xz) && tar xvf $CWD/3rdparty/ImageMagick-$MAGICK.tar.xz || exit 1
 cd ImageMagick-$MAGICK || exit 1
-LIBS="-lz" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE \
+LIBS="-lz -llzma" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE \
 --disable-docs \
 --disable-deprecated \
 --with-magick-plus-plus=yes \

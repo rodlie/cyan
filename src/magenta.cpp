@@ -120,6 +120,8 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             case 3:
                 image.renderingIntent(Magick::AbsoluteIntent);
                 break;
+            case 4:
+                image.renderingIntent(Magick::RelativeIntent);
             }
         }
 

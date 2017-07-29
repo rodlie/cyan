@@ -324,6 +324,7 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent->addItem(renderIcon, tr("Saturation"), 1);
     renderingIntent->addItem(renderIcon, tr("Perceptual"), 2);
     renderingIntent->addItem(renderIcon, tr("Absolute"), 3);
+    renderingIntent->addItem(renderIcon, tr("Relative"), 4);
 
     QLabel *inputLabel = new QLabel();
     QLabel *outputLabel = new QLabel();
