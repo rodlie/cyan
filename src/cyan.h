@@ -36,6 +36,8 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
+#include <QLabel>
 
 #include "yellow.h"
 #include "magenta.h"
@@ -125,6 +127,11 @@ private:
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     CyanProfile profileDialog;
+    QCheckBox *convertAdv;
+    QSpinBox *cmyLevel;
+    QSpinBox *kLevel;
+    QLabel *cmyLevelLabel;
+    QLabel *kLevelLabel;
 
 private slots:
     void readConfig();
@@ -165,6 +172,7 @@ private slots:
     void gimpPlugin();
     void openProfile(QString file);
     void saveProfile();
+    void triggerConvertAdv(bool show);
 
 };
 

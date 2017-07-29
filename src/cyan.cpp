@@ -17,7 +17,6 @@
 
 #include "cyan.h"
 #include <QCoreApplication>
-#include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSettings>
@@ -237,6 +236,9 @@ Cyan::Cyan(QWidget *parent)
     , currentImageNewProfile(0)
     , exportEmbeddedProfileAction(0)
     , bitDepth(0)
+    , convertAdv(0)
+    , cmyLevel(0)
+    , kLevel(0)
 {
     qApp->setStyle(QStyleFactory::create("fusion"));
 
@@ -296,6 +298,9 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent = new QComboBox();
     blackPoint = new QCheckBox();
     bitDepth = new QComboBox();
+    convertAdv = new QCheckBox();
+    cmyLevel = new QSpinBox();
+    kLevel = new QSpinBox();
 
     rgbProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     cmykProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -305,6 +310,11 @@ Cyan::Cyan(QWidget *parent)
     monitorProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     renderingIntent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     bitDepth->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    cmyLevel->setMaximum(100);
+    cmyLevel->setMinimum(0);
+    kLevel->setMaximum(100);
+    kLevel->setMinimum(0);
 
     QIcon bitDepthIcon(":/cyan-display.png");
     bitDepth->addItem(bitDepthIcon, tr("Default"));
@@ -335,6 +345,9 @@ Cyan::Cyan(QWidget *parent)
     QLabel *cmykLabel = new QLabel();
     QLabel *grayLabel = new QLabel();
     QLabel *bitDepthLabel = new QLabel();
+    QLabel *convertAdvLabel = new QLabel();
+    cmyLevelLabel = new QLabel();
+    kLevelLabel = new QLabel();
 
     inputLabel->setText(tr("Input"));
     outputLabel->setText(tr("Output"));
@@ -345,6 +358,9 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setText(tr("CMYK"));
     grayLabel->setText(tr("GRAY"));
     bitDepthLabel->setText(tr("Depth"));
+    convertAdvLabel->setText(tr("Advanced"));
+    cmyLevelLabel->setText(tr("C/M/Y Add"));
+    kLevelLabel->setText(tr("K Substract"));
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -355,6 +371,9 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setToolTip(tr("Default CMYK profile, used when image don't have an embedded profile"));
     grayLabel->setToolTip(tr("Default GRAY profile, used when image don't have an embedded profile"));
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
+    convertAdvLabel->setToolTip(tr("Enable/disable advanced options"));
+    cmyLevelLabel->setToolTip(tr("Adjust CMY levels (Add) in percent. Only for CMYK output."));
+    kLevelLabel->setToolTip(tr("Adjust K levels in (Substract) percent. Only for CMYK output."));
 
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
@@ -363,6 +382,12 @@ Cyan::Cyan(QWidget *parent)
     convertBar->addWidget(outputProfile);
     convertBar->addWidget(bitDepthLabel);
     convertBar->addWidget(bitDepth);
+    convertBar->addWidget(convertAdvLabel);
+    convertBar->addWidget(convertAdv);
+    convertBar->addWidget(cmyLevelLabel);
+    convertBar->addWidget(cmyLevel);
+    convertBar->addWidget(kLevelLabel);
+    convertBar->addWidget(kLevel);
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
@@ -467,7 +492,11 @@ Cyan::Cyan(QWidget *parent)
 
     connect(profileDialog.profileSaveButton, SIGNAL(released()), this, SLOT(saveProfile()));
 
+    connect(convertAdv, SIGNAL(toggled(bool)), this, SLOT(triggerConvertAdv(bool)));
+
     setStyleSheet("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;}");
+
+    triggerConvertAdv(false);
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
@@ -1347,5 +1376,24 @@ void Cyan::saveProfile()
         settings.sync();
     } else {
         QMessageBox::warning(this, tr("Unable to save"), tr("Nothing to save, please check the profile information."));
+    }
+}
+
+void Cyan::triggerConvertAdv(bool show)
+{
+    if (show) {
+        convertBar->actions().at(9)->setVisible(true);
+        convertBar->actions().at(10)->setVisible(true);
+        convertBar->actions().at(11)->setVisible(true);
+        convertBar->actions().at(12)->setVisible(true);
+        cmyLevel->setEnabled(true);
+        kLevel->setEnabled(true);
+    } else {
+        convertBar->actions().at(9)->setVisible(false);
+        convertBar->actions().at(10)->setVisible(false);
+        convertBar->actions().at(11)->setVisible(false);
+        convertBar->actions().at(12)->setVisible(false);
+        cmyLevel->setDisabled(true);
+        kLevel->setDisabled(true);
     }
 }
