@@ -32,6 +32,7 @@ QMAKE=$SDK/bin/qmake
 export PKG_CONFIG_PATH=$SDK/lib/pkgconfig:$PKG_CONFIG_PATH
 
 rm -rf $CWD/build || true
+git log>CHANGES || exit 1
 $QMAKE CONFIG+=release || exit 1
 make || exit 1
 cd $CWD/build || exit 1

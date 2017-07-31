@@ -33,6 +33,7 @@ QMAKE=$QT/bin/qmake
 DEPLOY=$QT/bin/macdeployqt
 
 rm -rf $CWD/build || true
+git log>CHANGES || exit 1
 $QMAKE CONFIG+=release || exit 1
 make || exit 1
 $DEPLOY build/Cyan.app || exit 1

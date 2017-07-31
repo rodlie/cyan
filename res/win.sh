@@ -34,6 +34,7 @@ export PKG_CONFIG_PATH=${MINGW}/lib/pkgconfig
 rm -f *.exe || true
 rm -rf build || true
 
+git log>CHANGES || exit 1
 ${QMAKE} cyan.pro CONFIG+=release CONFIG+=mxe || exit 1
 make || exit 1
 

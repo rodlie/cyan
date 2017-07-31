@@ -693,14 +693,31 @@ void Cyan::aboutCyan()
     aboutCyan.setInformativeText(infoText);
 
     QString detailedText;
+    QFile changes(":/CHANGES");
+    if (changes.open(QIODevice::ReadOnly)) {
+        detailedText.append("==============================\n");
+        detailedText.append(tr("CHANGELOG")+"\n");
+        detailedText.append("==============================\n\n");
+        detailedText.append(QString::fromUtf8(changes.readAll()));
+        detailedText.append("\n\n");
+        changes.close();
+    }
     QFile license(":/COPYING");
     if (license.open(QIODevice::ReadOnly)) {
+        detailedText.append("==============================\n");
+        detailedText.append(tr("LICENSE")+"\n");
+        detailedText.append("==============================\n\n");
         detailedText.append(QString::fromUtf8(license.readAll()));
+        detailedText.append("\n\n");
         license.close();
     }
     QFile licenseOther(":/3rdparty.txt");
     if (licenseOther.open(QIODevice::ReadOnly)) {
+        detailedText.append("==============================\n");
+        detailedText.append(tr("THIRD-PARTY")+"\n");
+        detailedText.append("==============================\n\n");
         detailedText.append(QString::fromUtf8(licenseOther.readAll()));
+        detailedText.append("\n\n");
         licenseOther.close();
     }
     aboutCyan.setDetailedText(detailedText);
