@@ -156,7 +156,7 @@ if [ "$OS" = "Linux" ]; then
     -opensource \
     -confirm-license \
     -static \
-    -c++std c++98 \
+    -c++std c++11 \
     -largefile \
     -no-sql-sqlite \
     -no-sql-mysql \

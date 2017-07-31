@@ -20,7 +20,7 @@ System requirements for downloads:
 
  * Windows 7+
  * Mac OS X 10.9+
- * Linux (GCC 4.8+/Glibc 2.17+)
+ * Linux (GCC 4.8.5+/Glibc 2.17+)
    * Ubuntu requires libxcb-xinerama0 (sudo apt-get install libxcb-xinerama0)
 
 # Build
