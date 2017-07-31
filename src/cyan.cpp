@@ -35,6 +35,12 @@
 #include <QApplication>
 #include <QStyleFactory>
 
+#ifdef __APPLE__
+#define CYAN_FONT_SIZE 10
+#else
+#define CYAN_FONT_SIZE 8
+#endif
+
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
@@ -579,7 +585,7 @@ Cyan::Cyan(QWidget *parent)
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
 
-    setStyleSheet("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;}");
+    setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;} QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
