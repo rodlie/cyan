@@ -28,7 +28,6 @@ System requirements for downloads:
 Build requirements:
 
 * ImageMagick (MagickCore/Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
-  * 6.9.0-0 is the only supported version, other versions may behave differently.
 * LCMS 2.x
 * Qt 4/5 (Core/GUI with PNG/TIFF support)
 
@@ -45,7 +44,6 @@ make install (optional, use INSTALL_ROOT=XXX for packaging)
 # Roadmap
 
  * Batch converter
- * Plug-ins
 
 # License
 Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.

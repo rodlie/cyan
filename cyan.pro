@@ -26,7 +26,7 @@ TEMPLATE = app
 SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
 HEADERS  += src/cyan.h src/magenta.h src/yellow.h
 RESOURCES += res/cyan.qrc
-OTHER_FILES += res/cyan.spec res/win.sh res/osx.sh res/sdk.sh res/linux.sh README.md res/osx/Info.plist CHANGES
+OTHER_FILES += README.md res/cyan.spec res/win.sh res/osx.sh res/sdk.sh res/linux.sh res/osx/Info.plist
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -37,7 +37,7 @@ DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
 QMAKE_TARGET_COMPANY = "Cyan"
 QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Prepress Toolkit"
-QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016, 2017 Ole-Andre Rodlie <olear@fxarena.net>"
+QMAKE_TARGET_COPYRIGHT = "Copyright (c)2017 Ole-Andre Rodlie <olear@fxarena.net>"
 
 !mac {
     CONFIG += link_pkgconfig
@@ -54,10 +54,6 @@ QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016, 2017 Ole-Andre Rodlie <olear@fxaren
 
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
-
-#release {
-#    DEFINES += QT_NO_DEBUG_OUTPUT
-#}
 
 unix:!mac {
     isEmpty(PREFIX) {
@@ -77,13 +73,17 @@ unix:!mac {
 }
 
 mac {
-    # Run res/sdk.sh to build third-party
     ICON = $$top_srcdir/res/Cyan.icns
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     DEFINES += MAGICKCORE_HDRI_ENABLE=1 MAGICKCORE_QUANTUM_DEPTH=32
     INCLUDEPATH += $$top_srcdir/sdk/include $$top_srcdir/sdk/include/ImageMagick-6
     LIBS += -L$$top_srcdir/sdk/lib -lMagickCore-6.Q32HDRI -lMagickWand-6.Q32HDRI -lMagick++-6.Q32HDRI \
             -lz -llcms2 -ltiff -ljpeg -lpng16 -lbz2 -lz -lm
+}
+
+win32 {
+    LIBS += -lpthread
+    #-lws2_32 -lole32
 }
 
 CONFIG(magick7) {
@@ -94,10 +94,4 @@ CONFIG(magick7) {
         LIBS -= -lMagickCore-6.Q32HDRI -lMagickWand-6.Q32HDRI -lMagick++-6.Q32HDRI
         LIBS += -lMagickCore-7.Q32HDRI -lMagickWand-7.Q32HDRI -lMagick++-7.Q32HDRI
     }
-}
-
-CONFIG(mxe) {
-    # Fix issues with static mxe
-    LIBS += -lpthread
-    #-lws2_32 -lole32
 }
