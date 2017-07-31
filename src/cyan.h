@@ -1,6 +1,6 @@
 /*
-* Cyan <https://github.com/olear/cyan>,
-* Copyright (C) 2016 Ole-André Rodlie
+* Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+* Copyright (C) 2016, 2017 Ole-André Rodlie
 *
 * Cyan is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2 as published
@@ -36,8 +36,9 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QLabel>
+#include <QProgressBar>
 
 #include "yellow.h"
 #include "magenta.h"
@@ -127,11 +128,21 @@ private:
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     CyanProfile profileDialog;
-    QCheckBox *convertAdv;
-    QSpinBox *cmyLevel;
-    QSpinBox *kLevel;
+    QDoubleSpinBox *cmyLevel;
+    QDoubleSpinBox *kLevel;
     QLabel *cmyLevelLabel;
     QLabel *kLevelLabel;
+    QLabel *inkDensity;
+    QToolBar *cmykBar;
+    QLabel *colorCyanMin;
+    QLabel *colorCyanMax;
+    QLabel *colorMagentaMin;
+    QLabel *colorMagentaMax;
+    QLabel *colorYellowMin;
+    QLabel *colorYellowMax;
+    QLabel *colorBlackMin;
+    QLabel *colorBlackMax;
+    QProgressBar *progBar;
 
 private slots:
     void readConfig();
@@ -156,8 +167,8 @@ private slots:
     QByteArray getMonitorProfile();
     QByteArray getOutputProfile();
     void getConvertProfiles();
-    void inputProfileChanged(int index);
-    void outputProfileChanged(int index);
+    void inputProfileChanged(int);
+    void outputProfileChanged(int);
     void enableUI();
     void disableUI();
     void exportEmbeddedProfileDialog();
@@ -172,7 +183,9 @@ private slots:
     void gimpPlugin();
     void openProfile(QString file);
     void saveProfile();
-    void triggerConvertAdv(bool show);
+    void handleConvertAdv();
+    void renderingIntentUpdated(int);
+    void blackPointUpdated(int);
 
 };
 

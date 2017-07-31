@@ -15,5 +15,11 @@
         <file>icc/cmyk.icc</file>
         <file>icc/gray.icc</file>
         <file>icc/rgb.icc</file>
+        <file>black-color.png</file>
+        <file>cyan-color.png</file>
+        <file>yellow-color.png</file>
+        <file>magenta-color.png</file>
+        <file>ink.png</file>
+        <file>cmy-color.png</file>
     </qresource>
 </RCC>

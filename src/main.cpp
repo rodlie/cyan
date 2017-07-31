@@ -1,6 +1,6 @@
 /*
-* Cyan <https://github.com/olear/cyan>,
-* Copyright (C) 2016 Ole-André Rodlie
+* Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+* Copyright (C) 2016, 2017 Ole-André Rodlie
 *
 * Cyan is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2 as published
@@ -18,40 +18,12 @@
 #include "cyan.h"
 #include <QApplication>
 
-#if QT_VERSION >= 0x050000
-void msgLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
-    QByteArray localMsg = msg.toLocal8Bit();
-    switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtInfoMsg:
-        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        abort();
-    }
-}
-#endif
-
 int main(int argc, char *argv[])
 {
-#if QT_VERSION >= 0x050000
-#ifdef QT_DEBUG
-    qInstallMessageHandler(msgLog);
-#endif
-#endif
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Cyan");
     QCoreApplication::setOrganizationName("Cyan");
+    QCoreApplication::setOrganizationDomain("net.fxarena");
     QCoreApplication::setApplicationVersion(CYAN_VERSION);
     Cyan w;
     w.show();

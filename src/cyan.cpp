@@ -1,6 +1,6 @@
 /*
-* Cyan <https://github.com/olear/cyan>,
-* Copyright (C) 2016 Ole-André Rodlie
+* Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+* Copyright (C) 2016, 2017 Ole-André Rodlie
 *
 * Cyan is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2 as published
@@ -45,7 +45,7 @@ CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 void CyanView::wheelEvent(QWheelEvent* event) {
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     double scaleFactor = 1.15;
-    if(event->delta() > 0) { // up
+    if (event->delta() > 0) { // up
         fit = false;
         scale(scaleFactor, scaleFactor);
         emit myZoom(scaleFactor, scaleFactor);
@@ -236,9 +236,19 @@ Cyan::Cyan(QWidget *parent)
     , currentImageNewProfile(0)
     , exportEmbeddedProfileAction(0)
     , bitDepth(0)
-    , convertAdv(0)
     , cmyLevel(0)
     , kLevel(0)
+    , inkDensity(0)
+    , cmykBar(0)
+    , colorCyanMin(0)
+    , colorCyanMax(0)
+    , colorMagentaMin(0)
+    , colorMagentaMax(0)
+    , colorYellowMin(0)
+    , colorYellowMax(0)
+    , colorBlackMin(0)
+    , colorBlackMax(0)
+    , progBar(0)
 {
     qApp->setStyle(QStyleFactory::create("fusion"));
 
@@ -275,6 +285,7 @@ Cyan::Cyan(QWidget *parent)
     mainBar = new QToolBar();
     convertBar = new QToolBar();
     profileBar = new QToolBar();
+    cmykBar = new QToolBar();
 
     mainBar->setObjectName("MainToolbar");
     mainBar->setWindowTitle(tr("Toolbar"));
@@ -285,9 +296,15 @@ Cyan::Cyan(QWidget *parent)
     profileBar->setObjectName("ColorManagement");
     profileBar->setWindowTitle(tr("Color Management"));
 
+    cmykBar->setObjectName("CMYK");
+    cmykBar->setWindowTitle(tr("CMYK"));
+
     addToolBar(Qt::TopToolBarArea, mainBar);
     addToolBar(Qt::TopToolBarArea, convertBar);
+    addToolBar(Qt::TopToolBarArea, cmykBar);
     addToolBar(Qt::BottomToolBarArea, profileBar);
+
+    insertToolBarBreak(cmykBar);
 
     rgbProfile = new QComboBox();
     cmykProfile = new QComboBox();
@@ -298,9 +315,9 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent = new QComboBox();
     blackPoint = new QCheckBox();
     bitDepth = new QComboBox();
-    convertAdv = new QCheckBox();
-    cmyLevel = new QSpinBox();
-    kLevel = new QSpinBox();
+    cmyLevel = new QDoubleSpinBox();
+    kLevel = new QDoubleSpinBox();
+    progBar = new QProgressBar();
 
     rgbProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     cmykProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -310,11 +327,15 @@ Cyan::Cyan(QWidget *parent)
     monitorProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     renderingIntent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     bitDepth->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    progBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     cmyLevel->setMaximum(100);
     cmyLevel->setMinimum(0);
     kLevel->setMaximum(100);
     kLevel->setMinimum(0);
+    progBar->setMaximumWidth(75);
+    progBar->setRange(0,0);
+    progBar->hide();
 
     QIcon bitDepthIcon(":/cyan-display.png");
     bitDepth->addItem(bitDepthIcon, tr("Default"));
@@ -345,9 +366,23 @@ Cyan::Cyan(QWidget *parent)
     QLabel *cmykLabel = new QLabel();
     QLabel *grayLabel = new QLabel();
     QLabel *bitDepthLabel = new QLabel();
-    QLabel *convertAdvLabel = new QLabel();
+    QLabel *colorCyanLabel = new QLabel();
+    QLabel *colorMagentaLabel = new QLabel();
+    QLabel *colorYellowLabel = new QLabel();
+    QLabel *colorBlackLabel = new QLabel();
+    QLabel *inkDensityLabel = new QLabel();
+
     cmyLevelLabel = new QLabel();
     kLevelLabel = new QLabel();
+    inkDensity = new QLabel();
+    colorCyanMin = new QLabel();
+    colorCyanMax = new QLabel();
+    colorMagentaMin = new QLabel();
+    colorMagentaMax = new QLabel();
+    colorYellowMin = new QLabel();
+    colorYellowMax = new QLabel();
+    colorBlackMin = new QLabel();
+    colorBlackMax = new QLabel();
 
     inputLabel->setText(tr("Input"));
     outputLabel->setText(tr("Output"));
@@ -358,9 +393,29 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setText(tr("CMYK"));
     grayLabel->setText(tr("GRAY"));
     bitDepthLabel->setText(tr("Depth"));
-    convertAdvLabel->setText(tr("Advanced"));
-    cmyLevelLabel->setText(tr("C/M/Y Add"));
-    kLevelLabel->setText(tr("K Substract"));
+    colorCyanLabel->setText(tr("Cyan"));
+    colorCyanLabel->setPixmap(QPixmap::fromImage(QImage(":/cyan-color.png")));
+    colorMagentaLabel->setText(tr("Magenta"));
+    colorMagentaLabel->setPixmap(QPixmap::fromImage(QImage(":/magenta-color.png")));
+    colorYellowLabel->setText(tr("Yellow"));
+    colorYellowLabel->setPixmap(QPixmap::fromImage(QImage(":/yellow-color.png")));
+    colorBlackLabel->setText(tr("Black"));
+    colorBlackLabel->setPixmap(QPixmap::fromImage(QImage(":/black-color.png")));
+    inkDensityLabel->setPixmap(QPixmap::fromImage(QImage(":/ink.png")));
+
+    cmyLevelLabel->setText(tr("Color Add"));
+    cmyLevelLabel->setPixmap(QPixmap::fromImage(QImage(":/cmy-color.png")));
+    kLevelLabel->setText(tr("Black Substract"));
+    kLevelLabel->setPixmap(QPixmap::fromImage(QImage(":/black-color.png")));
+    inkDensity->setText(tr("N/A"));
+    colorCyanMin->setText(tr("Min: N/A"));
+    colorCyanMax->setText(tr("Max: N/A"));
+    colorMagentaMin->setText(tr("Min: N/A"));
+    colorMagentaMax->setText(tr("Max: N/A"));
+    colorYellowMin->setText(tr("Min: N/A"));
+    colorYellowMax->setText(tr("Max: N/A"));
+    colorBlackMin->setText(tr("Min: N/A"));
+    colorBlackMax->setText(tr("Max: N/A"));
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -371,9 +426,14 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setToolTip(tr("Default CMYK profile, used when image don't have an embedded profile"));
     grayLabel->setToolTip(tr("Default GRAY profile, used when image don't have an embedded profile"));
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
-    convertAdvLabel->setToolTip(tr("Enable/disable advanced options"));
-    cmyLevelLabel->setToolTip(tr("Adjust CMY levels (Add) in percent. Only for CMYK output."));
-    kLevelLabel->setToolTip(tr("Adjust K levels in (Substract) percent. Only for CMYK output."));
+    colorCyanLabel->setToolTip(tr("Cyan"));
+    colorMagentaLabel->setToolTip(tr("Magenta"));
+    colorYellowLabel->setToolTip(tr("Yellow"));
+    colorBlackLabel->setToolTip(tr("Black"));
+    inkDensityLabel->setToolTip(tr("Ink density"));
+
+    cmyLevelLabel->setToolTip(tr("Adjust CMY levels (Add) in percent."));
+    kLevelLabel->setToolTip(tr("Adjust K levels in (Substract) percent."));
 
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
@@ -382,12 +442,6 @@ Cyan::Cyan(QWidget *parent)
     convertBar->addWidget(outputProfile);
     convertBar->addWidget(bitDepthLabel);
     convertBar->addWidget(bitDepth);
-    convertBar->addWidget(convertAdvLabel);
-    convertBar->addWidget(convertAdv);
-    convertBar->addWidget(cmyLevelLabel);
-    convertBar->addWidget(cmyLevel);
-    convertBar->addWidget(kLevelLabel);
-    convertBar->addWidget(kLevel);
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
@@ -409,6 +463,33 @@ Cyan::Cyan(QWidget *parent)
         profileBar->addWidget(blackLabel);
         profileBar->addWidget(blackPoint);
     }
+
+    profileBar->addSeparator();
+    profileBar->addWidget(progBar);
+
+    cmykBar->addWidget(colorCyanLabel);
+    cmykBar->addWidget(colorCyanMin);
+    cmykBar->addWidget(colorCyanMax);
+    cmykBar->addSeparator();
+    cmykBar->addWidget(colorMagentaLabel);
+    cmykBar->addWidget(colorMagentaMin);
+    cmykBar->addWidget(colorMagentaMax);
+    cmykBar->addSeparator();
+    cmykBar->addWidget(colorYellowLabel);
+    cmykBar->addWidget(colorYellowMin);
+    cmykBar->addWidget(colorYellowMax);
+    cmykBar->addSeparator();
+    cmykBar->addWidget(colorBlackLabel);
+    cmykBar->addWidget(colorBlackMin);
+    cmykBar->addWidget(colorBlackMax);
+    cmykBar->addSeparator();
+    cmykBar->addWidget(inkDensityLabel);
+    cmykBar->addWidget(inkDensity);
+    cmykBar->addSeparator();
+    cmykBar->addWidget(cmyLevelLabel);
+    cmykBar->addWidget(cmyLevel);
+    cmykBar->addWidget(kLevelLabel);
+    cmykBar->addWidget(kLevel);
 
     mainBarLoadButton = new QPushButton();
     mainBarSaveButton = new QPushButton();
@@ -492,11 +573,13 @@ Cyan::Cyan(QWidget *parent)
 
     connect(profileDialog.profileSaveButton, SIGNAL(released()), this, SLOT(saveProfile()));
 
-    connect(convertAdv, SIGNAL(toggled(bool)), this, SLOT(triggerConvertAdv(bool)));
+    connect(cmyLevel, SIGNAL(editingFinished()), this, SLOT(updateImage()));
+    connect(kLevel, SIGNAL(editingFinished()), this, SLOT(updateImage()));
+
+    connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
+    connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
 
     setStyleSheet("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;}");
-
-    triggerConvertAdv(false);
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
@@ -594,13 +677,13 @@ void Cyan::aboutCyan()
     aboutCyan.setTextFormat(Qt::RichText);
     aboutCyan.setWindowTitle(tr("About")+" " + qApp->applicationName() + " " + qApp->applicationVersion());
     aboutCyan.setIconPixmap(QPixmap::fromImage(QImage(":/cyan.png")));
-    aboutCyan.setText("<h1>" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><p>Prepress image viewer and converter.</p>");
+    aboutCyan.setText("<h1>" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><p>Prepress Toolkit.</p>");
 
     QString infoText = "<p>Copyright &copy;2016, 2017 <a href=\"mailto:olear@fxarena.net\">Ole-Andr&eacute; Rodlie</a>. All rights reserved.</p><p>Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.<br><br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>";
     infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License.</p>");
     infoText.append(proc.version());
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
-    infoText.append("<p>Visit <a href=\"https://github.com/olear/cyan\">github.com/olear/cyan</a> for news and updates.</p>");
+    infoText.append("<p>Visit <a href=\"http://cyan.fxarena.net\">cyan.fxarena.net</a> or <a href=\"https://github.com/olear/cyan\">github.com/olear/cyan</a> for news and updates.</p>");
     aboutCyan.setInformativeText(infoText);
 
     QString detailedText;
@@ -635,9 +718,10 @@ void Cyan::openImageDialog()
 
     file = QFileDialog::getOpenFileName(this, tr("Open image"), dir, tr("Image files (*.png *.jpg *.jpeg *.tif *.tiff *.psd *.icc *.icm)"));
     if (!file.isEmpty()) {
-        if (file.contains(QRegExp("(.icc|.icm)",Qt::CaseInsensitive))) {
+        QString suffix = QFileInfo(file).suffix().toUpper();
+        if (suffix == "ICC" || suffix == "ICM") {
             openProfile(file);
-        } else {
+        } else if (suffix == "PNG" || suffix == "JPG" || suffix == "JPEG" || suffix == "TIF" || suffix == "TIFF" || suffix == "PSD") {
             openImage(file);
         }
         QFileInfo imageFile(file);
@@ -714,6 +798,12 @@ void Cyan::saveImage(QString file)
         adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
         adjust.depth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
+        if (/*myLevel->isEnabled() &&*/ cmyLevel->value() > 0.0) {
+            adjust.cmyLevel = cmyLevel->value();
+        }
+        if (/*kLevel->isEnabled() &&*/ kLevel->value() > 0.0) {
+            adjust.kLevel = kLevel->value();
+        }
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
         if (!selectedInputProfile.isEmpty()) {
@@ -897,7 +987,7 @@ void Cyan::updateMonitorDefaultProfile(int index)
 void Cyan::getImage(magentaImage result)
 {
     enableUI();
-    if (result.saved && result.error.isEmpty() && result.warning.isEmpty()) {
+    if (result.saved && result.error.isEmpty() /*&& result.warning.isEmpty()*/) {
         QFileInfo imageFile(result.filename);
         if (imageFile.exists()) {
             if (lockedSaveFileName.isEmpty()) {
@@ -909,7 +999,43 @@ void Cyan::getImage(magentaImage result)
             QMessageBox::warning(this, tr("Failed to save image"), tr("Failed to save image to disk"));
         }
     }
-    if (result.error.isEmpty() && result.warning.isEmpty() && result.data.length() > 0 && result.profile.length() > 0) {
+    if (!result.warning.isEmpty()) {
+        QMessageBox::warning(this, tr("Cyan Warning"), result.warning);
+    }
+    if (result.error.isEmpty() && result.data.length() > 0 && result.profile.length() > 0) {
+        if (result.inkDensity>0.0) {
+            QString inkValue = QString::number(result.inkDensity);
+            inkValue.append("%");
+            inkDensity->setText(inkValue);
+        }
+        if (result.cyanMin > -1 && result.cyanMax > -1) {
+            colorCyanMin->setText(tr("Min: ") + QString::number(result.cyanMin));
+            colorCyanMax->setText(tr("Max: ") + QString::number(result.cyanMax));
+        } else {
+            colorCyanMin->setText(tr("Min: N/A"));
+            colorCyanMax->setText(tr("Max: N/A"));
+        }
+        if (result.magentaMin > -1 && result.magentaMax > -1) {
+            colorMagentaMin->setText(tr("Min: ") + QString::number(result.magentaMin));
+            colorMagentaMax->setText(tr("Max: ") + QString::number(result.magentaMax));
+        } else {
+            colorMagentaMin->setText(tr("Min: N/A"));
+            colorMagentaMax->setText(tr("Max: N/A"));
+        }
+        if (result.yellowMin > -1 && result.yellowMax > -1) {
+            colorYellowMin->setText(tr("Min: ") + QString::number(result.yellowMin));
+            colorYellowMax->setText(tr("Max: ") + QString::number(result.yellowMax));
+        } else {
+            colorYellowMin->setText(tr("Min: N/A"));
+            colorYellowMax->setText(tr("Max: N/A"));
+        }
+        if (result.blackMin > -1 && result.blackMax > -1) {
+            colorBlackMin->setText(tr("Min: ") + QString::number(result.blackMin));
+            colorBlackMax->setText(tr("Max: ") + QString::number(result.blackMax));
+        } else {
+            colorBlackMin->setText(tr("Min: N/A"));
+            colorBlackMax->setText(tr("Max: N/A"));
+        }
         if (!result.preview) {
             imageClear();
             currentImageData = result.data;
@@ -943,9 +1069,6 @@ void Cyan::getImage(magentaImage result)
         if (!result.error.isEmpty()) {
             QMessageBox::warning(this, tr("Cyan Error"), result.error);
         }
-        if (!result.warning.isEmpty()) {
-            QMessageBox::warning(this, tr("Cyan Warning"), result.warning);
-        }
         if (!result.saved) {
             imageClear();
         }
@@ -963,6 +1086,17 @@ void Cyan::imageClear()
     mainBarSaveButton->setDisabled(true);
     saveImageAction->setDisabled(true);
     exportEmbeddedProfileAction->setDisabled(true);
+    colorCyanMin->setText(tr("Min: N/A"));
+    colorCyanMax->setText(tr("Max: N/A"));
+    colorMagentaMin->setText(tr("Min: N/A"));
+    colorMagentaMax->setText(tr("Max: N/A"));
+    colorYellowMin->setText(tr("Min: N/A"));
+    colorYellowMax->setText(tr("Max: N/A"));
+    colorBlackMin->setText(tr("Min: N/A"));
+    colorBlackMax->setText(tr("Max: N/A"));
+    inkDensity->setText(tr("N/A"));
+    cmyLevel->setValue(0.0);
+    kLevel->setValue(0.0);
 }
 
 void Cyan::resetImageZoom()
@@ -994,6 +1128,13 @@ void Cyan::updateImage()
         adjust.hue = 100;
         adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
+        if (cmyLevel->value() > 0.0) {
+            adjust.cmyLevel = cmyLevel->value();
+        }
+        if (kLevel->value() > 0.0) {
+            adjust.kLevel = kLevel->value();
+        }
+
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
         if (!selectedInputProfile.isEmpty()) {
@@ -1098,9 +1239,8 @@ void Cyan::getConvertProfiles()
     }
 }
 
-void Cyan::inputProfileChanged(int index)
+void Cyan::inputProfileChanged(int)
 {
-    Q_UNUSED(index)
     QFile inputProfileName(inputProfile->itemData(inputProfile->currentIndex()).toString());
     if (inputProfileName.open(QIODevice::ReadOnly)) {
         currentImageNewProfile = inputProfileName.readAll();
@@ -1110,9 +1250,8 @@ void Cyan::inputProfileChanged(int index)
     updateImage();
 }
 
-void Cyan::outputProfileChanged(int index)
+void Cyan::outputProfileChanged(int)
 {
-    Q_UNUSED(index)
     handleSaveState();
     updateImage();
 }
@@ -1123,6 +1262,8 @@ void Cyan::enableUI()
     mainBar->setEnabled(true);
     convertBar->setEnabled(true);
     profileBar->setEnabled(true);
+    cmykBar->setEnabled(true);
+    profileBar->actions().at(18)->setVisible(false);
 }
 
 void Cyan::disableUI()
@@ -1131,6 +1272,8 @@ void Cyan::disableUI()
     mainBar->setDisabled(true);
     convertBar->setDisabled(true);
     profileBar->setDisabled(true);
+    cmykBar->setDisabled(true);
+    profileBar->actions().at(18)->setVisible(true);
 }
 
 void Cyan::exportEmbeddedProfileDialog()
@@ -1239,6 +1382,7 @@ void Cyan::bitDepthChanged(int index)
 {
     Q_UNUSED(index)
     handleSaveState();
+    updateImage();
 }
 
 void Cyan::gimpPlugin()
@@ -1379,21 +1523,17 @@ void Cyan::saveProfile()
     }
 }
 
-void Cyan::triggerConvertAdv(bool show)
+void Cyan::handleConvertAdv()
 {
-    if (show) {
-        convertBar->actions().at(9)->setVisible(true);
-        convertBar->actions().at(10)->setVisible(true);
-        convertBar->actions().at(11)->setVisible(true);
-        convertBar->actions().at(12)->setVisible(true);
-        cmyLevel->setEnabled(true);
-        kLevel->setEnabled(true);
-    } else {
-        convertBar->actions().at(9)->setVisible(false);
-        convertBar->actions().at(10)->setVisible(false);
-        convertBar->actions().at(11)->setVisible(false);
-        convertBar->actions().at(12)->setVisible(false);
-        cmyLevel->setDisabled(true);
-        kLevel->setDisabled(true);
-    }
+    updateImage();
+}
+
+void Cyan::renderingIntentUpdated(int)
+{
+    updateImage();
+}
+
+void Cyan::blackPointUpdated(int)
+{
+    updateImage();
 }

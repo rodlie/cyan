@@ -1,6 +1,6 @@
 /*
-* Cyan <https://github.com/olear/cyan>,
-* Copyright (C) 2016 Ole-André Rodlie
+* Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+* Copyright (C) 2016, 2017 Ole-André Rodlie
 *
 * Cyan is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2 as published
@@ -33,21 +33,32 @@ struct magentaImage {
     QString error;
     QString warning;
     QString filename;
-    bool preview;
-    bool saved;
-    bool hasProfile;
-    int colorspace;
-    int width;
-    int height;
+    bool preview = false;
+    bool saved = false;
+    bool hasProfile = false;
+    int colorspace = 0;
+    int width = 0;
+    int height = 0;
+    double inkDensity = 0.0;
+    double cyanMin = -1.0;
+    double cyanMax = -1.0;
+    double magentaMin = -1.0;
+    double magentaMax = -1.0;
+    double yellowMin = -1.0;
+    double yellowMax = -1.0;
+    double blackMin = -1.0;
+    double blackMax = -1.0;
 };Q_DECLARE_METATYPE(magentaImage)
 
 struct magentaAdjust {
-    double brightness;
-    double saturation;
-    double hue;
-    int intent;
-    bool black;
-    int depth;
+    double brightness = 100.0;
+    double saturation = 100.0;
+    double hue = 100.0;
+    int intent = 0;
+    bool black = false;
+    int depth = 0;
+    double cmyLevel = 0.0;
+    double kLevel = 0.0;
 };Q_DECLARE_METATYPE(magentaAdjust)
 
 class Magenta : public QObject

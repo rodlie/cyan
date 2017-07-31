@@ -19,3 +19,4 @@ sdk
 *.zip
 CHANGES
 ChangeLog
+.DS_Store

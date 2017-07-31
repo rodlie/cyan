@@ -1,8 +1,25 @@
-Summary: Prepress viewer and converter
+#
+# Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+# Copyright (C) 2016, 2017 Ole-André Rodlie
+#
+# Cyan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as published
+# by the Free Software Foundation.
+#
+# Cyan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
+#
+
+Summary: Prepress Toolkit
 Name: Cyan
 
 Version: 1.0.0
-Release: 1.el7.centos7.fedora19
+Release: 1.el7.centos7.fedora19.qt4
 License: GPLv2
 
 Group: System Environment/Base
@@ -16,7 +33,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: zlib-devel lcms2-devel libpng-devel libtiff-devel libjpeg-turbo-devel gcc-c++ qt-devel bzip2-devel
 
 %description
-Prepress viewer and converter.
+Open-source cross-platform prepress toolkit.
 
 %prep
 %setup

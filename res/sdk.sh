@@ -1,6 +1,7 @@
 #!/bin/sh
-# Cyan <https://github.com/olear/cyan>,
-# Copyright (C) 2016, 2017 Ole-André Rodlie <olear@fxarena.net>
+#
+# Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+# Copyright (C) 2016, 2017 Ole-André Rodlie
 #
 # Cyan is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as published
@@ -13,6 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
+#
 
 ZLIB=1.2.11
 TJPEG=1.5.2
@@ -20,7 +22,7 @@ JPEG=9b
 TIFF=4.0.8
 PNG=1.6.30
 LCMS=2.8
-MAGICK=6.9.0-0
+MAGICK=6.9.0-0 #7.0.6-4
 QT=5.6.2
 OSX_MIN=10.9
 JOBS=4

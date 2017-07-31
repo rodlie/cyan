@@ -1,6 +1,6 @@
 /*
-* Cyan <https://github.com/olear/cyan>,
-* Copyright (C) 2016 Ole-André Rodlie
+* Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
+* Copyright (C) 2016, 2017 Ole-André Rodlie
 *
 * Cyan is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2 as published
@@ -18,7 +18,13 @@
 #include "magenta.h"
 #include <QCoreApplication>
 #include <QDir>
-#include <magick/version.h>
+//#include <magick/version.h>
+//#include <magick/statistic.h>
+#ifdef MAGICK7
+#include <MagickCore/MagickCore.h>
+#include <MagickWand/MagickWand.h>
+#endif
+#include <QDebug>
 
 #ifdef GMAGICK
 #define PROFILE "ICM"
@@ -49,6 +55,7 @@ void Magenta::requestImage(bool isPreview, bool doSave, QString file, QByteArray
 magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit)
 {
     magentaImage result;
+    //result.inkDensity = 0.0;
     Magick::Blob outputImage;
     QByteArray outputProfile;
     int outputColorSpace;
@@ -60,7 +67,16 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             Magick::Blob imageData(data.data(),data.length());
             image.read(imageData);
         }
+    }
+    catch(Magick::Error &error_ ) {
+        result.error.append(error_.what());
+        return result;
+    }
+    catch(Magick::Warning &warn_ ) {
+        result.warning.append(warn_.what());
+    }
 
+    try {
         if (image.iccColorProfile().length() > 0) {
             result.hasProfile = true;
         } else {
@@ -71,6 +87,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.depth(edit.depth);
         }
 
+/*
 #ifdef MAGICK7
         if (!image.alpha()) {
             image.alpha(true);
@@ -80,7 +97,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.matte(true);
         }
 #endif
-
+*/
         switch(image.colorSpace()) {
         case Magick::CMYKColorspace:
             outputColorSpace=2;
@@ -139,6 +156,96 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             Magick::Blob destProfile(outprofile.data(), outprofile.length());
             image.profile(PROFILE,destProfile);
         }
+
+        if (image.colorSpace() == Magick::CMYKColorspace) {
+            if (edit.cmyLevel>0.0 && edit.cmyLevel <=100.0) {
+                double value = edit.cmyLevel/100;
+                QString fxValue = "u+";
+                fxValue.append(QString::number(value));
+                image.fx(fxValue.toStdString().c_str(), Magick::CyanChannel);
+                image.fx(fxValue.toStdString().c_str(), Magick::MagentaChannel);
+                image.fx(fxValue.toStdString().c_str(), Magick::YellowChannel);
+/*
+#ifdef MAGICK7
+                image.evaluate(Magick::CyanChannel, Magick::AddEvaluateOperator,  value);
+                image.evaluate(Magick::MagentaChannel, Magick::AddEvaluateOperator,  value);
+                image.evaluate(Magick::YellowChannel, Magick::AddEvaluateOperator,  value);
+#else
+                image.quantumOperator(Magick::CyanChannel, Magick::AddEvaluateOperator, value);
+                image.quantumOperator(Magick::MagentaChannel, Magick::AddEvaluateOperator, value);
+                image.quantumOperator(Magick::YellowChannel, Magick::AddEvaluateOperator, value);
+#endif
+*/
+            }
+            if (edit.kLevel >0.0 && edit.kLevel <=100.0) {
+                double value = edit.kLevel/100;
+                QString fxValue = "u-";
+                fxValue.append(QString::number(value));
+                image.fx(fxValue.toStdString().c_str(), Magick::BlackChannel);
+/*
+#ifdef MAGICK7
+                image.evaluate(Magick::BlackChannel, Magick::SubtractEvaluateOperator, value);
+#else
+                image.quantumOperator(Magick::BlackChannel, Magick::SubtractEvaluateOperator, value);
+#endif
+*/
+            }
+#ifdef MAGICK7
+            /// Channel Statistic in MagickCore and Magick++ is broken in v7
+            Magick::ExceptionInfo exception;
+            result.inkDensity = 100.0 * MagickCore::GetImageTotalInkDensity(image.image(), &exception) / (double)QuantumRange;
+
+            Magick::ImageStatistics stats = image.statistics();
+            Magick::ChannelStatistics cyan = stats.channel(Magick::CyanPixelChannel);
+            Magick::ChannelStatistics magenta = stats.channel(Magick::MagentaPixelChannel);
+            Magick::ChannelStatistics yellow = stats.channel(Magick::YellowPixelChannel);
+            Magick::ChannelStatistics black = stats.channel(Magick::BlackPixelChannel);
+
+            qDebug() << "cyan channel min max" << cyan.minima()) / (double)QuantumRange << ((double)QuantumRange-cyan.maxima())/ (double)QuantumRange;
+            qDebug() << "magenta channel min max" << magenta.minima()) / (double)QuantumRange << magenta.maxima()) / (double)QuantumRange;
+            qDebug() << "yellow channel min max" << yellow.minima()) / (double)QuantumRange << yellow.maxima()) / (double)QuantumRange;
+            qDebug() << "black channel min max" << black.minima()) / (double)QuantumRange << black.maxima()) / (double)QuantumRange;
+#else
+            result.inkDensity = 100.0 * MagickCore::GetImageTotalInkDensity(image.image()) / (double)QuantumRange;
+
+            MagickCore::ExceptionInfo exception;
+            MagickCore::ChannelStatistics *stats = MagickCore::GetImageChannelStatistics(image.image(), &exception);
+            result.cyanMin = stats[MagickCore::CyanChannel].minima/(double)QuantumRange;
+            result.cyanMax = stats[MagickCore::CyanChannel].maxima/(double)QuantumRange;
+            result.magentaMin = stats[MagickCore::MagentaChannel].minima/(double)QuantumRange;
+            result.magentaMax = stats[MagickCore::MagentaChannel].maxima/(double)QuantumRange;
+            result.yellowMin = stats[MagickCore::YellowChannel].minima/(double)QuantumRange;
+            result.yellowMax = stats[MagickCore::YellowChannel].maxima/(double)QuantumRange;
+            result.blackMin = stats[MagickCore::BlackChannel].minima/(double)QuantumRange;
+            result.blackMax = stats[MagickCore::BlackChannel].maxima/(double)QuantumRange;
+            if (result.cyanMin < 0) {
+                result.cyanMin = 0;
+            }
+            if (result.magentaMin < 0) {
+                result.magentaMin = 0;
+            }
+            if (result.yellowMin < 0) {
+                result.yellowMin = 0;
+            }
+            if (result.blackMin < 0) {
+                result.blackMin = 0;
+            }
+            if (result.cyanMax > 1) {
+                result.cyanMax = 1;
+            }
+            if (result.magentaMax > 1) {
+                result.magentaMax = 1;
+            }
+            if (result.yellowMax > 1) {
+                result.yellowMax = 1;
+            }
+            if (result.blackMax > 1) {
+                result.blackMax = 1;
+            }
+            free(stats);
+#endif
+        }
+
         if (monitorprofile.length() > 0 && isPreview) {
             Magick::Blob proofProfile(monitorprofile.data(), monitorprofile.length());
             image.profile(PROFILE,proofProfile);
@@ -159,18 +266,18 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 
         if (doSave) {
             image.magick("TIF");
-            QString comment = QCoreApplication::applicationName() + " " + QCoreApplication::applicationVersion() + " https://github.com/olear/cyan";
+            QString comment = QCoreApplication::applicationName() + " " + QCoreApplication::applicationVersion() + " <http://cyan.fxarena.net>";
             image.comment(comment.toStdString());
             image.write(file.toUtf8().data());
             result.saved = true;
         } else {
-            result.saved = false;
             image.strip();
             image.write(&outputImage);
         }
     }
     catch(Magick::Error &error_ ) {
         result.error.append(error_.what());
+        return result;
     }
     catch(Magick::Warning &warn_ ) {
         result.warning.append(warn_.what());
@@ -215,7 +322,7 @@ QString Magenta::version()
     result.append(MagickCopyright);
     result.append("<br>");
 #ifndef GMAGICK
-    result.append("ImageMagick is licenced under the <a href=\"https://www.imagemagick.org/script/license.php\">Apache 2.0 license</a>.<br>");
+    result.append("ImageMagick is distributed under the <a href=\"https://www.imagemagick.org/script/license.php\">Apache 2.0 license</a>.<br>");
     QString magickFeatures = QString::fromStdString(MagickCore::GetMagickFeatures());
     QString magickDelegates = QString::fromStdString(MagickCore::GetMagickDelegates());
     result.append("<small><i>" + magickFeatures + " " + magickDelegates + "</i></small>");

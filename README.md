@@ -1,6 +1,6 @@
 ![cyan](https://github.com/olear/cyan/raw/master/res/cyan-header.png)
 # Cyan
-Prepress viewer and converter.
+Free cross-platform prepress toolkit.
 
 # Features
 
@@ -12,7 +12,7 @@ Prepress viewer and converter.
 * Edit ICC color profiles
 * Convert to and from RGB/CMYK/GRAY
 * Change image bit depth
-* GIMP 2.x integration (Prepress workflow)
+* GIMP integration (import/export)
 
 # Requirements
 
@@ -27,10 +27,8 @@ System requirements for downloads:
 
 Build requirements:
 
-* ImageMagick/GraphicsMagick (Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
-  * Add CONFIG+=gmagick to build against GraphicsMagick (missing black point, not supported)
-  * Add CONFIG+=magick7 to build against ImageMagick 7 (only for testing, not supported)
-  * ImageMagick 6.9.0-0 is the only certified cross-platform version compatible with Cyan.
+* ImageMagick (MagickCore/Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
+  * 6.9.0-0 is the only supported version, other versions may behave differently.
 * LCMS 2.x
 * Qt 4/5 (Core/GUI with PNG/TIFF support)
 
