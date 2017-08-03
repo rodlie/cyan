@@ -19,7 +19,7 @@ QT += core gui xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Cyan
-VERSION = 1.0.9.1
+VERSION = 1.1.0
 
 TEMPLATE = app
 

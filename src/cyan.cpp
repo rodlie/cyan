@@ -1406,6 +1406,15 @@ void Cyan::exportEmbeddedProfile(QString file)
 
 bool Cyan::imageModified()
 {
+    QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
+    if (colorFilterItem) {
+        if (!colorFilterItem->data(32).toString().isEmpty()) {
+            QString clut = colorFilterItem->data(32).toString();
+            if (!clut.isEmpty()) {
+                return true;
+            }
+        }
+    }
     if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
         return true;
     }
