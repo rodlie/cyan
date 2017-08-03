@@ -44,6 +44,7 @@
 #endif
 
 #define COLOR_FILTER_ITEM_DATA 32
+#define BLACKPOINT_CHECKBOX_LOCATION 18
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
@@ -660,9 +661,18 @@ void Cyan::readConfig()
     loadColorFilters();
     gimpPlugin();
 
-    if (proc.quantumDepth() < 32) {
-        QMessageBox::warning(this, tr("Cyan Quantum Depth"), tr("Quantum depth 32 is missing from backend, you will not be able to handle 32-bit images."));
+    bool bitDepthNoWarn = false;
+    settings.beginGroup("default");
+    if (settings.value("nowarning_bitdepth").isValid()) {
+        bitDepthNoWarn = settings.value("nowarning_bitdepth").toBool();
     }
+    if (!bitDepthNoWarn) {
+        if (proc.quantumDepth() < 32) {
+            QMessageBox::warning(this, tr("Cyan Quantum Depth"), tr("Quantum depth 32 is missing from backend, you will not be able to handle 32-bit images."));
+            settings.setValue("nowarning_bitdepth",true);
+        }
+    }
+    settings.endGroup();
 
     QStringList args = qApp->arguments();
     bool foundArg1 = false;
@@ -855,10 +865,10 @@ void Cyan::saveImage(QString file)
         adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
         adjust.depth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
-        if (/*myLevel->isEnabled() &&*/ cmyLevel->value() > 0.0) {
+        if (cmyLevel->value() > 0.0) {
             adjust.cmyLevel = cmyLevel->value();
         }
-        if (/*kLevel->isEnabled() &&*/ kLevel->value() > 0.0) {
+        if (kLevel->value() > 0.0) {
             adjust.kLevel = kLevel->value();
         }
         QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
@@ -1343,7 +1353,7 @@ void Cyan::enableUI()
     convertBar->setEnabled(true);
     profileBar->setEnabled(true);
     cmykBar->setEnabled(true);
-    profileBar->actions().at(18)->setVisible(false);
+    profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(false);
     colorFilterDock->setEnabled(true);
 }
 
@@ -1354,7 +1364,7 @@ void Cyan::disableUI()
     convertBar->setDisabled(true);
     profileBar->setDisabled(true);
     cmykBar->setDisabled(true);
-    profileBar->actions().at(18)->setVisible(true);
+    profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(true);
     colorFilterDock->setDisabled(true);
 }
 
@@ -1631,7 +1641,6 @@ void Cyan::blackPointUpdated(int)
 
 void Cyan::loadColorFilters()
 {
-    qDebug() << "loading color filters";
     if (proc.colorFiltersPath().isEmpty()) {
         return;
     }
@@ -1661,7 +1670,6 @@ void Cyan::loadColorFilters()
         }
     }
     categories.removeDuplicates();
-    qDebug() << categories;
     for (int i = 0; i < categories.size(); i++) {
         QString catData = categories.at(i);
         QString catTitle = catData;
