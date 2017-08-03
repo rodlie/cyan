@@ -23,6 +23,11 @@
 #include <QStringList>
 #include <QByteArray>
 
+#define NO_COLORSPACE 0
+#define RGB_COLORSPACE 1
+#define CMYK_COLORSPACE 2
+#define GRAY_COLORSPACE 3
+
 class Yellow : public QObject
 {
     Q_OBJECT

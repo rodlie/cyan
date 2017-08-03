@@ -100,22 +100,22 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 */
         switch(image.colorSpace()) {
         case Magick::CMYKColorspace:
-            outputColorSpace=2;
+            outputColorSpace = CMYK_COLORSPACE;
             break;
         case Magick::GRAYColorspace:
-            outputColorSpace=3;
+            outputColorSpace = GRAY_COLORSPACE;
             break;
         case Magick::RGBColorspace:
-            outputColorSpace=1;
+            outputColorSpace = RGB_COLORSPACE;
             break;
         case Magick::sRGBColorspace:
-            outputColorSpace=1;
+            outputColorSpace = RGB_COLORSPACE;
             break;
         case Magick::TransparentColorspace:
-            outputColorSpace=1;
+            outputColorSpace = RGB_COLORSPACE;
             break;
         default:
-            outputColorSpace=0;
+            outputColorSpace = NO_COLORSPACE;
         }
         result.colorspace = outputColorSpace;
 
@@ -148,13 +148,29 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         }
 #endif
 
+        // Apply source profile
         if (inprofile.length() > 0) {
             Magick::Blob sourceProfile(inprofile.data(), inprofile.length());
             image.profile(PROFILE,sourceProfile);
         }
+
+        // apply hald if source is RGB
+        bool addedHald = false;
+        if (outputColorSpace == RGB_COLORSPACE && !edit.clut.isEmpty() && !colorFiltersPath().isEmpty()) {
+            image = colorFilter(image, edit.clut);
+            addedHald = true;
+        }
+
+        // Apply destination profile
         if (outprofile.length() > 0) {
             Magick::Blob destProfile(outprofile.data(), outprofile.length());
             image.profile(PROFILE,destProfile);
+        }
+
+        // apply hald if source is CMYK, only works if destination is RGB
+        if (!addedHald && outputColorSpace == CMYK_COLORSPACE && image.colorSpace() != Magick::CMYKColorspace && !edit.clut.isEmpty() && !colorFiltersPath().isEmpty()) {
+            image = colorFilter(image, edit.clut);
+            addedHald = true;
         }
 
         if (image.colorSpace() == Magick::CMYKColorspace) {
@@ -191,7 +207,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 */
             }
 #ifdef MAGICK7
-            /// Channel Statistic in MagickCore and Magick++ is broken in v7
+            /// broken in v7
             Magick::ExceptionInfo exception;
             result.inkDensity = 100.0 * MagickCore::GetImageTotalInkDensity(image.image(), &exception) / (double)QuantumRange;
 
@@ -246,6 +262,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 #endif
         }
 
+        // Apply monitor profile at the end (if preview)
         if (monitorprofile.length() > 0 && isPreview) {
             Magick::Blob proofProfile(monitorprofile.data(), monitorprofile.length());
             image.profile(PROFILE,proofProfile);
@@ -296,6 +313,39 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 
     if (!file.isEmpty()) {
         result.filename = file;
+    }
+
+    // thumb
+    if (!doSave && !isPreview) {
+        try {
+            Magick::Blob thumb;
+            Magick::Image t_image;
+            t_image = image;
+            t_image.depth(8);
+            t_image.strip();
+            t_image.scale(Magick::Geometry(200,200));
+            if (t_image.colorSpace() == Magick::CMYKColorspace) {
+                if (inprofile.length() > 0) {
+                    Magick::Blob sourceProfile(inprofile.data(), inprofile.length());
+                    t_image.profile(PROFILE,sourceProfile);
+                } else {
+                    QByteArray srcPro = yellow.profileDefault(CMYK_COLORSPACE);
+                    Magick::Blob sourceProfile(srcPro.data(), srcPro.length());
+                    t_image.profile(PROFILE,sourceProfile);
+                }
+                QByteArray thumbProfileData = yellow.profileDefault(RGB_COLORSPACE);
+                Magick::Blob thumbProfile(thumbProfileData.data(), thumbProfileData.length());
+                t_image.profile(PROFILE,thumbProfile);
+            }
+            t_image.write(&thumb);
+            result.thumb = QByteArray((char*)thumb.data(), thumb.length());
+        }
+        catch(Magick::Error &error_ ) {
+            result.error.append(error_.what());
+        }
+        catch(Magick::Warning &warn_ ) {
+            result.warning.append(warn_.what());
+        }
     }
 
     emit returnImage(result);
@@ -359,4 +409,140 @@ int Magenta::quantumDepth()
     } else {
         return 0;
     }
+}
+
+QString Magenta::colorFiltersPath()
+{
+    QString result;
+    QString clutDirPath = qApp->applicationDirPath()+QDir::separator()+"looks";
+    QDir clutDir(clutDirPath);
+    qDebug() << clutDir.absolutePath();
+    if (clutDir.exists(clutDirPath)) {
+        result = clutDir.absolutePath()+QDir::separator();
+    } else {
+        QString user1DirPath = QDir::homePath()+QDir::separator()+".config"+QDir::separator()+"looks";
+        QDir user1Dir(user1DirPath);
+        if (user1Dir.exists(user1DirPath)) {
+            result = user1Dir.absolutePath()+QDir::separator();
+        } else {
+            QString user2DirPath = QDir::homePath()+QDir::separator()+"looks";
+            QDir user2Dir(user2DirPath);
+            if (user2Dir.exists(user2DirPath)) {
+                result = user2Dir.absolutePath()+QDir::separator();
+            }
+        }
+    }
+    return result;
+}
+
+void Magenta::requestColorPreview(QString file, QByteArray data)
+{
+    QMetaObject::invokeMethod(this,"makeColorPreview", Q_ARG(QString, file), Q_ARG(QByteArray, data));
+}
+
+magentaImage Magenta::makeColorPreview(QString file, QByteArray data)
+{
+    magentaImage result;
+    Magick::Blob outputImage;
+    bool hasAlpha = false;
+    if (!file.isEmpty() && data.length() > 0) {
+        Magick::Image image;
+        try {
+            Magick::Blob imageData(data.data(),data.length());
+            image.read(imageData);
+#ifdef MAGICK7
+            if (image.alpha()) {
+#else
+            if (image.matte()) {
+#endif
+                hasAlpha = true;
+            } else {
+#ifdef MAGICK7
+                image.alpha(true);
+#else
+                image.matte(true);
+#endif
+            }
+            if (!file.isEmpty() && !colorFiltersPath().isEmpty()) {
+                QString clutPath = colorFiltersPath() + file;
+                Magick::Image clut;
+                clut.read(clutPath.toUtf8().data());
+                if (!clut.matte()) {
+                    clut.matte(true);
+                }
+                if (clut.depth()>0) {
+                    image.haldClut(clut);
+                }
+            }
+
+            if (!hasAlpha) {
+#ifdef MAGICK7
+                image.alpha(false);
+#else
+                image.matte(false);
+#endif
+            }
+
+            if (image.depth()>8) {
+                image.depth(8);
+            }
+            image.magick("TIF");
+            image.write(&outputImage);
+        }
+        catch(Magick::Error &error_ ) {
+            result.error.append(error_.what());
+        }
+        catch(Magick::Warning &warn_ ) {
+            result.warning.append(warn_.what());
+        }
+        result.thumb = QByteArray((char*)outputImage.data(), outputImage.length());
+        result.filename = file;
+    }
+    emit returnColorPreview(result);
+    return result;
+}
+
+Magick::Image Magenta::colorFilter(Magick::Image image, QString hald)
+{
+    if (image.depth()>0 && !hald.isEmpty() && !colorFiltersPath().isEmpty()) {
+        //if (!edit.clut.isEmpty() && ) {
+            QString clutPath = colorFiltersPath() + hald;
+            Magick::Image clut;
+            clut.read(clutPath.toUtf8().data());
+            if (clut.depth()>0) {
+                bool hasAlpha = false;
+#ifdef MAGICK7
+                if (image.alpha()) {
+#else
+                if (image.matte()) {
+#endif
+                    hasAlpha = true;
+                } else {
+#ifdef MAGICK7
+                    image.alpha(true);
+#else
+                    image.matte(true);
+#endif
+                }
+#ifdef MAGICK7
+                if (!clut.alpha()) {
+                    clut.alpha(true);
+                }
+#else
+                if (!clut.matte()) {
+                    clut.matte(true);
+                }
+#endif
+                image.haldClut(clut);
+                if (!hasAlpha) {
+#ifdef MAGICK7
+                    image.alpha(false);
+#else
+                    image.matte(false);
+#endif
+                }
+            }
+        //}
+    }
+    return image;
 }

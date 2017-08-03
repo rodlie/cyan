@@ -30,6 +30,7 @@
 struct magentaImage {
     QByteArray data;
     QByteArray profile;
+    QByteArray thumb;
     QString error;
     QString warning;
     QString filename;
@@ -59,6 +60,7 @@ struct magentaAdjust {
     int depth = 0;
     double cmyLevel = 0.0;
     double kLevel = 0.0;
+    QString clut;
 };Q_DECLARE_METATYPE(magentaAdjust)
 
 class Magenta : public QObject
@@ -79,7 +81,12 @@ public slots:
     QString version();
     bool supportBlackPoint();
     int quantumDepth();
+    QString colorFiltersPath();
+    void requestColorPreview(QString file, QByteArray data);
+    magentaImage makeColorPreview(QString file, QByteArray data);
 
+    private slots:
+    Magick::Image colorFilter(Magick::Image image, QString hald);
 private:
     Yellow yellow;
     QThread t;

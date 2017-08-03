@@ -39,6 +39,8 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QProgressBar>
+#include <QDockWidget>
+#include <QListWidget>
 
 #include "yellow.h"
 #include "magenta.h"
@@ -124,6 +126,7 @@ private:
     QByteArray currentImageData;
     QByteArray currentImageProfile;
     QByteArray currentImageNewProfile;
+    QByteArray currentImageThumbnail;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
@@ -143,6 +146,9 @@ private:
     QLabel *colorBlackMin;
     QLabel *colorBlackMax;
     QProgressBar *progBar;
+    QDockWidget *colorFilterDock;
+    QListWidget *colorFilterList;
+    QComboBox *colorFilterCategory;
 
 private slots:
     void readConfig();
@@ -186,7 +192,11 @@ private slots:
     void handleConvertAdv();
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
-
+    void loadColorFilters();
+    void colorFilterListUpdate();
+    void applyColorFilterThumb(magentaImage result);
+    void colorFilterListClicked(QListWidgetItem *item);
+    void colorFilterCategoryChanged(int index);
 };
 
 #endif // CYAN_H

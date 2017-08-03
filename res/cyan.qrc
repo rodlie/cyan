@@ -22,5 +22,6 @@
         <file>magenta-color.png</file>
         <file>ink.png</file>
         <file>cmy-color.png</file>
+        <file>looks.xml</file>
     </qresource>
 </RCC>

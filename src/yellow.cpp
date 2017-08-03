@@ -150,11 +150,11 @@ int Yellow::profileColorSpaceFromData(QByteArray data)
         lcmsProfile = cmsOpenProfileFromMem(data.data(), data.length());
         if (lcmsProfile) {
             if (cmsGetColorSpace(lcmsProfile) == cmsSigRgbData) {
-                status = 1;
+                status = RGB_COLORSPACE;
             } else if (cmsGetColorSpace(lcmsProfile) == cmsSigCmykData) {
-                status = 2;
+                status = CMYK_COLORSPACE;
             } else if (cmsGetColorSpace(lcmsProfile) == cmsSigGrayData) {
-                status = 3;
+                status = GRAY_COLORSPACE;
             }
         }
         cmsCloseProfile(lcmsProfile);
