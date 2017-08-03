@@ -416,7 +416,6 @@ QString Magenta::colorFiltersPath()
     QString result;
     QString clutDirPath = qApp->applicationDirPath()+QDir::separator()+"looks";
     QDir clutDir(clutDirPath);
-    qDebug() << clutDir.absolutePath();
     if (clutDir.exists(clutDirPath)) {
         result = clutDir.absolutePath()+QDir::separator();
     } else {
@@ -505,44 +504,42 @@ magentaImage Magenta::makeColorPreview(QString file, QByteArray data)
 Magick::Image Magenta::colorFilter(Magick::Image image, QString hald)
 {
     if (image.depth()>0 && !hald.isEmpty() && !colorFiltersPath().isEmpty()) {
-        //if (!edit.clut.isEmpty() && ) {
-            QString clutPath = colorFiltersPath() + hald;
-            Magick::Image clut;
-            clut.read(clutPath.toUtf8().data());
-            if (clut.depth()>0) {
-                bool hasAlpha = false;
+        QString clutPath = colorFiltersPath() + hald;
+        Magick::Image clut;
+        clut.read(clutPath.toUtf8().data());
+        if (clut.depth()>0) {
+            bool hasAlpha = false;
 #ifdef MAGICK7
-                if (image.alpha()) {
+            if (image.alpha()) {
 #else
-                if (image.matte()) {
+            if (image.matte()) {
 #endif
-                    hasAlpha = true;
-                } else {
+                hasAlpha = true;
+            } else {
 #ifdef MAGICK7
-                    image.alpha(true);
+                image.alpha(true);
 #else
-                    image.matte(true);
+                image.matte(true);
 #endif
-                }
-#ifdef MAGICK7
-                if (!clut.alpha()) {
-                    clut.alpha(true);
-                }
-#else
-                if (!clut.matte()) {
-                    clut.matte(true);
-                }
-#endif
-                image.haldClut(clut);
-                if (!hasAlpha) {
-#ifdef MAGICK7
-                    image.alpha(false);
-#else
-                    image.matte(false);
-#endif
-                }
             }
-        //}
+#ifdef MAGICK7
+            if (!clut.alpha()) {
+                clut.alpha(true);
+            }
+#else
+            if (!clut.matte()) {
+                clut.matte(true);
+            }
+#endif
+            image.haldClut(clut);
+            if (!hasAlpha) {
+#ifdef MAGICK7
+                image.alpha(false);
+#else
+                image.matte(false);
+#endif
+            }
+        }
     }
     return image;
 }

@@ -43,6 +43,8 @@
 #define CYAN_FONT_SIZE 8
 #endif
 
+#define COLOR_FILTER_ITEM_DATA 32
+
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
@@ -861,8 +863,8 @@ void Cyan::saveImage(QString file)
         }
         QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
         if (colorFilterItem) {
-            if (!colorFilterItem->data(32).toString().isEmpty()) {
-                adjust.clut = colorFilterItem->data(32).toString();
+            if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
+                adjust.clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
             }
         }
         QByteArray currentInputProfile;
@@ -1209,8 +1211,8 @@ void Cyan::updateImage()
         }
         QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
         if (colorFilterItem) {
-            if (!colorFilterItem->data(32).toString().isEmpty()) {
-                adjust.clut = colorFilterItem->data(32).toString();
+            if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
+                adjust.clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
             }
         }
         QByteArray currentInputProfile;
@@ -1408,8 +1410,8 @@ bool Cyan::imageModified()
 {
     QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
     if (colorFilterItem) {
-        if (!colorFilterItem->data(32).toString().isEmpty()) {
-            QString clut = colorFilterItem->data(32).toString();
+        if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
+            QString clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
             if (!clut.isEmpty()) {
                 return true;
             }
@@ -1440,7 +1442,7 @@ void Cyan::handleSaveState()
 
 bool Cyan::hasProfiles()
 {
-    if (cms.genProfiles(1).size()>0) {
+    if (cms.genProfiles(RGB_COLORSPACE).size()>0) {
         return true;
     }
     return false;
@@ -1692,7 +1694,6 @@ void Cyan::colorFilterListUpdate()
 {
     QString currentCat = colorFilterCategory->itemData(colorFilterCategory->currentIndex()).toString();
     if (!currentCat.isEmpty() && currentImageThumbnail.length() > 0) {
-        qDebug() << "har cat og thumb";
         colorFilterList->clear();
         QDomDocument doc;
         QFile xml(":/looks.xml");
@@ -1714,11 +1715,11 @@ void Cyan::colorFilterListUpdate()
                         itemText.append("...");
                     }
                     item->setText(itemText);*/
-                    item->setData(32,category.text()+QDir::separator()+filename.text());
+                    item->setData(COLOR_FILTER_ITEM_DATA,category.text()+QDir::separator()+filename.text());
                     colorFilterList->addItem(item);
                     item->setHidden(true);
 
-                    proc.requestColorPreview(item->data(32).toString(), currentImageThumbnail);
+                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
                 }
             }
         }
@@ -1731,7 +1732,7 @@ void Cyan::applyColorFilterThumb(magentaImage result)
         for(int i = 0; i < colorFilterList->count(); ++i) {
             QListWidgetItem* item = colorFilterList->item(i);
             if (item) {
-                if (item->data(32).toString() == result.filename) {
+                if (item->data(COLOR_FILTER_ITEM_DATA).toString() == result.filename) {
                     if (result.thumb.length() > 0) {
                         QPixmap thumb( QPixmap::fromImage( QImage::fromData(result.thumb) ) );
                         item->setIcon(QIcon(thumb));
@@ -1761,7 +1762,7 @@ void Cyan::colorFilterListClicked(QListWidgetItem *item)
         return;
     }
     if (item) {
-        if (!item->data(32).toString().isEmpty()) {
+        if (!item->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
             handleSaveState();
             updateImage();
             colorFilterList->setFocus();
