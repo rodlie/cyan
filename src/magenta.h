@@ -27,6 +27,8 @@
 #include <QStringList>
 #include <QThread>
 
+#define COLOR_FILTERS_URL "https://raw.githubusercontent.com/olear/clut/master"
+
 struct magentaImage {
     QByteArray data;
     QByteArray profile;

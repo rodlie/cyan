@@ -36,6 +36,11 @@
 #include <QStyleFactory>
 #include <QDomDocument>
 #include <QDomNode>
+#include <QEventLoop>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QUrl>
 
 #ifdef __APPLE__
 #define CYAN_FONT_SIZE 10
@@ -1696,6 +1701,7 @@ void Cyan::loadColorFilters()
         }
         colorFilterCategory->addItem(icon, catTitle, catData);
     }
+    colorFilterCategory->addItem(icon, tr("Custom"), "custom");
 }
 
 void Cyan::colorFilterListUpdate()
@@ -1723,11 +1729,47 @@ void Cyan::colorFilterListUpdate()
                         itemText.append("...");
                     }
                     item->setText(itemText);*/
-                    item->setData(COLOR_FILTER_ITEM_DATA,category.text()+QDir::separator()+filename.text());
-                    colorFilterList->addItem(item);
-                    item->setHidden(true);
+                    QString filtersPath = proc.colorFiltersPath();
+                    QString itemData = category.text()+QDir::separator()+filename.text();
 
-                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                    QDir filtersDir(filtersPath);
+                    if (!filtersDir.exists(filtersPath)) {
+                        filtersDir.mkdir(filtersPath);
+                    }
+                    QDir categoryDir(filtersPath+category.text());
+                    if (!categoryDir.exists(filtersPath+category.text())) {
+                        categoryDir.mkdir(filtersPath+category.text());
+                    }
+
+                    bool addItem  = false;
+                    QFile filterFile(filtersPath+itemData);
+                    if (!filterFile.exists()) {
+                        QNetworkAccessManager nm;
+                        QString url = COLOR_FILTERS_URL;
+                        url.append("/"+itemData);
+                        QNetworkReply *reply = nm.get(QNetworkRequest(QUrl::fromUserInput(url)));
+                        QEventLoop loop;
+                        connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+                        loop.exec();
+                        QByteArray filterData = reply->readAll();
+                        if (filterData.length()>0) {
+                            if (filterFile.open(QIODevice::WriteOnly)) {
+                                if (filterFile.write(filterData) > -1) {
+                                    addItem = true;
+                                }
+                                filterFile.close();
+                            }
+                        }
+                        reply->deleteLater();
+                    } else {
+                        addItem = true;
+                    }
+                    if (addItem) {
+                        item->setData(COLOR_FILTER_ITEM_DATA, itemData);
+                        colorFilterList->addItem(item);
+                        item->setHidden(true);
+                        proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                    }
                 }
             }
         }
@@ -1770,7 +1812,8 @@ void Cyan::colorFilterListClicked(QListWidgetItem *item)
         return;
     }
     if (item) {
-        if (!item->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
+        QString filePath = item->data(COLOR_FILTER_ITEM_DATA).toString();
+        if (!filePath.isEmpty()) {
             handleSaveState();
             updateImage();
             colorFilterList->setFocus();
