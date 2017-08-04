@@ -45,9 +45,27 @@
 #include "yellow.h"
 #include "magenta.h"
 
+class CyanList : public QListWidget
+{
+    Q_OBJECT
+
+public:
+    explicit CyanList(QWidget* parent = NULL);
+
+signals:
+    void openCustomClut(QString file);
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
+};
+
 class CyanView : public QGraphicsView
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     explicit CyanView(QWidget* parent = NULL);
     bool fit;
@@ -147,7 +165,7 @@ private:
     QLabel *colorBlackMax;
     QProgressBar *progBar;
     QDockWidget *colorFilterDock;
-    QListWidget *colorFilterList;
+    CyanList *colorFilterList;
     QComboBox *colorFilterCategory;
 
 private slots:
@@ -197,6 +215,7 @@ private slots:
     void applyColorFilterThumb(magentaImage result);
     void colorFilterListClicked(QListWidgetItem *item);
     void colorFilterCategoryChanged(int index);
+    void handleDroppedCustomClut(QString file);
 };
 
 #endif // CYAN_H

@@ -51,6 +51,48 @@
 #define COLOR_FILTER_ITEM_DATA 32
 #define BLACKPOINT_CHECKBOX_LOCATION 18
 
+CyanList::CyanList(QWidget* parent) : QListWidget(parent)
+{
+    setAcceptDrops(true);
+    setViewMode(QListWidget::IconMode);
+    setIconSize(QSize(200,200));
+    setResizeMode(QListWidget::Adjust);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    //setMovement(QListView::Static);
+}
+
+void CyanList::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->acceptProposedAction();
+}
+
+void CyanList::dragMoveEvent(QDragMoveEvent *event)
+{
+    event->acceptProposedAction();
+}
+
+void CyanList::dropEvent(QDropEvent *event) {
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        if (!mimeData->urls().at(0).isEmpty()) {
+            QUrl url = mimeData->urls().at(0);
+            QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
+            if (suffix == "PNG"
+                || suffix == "TIF"
+                || suffix == "TIFF"
+                || suffix == "PSD")
+            {
+                emit openCustomClut(url.toLocalFile());
+            }
+        }
+    }
+}
+
+void CyanList::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    event->accept();
+}
+
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
@@ -102,19 +144,22 @@ void CyanView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void CyanView::dropEvent(QDropEvent *event)
 {
-    if (!event->mimeData()->urls().at(0).isEmpty()) {
-        QUrl url = event->mimeData()->urls().at(0);
-        QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
-        if (suffix == "PNG"
-            || suffix == "JPG"
-            || suffix == "JPEG"
-            || suffix == "TIF"
-            || suffix == "TIFF"
-            || suffix == "PSD")
-        {
-            emit openImage(url.toLocalFile());
-        } else if (suffix == "ICC" || suffix == "ICM") {
-            emit openProfile(url.toLocalFile());
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        if (!mimeData->urls().at(0).isEmpty()) {
+            QUrl url = mimeData->urls().at(0);
+            QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
+            if (suffix == "PNG"
+                || suffix == "JPG"
+                || suffix == "JPEG"
+                || suffix == "TIF"
+                || suffix == "TIFF"
+                || suffix == "PSD")
+            {
+                emit openImage(url.toLocalFile());
+            } else if (suffix == "ICC" || suffix == "ICM") {
+                emit openProfile(url.toLocalFile());
+            }
         }
     }
 }
@@ -571,12 +616,7 @@ Cyan::Cyan(QWidget *parent)
     colorFilterDock->setWindowTitle(tr("Color Filters"));
     addDockWidget(Qt::RightDockWidgetArea, colorFilterDock);
 
-    colorFilterList = new QListWidget(this);
-    colorFilterList->setViewMode(QListWidget::IconMode);
-    colorFilterList->setIconSize(QSize(200,200));
-    colorFilterList->setResizeMode(QListWidget::Adjust);
-    colorFilterList->setContextMenuPolicy(Qt::CustomContextMenu);
-    colorFilterList->setMovement(QListView::Static);
+    colorFilterList = new CyanList();
 
     QWidget *colorFilterWidget = new QWidget();
     QVBoxLayout *colorFilterDockLayout = new QVBoxLayout();
@@ -624,6 +664,7 @@ Cyan::Cyan(QWidget *parent)
     connect(&proc, SIGNAL(returnColorPreview(magentaImage)), this, SLOT(applyColorFilterThumb(magentaImage)));
     connect(colorFilterList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(colorFilterListClicked(QListWidgetItem*)));
     connect(colorFilterList, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(colorFilterListClicked(QListWidgetItem*)));
+    connect(colorFilterList, SIGNAL(openCustomClut(QString)), this, SLOT(handleDroppedCustomClut(QString)));
 
     setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;} QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
 
@@ -1711,66 +1752,85 @@ void Cyan::colorFilterListUpdate()
     QString currentCat = colorFilterCategory->itemData(colorFilterCategory->currentIndex()).toString();
     if (!currentCat.isEmpty() && currentImageThumbnail.length() > 0) {
         colorFilterList->clear();
-        QDomDocument doc;
-        QFile xml(":/looks.xml");
-        if (!xml.open(QIODevice::ReadOnly) || !doc.setContent(&xml)) {
-            return;
-        }
-        QDomNodeList preset = doc.elementsByTagName("preset");
-        for (int i = 0; i < preset.size(); i++) {
-            QDomNode node = preset.item(i);
-            QDomElement title = node.firstChildElement("title");
-            QDomElement category = node.firstChildElement("category");
-            QDomElement filename = node.firstChildElement("file");
-            if (!title.isNull() && !category.isNull() && !filename.isNull()) {
-                if (currentCat == category.text() && colorFilterDock->isVisible()) {
+        if (currentCat == "custom") {
+            QStringList filter;
+            QString folder = proc.colorFiltersPath() + "custom";
+            QDirIterator it(folder, filter, QDir::Files);
+            while (it.hasNext()) {
+                QString customFile = it.next();
+                if (!customFile.isEmpty()) {
                     QListWidgetItem *item = new QListWidgetItem();
-                    item->setToolTip(title.text());
-                    /*QString itemText = title.text().left(25);
-                    if (title.text().length()>25) {
-                        itemText.append("...");
-                    }
-                    item->setText(itemText);*/
-                    QString filtersPath = proc.colorFiltersPath();
-                    QString itemData = category.text()+"/"+filename.text();
-
-                    QDir filtersDir(filtersPath);
-                    if (!filtersDir.exists(filtersPath)) {
-                        filtersDir.mkdir(filtersPath);
-                    }
-                    QDir categoryDir(filtersPath+category.text());
-                    if (!categoryDir.exists(filtersPath+category.text())) {
-                        categoryDir.mkdir(filtersPath+category.text());
-                    }
-
-                    bool addItem  = false;
-                    QFile filterFile(filtersPath+itemData);
-                    if (!filterFile.exists()) {
-                        QNetworkAccessManager nm;
-                        QString url = COLOR_FILTERS_URL;
-                        url.append("/"+itemData);
-                        QNetworkReply *reply = nm.get(QNetworkRequest(QUrl::fromUserInput(url)));
-                        QEventLoop loop;
-                        connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-                        loop.exec();
-                        QByteArray filterData = reply->readAll();
-                        if (filterData.length()>0) {
-                            if (filterFile.open(QIODevice::WriteOnly)) {
-                                if (filterFile.write(filterData) > -1) {
-                                    addItem = true;
-                                }
-                                filterFile.close();
-                            }
+                    item->setToolTip(customFile);
+                    QFileInfo customInfo(customFile);
+                    QString customData = "custom/" + customInfo.baseName() + "." + customInfo.completeSuffix();
+                    item->setData(COLOR_FILTER_ITEM_DATA, customData);
+                    colorFilterList->addItem(item);
+                    item->setHidden(true);
+                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                }
+            }
+        } else {
+            QDomDocument doc;
+            QFile xml(":/looks.xml");
+            if (!xml.open(QIODevice::ReadOnly) || !doc.setContent(&xml)) {
+                return;
+            }
+            QDomNodeList preset = doc.elementsByTagName("preset");
+            for (int i = 0; i < preset.size(); i++) {
+                QDomNode node = preset.item(i);
+                QDomElement title = node.firstChildElement("title");
+                QDomElement category = node.firstChildElement("category");
+                QDomElement filename = node.firstChildElement("file");
+                if (!title.isNull() && !category.isNull() && !filename.isNull()) {
+                    if (currentCat == category.text() && colorFilterDock->isVisible()) {
+                        QListWidgetItem *item = new QListWidgetItem();
+                        item->setToolTip(title.text());
+                        /*QString itemText = title.text().left(25);
+                        if (title.text().length()>25) {
+                            itemText.append("...");
                         }
-                        reply->deleteLater();
-                    } else {
-                        addItem = true;
-                    }
-                    if (addItem) {
-                        item->setData(COLOR_FILTER_ITEM_DATA, itemData);
-                        colorFilterList->addItem(item);
-                        item->setHidden(true);
-                        proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                        item->setText(itemText);*/
+                        QString filtersPath = proc.colorFiltersPath();
+                        QString itemData = category.text()+"/"+filename.text();
+
+                        QDir filtersDir(filtersPath);
+                        if (!filtersDir.exists(filtersPath)) {
+                            filtersDir.mkdir(filtersPath);
+                        }
+                        QDir categoryDir(filtersPath+category.text());
+                        if (!categoryDir.exists(filtersPath+category.text())) {
+                            categoryDir.mkdir(filtersPath+category.text());
+                        }
+
+                        bool addItem  = false;
+                        QFile filterFile(filtersPath+itemData);
+                        if (!filterFile.exists()) {
+                            QNetworkAccessManager nm;
+                            QString url = COLOR_FILTERS_URL;
+                            url.append("/"+itemData);
+                            QNetworkReply *reply = nm.get(QNetworkRequest(QUrl::fromUserInput(url)));
+                            QEventLoop loop;
+                            connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+                            loop.exec();
+                            QByteArray filterData = reply->readAll();
+                            if (filterData.length()>0) {
+                                if (filterFile.open(QIODevice::WriteOnly)) {
+                                    if (filterFile.write(filterData) > -1) {
+                                        addItem = true;
+                                    }
+                                    filterFile.close();
+                                }
+                            }
+                            reply->deleteLater();
+                        } else {
+                            addItem = true;
+                        }
+                        if (addItem) {
+                            item->setData(COLOR_FILTER_ITEM_DATA, itemData);
+                            colorFilterList->addItem(item);
+                            item->setHidden(true);
+                            proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                        }
                     }
                 }
             }
@@ -1830,5 +1890,42 @@ void Cyan::colorFilterCategoryChanged(int index)
     } else {
         colorFilterList->clear();
         updateImage();
+    }
+}
+
+void Cyan::handleDroppedCustomClut(QString file)
+{
+    QFileInfo clutFile(file);
+    bool addedItem = false;
+    if (clutFile.exists()) {
+        magentaInfo info = proc.getImageInfo(file);
+        if (info.width>0 && info.height>0 /*&& info.width == info.height*/) {
+            QString customPath = proc.colorFiltersPath() + "custom";
+            QDir customDir(customPath);
+            if (!customDir.exists(customPath)) {
+                customDir.mkdir(customPath);
+            }
+            QString newFile = customPath + "/" + clutFile.baseName() + "." + clutFile.completeSuffix();
+            QFile hasNewFile(newFile);
+            if (hasNewFile.exists()) {
+                QMessageBox::warning(this, tr("File exists"), tr("File already in custom color filters."));
+                return;
+            } else {
+                QFile customFile(file);
+                if (customFile.copy(newFile)) {
+                    for(int i = 0; i < colorFilterCategory->count(); ++i) {
+                        if (colorFilterCategory->itemData(i).toString() == "custom") {
+                            colorFilterCategory->setCurrentIndex(i);
+                            colorFilterCategoryChanged(i);
+                            addedItem = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (!addedItem) {
+        QMessageBox::warning(this, tr("Unable to add HaldCLUT"), tr("Unable to add unsupported HaldCLUT."));
     }
 }

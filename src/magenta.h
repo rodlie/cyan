@@ -65,6 +65,13 @@ struct magentaAdjust {
     QString clut;
 };Q_DECLARE_METATYPE(magentaAdjust)
 
+struct magentaInfo {
+    int width = 0;
+    int height = 0;
+    QString error;
+    QString warning;
+};Q_DECLARE_METATYPE(magentaInfo)
+
 class Magenta : public QObject
 {
     Q_OBJECT
@@ -86,9 +93,11 @@ public slots:
     QString colorFiltersPath();
     void requestColorPreview(QString file, QByteArray data);
     magentaImage makeColorPreview(QString file, QByteArray data);
+    magentaInfo getImageInfo(QString file);
 
-    private slots:
+private slots:
     Magick::Image colorFilter(Magick::Image image, QString hald);
+
 private:
     Yellow yellow;
     QThread t;

@@ -503,6 +503,24 @@ magentaImage Magenta::makeColorPreview(QString file, QByteArray data)
     return result;
 }
 
+magentaInfo Magenta::getImageInfo(QString file)
+{
+    magentaInfo info;
+    try {
+        Magick::Image image;
+        image.ping(file.toUtf8().data());
+        info.width = (int)image.columns();
+        info.height = (int)image.rows();
+    }
+    catch(Magick::Error &error_ ) {
+        info.error.append(error_.what());
+    }
+    catch(Magick::Warning &warn_ ) {
+        info.warning.append(warn_.what());
+    }
+    return info;
+}
+
 Magick::Image Magenta::colorFilter(Magick::Image image, QString hald)
 {
     if (image.depth()>0 && !hald.isEmpty() && !colorFiltersPath().isEmpty()) {
