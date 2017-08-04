@@ -58,7 +58,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
     //result.inkDensity = 0.0;
     Magick::Blob outputImage;
     QByteArray outputProfile;
-    int outputColorSpace;
+    int outputColorSpace = 0;
     Magick::Image image;
     try {
         if (!file.isEmpty() && !doSave ) {
