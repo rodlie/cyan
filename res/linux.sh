@@ -1,6 +1,6 @@
 #!/bin/sh
 # Cyan <https://github.com/olear/cyan>,
-# Copyright (C) 2016, 2017 Ole-André Rodlie <olear@fxarena.net>
+# Copyright (C) 2016, 2017 Ole-André Rodlie <olear@dracolinux.org>
 #
 # Cyan is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as published

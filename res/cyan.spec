@@ -23,7 +23,7 @@ Release: 1.el7.centos7.fedora19.qt4
 License: GPLv2
 
 Group: System Environment/Base
-Packager: Ole-André Rodlie, <olear@fxarena.net>
+Packager: Ole-André Rodlie, <olear@dracolinux.org>
 URL: https://github.com/olear/cyan
 
 Source: %{name}-%{version}.tar.gz

@@ -37,7 +37,7 @@ DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
 QMAKE_TARGET_COMPANY = "Cyan"
 QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Prepress Toolkit"
-QMAKE_TARGET_COPYRIGHT = "Copyright (c)2017 Ole-Andre Rodlie <olear@fxarena.net>"
+QMAKE_TARGET_COPYRIGHT = "Copyright (c)2017 Ole-Andre Rodlie"
 
 !mac {
     CONFIG += link_pkgconfig
