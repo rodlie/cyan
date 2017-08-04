@@ -1764,9 +1764,9 @@ void Cyan::colorFilterListUpdate()
                     QFileInfo customInfo(customFile);
                     QString customData = "custom/" + customInfo.baseName() + "." + customInfo.completeSuffix();
                     item->setData(COLOR_FILTER_ITEM_DATA, customData);
-                    colorFilterList->addItem(item);
                     item->setHidden(true);
-                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                    colorFilterList->addItem(item);
+                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentCat, currentImageThumbnail);
                 }
             }
         } else {
@@ -1827,9 +1827,9 @@ void Cyan::colorFilterListUpdate()
                         }
                         if (addItem) {
                             item->setData(COLOR_FILTER_ITEM_DATA, itemData);
-                            colorFilterList->addItem(item);
                             item->setHidden(true);
-                            proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentImageThumbnail);
+                            colorFilterList->addItem(item);
+                            proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), category.text(), currentImageThumbnail);
                         }
                     }
                 }
@@ -1841,6 +1841,10 @@ void Cyan::colorFilterListUpdate()
 void Cyan::applyColorFilterThumb(magentaImage result)
 {
     if (!result.filename.isEmpty()) {
+        QString currentCat = colorFilterCategory->itemData(colorFilterCategory->currentIndex()).toString();
+        if (result.category != currentCat) {
+            return;
+        }
         for(int i = 0; i < colorFilterList->count(); ++i) {
             QListWidgetItem* item = colorFilterList->item(i);
             if (item) {

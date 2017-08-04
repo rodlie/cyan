@@ -51,6 +51,7 @@ struct magentaImage {
     double yellowMax = -1.0;
     double blackMin = -1.0;
     double blackMax = -1.0;
+    QString category;
 };Q_DECLARE_METATYPE(magentaImage)
 
 struct magentaAdjust {
@@ -91,8 +92,8 @@ public slots:
     bool supportBlackPoint();
     int quantumDepth();
     QString colorFiltersPath();
-    void requestColorPreview(QString file, QByteArray data);
-    magentaImage makeColorPreview(QString file, QByteArray data);
+    void requestColorPreview(QString file, QString category, QByteArray data);
+    magentaImage makeColorPreview(QString file, QString category, QByteArray data);
     magentaInfo getImageInfo(QString file);
 
 private slots:

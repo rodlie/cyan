@@ -436,14 +436,15 @@ QString Magenta::colorFiltersPath()
     return result;
 }
 
-void Magenta::requestColorPreview(QString file, QByteArray data)
+void Magenta::requestColorPreview(QString file, QString category, QByteArray data)
 {
-    QMetaObject::invokeMethod(this,"makeColorPreview", Q_ARG(QString, file), Q_ARG(QByteArray, data));
+    QMetaObject::invokeMethod(this,"makeColorPreview", Q_ARG(QString, file), Q_ARG(QString, category), Q_ARG(QByteArray, data));
 }
 
-magentaImage Magenta::makeColorPreview(QString file, QByteArray data)
+magentaImage Magenta::makeColorPreview(QString file, QString category, QByteArray data)
 {
     magentaImage result;
+    result.category = category;
     Magick::Blob outputImage;
     bool hasAlpha = false;
     if (!file.isEmpty() && data.length() > 0) {
