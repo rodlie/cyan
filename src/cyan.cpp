@@ -576,6 +576,7 @@ Cyan::Cyan(QWidget *parent)
     colorFilterList->setIconSize(QSize(200,200));
     colorFilterList->setResizeMode(QListWidget::Adjust);
     colorFilterList->setContextMenuPolicy(Qt::CustomContextMenu);
+    colorFilterList->setMovement(QListView::Static);
 
     QWidget *colorFilterWidget = new QWidget();
     QVBoxLayout *colorFilterDockLayout = new QVBoxLayout();
