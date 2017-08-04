@@ -414,23 +414,25 @@ int Magenta::quantumDepth()
 QString Magenta::colorFiltersPath()
 {
     QString result;
-    QString clutDirPath = qApp->applicationDirPath()+QDir::separator()+"looks";
-    QDir clutDir(clutDirPath);
-    if (clutDir.exists(clutDirPath)) {
-        result = clutDir.absolutePath()+QDir::separator();
-    } else {
-        QString user1DirPath = QDir::homePath()+QDir::separator()+".config"+QDir::separator()+"looks";
-        QDir user1Dir(user1DirPath);
-        if (user1Dir.exists(user1DirPath)) {
-            result = user1Dir.absolutePath()+QDir::separator();
-        } else {
-            QString user2DirPath = QDir::homePath()+QDir::separator()+"looks";
-            QDir user2Dir(user2DirPath);
-            if (user2Dir.exists(user2DirPath)) {
-                result = user2Dir.absolutePath()+QDir::separator();
-            }
-        }
+    result.append(QDir::homePath());
+    result.append("/.config");
+    QDir configDir(result);
+    if (!configDir.exists(result)) {
+        configDir.mkdir(result);
     }
+    result.append("/");
+    result.append(qApp->applicationName());
+    QDir cyanDir(result);
+    if (!cyanDir.exists(result)) {
+        cyanDir.mkdir(result);
+    }
+    result.append("/looks");
+    QDir looksDir(result);
+    if (!looksDir.exists(result)) {
+        looksDir.mkdir(result);
+    }
+    result.append("/");
+
     return result;
 }
 

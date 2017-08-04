@@ -1730,7 +1730,7 @@ void Cyan::colorFilterListUpdate()
                     }
                     item->setText(itemText);*/
                     QString filtersPath = proc.colorFiltersPath();
-                    QString itemData = category.text()+QDir::separator()+filename.text();
+                    QString itemData = category.text()+"/"+filename.text();
 
                     QDir filtersDir(filtersPath);
                     if (!filtersDir.exists(filtersPath)) {
