@@ -22,8 +22,13 @@ SSH="ssh $HOST"
 ID=$$
 CYAN="~/Cyan-build"
 
+if [ ! -f "$CWD/cyan.pro" ]; then
+  echo "Can't find cyan.pro" || exit 1
+fi
+VERSION=`cat $CWD/cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
+
 git log >CHANGES || exit 1
 $SSH "mkdir -p $CYAN ; rm -rf $CYAN/*" || exit 1
 scp -r $CWD/.qmake* $CWD/res $CWD/src $CWD/COPYING $CWD/CHANGES $CWD/README.md $CWD/cyan.pro $HOST:$CYAN/ || exit 1
 $SSH "cd $CYAN ; sh res/osx/build.sh" || exit 1
-scp $HOST:$CYAN/*.dmg . || exit 1
+scp $HOST:$CYAN/Cyan-$VERSION-Darwin64.dmg . || exit 1
