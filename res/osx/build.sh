@@ -56,5 +56,5 @@ mv $APP $CWD/build/tmp/ || exit 1
 
 cd $CWD/build/ || exit 1
 hdiutil create -volname Cyan -srcfolder tmp -ov -format UDBZ Cyan.dmg || exit 1
-mv Cyan.dmg $CWD/Cyan-$VERSION.dmg || exit 1
+mv Cyan.dmg $CWD/Cyan-$VERSION-Darwin64.dmg || exit 1
 cd $CWD || exit 1
