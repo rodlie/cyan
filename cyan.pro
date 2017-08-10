@@ -19,7 +19,7 @@ QT += core gui xml network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Cyan
-VERSION = 1.1.1
+VERSION = 1.0.0
 
 TEMPLATE = app
 
@@ -27,6 +27,11 @@ SOURCES += src/main.cpp src/cyan.cpp src/magenta.cpp src/yellow.cpp
 HEADERS  += src/cyan.h src/magenta.h src/yellow.h
 RESOURCES += res/cyan.qrc
 OTHER_FILES += README.md res/cyan.spec res/win.sh res/osx.sh res/sdk.sh res/linux.sh res/osx/Info.plist res/osx/build.sh
+
+unix:!mac {
+    SOURCES += src/gamma.cpp
+    HEADERS += src/gamma.h
+}
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -56,6 +61,12 @@ lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc
 greaterThan(QT_MAJOR_VERSION, 4): win32:RC_ICONS += res/cyan.ico
 
 unix:!mac {
+    isEmpty(X11_INCLUDE) {
+        X11_INCLUDE = /usr/X11R6/include
+    }
+    isEmpty(X11_LIBS) {
+        X11_LIBS = /usr/X11R6/lib
+    }
     isEmpty(PREFIX) {
         PREFIX = /usr/local
     }
@@ -70,6 +81,10 @@ unix:!mac {
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
     target_docs.files = COPYING README.md
     INSTALLS += target target_icon target_desktop target_docs
+    INCLUDEPATH += $${X11_INCLUDE}
+    LIBS += -L$${X11_LIBS}
+    LIBS += -lX11 -lXxf86vm -lXext
+    QT += x11extras
 }
 
 mac {

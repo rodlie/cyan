@@ -45,6 +45,12 @@
 #include "yellow.h"
 #include "magenta.h"
 
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+#include "gamma.h"
+#endif
+#endif
+
 class CyanList : public QListWidget
 {
     Q_OBJECT
@@ -120,6 +126,11 @@ public:
 private:
     Yellow cms;
     Magenta proc;
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    Gamma gamma;
+#endif
+#endif
     QGraphicsScene *scene;
     CyanView *view;
     QToolBar *mainBar;

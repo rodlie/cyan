@@ -18,6 +18,7 @@
 #include "cyan.h"
 #include <QApplication>
 
+#if QT_VERSION >= 0x050000
 void msgLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -39,11 +40,14 @@ void msgLog(QtMsgType type, const QMessageLogContext &context, const QString &ms
         abort();
     }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
 #ifdef QT_DEBUG
+#if QT_VERSION >= 0x050000
     qInstallMessageHandler(msgLog);
+#endif
 #endif
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Cyan");

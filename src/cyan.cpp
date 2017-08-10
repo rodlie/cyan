@@ -57,7 +57,6 @@ CyanList::CyanList(QWidget* parent) : QListWidget(parent)
     setViewMode(QListWidget::IconMode);
     setIconSize(QSize(200,200));
     setResizeMode(QListWidget::Adjust);
-    setContextMenuPolicy(Qt::CustomContextMenu);
     //setMovement(QListView::Static);
 }
 
@@ -737,9 +736,8 @@ void Cyan::readConfig()
                     openImage(file);
                     break;
                 }
+            }
         }
-        }
-
     }
 }
 
@@ -1764,8 +1762,8 @@ void Cyan::colorFilterListUpdate()
                     QFileInfo customInfo(customFile);
                     QString customData = "custom/" + customInfo.baseName() + "." + customInfo.completeSuffix();
                     item->setData(COLOR_FILTER_ITEM_DATA, customData);
-                    item->setHidden(true);
                     colorFilterList->addItem(item);
+                    item->setHidden(true);
                     proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentCat, currentImageThumbnail);
                 }
             }
@@ -1827,8 +1825,8 @@ void Cyan::colorFilterListUpdate()
                         }
                         if (addItem) {
                             item->setData(COLOR_FILTER_ITEM_DATA, itemData);
-                            item->setHidden(true);
                             colorFilterList->addItem(item);
+                            item->setHidden(true);
                             proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), category.text(), currentImageThumbnail);
                         }
                     }
