@@ -2,6 +2,22 @@
 LICENSES FOR THIRD-PARTY SOFTWARE THAT MAY BE INCLUDED IN A CYAN DISTRIBUTION:
 
 ==============================
+XCALIB
+==============================
+
+includes a code from xcalib.c (http://xcalib.sourceforge.net/)
+(c) 2004-2005 Stefan Doehla <stefan AT doehla DOT de>
+
+You should have received a copy of the GPL together with this
+software. Furthermore, it is postcardware. So if you like this
+program, send me a picture postcard from your country/area to:
+
+Stefan Doehla
+Steinselb 7
+95100 Selb
+GERMANY
+
+==============================
 IMAGEMAGICK
 ==============================
 

@@ -700,6 +700,11 @@ void Cyan::aboutCyan()
 
     QString infoText = "<p>Copyright &copy;2016, 2017 <a href=\"mailto:olear@dracolinux.org\">Ole-Andr&eacute; Rodlie</a>. All rights reserved.</p><p>Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.<br><br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>";
     infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License.</p><p>Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.</p>");
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    infoText.append("<p>Includes code from <a href=\"http://xcalib.sourceforge.net\">xcalib</a>. &copy;2004-2005 Stefan Doehla</p>");
+#endif
+#endif
     infoText.append(proc.version());
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
     infoText.append("<p>Visit <a href=\"http://cyan.fxarena.net\">cyan.fxarena.net</a> or <a href=\"https://github.com/olear/cyan\">github.com/olear/cyan</a> for news and updates.</p>");
