@@ -34,63 +34,14 @@
 #include <QDirIterator>
 #include <QApplication>
 #include <QStyleFactory>
-#include <QDomDocument>
-#include <QDomNode>
-#include <QEventLoop>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
-#include <QUrl>
 
-#ifdef __APPLE__
+#ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
 #else
 #define CYAN_FONT_SIZE 8
 #endif
 
-#define COLOR_FILTER_ITEM_DATA 32
 #define BLACKPOINT_CHECKBOX_LOCATION 18
-
-CyanList::CyanList(QWidget* parent) : QListWidget(parent)
-{
-    setAcceptDrops(true);
-    setViewMode(QListWidget::IconMode);
-    setIconSize(QSize(200,200));
-    setResizeMode(QListWidget::Adjust);
-    //setMovement(QListView::Static);
-}
-
-void CyanList::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void CyanList::dragMoveEvent(QDragMoveEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void CyanList::dropEvent(QDropEvent *event) {
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        if (!mimeData->urls().at(0).isEmpty()) {
-            QUrl url = mimeData->urls().at(0);
-            QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
-            if (suffix == "PNG"
-                || suffix == "TIF"
-                || suffix == "TIFF"
-                || suffix == "PSD")
-            {
-                emit openCustomClut(url.toLocalFile());
-            }
-        }
-    }
-}
-
-void CyanList::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    event->accept();
-}
 
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
@@ -294,7 +245,6 @@ Cyan::Cyan(QWidget *parent)
     , currentImageData(0)
     , currentImageProfile(0)
     , currentImageNewProfile(0)
-    , currentImageThumbnail(0)
     , exportEmbeddedProfileAction(0)
     , bitDepth(0)
     , cmyLevel(0)
@@ -310,9 +260,6 @@ Cyan::Cyan(QWidget *parent)
     , colorBlackMin(0)
     , colorBlackMax(0)
     , progBar(0)
-    , colorFilterDock(0)
-    , colorFilterList(0)
-    , colorFilterCategory(0)
 {
     qApp->setStyle(QStyleFactory::create("fusion"));
 
@@ -382,7 +329,6 @@ Cyan::Cyan(QWidget *parent)
     cmyLevel = new QDoubleSpinBox();
     kLevel = new QDoubleSpinBox();
     progBar = new QProgressBar();
-    colorFilterCategory = new QComboBox();
 
     rgbProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     cmykProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -393,7 +339,6 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     bitDepth->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     progBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    colorFilterCategory->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     cmyLevel->setMaximum(100);
     cmyLevel->setMinimum(0);
@@ -610,20 +555,6 @@ Cyan::Cyan(QWidget *parent)
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     fileMenu->addAction(quitAction);
 
-    colorFilterDock = new QDockWidget(this);
-    colorFilterDock->setObjectName("colorFilterDock");
-    colorFilterDock->setWindowTitle(tr("Color Filters"));
-    addDockWidget(Qt::RightDockWidgetArea, colorFilterDock);
-
-    colorFilterList = new CyanList();
-
-    QWidget *colorFilterWidget = new QWidget();
-    QVBoxLayout *colorFilterDockLayout = new QVBoxLayout();
-    colorFilterWidget->setLayout(colorFilterDockLayout);
-    colorFilterDockLayout->addWidget(colorFilterCategory);
-    colorFilterDockLayout->addWidget(colorFilterList);
-    colorFilterDock->setWidget(colorFilterWidget);
-
     qRegisterMetaType<magentaImage>("magentaImage");
     qRegisterMetaType<magentaAdjust>("magentaAdjust");
 
@@ -658,12 +589,6 @@ Cyan::Cyan(QWidget *parent)
 
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
-
-    connect(colorFilterCategory, SIGNAL(currentIndexChanged(int)), this, SLOT(colorFilterCategoryChanged(int)));
-    connect(&proc, SIGNAL(returnColorPreview(magentaImage)), this, SLOT(applyColorFilterThumb(magentaImage)));
-    connect(colorFilterList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(colorFilterListClicked(QListWidgetItem*)));
-    connect(colorFilterList, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(colorFilterListClicked(QListWidgetItem*)));
-    connect(colorFilterList, SIGNAL(openCustomClut(QString)), this, SLOT(handleDroppedCustomClut(QString)));
 
     setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;} QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
 
@@ -704,7 +629,6 @@ void Cyan::readConfig()
     settings.endGroup();
 
     loadDefaultProfiles();
-    loadColorFilters();
     gimpPlugin();
 
     bool bitDepthNoWarn = false;
@@ -775,7 +699,7 @@ void Cyan::aboutCyan()
     aboutCyan.setText("<h1>" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><p>Prepress Toolkit.</p>");
 
     QString infoText = "<p>Copyright &copy;2016, 2017 <a href=\"mailto:olear@dracolinux.org\">Ole-Andr&eacute; Rodlie</a>. All rights reserved.</p><p>Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.<br><br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>";
-    infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License.</p><p>Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.</p><p>Downloadable <a href=\"https://github.com/olear/clut\">color filters</a> are licensed under a <a href=\"http://creativecommons.org/licenses/by-sa/4.0/\">Creative Commons Attribution-ShareAlike 4.0 International</a> license.");
+    infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License.</p><p>Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.</p>");
     infoText.append(proc.version());
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
     infoText.append("<p>Visit <a href=\"http://cyan.fxarena.net\">cyan.fxarena.net</a> or <a href=\"https://github.com/olear/cyan\">github.com/olear/cyan</a> for news and updates.</p>");
@@ -892,7 +816,7 @@ void Cyan::openImage(QString file)
         adjust.black = false;
         adjust.brightness = 100;
         adjust.hue = 100;
-        adjust.intent = 0;
+        adjust.intent = 0; // we don't want to modify source image
         adjust.saturation = 100;
         view->fit = true;
         proc.requestImage(false , false, file, empty, empty, empty, empty, adjust);
@@ -916,12 +840,6 @@ void Cyan::saveImage(QString file)
         }
         if (kLevel->value() > 0.0) {
             adjust.kLevel = kLevel->value();
-        }
-        QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
-        if (colorFilterItem) {
-            if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
-                adjust.clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
-            }
         }
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
@@ -1111,7 +1029,7 @@ void Cyan::getImage(magentaImage result)
         imageClear();
         return;
     }
-    if (result.saved && result.error.isEmpty() /*&& result.warning.isEmpty()*/) {
+    if (result.saved && result.error.isEmpty()) {
         QFileInfo imageFile(result.filename);
         if (imageFile.exists()) {
             if (lockedSaveFileName.isEmpty()) {
@@ -1166,9 +1084,6 @@ void Cyan::getImage(magentaImage result)
             imageClear();
             currentImageData = result.data;
             currentImageProfile = result.profile;
-            if (result.thumb.length()>0) {
-                currentImageThumbnail = result.thumb;
-            }
             QFileInfo imageFile(result.filename);
             QString imageColorspace;
             switch (result.colorspace) {
@@ -1190,7 +1105,6 @@ void Cyan::getImage(magentaImage result)
                 mainBarSaveButton->setEnabled(true);
             }
             exportEmbeddedProfileAction->setEnabled(true);
-            colorFilterListUpdate();
             updateImage();
         } else {
             setImage(result.data);
@@ -1211,7 +1125,6 @@ void Cyan::imageClear()
     currentImageData.clear();
     currentImageProfile.clear();
     currentImageNewProfile.clear();
-    currentImageThumbnail.clear();
     scene->clear();
     resetImageZoom();
     mainBarSaveButton->setDisabled(true);
@@ -1264,12 +1177,6 @@ void Cyan::updateImage()
         }
         if (kLevel->value() > 0.0) {
             adjust.kLevel = kLevel->value();
-        }
-        QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
-        if (colorFilterItem) {
-            if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
-                adjust.clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
-            }
         }
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
@@ -1400,7 +1307,6 @@ void Cyan::enableUI()
     profileBar->setEnabled(true);
     cmykBar->setEnabled(true);
     profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(false);
-    colorFilterDock->setEnabled(true);
 }
 
 void Cyan::disableUI()
@@ -1411,7 +1317,6 @@ void Cyan::disableUI()
     profileBar->setDisabled(true);
     cmykBar->setDisabled(true);
     profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(true);
-    colorFilterDock->setDisabled(true);
 }
 
 void Cyan::exportEmbeddedProfileDialog()
@@ -1464,15 +1369,6 @@ void Cyan::exportEmbeddedProfile(QString file)
 
 bool Cyan::imageModified()
 {
-    QListWidgetItem *colorFilterItem = colorFilterList->currentItem();
-    if (colorFilterItem) {
-        if (!colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString().isEmpty()) {
-            QString clut = colorFilterItem->data(COLOR_FILTER_ITEM_DATA).toString();
-            if (!clut.isEmpty()) {
-                return true;
-            }
-        }
-    }
     if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
         return true;
     }
@@ -1542,7 +1438,7 @@ void Cyan::gimpPlugin()
         QString gimpPath;
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
-#ifndef __APPLE__
+#ifndef Q_OS_MAC
         gimpPath.append(".gimp-"+version);
         if (gimpDir.exists(gimpPath)) {
             hasDir = true;
@@ -1638,9 +1534,7 @@ void Cyan::saveProfile()
         QSettings settings;
         settings.beginGroup("default");
 
-        QString file;
         QString dir;
-
         if (settings.value("lastSaveDir").isValid()) {
             dir = settings.value("lastSaveDir").toString();
         } else {
@@ -1683,251 +1577,4 @@ void Cyan::renderingIntentUpdated(int)
 void Cyan::blackPointUpdated(int)
 {
     updateImage();
-}
-
-void Cyan::loadColorFilters()
-{
-    if (proc.colorFiltersPath().isEmpty()) {
-        return;
-    }
-    /*colorFilters->clear();
-    QIcon icon(":/cyan-display.png");
-    colorFilters->addItem(icon, tr("None"));
-    colorFilters->addItem("----------");*/
-    colorFilterCategory->clear();
-    QIcon icon(":/cyan-display.png");
-
-    QDomDocument doc;
-    QFile xml(":/looks.xml");
-    if (!xml.open(QIODevice::ReadOnly) || !doc.setContent(&xml)) {
-        return;
-    }
-    QDomNodeList preset = doc.elementsByTagName("preset");
-    QStringList categories;
-    categories << tr("None");
-    for (int i = 0; i < preset.size(); i++) {
-        QDomNode node = preset.item(i);
-        QDomElement title = node.firstChildElement("title");
-        QDomElement category = node.firstChildElement("category");
-        QDomElement filename = node.firstChildElement("file");
-        if (!title.isNull() && !category.isNull() && !filename.isNull()) {
-            //colorFilters->addItem(icon, title.text(), category.text()+QDir::separator()+filename.text());
-            categories << category.text();
-        }
-    }
-    categories.removeDuplicates();
-    for (int i = 0; i < categories.size(); i++) {
-        QString catData = categories.at(i);
-        QString catTitle = catData;
-        if (catTitle == "bw") {
-            catTitle = "Black and White";
-        } else if (catTitle == "instant_consumer") {
-            catTitle = "Instant (consumer)";
-        } else if (catTitle == "instant_pro") {
-            catTitle = "Instant (pro)";
-        } else if (catTitle == "negative_color") {
-            catTitle = "Negative (color)";
-        } else if (catTitle == "negative_new") {
-            catTitle = "Negative (new)";
-        } else if (catTitle == "negative_old") {
-            catTitle = "Negative (old)";
-        } else if (catTitle == "picturefx") {
-            catTitle = "PictureFX";
-        } else if (catTitle == "print") {
-            catTitle = "Print films";
-        } else if (catTitle == "colorslide") {
-            catTitle = "Slide (color)";
-        } else if (catTitle == "various") {
-            catTitle = "Various";
-        }
-        colorFilterCategory->addItem(icon, catTitle, catData);
-    }
-    colorFilterCategory->addItem(icon, tr("Custom"), "custom");
-}
-
-void Cyan::colorFilterListUpdate()
-{
-    QString currentCat = colorFilterCategory->itemData(colorFilterCategory->currentIndex()).toString();
-    if (!currentCat.isEmpty() && currentImageThumbnail.length() > 0) {
-        colorFilterList->clear();
-        if (currentCat == "custom") {
-            QStringList filter;
-            QString folder = proc.colorFiltersPath() + "custom";
-            QDirIterator it(folder, filter, QDir::Files);
-            while (it.hasNext()) {
-                QString customFile = it.next();
-                if (!customFile.isEmpty()) {
-                    QListWidgetItem *item = new QListWidgetItem();
-                    item->setToolTip(customFile);
-                    QFileInfo customInfo(customFile);
-                    QString customData = "custom/" + customInfo.baseName() + "." + customInfo.completeSuffix();
-                    item->setData(COLOR_FILTER_ITEM_DATA, customData);
-                    colorFilterList->addItem(item);
-                    item->setHidden(true);
-                    proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), currentCat, currentImageThumbnail);
-                }
-            }
-        } else {
-            QDomDocument doc;
-            QFile xml(":/looks.xml");
-            if (!xml.open(QIODevice::ReadOnly) || !doc.setContent(&xml)) {
-                return;
-            }
-            QDomNodeList preset = doc.elementsByTagName("preset");
-            for (int i = 0; i < preset.size(); i++) {
-                QDomNode node = preset.item(i);
-                QDomElement title = node.firstChildElement("title");
-                QDomElement category = node.firstChildElement("category");
-                QDomElement filename = node.firstChildElement("file");
-                if (!title.isNull() && !category.isNull() && !filename.isNull()) {
-                    if (currentCat == category.text() && colorFilterDock->isVisible()) {
-                        QListWidgetItem *item = new QListWidgetItem();
-                        item->setToolTip(title.text());
-                        /*QString itemText = title.text().left(25);
-                        if (title.text().length()>25) {
-                            itemText.append("...");
-                        }
-                        item->setText(itemText);*/
-                        QString filtersPath = proc.colorFiltersPath();
-                        QString itemData = category.text()+"/"+filename.text();
-
-                        QDir filtersDir(filtersPath);
-                        if (!filtersDir.exists(filtersPath)) {
-                            filtersDir.mkdir(filtersPath);
-                        }
-                        QDir categoryDir(filtersPath+category.text());
-                        if (!categoryDir.exists(filtersPath+category.text())) {
-                            categoryDir.mkdir(filtersPath+category.text());
-                        }
-
-                        bool addItem  = false;
-                        QFile filterFile(filtersPath+itemData);
-                        if (!filterFile.exists()) {
-                            QNetworkAccessManager nm;
-                            QString url = COLOR_FILTERS_URL;
-                            url.append("/"+itemData);
-                            QNetworkReply *reply = nm.get(QNetworkRequest(QUrl::fromUserInput(url)));
-                            QEventLoop loop;
-                            connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-                            loop.exec();
-                            QByteArray filterData = reply->readAll();
-                            if (filterData.length()>0) {
-                                if (filterFile.open(QIODevice::WriteOnly)) {
-                                    if (filterFile.write(filterData) > -1) {
-                                        addItem = true;
-                                    }
-                                    filterFile.close();
-                                }
-                            }
-                            reply->deleteLater();
-                        } else {
-                            addItem = true;
-                        }
-                        if (addItem) {
-                            item->setData(COLOR_FILTER_ITEM_DATA, itemData);
-                            colorFilterList->addItem(item);
-                            item->setHidden(true);
-                            proc.requestColorPreview(item->data(COLOR_FILTER_ITEM_DATA).toString(), category.text(), currentImageThumbnail);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void Cyan::applyColorFilterThumb(magentaImage result)
-{
-    if (!result.filename.isEmpty()) {
-        QString currentCat = colorFilterCategory->itemData(colorFilterCategory->currentIndex()).toString();
-        if (result.category != currentCat) {
-            return;
-        }
-        for(int i = 0; i < colorFilterList->count(); ++i) {
-            QListWidgetItem* item = colorFilterList->item(i);
-            if (item) {
-                if (item->data(COLOR_FILTER_ITEM_DATA).toString() == result.filename) {
-                    if (result.thumb.length() > 0) {
-                        QPixmap thumb( QPixmap::fromImage( QImage::fromData(result.thumb) ) );
-                        item->setIcon(QIcon(thumb));
-                        if (item->isHidden()) {
-                            item->setHidden(false);
-                        }
-                    } else {
-                        if (!item->isHidden()) {
-                            item->setHidden(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void Cyan::colorFilterListClicked(QListWidgetItem *item)
-{
-    bool hasOutputProfile = false;
-    QString outputProfileData = outputProfile->itemData(outputProfile->currentIndex()).toString();
-    if (!outputProfileData.isEmpty()) {
-        hasOutputProfile = true;
-    }
-    if (cms.profileColorSpaceFromData(currentImageProfile) == CMYK_COLORSPACE && !hasOutputProfile) {
-        QMessageBox::warning(this, tr("Color Filters"), tr("CMYK images must be converted to RGB for the Color Filters to work, select an RGB profile in the output combobox."));
-        return;
-    }
-    if (item) {
-        QString filePath = item->data(COLOR_FILTER_ITEM_DATA).toString();
-        if (!filePath.isEmpty()) {
-            handleSaveState();
-            updateImage();
-            colorFilterList->setFocus();
-        }
-    }
-}
-
-void Cyan::colorFilterCategoryChanged(int index)
-{
-    if (index>0) {
-        colorFilterListUpdate();
-    } else {
-        colorFilterList->clear();
-        updateImage();
-    }
-}
-
-void Cyan::handleDroppedCustomClut(QString file)
-{
-    QFileInfo clutFile(file);
-    bool addedItem = false;
-    if (clutFile.exists()) {
-        magentaInfo info = proc.getImageInfo(file);
-        if (info.width>0 && info.height>0 /*&& info.width == info.height*/) {
-            QString customPath = proc.colorFiltersPath() + "custom";
-            QDir customDir(customPath);
-            if (!customDir.exists(customPath)) {
-                customDir.mkdir(customPath);
-            }
-            QString newFile = customPath + "/" + clutFile.baseName() + "." + clutFile.completeSuffix();
-            QFile hasNewFile(newFile);
-            if (hasNewFile.exists()) {
-                QMessageBox::warning(this, tr("File exists"), tr("File already in custom color filters."));
-                return;
-            } else {
-                QFile customFile(file);
-                if (customFile.copy(newFile)) {
-                    for(int i = 0; i < colorFilterCategory->count(); ++i) {
-                        if (colorFilterCategory->itemData(i).toString() == "custom") {
-                            colorFilterCategory->setCurrentIndex(i);
-                            colorFilterCategoryChanged(i);
-                            addedItem = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (!addedItem) {
-        QMessageBox::warning(this, tr("Unable to add HaldCLUT"), tr("Unable to add unsupported HaldCLUT."));
-    }
 }

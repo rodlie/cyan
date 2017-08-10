@@ -23,16 +23,12 @@
 #include <Magick++.h>
 #include <QByteArray>
 #include <QFile>
-#include <QDebug>
 #include <QStringList>
 #include <QThread>
-
-#define COLOR_FILTERS_URL "https://raw.githubusercontent.com/olear/clut/master"
 
 struct magentaImage {
     QByteArray data;
     QByteArray profile;
-    QByteArray thumb;
     QString error;
     QString warning;
     QString filename;
@@ -51,7 +47,6 @@ struct magentaImage {
     double yellowMax = -1.0;
     double blackMin = -1.0;
     double blackMax = -1.0;
-    QString category;
 };Q_DECLARE_METATYPE(magentaImage)
 
 struct magentaAdjust {
@@ -63,15 +58,7 @@ struct magentaAdjust {
     int depth = 0;
     double cmyLevel = 0.0;
     double kLevel = 0.0;
-    QString clut;
 };Q_DECLARE_METATYPE(magentaAdjust)
-
-struct magentaInfo {
-    int width = 0;
-    int height = 0;
-    QString error;
-    QString warning;
-};Q_DECLARE_METATYPE(magentaInfo)
 
 class Magenta : public QObject
 {
@@ -82,8 +69,6 @@ public:
 
 signals:
     void returnImage(magentaImage result);
-    void returnColorPreview(magentaImage result);
-    void returnThumbnail(magentaImage result);
 
 public slots:
     void requestImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit);
@@ -91,13 +76,6 @@ public slots:
     QString version();
     bool supportBlackPoint();
     int quantumDepth();
-    QString colorFiltersPath();
-    void requestColorPreview(QString file, QString category, QByteArray data);
-    magentaImage makeColorPreview(QString file, QString category, QByteArray data);
-    magentaInfo getImageInfo(QString file);
-
-private slots:
-    Magick::Image colorFilter(Magick::Image image, QString hald);
 
 private:
     Yellow yellow;

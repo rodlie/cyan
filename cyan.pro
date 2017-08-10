@@ -15,7 +15,7 @@
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 #
 
-QT += core gui xml network
+QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Cyan

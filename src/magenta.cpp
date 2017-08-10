@@ -18,12 +18,6 @@
 #include "magenta.h"
 #include <QCoreApplication>
 #include <QDir>
-//#include <magick/version.h>
-//#include <magick/statistic.h>
-#ifdef MAGICK7
-#include <MagickCore/MagickCore.h>
-#include <MagickWand/MagickWand.h>
-#endif
 #include <QDebug>
 
 #ifdef GMAGICK
@@ -55,7 +49,6 @@ void Magenta::requestImage(bool isPreview, bool doSave, QString file, QByteArray
 magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit)
 {
     magentaImage result;
-    //result.inkDensity = 0.0;
     Magick::Blob outputImage;
     QByteArray outputProfile;
     int outputColorSpace = 0;
@@ -87,17 +80,6 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.depth(edit.depth);
         }
 
-/*
-#ifdef MAGICK7
-        if (!image.alpha()) {
-            image.alpha(true);
-        }
-#else
-        if (!image.matte()) {
-            image.matte(true);
-        }
-#endif
-*/
         switch(image.colorSpace()) {
         case Magick::CMYKColorspace:
             outputColorSpace = CMYK_COLORSPACE;
@@ -122,9 +104,9 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         result.width = (int)image.columns();
         result.height = (int)image.rows();
 
-        if (edit.brightness!=100 || edit.saturation!=100 || edit.hue!=100) {
+        /*if (edit.brightness!=100 || edit.saturation!=100 || edit.hue!=100) {
             image.modulate(edit.brightness, edit.saturation, edit.hue);
-        }
+        }*/
 
         if (edit.intent > 0) {
             switch(edit.intent) {
@@ -154,23 +136,10 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             image.profile(PROFILE,sourceProfile);
         }
 
-        // apply hald if source is RGB
-        bool addedHald = false;
-        if (outputColorSpace == RGB_COLORSPACE && !edit.clut.isEmpty() && !colorFiltersPath().isEmpty()) {
-            image = colorFilter(image, edit.clut);
-            addedHald = true;
-        }
-
         // Apply destination profile
         if (outprofile.length() > 0) {
             Magick::Blob destProfile(outprofile.data(), outprofile.length());
             image.profile(PROFILE,destProfile);
-        }
-
-        // apply hald if source is CMYK, only works if destination is RGB
-        if (!addedHald && outputColorSpace == CMYK_COLORSPACE && image.colorSpace() != Magick::CMYKColorspace && !edit.clut.isEmpty() && !colorFiltersPath().isEmpty()) {
-            image = colorFilter(image, edit.clut);
-            addedHald = true;
         }
 
         if (image.colorSpace() == Magick::CMYKColorspace) {
@@ -315,39 +284,6 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         result.filename = file;
     }
 
-    // thumb
-    if (!doSave && !isPreview) {
-        try {
-            Magick::Blob thumb;
-            Magick::Image t_image;
-            t_image = image;
-            t_image.depth(8);
-            t_image.strip();
-            t_image.scale(Magick::Geometry(200,200));
-            if (t_image.colorSpace() == Magick::CMYKColorspace) {
-                if (inprofile.length() > 0) {
-                    Magick::Blob sourceProfile(inprofile.data(), inprofile.length());
-                    t_image.profile(PROFILE,sourceProfile);
-                } else {
-                    QByteArray srcPro = yellow.profileDefault(CMYK_COLORSPACE);
-                    Magick::Blob sourceProfile(srcPro.data(), srcPro.length());
-                    t_image.profile(PROFILE,sourceProfile);
-                }
-                QByteArray thumbProfileData = yellow.profileDefault(RGB_COLORSPACE);
-                Magick::Blob thumbProfile(thumbProfileData.data(), thumbProfileData.length());
-                t_image.profile(PROFILE,thumbProfile);
-            }
-            t_image.write(&thumb);
-            result.thumb = QByteArray((char*)thumb.data(), thumb.length());
-        }
-        catch(Magick::Error &error_ ) {
-            result.error.append(error_.what());
-        }
-        catch(Magick::Warning &warn_ ) {
-            result.warning.append(warn_.what());
-        }
-    }
-
     emit returnImage(result);
     return result;
 }
@@ -409,158 +345,4 @@ int Magenta::quantumDepth()
     } else {
         return 0;
     }
-}
-
-QString Magenta::colorFiltersPath()
-{
-    QString result;
-    result.append(QDir::homePath());
-    result.append("/.config");
-    QDir configDir(result);
-    if (!configDir.exists(result)) {
-        configDir.mkdir(result);
-    }
-    result.append("/");
-    result.append(qApp->applicationName());
-    QDir cyanDir(result);
-    if (!cyanDir.exists(result)) {
-        cyanDir.mkdir(result);
-    }
-    result.append("/looks");
-    QDir looksDir(result);
-    if (!looksDir.exists(result)) {
-        looksDir.mkdir(result);
-    }
-    result.append("/");
-
-    return result;
-}
-
-void Magenta::requestColorPreview(QString file, QString category, QByteArray data)
-{
-    QMetaObject::invokeMethod(this,"makeColorPreview", Q_ARG(QString, file), Q_ARG(QString, category), Q_ARG(QByteArray, data));
-}
-
-magentaImage Magenta::makeColorPreview(QString file, QString category, QByteArray data)
-{
-    magentaImage result;
-    result.category = category;
-    Magick::Blob outputImage;
-    bool hasAlpha = false;
-    if (!file.isEmpty() && data.length() > 0) {
-        Magick::Image image;
-        try {
-            Magick::Blob imageData(data.data(),data.length());
-            image.read(imageData);
-#ifdef MAGICK7
-            if (image.alpha()) {
-#else
-            if (image.matte()) {
-#endif
-                hasAlpha = true;
-            } else {
-#ifdef MAGICK7
-                image.alpha(true);
-#else
-                image.matte(true);
-#endif
-            }
-            if (!file.isEmpty() && !colorFiltersPath().isEmpty()) {
-                QString clutPath = colorFiltersPath() + file;
-                Magick::Image clut;
-                clut.read(clutPath.toUtf8().data());
-                if (!clut.matte()) {
-                    clut.matte(true);
-                }
-                if (clut.depth()>0) {
-                    image.haldClut(clut);
-                }
-            }
-
-            if (!hasAlpha) {
-#ifdef MAGICK7
-                image.alpha(false);
-#else
-                image.matte(false);
-#endif
-            }
-
-            if (image.depth()>8) {
-                image.depth(8);
-            }
-            image.magick("TIF");
-            image.write(&outputImage);
-        }
-        catch(Magick::Error &error_ ) {
-            result.error.append(error_.what());
-        }
-        catch(Magick::Warning &warn_ ) {
-            result.warning.append(warn_.what());
-        }
-        result.thumb = QByteArray((char*)outputImage.data(), outputImage.length());
-        result.filename = file;
-    }
-    emit returnColorPreview(result);
-    return result;
-}
-
-magentaInfo Magenta::getImageInfo(QString file)
-{
-    magentaInfo info;
-    try {
-        Magick::Image image;
-        image.ping(file.toUtf8().data());
-        info.width = (int)image.columns();
-        info.height = (int)image.rows();
-    }
-    catch(Magick::Error &error_ ) {
-        info.error.append(error_.what());
-    }
-    catch(Magick::Warning &warn_ ) {
-        info.warning.append(warn_.what());
-    }
-    return info;
-}
-
-Magick::Image Magenta::colorFilter(Magick::Image image, QString hald)
-{
-    if (image.depth()>0 && !hald.isEmpty() && !colorFiltersPath().isEmpty()) {
-        QString clutPath = colorFiltersPath() + hald;
-        Magick::Image clut;
-        clut.read(clutPath.toUtf8().data());
-        if (clut.depth()>0) {
-            bool hasAlpha = false;
-#ifdef MAGICK7
-            if (image.alpha()) {
-#else
-            if (image.matte()) {
-#endif
-                hasAlpha = true;
-            } else {
-#ifdef MAGICK7
-                image.alpha(true);
-#else
-                image.matte(true);
-#endif
-            }
-#ifdef MAGICK7
-            if (!clut.alpha()) {
-                clut.alpha(true);
-            }
-#else
-            if (!clut.matte()) {
-                clut.matte(true);
-            }
-#endif
-            image.haldClut(clut);
-            if (!hasAlpha) {
-#ifdef MAGICK7
-                image.alpha(false);
-#else
-                image.matte(false);
-#endif
-            }
-        }
-    }
-    return image;
 }

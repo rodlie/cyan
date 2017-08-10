@@ -39,8 +39,6 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QProgressBar>
-#include <QDockWidget>
-#include <QListWidget>
 
 #include "yellow.h"
 #include "magenta.h"
@@ -50,23 +48,6 @@
 #include "gamma.h"
 #endif
 #endif
-
-class CyanList : public QListWidget
-{
-    Q_OBJECT
-
-public:
-    explicit CyanList(QWidget* parent = NULL);
-
-signals:
-    void openCustomClut(QString file);
-
-protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dragLeaveEvent(QDragLeaveEvent *event);
-    void dropEvent(QDropEvent *event);
-};
 
 class CyanView : public QGraphicsView
 {
@@ -155,7 +136,6 @@ private:
     QByteArray currentImageData;
     QByteArray currentImageProfile;
     QByteArray currentImageNewProfile;
-    QByteArray currentImageThumbnail;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
@@ -175,9 +155,6 @@ private:
     QLabel *colorBlackMin;
     QLabel *colorBlackMax;
     QProgressBar *progBar;
-    QDockWidget *colorFilterDock;
-    CyanList *colorFilterList;
-    QComboBox *colorFilterCategory;
 
 private slots:
     void readConfig();
@@ -221,12 +198,6 @@ private slots:
     void handleConvertAdv();
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
-    void loadColorFilters();
-    void colorFilterListUpdate();
-    void applyColorFilterThumb(magentaImage result);
-    void colorFilterListClicked(QListWidgetItem *item);
-    void colorFilterCategoryChanged(int index);
-    void handleDroppedCustomClut(QString file);
 };
 
 #endif // CYAN_H
