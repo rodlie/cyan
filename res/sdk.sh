@@ -24,7 +24,7 @@ PNG=1.6.30
 LCMS=2.8
 MAGICK=6.9.0-0 #7.0.6-4
 QT=5.6.2
-SSL=1.0.2l
+#SSL=1.0.2l
 OSX_MIN=10.7
 JOBS=4
 JTYPE="" #"turbo" # has issues on macosx, so use vanilla jpeg on all platforms.
@@ -147,12 +147,12 @@ make -j$JOBS || exit 1
 make install || exit 1
 
 if [ "$OS" = "Linux" ]; then
-    cd $WRK || exit 1
-    tar xvf $CWD/3rdparty/openssl-$SSL.tar.gz || (cd $CWD/3rdparty; curl -L -O https://www.openssl.org/source/openssl-$SSL.tar.gz) && tar xvf $CWD/3rdparty/openssl-$SSL.tar.gz || exit 1
-    cd $WRK/openssl-$SSL || exit 1
-    CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./Configure --prefix=$SDK linux-x86_64 || exit 1
-    make || exit 1
-    make install || exit 1
+    #cd $WRK || exit 1
+    #tar xvf $CWD/3rdparty/openssl-$SSL.tar.gz || (cd $CWD/3rdparty; curl -L -O https://www.openssl.org/source/openssl-$SSL.tar.gz) && tar xvf $CWD/3rdparty/openssl-$SSL.tar.gz || exit 1
+    #cd $WRK/openssl-$SSL || exit 1
+    #CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./Configure --prefix=$SDK linux-x86_64 || exit 1
+    #make || exit 1
+    #make install || exit 1
 
     cd $WRK || exit 1
     tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || (cd $CWD/3rdparty; curl -L -O http://download.qt.io/official_releases/qt/5.6/$QT/single/qt-everywhere-opensource-src-$QT.tar.xz) && tar xvf $CWD/3rdparty/qt-everywhere-opensource-src-$QT.tar.xz || exit 1
@@ -176,7 +176,7 @@ if [ "$OS" = "Linux" ]; then
     -system-libpng \
     -system-libjpeg \
     -qt-harfbuzz \
-    -openssl \
+    -no-openssl \
     -no-libproxy \
     -no-pulseaudio \
     -no-alsa \
