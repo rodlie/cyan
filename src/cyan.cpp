@@ -1641,7 +1641,7 @@ void Cyan::handleGamma(bool use)
     if (use && !monitorProfile->itemData(index).isNull()) {
         QString currentProfile = monitorProfile->itemData(index).toString();
         if (!gamma.apply(currentProfile)) {
-            QMessageBox::warning(this, tr("Gamma Loader"), tr("Unable to calibrate display."));
+            QMessageBox::warning(this, tr("Gamma Loader"), tr("Unable to calibrate display with selected profile."));
         }
     } else if (!use) {
         if (!gamma.clear()) {
