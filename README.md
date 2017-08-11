@@ -13,13 +13,14 @@ Free cross-platform prepress toolkit.
 * Convert to and from RGB/CMYK/GRAY
 * Change image bit depth
 * GIMP integration (import/export)
+* Gamma loader (Linux)
 
 # Requirements
 
 System requirements for downloads:
 
  * Windows 7+
- * Mac OS X 10.9+
+ * Mac OS X 10.7+
  * Linux (GCC 4.8.5+/Glibc 2.17+)
    * Ubuntu requires libxcb-xinerama0 (sudo apt-get install libxcb-xinerama0)
 
