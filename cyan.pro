@@ -46,15 +46,8 @@ QMAKE_TARGET_COPYRIGHT = "Copyright (c)2017 Ole-Andre Rodlie"
 
 !mac {
     CONFIG += link_pkgconfig
-    PKGCONFIG += lcms2
-    CONFIG(gmagick) {
-        DEFINES += GMAGICK
-        PKGCONFIG += GraphicsMagick++
-        LIBS += `pkg-config --libs --static GraphicsMagick++`
-    } else {
-        PKGCONFIG += Magick++
-        LIBS += `pkg-config --libs --static Magick++`
-    }
+    PKGCONFIG += lcms2 Magick++
+    LIBS += `pkg-config --libs --static Magick++`
 }
 
 lessThan(QT_MAJOR_VERSION, 5): win32:RC_FILE += res/cyan.rc

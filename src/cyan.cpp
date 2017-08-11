@@ -41,8 +41,6 @@
 #define CYAN_FONT_SIZE 8
 #endif
 
-#define BLACKPOINT_CHECKBOX_LOCATION 18
-
 CyanView::CyanView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
@@ -260,6 +258,11 @@ Cyan::Cyan(QWidget *parent)
     , colorBlackMin(0)
     , colorBlackMax(0)
     , progBar(0)
+    #ifdef Q_OS_UNIX
+    #ifndef Q_OS_MAC
+    , loadGamma(0)
+    #endif
+    #endif
 {
     qApp->setStyle(QStyleFactory::create("fusion"));
 
@@ -329,6 +332,15 @@ Cyan::Cyan(QWidget *parent)
     cmyLevel = new QDoubleSpinBox();
     kLevel = new QDoubleSpinBox();
     progBar = new QProgressBar();
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    loadGamma = new QCheckBox();
+    QLabel *gammaLabel = new QLabel();
+    gammaLabel->setText(tr("Calibrate"));
+    gammaLabel->setToolTip(tr("Calibrate monitor with the selected profile. Will override other gamma loaders on the system."));
+#endif
+#endif
 
     rgbProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     cmykProfile->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -465,15 +477,18 @@ Cyan::Cyan(QWidget *parent)
     profileBar->addSeparator();
     profileBar->addWidget(monitorLabel);
     profileBar->addWidget(monitorProfile);
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    profileBar->addWidget(gammaLabel);
+    profileBar->addWidget(loadGamma);
+#endif
+#endif
     profileBar->addSeparator();
     profileBar->addWidget(renderLabel);
     profileBar->addWidget(renderingIntent);
     profileBar->addSeparator();
-
-    if (proc.supportBlackPoint()) {
-        profileBar->addWidget(blackLabel);
-        profileBar->addWidget(blackPoint);
-    }
+    profileBar->addWidget(blackLabel);
+    profileBar->addWidget(blackPoint);
 
     profileBar->addSeparator();
     profileBar->addWidget(progBar);
@@ -590,6 +605,12 @@ Cyan::Cyan(QWidget *parent)
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
 
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    connect(loadGamma, SIGNAL(toggled(bool)), this, SLOT(handleGamma(bool)));
+#endif
+#endif
+
     setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;} QComboBox {padding:3px;} QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
 
     QTimer::singleShot(0, this, SLOT(readConfig()));
@@ -598,6 +619,13 @@ Cyan::Cyan(QWidget *parent)
 Cyan::~Cyan()
 {
     writeConfig();
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    if (loadGamma->isChecked()) {
+        handleGamma(false);
+    }
+#endif
+#endif
 }
 
 void Cyan::readConfig()
@@ -605,12 +633,16 @@ void Cyan::readConfig()
     QSettings settings;
 
     settings.beginGroup("color");
-    if (proc.supportBlackPoint()) {
-        blackPoint->setChecked(settings.value("black").toBool());
-    }
+    blackPoint->setChecked(settings.value("black").toBool());
+
     if (settings.value("render").isValid()) {
         renderingIntent->setCurrentIndex(settings.value("render").toInt());
     }
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    loadGamma->setChecked(settings.value("loadgamma").toBool());
+#endif
+#endif
     settings.endGroup();
 
     settings.beginGroup("ui");
@@ -669,9 +701,12 @@ void Cyan::writeConfig()
 {
     QSettings settings;
     settings.beginGroup("color");
-    if (proc.supportBlackPoint()) {
-        settings.setValue("black", blackPoint->isChecked());
-    }
+    settings.setValue("black", blackPoint->isChecked());
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    settings.setValue("loadgamma", loadGamma->isChecked());
+#endif
+#endif
     settings.setValue("render", renderingIntent->itemData(renderingIntent->currentIndex()).toInt());
     settings.endGroup();
 
@@ -942,6 +977,14 @@ void Cyan::loadDefaultProfiles()
     getColorProfiles(2, cmykProfile, false);
     getColorProfiles(3, grayProfile, false);
     getColorProfiles(1, monitorProfile, true /*isMonitor*/);
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    if (loadGamma->isChecked()) {
+        handleGamma(true);
+    }
+#endif
+#endif
 }
 
 void Cyan::saveDefaultProfiles()
@@ -1024,6 +1067,14 @@ void Cyan::updateMonitorDefaultProfile(int index)
     settings.sync();
 
     updateImage();
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    if (loadGamma->isChecked()) {
+        handleGamma(true);
+    }
+#endif
+#endif
 }
 
 void Cyan::getImage(magentaImage result)
@@ -1311,7 +1362,6 @@ void Cyan::enableUI()
     convertBar->setEnabled(true);
     profileBar->setEnabled(true);
     cmykBar->setEnabled(true);
-    profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(false);
 }
 
 void Cyan::disableUI()
@@ -1321,7 +1371,6 @@ void Cyan::disableUI()
     convertBar->setDisabled(true);
     profileBar->setDisabled(true);
     cmykBar->setDisabled(true);
-    profileBar->actions().at(BLACKPOINT_CHECKBOX_LOCATION)->setVisible(true);
 }
 
 void Cyan::exportEmbeddedProfileDialog()
@@ -1583,3 +1632,22 @@ void Cyan::blackPointUpdated(int)
 {
     updateImage();
 }
+
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+void Cyan::handleGamma(bool use)
+{
+    int index = monitorProfile->currentIndex();
+    if (use && !monitorProfile->itemData(index).isNull()) {
+        QString currentProfile = monitorProfile->itemData(index).toString();
+        if (!gamma.apply(currentProfile)) {
+            QMessageBox::warning(this, tr("Gamma Loader"), tr("Unable to calibrate display."));
+        }
+    } else if (!use) {
+        if (!gamma.clear()) {
+            QMessageBox::warning(this, tr("Gamma Loader"), tr("Unable to clear display calibration."));
+        }
+    }
+}
+#endif
+#endif

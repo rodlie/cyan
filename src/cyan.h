@@ -107,11 +107,6 @@ public:
 private:
     Yellow cms;
     Magenta proc;
-#ifdef Q_OS_UNIX
-#ifndef Q_OS_MAC
-    Gamma gamma;
-#endif
-#endif
     QGraphicsScene *scene;
     CyanView *view;
     QToolBar *mainBar;
@@ -155,6 +150,12 @@ private:
     QLabel *colorBlackMin;
     QLabel *colorBlackMax;
     QProgressBar *progBar;
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    Gamma gamma;
+    QCheckBox *loadGamma;
+#endif
+#endif
 
 private slots:
     void readConfig();
@@ -198,6 +199,11 @@ private slots:
     void handleConvertAdv();
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
+#ifdef Q_OS_UNIX
+#ifndef Q_OS_MAC
+    void handleGamma(bool use);
+#endif
+#endif
 };
 
 #endif // CYAN_H

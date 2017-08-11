@@ -13,7 +13,6 @@ Free cross-platform prepress toolkit.
 * Convert to and from RGB/CMYK/GRAY
 * Change image bit depth
 * GIMP integration (import/export)
-* Supports Hald CLUT
 
 # Requirements
 

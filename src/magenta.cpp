@@ -20,12 +20,7 @@
 #include <QDir>
 #include <QDebug>
 
-#ifdef GMAGICK
-#define PROFILE "ICM"
-#define NOBLACKPOINT
-#else
 #define PROFILE "ICC"
-#endif
 
 Magenta::Magenta(QObject *parent) :
     QObject(parent)
@@ -124,11 +119,9 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             }
         }
 
-#ifndef NOBLACKPOINT
         if (edit.black) {
             image.blackPointCompensation(edit.black);
         }
-#endif
 
         // Apply source profile
         if (inprofile.length() > 0) {
@@ -322,15 +315,6 @@ QString Magenta::version()
     result.append("</p>");
 
     return result;
-}
-
-bool Magenta::supportBlackPoint()
-{
-#ifdef NOBLACKPOINT
-    return false;
-#else
-    return true;
-#endif
 }
 
 int Magenta::quantumDepth()
