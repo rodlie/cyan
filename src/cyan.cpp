@@ -557,7 +557,7 @@ Cyan::Cyan(QWidget *parent)
 
     fileMenu->addSeparator();
 
-    exportEmbeddedProfileAction = new QAction(tr("Export image profile"), this);
+    exportEmbeddedProfileAction = new QAction(tr("Save embedded profile"), this);
     exportEmbeddedProfileAction->setIcon(QIcon(":/cyan-save.png"));
     exportEmbeddedProfileAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
     exportEmbeddedProfileAction->setDisabled(true);
@@ -731,19 +731,20 @@ void Cyan::aboutCyan()
     aboutCyan.setTextFormat(Qt::RichText);
     aboutCyan.setWindowTitle(tr("About")+" " + qApp->applicationName() + " " + qApp->applicationVersion());
     aboutCyan.setIconPixmap(QPixmap::fromImage(QImage(":/cyan.png")));
-    aboutCyan.setText("<h1>" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><p>Prepress Toolkit.</p>");
+    aboutCyan.setText("<h1>" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><p>Prepress image viewer and converter.</p>");
 
     QString infoText = "<p>Copyright &copy;2016, 2017 <a href=\"mailto:olear@dracolinux.org\">Ole-Andr&eacute; Rodlie</a>. All rights reserved.</p><p>Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.<br><br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>";
-    infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License.</p><p>Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.</p>");
+    infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License. Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.");
 #ifdef Q_OS_UNIX
 #ifndef Q_OS_MAC
-    infoText.append("<p>Includes code from <a href=\"http://xcalib.sourceforge.net\">xcalib</a>. &copy;2004-2005 Stefan Doehla</p>");
+    infoText.append(" Includes code from <a href=\"http://xcalib.sourceforge.net\">xcalib</a>, &copy;2004-2005 Stefan Doehla.");
 #endif
 #endif
+    infoText.append("</p>");
     infoText.append(proc.version());
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
-    infoText.append("<p>Visit <a href=\"http://cyan.fxarena.net\">cyan.fxarena.net</a> or <a href=\"https://github.com/olear/cyan\">github.com/olear/cyan</a> for news and updates.</p>");
-    infoText.append("Please consider a <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=CKVSFAUAZLUBL&lc=NO&item_name=Cyan&item_number=CYAN&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted\">donation</a> to keep this project alive.");
+    infoText.append("<p>Visit <a href=\"http://prepress.sf.net\">prepress.sf.net</a> for news and updates.");
+    infoText.append(" Please consider a <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=CKVSFAUAZLUBL&lc=NO&item_name=Cyan&item_number=CYAN&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted\">donation</a> to keep this project alive.</p>");
     aboutCyan.setInformativeText(infoText);
 
     QString detailedText;
@@ -1642,6 +1643,7 @@ void Cyan::handleGamma(bool use)
         QString currentProfile = monitorProfile->itemData(index).toString();
         if (!gamma.apply(currentProfile)) {
             QMessageBox::warning(this, tr("Gamma Loader"), tr("Unable to calibrate display with selected profile."));
+            loadGamma->setChecked(false);
         }
     } else if (!use) {
         if (!gamma.clear()) {

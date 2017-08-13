@@ -38,10 +38,10 @@ Magenta::~Magenta()
 
 void Magenta::requestImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit)
 {
-    QMetaObject::invokeMethod(this,"readImage", Q_ARG(bool, isPreview), Q_ARG(bool, doSave), Q_ARG(QString, file), Q_ARG(QByteArray, data), Q_ARG(QByteArray, inprofile), Q_ARG(QByteArray, outprofile), Q_ARG(QByteArray, monitorprofile), Q_ARG(magentaAdjust, edit));
+    QMetaObject::invokeMethod(this,"readImage", Q_ARG(bool, isPreview), Q_ARG(bool, doSave), Q_ARG(QString, file), Q_ARG(QByteArray, data), Q_ARG(QByteArray, inprofile), Q_ARG(QByteArray, outprofile), Q_ARG(QByteArray, monitorprofile), Q_ARG(magentaAdjust, edit), Q_ARG(bool, true));
 }
 
-magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit)
+magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByteArray data, QByteArray inprofile, QByteArray outprofile, QByteArray monitorprofile, magentaAdjust edit, bool doEmit)
 {
     magentaImage result;
     Magick::Blob outputImage;
@@ -277,7 +277,10 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
         result.filename = file;
     }
 
-    emit returnImage(result);
+    if (doEmit) {
+        emit returnImage(result);
+    }
+
     return result;
 }
 
