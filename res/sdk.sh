@@ -25,7 +25,7 @@ LCMS=2.8
 MAGICK=6.9.0-0 #7.0.6-4
 QT=5.6.2
 #SSL=1.0.2l
-OSX_MIN=10.7
+OSX_MIN=10.9
 JOBS=4
 JTYPE="" #"turbo" # has issues on macosx, so use vanilla jpeg on all platforms.
 

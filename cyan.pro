@@ -82,7 +82,7 @@ unix:!mac {
 
 mac {
     ICON = $$top_srcdir/res/Cyan.icns
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     DEFINES += MAGICKCORE_HDRI_ENABLE=1 MAGICKCORE_QUANTUM_DEPTH=32
     INCLUDEPATH += $$top_srcdir/sdk/include $$top_srcdir/sdk/include/ImageMagick-6
     LIBS += -L$$top_srcdir/sdk/lib -lMagickCore-6.Q32HDRI -lMagickWand-6.Q32HDRI -lMagick++-6.Q32HDRI \
