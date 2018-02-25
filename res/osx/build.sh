@@ -28,7 +28,7 @@ if [ ! -f "$CWD/cyan.pro" ]; then
 fi
 VERSION=`cat $CWD/cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
 
-QT=~/Qt/5.6/clang_64
+QT=~/Qt/5.6.3/clang_64
 QMAKE=$QT/bin/qmake
 DEPLOY=$QT/bin/macdeployqt
 
@@ -56,5 +56,5 @@ mv $APP $CWD/build/tmp/ || exit 1
 
 cd $CWD/build/ || exit 1
 hdiutil create -volname Cyan -srcfolder tmp -ov -format UDBZ Cyan.dmg || exit 1
-mv Cyan.dmg $CWD/Cyan-$VERSION-Darwin64.dmg || exit 1
+mv Cyan.dmg $CWD/Cyan-$VERSION.dmg || exit 1
 cd $CWD || exit 1
