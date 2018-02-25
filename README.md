@@ -19,8 +19,8 @@ Free cross-platform prepress toolkit.
 
 System requirements for downloads:
 
- * Windows 7+
- * Mac OS X 10.7+
+ * Windows XP or higher
+ * Mac OS X Lion (10.7) or higher
  * Linux (GCC 4.8.5+/Glibc 2.17+)
    * Ubuntu requires libxcb-xinerama0 (sudo apt-get install libxcb-xinerama0)
 

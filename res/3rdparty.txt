@@ -5,7 +5,7 @@ LICENSES FOR THIRD-PARTY SOFTWARE THAT MAY BE INCLUDED IN A CYAN DISTRIBUTION:
 XCALIB
 ==============================
 
-includes a code from xcalib.c (http://xcalib.sourceforge.net/)
+includes code from xcalib.c (http://xcalib.sourceforge.net/)
 (c) 2004-2005 Stefan Doehla <stefan AT doehla DOT de>
 
 You should have received a copy of the GPL together with this
