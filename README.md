@@ -44,6 +44,8 @@ make install (optional, use INSTALL_ROOT=XXX for packaging)
 
 # Roadmap
 
+ * Rewrite backend from qt to c++ for use in other utils (libFXX)
+ * GUI changes
  * Batch converter
 
 # License
