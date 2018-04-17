@@ -52,6 +52,42 @@ public:
         if (!iface.isValid()) { return false; }
         return iface.property("Removable").toBool();
     }
+    static bool isOptical(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("Optical").toBool();
+    }
+    static bool hasMedia(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("MediaAvailable").toBool();
+    }
+    static bool canEject(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("Ejectable").toBool();
+    }
+    static bool opticalMediaIsBlank(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("OpticalBlank").toBool();
+    }
+    static int opticalDataTracks(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("OpticalNumDataTracks").toBool();
+    }
+    static int opticalAudioTracks(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        return iface.property("OpticalNumAudioTracks").toBool();
+    }
     static QString getMountPoint(QString path)
     {
         QString mountpoint;

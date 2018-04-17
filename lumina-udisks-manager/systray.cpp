@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QMenu>
 #include <QAction>
+#include <QDebug>
 
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
@@ -61,6 +62,7 @@ void SysTray::deviceRemoved(const QDBusObjectPath &obj)
 void SysTray::generateContextMenu()
 {
     for(int i=0;i<contextMenu->actions().size();i++) {
+        contextMenu->actions().at(i)->disconnect();
         delete contextMenu->actions().at(i);
     }
     contextMenu->clear();
@@ -101,7 +103,7 @@ void SysTray::handleMessageClicked()
 void SysTray::handleContextMenuAction()
 {
     QAction *action = qobject_cast<QAction*>(sender());
-    if (!action) { return; }
+    if (action==NULL) { return; }
     QString actionText = action->text();
     QString path = action->data().toString();
     if (!uDisks2::getMountPoint(path).isEmpty()) { // unmount
