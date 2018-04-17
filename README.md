@@ -14,7 +14,7 @@ An D-Bus/UDisks2 device manager for Lumina.
 
 ## Build
 
-Clone or download this repository, then make sure you have Qt and the D-Bus bindings installed.
+Clone or download this repository, then make sure you have Qt 4/5 and the D-Bus bindings installed.
 
 Build and install to /usr/local:
 
