@@ -19,7 +19,7 @@ Clone or download this repository, then make sure you have Qt 4/5 and the D-Bus 
 Build and install to /usr/local:
 
 ```
-mkdir build && build
+mkdir build && cd build
 qmake CONFIG+=release .. && make
 make install
 ```
@@ -44,10 +44,10 @@ package/
     │   └── lumina-udisks-manager
     └── share
         └── doc
-            ├── lumina-screensaver-service-1.0
+            ├── lumina-screensaver-service-VERSION
             │   ├── LICENSE
             │   └── README.md
-            └── lumina-udisks-manager-0.1
+            └── lumina-udisks-manager-VERSION
                 ├── LICENSE
                 └── README.md
 ```
