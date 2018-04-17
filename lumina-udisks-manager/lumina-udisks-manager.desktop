@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Lumina UDisks Manager
+Comment=Lumina UDisks Manager
+Icon=drive-removable-media
+Exec=lumina-udisks-manager
+Terminal=false
+Type=Application
+OnlyShowIn=Lumina;
+StartupNotify=false
