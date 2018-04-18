@@ -8,9 +8,9 @@ Additional applications to enchance the Lumina Desktop Enviroment.
 
 An D-Bus session daemon that implements the **org.freedesktop.ScreenSaver** specification for Lumina.
 
-### lumina-udisks-manager
+### lumina-disk-manager
 
-An D-Bus/UDisks2 device manager for Lumina.
+An D-Bus/UDisks2(bsdisk) device manager for Lumina.
 
 ## Build
 
@@ -34,20 +34,20 @@ make INSTALL_ROOT=/path/to/where/you/want/the/package/content install
 ```
 package/
 ├── etc
-│   └── xdg
-│       └── autostart
-│           ├── lumina-screensaver-service.desktop
-│           └── lumina-udisks-manager.desktop
+│   └── xdg
+│       └── autostart
+│           ├── lumina-screensaver-service.desktop
+│           └── lumina-disk-manager.desktop
 └── usr
     ├── bin
-    │   ├── lumina-screensaver-service
-    │   └── lumina-udisks-manager
+    │   ├── lumina-screensaver-service
+    │   └── lumina-disk-manager
     └── share
         └── doc
             ├── lumina-screensaver-service-VERSION
-            │   ├── LICENSE
-            │   └── README.md
-            └── lumina-udisks-manager-VERSION
+            │   ├── LICENSE
+            │   └── README.md
+            └── lumina-disk-manager-VERSION
                 ├── LICENSE
                 └── README.md
 ```

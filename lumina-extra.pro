@@ -9,5 +9,5 @@
 TEMPLATE = subdirs
 CONFIG -= ordered
 
-SUBDIRS += lumina-screensaver-service lumina-udisks-manager
+SUBDIRS += lumina-screensaver-service lumina-disk-manager
 
