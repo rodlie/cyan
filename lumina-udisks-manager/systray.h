@@ -11,8 +11,7 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QMenu>
-#include <QMap>
-#include "udisks2.h"
+#include "manager.h"
 
 class SysTray : public QObject
 {
@@ -21,19 +20,16 @@ public:
     explicit SysTray(QObject *parent = NULL);
 private:
     QSystemTrayIcon *tray;
-    QMenu *contextMenu;
-    QStringList monitoredDevices;
-signals:
-    void needDeviceList();
+    QMenu *menu;
+    Manager *man;
 private slots:
-    void setupDbus();
-    void deviceAdded(const QDBusObjectPath &obj);
-    void deviceRemoved(const QDBusObjectPath &obj);
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void handleMessageClicked();
     void handleContextMenuAction();
-    void handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties);
+    void handleDeviceError(QString path, QString error);
+    void handleDeviceMediaChanged(QString path, bool media);
+    void handleDeviceMountpointChanged(QString path, QString mountpoint);
 };
 
 #endif // SYSTRAY_H

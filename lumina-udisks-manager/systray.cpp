@@ -16,31 +16,36 @@
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
     , tray(0)
-    , contextMenu(0)
+    , menu(0)
+    , man(0)
 {
-    qRegisterMetaType<QMap<QString, QVariant>>("QMap<QString, QVariant>");
-    contextMenu = new QMenu();
+    menu = new QMenu();
+
     tray = new QSystemTrayIcon(QIcon::fromTheme("drive-removable-media"), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
     connect(tray, SIGNAL(messageClicked()), this, SLOT(handleMessageClicked()));
-    setupDbus();
+
+    man  = new Manager(this);
+    connect(man , SIGNAL(updatedDevices()), this, SLOT(generateContextMenu()));
+    connect(man, SIGNAL(deviceErrorMessage(QString,QString)), this, SLOT(handleDeviceError(QString,QString)));
+    connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
+    connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
 }
 
-void SysTray::setupDbus()
+/*void SysTray::setupDbus()
 {
     QDBusConnection system = QDBusConnection::systemBus();
     if (system.isConnected()) {
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
-        //system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(const QString&,const QMap<QString, QVariant>&/*,const QStringList&*/)));
         generateContextMenu();
     } else {
         if (tray->isVisible()) { tray->hide(); }
         QTimer::singleShot(300000, this, SLOT(setupDbus()));
     }
-}
+}*/
 
-void SysTray::deviceAdded(const QDBusObjectPath &obj)
+/*void SysTray::deviceAdded(const QDBusObjectPath &obj)
 {
     QString path = obj.path();
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
@@ -58,11 +63,11 @@ void SysTray::deviceRemoved(const QDBusObjectPath &obj)
     QString path = obj.path();
     if (monitoredDevices.contains(path)) { monitoredDevices.removeAll(path); }
     generateContextMenu();
-}
+}*/
 
 void SysTray::generateContextMenu()
 {
-    for(int i=0;i<contextMenu->actions().size();i++) {
+    /*for(int i=0;i<contextMenu->actions().size();i++) {
         contextMenu->actions().at(i)->disconnect();
         delete contextMenu->actions().at(i);
     }
@@ -112,7 +117,7 @@ void SysTray::generateContextMenu()
         if (tray->isVisible()) { tray->hide(); }
     } else {
         if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
-    }
+    }*/
 }
 
 void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -120,7 +125,7 @@ void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
     switch(reason) {
     case QSystemTrayIcon::Context:
     case QSystemTrayIcon::Trigger:
-        contextMenu->popup(QCursor::pos());
+        if (menu->actions().size()>0) { menu->popup(QCursor::pos()); }
     default:;
     }
 }
@@ -135,7 +140,7 @@ void SysTray::handleContextMenuAction()
     QAction *action = qobject_cast<QAction*>(sender());
     if (action==NULL) { return; }
 
-    QString actionText = action->text();
+    /*QString actionText = action->text();
     QString path = action->data().toString();
     QString drive = uDisks2::getDrivePath(path);
     bool isOptical = uDisks2::isOptical(drive);
@@ -186,12 +191,35 @@ void SysTray::handleContextMenuAction()
             if (mounted.size()>1) { msg = mounted.at(1); }
             if (tray->isVisible()) { tray->showMessage(tr("Failed to mount %1").arg(actionText), msg); }
         }
-    }
+    }*/
 }
 
-void SysTray::handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties/*, const QStringList &invalidatedProperties*/)
+void SysTray::handleDeviceError(QString path, QString error)
 {
+    qDebug() << "handle device error" << path << error;
+    if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
+    tray->showMessage(QString("Error for device %1").arg(man->devices[path]->name), error);
+}
+
+void SysTray::handleDeviceMediaChanged(QString path, bool media)
+{
+    qDebug() << "handle device media changed" << path << media;
+    if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
+    generateContextMenu();
+}
+
+void SysTray::handleDeviceMountpointChanged(QString path, QString mountpoint)
+{
+    qDebug() << "handle device mountpoint changed" << path << mountpoint;
+    if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
+    generateContextMenu();
+}
+
+
+
+//void SysTray::handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties/*, const QStringList &invalidatedProperties*/)
+/*{
     Q_UNUSED(interface)
     Q_UNUSED(changedProperties)
     generateContextMenu();
-}
+}*/

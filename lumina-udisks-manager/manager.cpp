@@ -103,8 +103,9 @@ void Manager::scanDevices()
         Device *newDevice = new Device(foundDevicePath, this);
         connect(newDevice, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
         connect(newDevice, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
-        connect(newDevice, SIGNAL(nameChanged(QString,QString)), this, SLOT(handleDeviceNameChanged(QString,QString)));
+        connect(newDevice, SIGNAL(errorMessage(QString,QString)), this, SLOT(handleDeviceErrorMessage(QString,QString)));
         devices[foundDevicePath] = newDevice;
+        emit updatedDevices();
     }
 }
 
@@ -145,14 +146,17 @@ void Manager::deviceRemoved(const QDBusObjectPath &obj)
 void Manager::handleDeviceMediaChanged(QString devicePath, bool mediaPresent)
 {
     qDebug() << "===> device media status changed" << devicePath << mediaPresent;
+    emit mediaChanged(devicePath, mediaPresent);
 }
 
 void Manager::handleDeviceMountpointChanged(QString devicePath, QString deviceMountpoint)
 {
     qDebug() << "===> device mountpoint changed" << devicePath << deviceMountpoint;
+    emit mountpointChanged(devicePath, deviceMountpoint);
 }
 
-void Manager::handleDeviceNameChanged(QString devicePath, QString deviceName)
+void Manager::handleDeviceErrorMessage(QString devicePath, QString deviceError)
 {
-    qDebug() << "===> device name changed" << devicePath << deviceName;
+    qDebug() << "===> device error" << devicePath << deviceError;
+    emit deviceErrorMessage(devicePath, deviceError);
 }

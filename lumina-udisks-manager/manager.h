@@ -28,7 +28,7 @@ signals:
     void mediaChanged(QString devicePath, bool mediaPresent);
     void mountpointChanged(QString devicePath, QString deviceMountpoint);
     void nameChanged(QString devicePath, QString deviceName);
-    void errorMessage(QString error);
+    void errorMessage(QString devicePath, QString deviceError);
 public slots:
     void mount();
     void unmount();
@@ -45,7 +45,10 @@ public:
     explicit Manager(QObject *parent = NULL);
     QMap<QString,Device*> devices;
 signals:
-    void showHideTray(bool show);
+    void updatedDevices();
+    void mediaChanged(QString path, bool media);
+    void mountpointChanged(QString path, QString mountpoint);
+    void deviceErrorMessage(QString path, QString error);
 private slots:
     void setupDBus();
     void scanDevices();
@@ -53,7 +56,7 @@ private slots:
     void deviceRemoved(const QDBusObjectPath &obj);
     void handleDeviceMediaChanged(QString devicePath, bool mediaPresent);
     void handleDeviceMountpointChanged(QString devicePath, QString deviceMountpoint);
-    void handleDeviceNameChanged(QString devicePath, QString deviceName);
+    void handleDeviceErrorMessage(QString devicePath, QString deviceError);
 };
 
 #endif // MANAGER_H
