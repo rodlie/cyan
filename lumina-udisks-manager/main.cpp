@@ -5,12 +5,12 @@
 # See the LICENSE file for full details
 */
 
-#include "systray.h"
+#include "manager.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    SysTray tray(a.parent());
+    Manager man(a.parent());
     return a.exec();
 }

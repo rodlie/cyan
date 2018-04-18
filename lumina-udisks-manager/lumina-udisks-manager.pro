@@ -12,8 +12,10 @@ TARGET = lumina-udisks-manager
 VERSION = 0.1
 TEMPLATE = app
 
-SOURCES += main.cpp systray.cpp
-HEADERS += systray.h udisks2.h
+SOURCES += main.cpp systray.cpp \
+    manager.cpp
+HEADERS += systray.h udisks2.h \
+    manager.h
 
 include(../lumina-extra.pri)
 

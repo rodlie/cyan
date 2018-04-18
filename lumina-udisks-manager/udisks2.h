@@ -185,6 +185,25 @@ public:
         }
         return result;
     }
+    static QStringList getDevices()
+    {
+        QStringList result;
+        QDBusMessage call = QDBusMessage::createMethodCall(DBUS_SERVICE, QString("%1/block_devices").arg(DBUS_PATH), DBUS_INTROSPECTABLE, "Introspect");
+        QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(call);
+        QList<QDBusObjectPath> devices;
+        QXmlStreamReader xml(reply.value());
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if (xml.tokenType() == QXmlStreamReader::StartElement && xml.name().toString() == "node" ) {
+                QString name = xml.attributes().value("name").toString();
+                if(!name.isEmpty()) { devices << QDBusObjectPath("/org/freedesktop/UDisks2/block_devices/" + name); }
+            }
+        }
+        foreach (QDBusObjectPath device, devices) {
+            result << device.path();
+        }
+        return result;
+    }
 };
 
 #endif // UDISKS2_H
