@@ -30,61 +30,47 @@ SysTray::SysTray(QObject *parent)
     connect(man, SIGNAL(deviceErrorMessage(QString,QString)), this, SLOT(handleDeviceError(QString,QString)));
     connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
     connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
+    generateContextMenu();
 }
 
 void SysTray::generateContextMenu()
 {
-    /*for(int i=0;i<contextMenu->actions().size();i++) {
-        contextMenu->actions().at(i)->disconnect();
-        delete contextMenu->actions().at(i);
+    qDebug() << "generate context menu";
+    for(int i=0;i<menu->actions().size();i++) {
+        menu->actions().at(i)->disconnect();
+        delete menu->actions().at(i);
     }
-    contextMenu->clear();
-    QVector<QStringList> devices = uDisks2::getRemovableDevices();
-    //qDebug() << "devices" << devices;
-    if (devices.size()==0) { return; }
-    for (int i=0;i<devices.size();i++) {
-        if (devices.at(i).size()<2) { continue; }
-        QString path = devices.at(i).at(0);
-        QString drive = uDisks2::getDrivePath(path);
+    menu->clear();
 
-        bool isOptical = false;
-        if (devices.at(i).size()>=4) {
-            if (devices.at(i).at(3) == "optical") { isOptical = true; }
-        }
-        if (isOptical) {
-            if (!monitoredDevices.contains(drive)) {
-                monitoredDevices << drive;
-                QDBusConnection system = QDBusConnection::systemBus();
-                system.connect(DBUS_SERVICE, drive, DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(const QString&,const QMap<QString, QVariant>&)));
-            }
-            if (!uDisks2::hasMedia(drive)) { continue; } // optical don't have media, don't add to menu
+    QMapIterator<QString, Device*> device(man->devices);
+    while (device.hasNext()) {
+        device.next();
+        qDebug() << "add to menu?" << device.key() << "is removable?" << device.value()->isRemovable;
+        if ((device.value()->isOptical && !device.value()->hasMedia) || (!device.value()->isOptical && !device.value()->isRemovable) || (!device.value()->isOptical && !device.value()->hasPartition)) {
+            continue;
         }
 
-        QAction *devAction = new QAction(this);
-        QString title;
-        QString mountpoint;
-        if (devices.at(i).size()>=3) { mountpoint = devices.at(i).at(2); }
-        if (mountpoint.isEmpty()) {
-            devAction->setIcon(QIcon::fromTheme(isOptical?"drive-optical":"drive-removable-media"));
-            if (isOptical) {
-                bool hasAudio = uDisks2::opticalAudioTracks(drive)>0?true:false;
-                bool hasData = uDisks2::opticalDataTracks(drive)>0?true:false;
-                bool hasBlank = uDisks2::opticalMediaIsBlank(drive);
-                if (hasBlank||(hasAudio&&!hasData)) { devAction->setIcon(QIcon::fromTheme("media-eject")); }
-            }
-        }
-        else { devAction->setIcon(QIcon::fromTheme("media-eject")); }
-        devAction->setText(devices.at(i).at(1));
-        devAction->setData(path);
-        connect(devAction, SIGNAL(triggered(bool)), this, SLOT(handleContextMenuAction()));
-        contextMenu->addAction(devAction);
+        QAction *deviceAction = new QAction(this);
+        deviceAction->setData(device.key());
+        deviceAction->setText(device.value()->name);
+
+        connect(deviceAction, SIGNAL(triggered(bool)), this, SLOT(handleContextMenuAction()));
+        menu->addAction(deviceAction);
+
+        if (device.value()->mountpoint.isEmpty()) {
+            deviceAction->setIcon(QIcon::fromTheme(device.value()->isOptical?"drive-optical":"drive-removable-media"));
+            bool hasAudio = device.value()->opticalAudioTracks>0?true:false;
+            bool hasData = device.value()->opticalDataTracks>0?true:false;
+            if (device.value()->isBlankDisc||(hasAudio&&!hasData)) { deviceAction->setIcon(QIcon::fromTheme("media-eject")); }
+        } else { deviceAction->setIcon(QIcon::fromTheme("media-eject")); }
     }
 
-    if (contextMenu->actions().size()==0) {
+    qDebug() << menu->actions();
+    if (menu->actions().size()==0) {
         if (tray->isVisible()) { tray->hide(); }
     } else {
         if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
-    }*/
+    }
 }
 
 void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -165,7 +151,8 @@ void SysTray::handleDeviceError(QString path, QString error)
 {
     qDebug() << "handle device error" << path << error;
     if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
-    tray->showMessage(QString("Error for device %1").arg(man->devices[path]->name), error);
+    if (!tray->isVisible()) { tray->show(); }
+    tray->showMessage(QObject::tr("Error for device %1").arg(man->devices[path]->name), error);
 }
 
 void SysTray::handleDeviceMediaChanged(QString path, bool media)
@@ -173,6 +160,16 @@ void SysTray::handleDeviceMediaChanged(QString path, bool media)
     qDebug() << "handle device media changed" << path << media;
     if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
     generateContextMenu();
+    if (man->devices[path]->isOptical && media) {
+        bool isData = man->devices[path]->opticalDataTracks>0?true:false;
+        bool isAudio = man->devices[path]->opticalAudioTracks>0?true:false;
+        QString opticalType;
+        if (isData&&isAudio) { opticalType = "data+audio"; }
+        else if (isData) { opticalType = "data"; }
+        else if (isAudio) { opticalType = "audio"; }
+        if (!tray->isVisible()) { tray->show(); }
+        tray->showMessage(QObject::tr("%1 has media").arg(man->devices[path]->name), QObject::tr("Detected %1 media in %2").arg(opticalType).arg(man->devices[path]->name));
+    }
 }
 
 void SysTray::handleDeviceMountpointChanged(QString path, QString mountpoint)
@@ -180,4 +177,14 @@ void SysTray::handleDeviceMountpointChanged(QString path, QString mountpoint)
     qDebug() << "handle device mountpoint changed" << path << mountpoint;
     if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
     generateContextMenu();
+    if (!man->devices[path]->isRemovable) { qDebug()<<"not removable";return; }
+    if (mountpoint.isEmpty()) {
+        if (!tray->isVisible()) { tray->show(); }
+        tray->showMessage(QObject::tr("%1 removed").arg(man->devices[path]->name), QObject::tr("It's now safe to remove %1 from your computer.").arg(man->devices[path]->name));
+    } else { openMountpoint(mountpoint); }
+}
+
+void SysTray::openMountpoint(QString mountpoint)
+{
+    qDebug() << "open mountpoint in something" << mountpoint;
 }

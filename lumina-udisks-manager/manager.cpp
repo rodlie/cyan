@@ -46,8 +46,8 @@ void Device::updateDeviceProperties()
     QString lastMountpoint = mountpoint;
     QString lastName = name;
 
-    name = uDisks2::getDeviceName(path);
     drive = uDisks2::getDrivePath(path);
+    name = uDisks2::getDeviceName(drive);
     mountpoint = uDisks2::getMountPoint(path);
     filesystem = uDisks2::getFileSystem(path);
     isOptical = uDisks2::isOptical(drive);
