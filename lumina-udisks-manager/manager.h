@@ -12,6 +12,7 @@ public:
     explicit Device(const QString block, QObject *parent = NULL);
     QString name;
     QString path;
+    QString dev;
     QString drive;
     QString mountpoint;
     QString filesystem;

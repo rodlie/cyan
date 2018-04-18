@@ -19,13 +19,17 @@ class SysTray : public QObject
 public:
     explicit SysTray(QObject *parent = NULL);
 private:
-    QSystemTrayIcon *tray;
+    QSystemTrayIcon *disktray;
+    QSystemTrayIcon *msgtray;
     QMenu *menu;
     Manager *man;
 private slots:
     void generateContextMenu();
-    void trayActivated(QSystemTrayIcon::ActivationReason reason);
-    void handleMessageClicked();
+    void disktrayActivated(QSystemTrayIcon::ActivationReason reason);
+    void msgtrayActivated(QSystemTrayIcon::ActivationReason reason);
+    void handleDisktrayMessageClicked();
+    void handleMsgtrayMessageClicked();
+    void showMessage(QString title, QString message);
     void handleContextMenuAction();
     void handleDeviceError(QString path, QString error);
     void handleDeviceMediaChanged(QString path, bool media);

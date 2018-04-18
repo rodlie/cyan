@@ -25,16 +25,34 @@ Device::Device(const QString block, QObject *parent)
 void Device::mount()
 {
     qDebug() << "mount" << path;
+    if (!mountpoint.isEmpty()) { return; }
+    QString reply = uDisks2::mountDevice(path);
+    if (!reply.isEmpty()) {
+        qDebug() << "FAILED TO MOUNT" << reply;
+    }
+    updateDeviceProperties();
 }
 
 void Device::unmount()
 {
     qDebug() << "unmount" << path;
+    if (mountpoint.isEmpty()) { return; }
+    QString reply = uDisks2::unmountDevice(path);
+    updateDeviceProperties();
+    if (!reply.isEmpty() || !mountpoint.isEmpty()) {
+        qDebug() << "FAILED TO UNMOUNT" << mountpoint;
+    }
+    if (isOptical) { eject(); }
 }
 
 void Device::eject()
 {
     qDebug() << "eject" << path;
+    QString reply = uDisks2::ejectDevice(drive);
+    updateDeviceProperties();
+    if (!reply.isEmpty() || hasMedia) {
+        qDebug() << "FAILED TO EJECT" << reply;
+    }
 }
 
 void Device::updateDeviceProperties()
@@ -48,6 +66,8 @@ void Device::updateDeviceProperties()
 
     drive = uDisks2::getDrivePath(path);
     name = uDisks2::getDeviceName(drive);
+    dev = path.split("/").takeLast();
+    isRemovable = uDisks2::isRemovable(drive);
     mountpoint = uDisks2::getMountPoint(path);
     filesystem = uDisks2::getFileSystem(path);
     isOptical = uDisks2::isOptical(drive);
@@ -105,8 +125,8 @@ void Manager::scanDevices()
         connect(newDevice, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
         connect(newDevice, SIGNAL(errorMessage(QString,QString)), this, SLOT(handleDeviceErrorMessage(QString,QString)));
         devices[foundDevicePath] = newDevice;
-        emit updatedDevices();
     }
+    emit updatedDevices();
 }
 
 void Manager::deviceAdded(const QDBusObjectPath &obj)

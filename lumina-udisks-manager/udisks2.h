@@ -126,16 +126,14 @@ public:
         name.append(iface.property("Model").toString().simplified());
         return name;
     }
-    static QStringList mountDevice(QString path)
+    static QString mountDevice(QString path)
     {
         QDBusInterface filesystem(DBUS_SERVICE, path, QString("%1.Filesystem").arg(DBUS_SERVICE), QDBusConnection::systemBus());
-        if (!filesystem.isValid()) { return QStringList(); }
+        if (!filesystem.isValid()) { return QObject::tr("Failed D-Bus connection."); }
         QVariantMap options;
         if (getFileSystem(path) == "vfat") { options.insert("options", "flush"); }
         QDBusReply<QString> mountpoint =  filesystem.call("Mount", options);
-        QStringList result;
-        result << mountpoint.value() << mountpoint.error().message();
-        return result;
+        return mountpoint.error().message();
     }
     static QString unmountDevice(QString path)
     {
@@ -144,16 +142,12 @@ public:
         QDBusMessage reply = filesystem.call("Unmount", QVariantMap());
         return reply.arguments().first().toString();
     }
-    static /*QStringList*/QString ejectDevice(QString path)
+    static QString ejectDevice(QString path)
     {
         QDBusInterface filesystem(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
-        //if (!filesystem.isValid()) { return QStringList(); }
-        /*QDBusReply<QString> reply =*/ QDBusMessage reply = filesystem.call("Eject", QVariantMap());
+        if (!filesystem.isValid()) { return QObject::tr("Failed D-Bus connection."); }
+        QDBusMessage reply = filesystem.call("Eject", QVariantMap());
         return reply.arguments().first().toString();
-        /*QStringList result;
-        result << reply.value();
-        if (reply.error().isValid()) { result << reply.error().message(); }
-        return result;*/
     }
     static QVector<QStringList> getRemovableDevices()
     {
