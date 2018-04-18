@@ -32,39 +32,6 @@ SysTray::SysTray(QObject *parent)
     connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
 }
 
-/*void SysTray::setupDbus()
-{
-    QDBusConnection system = QDBusConnection::systemBus();
-    if (system.isConnected()) {
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
-        generateContextMenu();
-    } else {
-        if (tray->isVisible()) { tray->hide(); }
-        QTimer::singleShot(300000, this, SLOT(setupDbus()));
-    }
-}*/
-
-/*void SysTray::deviceAdded(const QDBusObjectPath &obj)
-{
-    QString path = obj.path();
-    if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
-    if (uDisks2::hasPartition(path)) {
-        generateContextMenu();
-        if (tray->isSystemTrayAvailable()) {
-            if (!tray->isVisible()) { tray->show(); }
-            tray->showMessage(uDisks2::getDeviceName(uDisks2::getDrivePath(path)), tr("Found new device"));
-        }
-    }
-}
-
-void SysTray::deviceRemoved(const QDBusObjectPath &obj)
-{
-    QString path = obj.path();
-    if (monitoredDevices.contains(path)) { monitoredDevices.removeAll(path); }
-    generateContextMenu();
-}*/
-
 void SysTray::generateContextMenu()
 {
     /*for(int i=0;i<contextMenu->actions().size();i++) {
@@ -214,12 +181,3 @@ void SysTray::handleDeviceMountpointChanged(QString path, QString mountpoint)
     if (!tray->isSystemTrayAvailable()||!man->devices.contains(path)) { return; }
     generateContextMenu();
 }
-
-
-
-//void SysTray::handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties/*, const QStringList &invalidatedProperties*/)
-/*{
-    Q_UNUSED(interface)
-    Q_UNUSED(changedProperties)
-    generateContextMenu();
-}*/
