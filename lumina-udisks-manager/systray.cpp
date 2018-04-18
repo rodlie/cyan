@@ -18,6 +18,7 @@ SysTray::SysTray(QObject *parent)
     , tray(0)
     , contextMenu(0)
 {
+    qRegisterMetaType<QMap<QString, QVariant>>("QMap<QString, QVariant>");
     contextMenu = new QMenu();
     tray = new QSystemTrayIcon(QIcon::fromTheme("drive-removable-media"), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
@@ -31,7 +32,7 @@ void SysTray::setupDbus()
     if (system.isConnected()) {
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
-        if (uDisks2::getRemovableDevices().size()>0 && tray->isSystemTrayAvailable()) { tray->show(); }
+        //system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(const QString&,const QMap<QString, QVariant>&/*,const QStringList&*/)));
         generateContextMenu();
     } else {
         if (tray->isVisible()) { tray->hide(); }
@@ -54,8 +55,8 @@ void SysTray::deviceAdded(const QDBusObjectPath &obj)
 
 void SysTray::deviceRemoved(const QDBusObjectPath &obj)
 {
-    Q_UNUSED(obj)
-    if (uDisks2::getRemovableDevices().size()==0 && tray->isVisible()) { tray->hide(); }
+    QString path = obj.path();
+    if (monitoredDevices.contains(path)) { monitoredDevices.removeAll(path); }
     generateContextMenu();
 }
 
@@ -67,11 +68,29 @@ void SysTray::generateContextMenu()
     }
     contextMenu->clear();
     QVector<QStringList> devices = uDisks2::getRemovableDevices();
+    //qDebug() << "devices" << devices;
     if (devices.size()==0) { return; }
     for (int i=0;i<devices.size();i++) {
         if (devices.at(i).size()<2) { continue; }
-        QAction *devAction = new QAction(this);
         QString path = devices.at(i).at(0);
+
+        bool isOptical = false;
+        bool opticalHasMedia = uDisks2::hasMedia(uDisks2::getDrivePath(path));
+        if (devices.at(i).size()>=4) {
+            if (devices.at(i).at(3) == "optical") { isOptical = true; }
+        }
+        if (isOptical) {
+            QString drive = uDisks2::getDrivePath(path);
+            if (!monitoredDevices.contains(drive)) {
+                //qDebug() << "monitor device" << drive;
+                monitoredDevices << drive;
+                QDBusConnection system = QDBusConnection::systemBus();
+                system.connect(DBUS_SERVICE, drive, DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(const QString&,const QMap<QString, QVariant>&)));
+            }
+            if (!opticalHasMedia) { continue; } // optical don't have media, don't add to menu
+        }
+
+        QAction *devAction = new QAction(this);
         QString title;
         QString mountpoint;
         if (devices.at(i).size()>=3) { mountpoint = devices.at(i).at(2); }
@@ -83,6 +102,11 @@ void SysTray::generateContextMenu()
         contextMenu->addAction(devAction);
     }
 
+    if (contextMenu->actions().size()==0) {
+        if (tray->isVisible()) { tray->hide(); }
+    } else {
+        if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
+    }
 }
 
 void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -124,4 +148,11 @@ void SysTray::handleContextMenuAction()
             if (tray->isVisible()) { tray->showMessage(tr("Failed to mount %1").arg(actionText), msg);}
         }
     }
+}
+
+void SysTray::handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties/*, const QStringList &invalidatedProperties*/)
+{
+    Q_UNUSED(interface)
+    Q_UNUSED(changedProperties)
+    generateContextMenu();
 }

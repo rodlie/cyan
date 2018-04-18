@@ -14,6 +14,8 @@
 #include <QDBusReply>
 #include <QDBusInterface>
 #include <QXmlStreamReader>
+#include <QDebug>
+#include <QStringList>
 
 #define DBUS_SERVICE "org.freedesktop.UDisks2"
 #define DBUS_PATH "/org/freedesktop/UDisks2"
@@ -56,13 +58,25 @@ public:
     {
         QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
         if (!iface.isValid()) { return false; }
-        return iface.property("Optical").toBool();
+        QStringList compat = iface.property("MediaCompatibility").toStringList();
+        for (int i=0;i<compat.size();i++) {
+            if (compat.at(i).startsWith("optical_")) { return true; }
+        }
+        return false;
     }
     static bool hasMedia(QString path)
     {
         QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
         if (!iface.isValid()) { return false; }
         return iface.property("MediaAvailable").toBool();
+    }
+    static bool hasOpticalMedia(QString path)
+    {
+        QDBusInterface iface(DBUS_SERVICE, path, QString("%1.Drive").arg(DBUS_SERVICE), QDBusConnection::systemBus());
+        if (!iface.isValid()) { return false; }
+        QString type = iface.property("Media").toString();
+        if (type.startsWith("optical_")) { return true; }
+        return false;
     }
     static bool canEject(QString path)
     {
@@ -149,11 +163,14 @@ public:
         foreach (QDBusObjectPath device, devices) {
             QString path = device.path();
             QString drive = getDrivePath(path);
-            if (isRemovable(drive) && hasPartition(path)) {
-                QStringList deviceInfo;
-                QString deviceName = getDeviceName(drive);
-                if (deviceName.isEmpty()) { deviceName = QObject::tr("Unknown device"); }
+            QString deviceName = getDeviceName(drive);
+            QStringList deviceInfo;
+            bool deviceIsOptical = isOptical(drive);
+            //qDebug() << path << deviceIsOptical;
+            if (deviceName.isEmpty()) { deviceName = QObject::tr("Unknown device"); }
+            if (isRemovable(drive) && (hasPartition(path)||deviceIsOptical)) {
                 deviceInfo << path << deviceName << getMountPoint(path);
+                if (deviceIsOptical) { deviceInfo << "optical"; }
                 result << deviceInfo;
             }
         }

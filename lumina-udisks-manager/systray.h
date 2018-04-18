@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QMap>
 #include "udisks2.h"
 
 class SysTray : public QObject
@@ -21,6 +22,7 @@ public:
 private:
     QSystemTrayIcon *tray;
     QMenu *contextMenu;
+    QStringList monitoredDevices;
 signals:
     void needDeviceList();
 private slots:
@@ -31,6 +33,7 @@ private slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void handleMessageClicked();
     void handleContextMenuAction();
+    void handlePropertiesChanged(const QString &interface, const QMap<QString, QVariant> &changedProperties);
 };
 
 #endif // SYSTRAY_H
