@@ -35,6 +35,7 @@ SysTray::SysTray(QObject *parent)
     connect(man, SIGNAL(deviceErrorMessage(QString,QString)), this, SLOT(handleDeviceError(QString,QString)));
     connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
     connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
+    connect(man, SIGNAL(foundNewDevice(QString)), this, SLOT(handleFoundNewDevice(QString)));
     generateContextMenu();
 }
 
@@ -68,7 +69,7 @@ void SysTray::generateContextMenu()
         } else { deviceAction->setIcon(QIcon::fromTheme("media-eject")); }
     }
 
-    qDebug() << menu->actions();
+    //qDebug() << menu->actions();
     if (menu->actions().size()==0) {
         if (disktray->isVisible()) { disktray->hide(); }
     } else {
@@ -151,7 +152,6 @@ void SysTray::handleDeviceMediaChanged(QString path, bool media)
 
 void SysTray::handleDeviceMountpointChanged(QString path, QString mountpoint)
 {
-    qDebug() << "handle device mountpoint changed" << path << mountpoint;
     if (!man->devices.contains(path)) { return; }
     generateContextMenu();
     if (!man->devices[path]->isRemovable) { return; }
@@ -166,4 +166,10 @@ void SysTray::openMountpoint(QString mountpoint)
 {
     if (mountpoint.isEmpty()) { return; }
     QProcess::startDetached(QString("lumina-open %1").arg(mountpoint));
+}
+
+void SysTray::handleFoundNewDevice(QString path)
+{
+    if (!man->devices.contains(path)) { return; }
+    showMessage(QString("Found %1").arg(man->devices[path]->name), QString("Found a new device (%1)").arg(man->devices[path]->dev));
 }

@@ -15,51 +15,48 @@ Device::Device(const QString block, QObject *parent)
     , hasPartition(false)
     , dbus(0)
 {
-    qDebug() << "setup device" << path;
     QDBusConnection system = QDBusConnection::systemBus();
     dbus = new QDBusInterface(DBUS_SERVICE, path, QString("%1.Block").arg(DBUS_SERVICE), system, parent);
-    qDebug() << "connect?" << system.connect(dbus->service(), dbus->path(), DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(QString,QMap<QString,QVariant>)));
+    system.connect(dbus->service(), dbus->path(), DBUS_PROPERTIES, "PropertiesChanged", this, SLOT(handlePropertiesChanged(QString,QMap<QString,QVariant>)));
     updateDeviceProperties();
 }
 
 void Device::mount()
 {
-    qDebug() << "mount" << path;
     if (!mountpoint.isEmpty()) { return; }
     QString reply = uDisks2::mountDevice(path);
     if (!reply.isEmpty()) {
-        qDebug() << "FAILED TO MOUNT" << reply;
+        emit errorMessage(path, reply);
+        return;
     }
     updateDeviceProperties();
 }
 
 void Device::unmount()
 {
-    qDebug() << "unmount" << path;
     if (mountpoint.isEmpty()) { return; }
     QString reply = uDisks2::unmountDevice(path);
     updateDeviceProperties();
     if (!reply.isEmpty() || !mountpoint.isEmpty()) {
-        qDebug() << "FAILED TO UNMOUNT" << mountpoint;
+        if (reply.isEmpty()) { reply = QObject::tr("Failed to umount %1").arg(name); }
+        emit errorMessage(path, reply);
+        return;
     }
     if (isOptical) { eject(); }
 }
 
 void Device::eject()
 {
-    qDebug() << "eject" << path;
     QString reply = uDisks2::ejectDevice(drive);
     updateDeviceProperties();
     if (!reply.isEmpty() || hasMedia) {
-        qDebug() << "FAILED TO EJECT" << reply;
+        if (reply.isEmpty()) { reply = QObject::tr("Failed to eject %1").arg(name); }
+        emit errorMessage(path, reply);
     }
 }
 
 void Device::updateDeviceProperties()
 {
-    qDebug() << "update device properties";
-
-
     bool hadMedia =  hasMedia;
     QString lastMountpoint = mountpoint;
     QString lastName = name;
@@ -90,7 +87,8 @@ void Device::updateDeviceProperties()
 
 void Device::handlePropertiesChanged(const QString &interfaceType, const QMap<QString, QVariant> &changedProperties)
 {
-    qDebug() << "device properties changed" << path << interfaceType << changedProperties;
+    Q_UNUSED(interfaceType)
+    Q_UNUSED(changedProperties)
     updateDeviceProperties();
 }
 
@@ -102,19 +100,16 @@ Manager::Manager(QObject *parent)
 
 void Manager::setupDBus()
 {
-    qDebug() << "setup dbus";
     QDBusConnection system = QDBusConnection::systemBus();
     if (system.isConnected()) {
-        qDebug() << "device added connect?" << system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
-        qDebug() << "device removed connect?" << system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
         scanDevices();
     } else { QTimer::singleShot(300000, this, SLOT(setupDbus())); }
 }
 
 void Manager::scanDevices()
 {
-    qDebug() << "devs" << devices;
-    qDebug() << "do a device scan...";
     QStringList foundDevices = uDisks2::getDevices();
     for (int i=0;i<foundDevices.size();i++) {
         QString foundDevicePath = foundDevices.at(i);
@@ -131,33 +126,21 @@ void Manager::scanDevices()
 
 void Manager::deviceAdded(const QDBusObjectPath &obj)
 {
-    qDebug() << "device added";
     QString path = obj.path();
-    bool deviceExists = devices.contains(path);
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
 
-    qDebug() << "device was added" << path;
-    qDebug() << "device exists?" << deviceExists;
-
-
     scanDevices();
+    emit foundNewDevice(path);
 }
 
 void Manager::deviceRemoved(const QDBusObjectPath &obj)
 {
-    qDebug() << "device removed";
     QString path = obj.path();
     bool deviceExists = devices.contains(path);
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
 
-    qDebug() << "device was removed" << path;
-    qDebug() << "device exists?" << deviceExists;
-
     if (deviceExists) {
-        if (uDisks2::getDevices().contains(path)) {
-            qDebug() << "device is still present, so ignore remove.";
-            return;
-        }
+        if (uDisks2::getDevices().contains(path)) { return; }
         delete devices.take(path);
     }
     scanDevices();
@@ -165,18 +148,15 @@ void Manager::deviceRemoved(const QDBusObjectPath &obj)
 
 void Manager::handleDeviceMediaChanged(QString devicePath, bool mediaPresent)
 {
-    qDebug() << "===> device media status changed" << devicePath << mediaPresent;
     emit mediaChanged(devicePath, mediaPresent);
 }
 
 void Manager::handleDeviceMountpointChanged(QString devicePath, QString deviceMountpoint)
 {
-    qDebug() << "===> device mountpoint changed" << devicePath << deviceMountpoint;
     emit mountpointChanged(devicePath, deviceMountpoint);
 }
 
 void Manager::handleDeviceErrorMessage(QString devicePath, QString deviceError)
 {
-    qDebug() << "===> device error" << devicePath << deviceError;
     emit deviceErrorMessage(devicePath, deviceError);
 }

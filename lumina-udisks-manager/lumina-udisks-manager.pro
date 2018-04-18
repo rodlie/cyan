@@ -8,14 +8,12 @@
 QT += core gui dbus
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = lumina-udisks-manager
-VERSION = 0.1
+TARGET = lumina-disk-manager
+VERSION = 0.2
 TEMPLATE = app
 
-SOURCES += main.cpp systray.cpp \
-    manager.cpp
-HEADERS += systray.h udisks2.h \
-    manager.h
+SOURCES += main.cpp systray.cpp manager.cpp
+HEADERS += systray.h udisks2.h manager.h
 
 include(../lumina-extra.pri)
 

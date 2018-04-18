@@ -50,6 +50,7 @@ signals:
     void mediaChanged(QString path, bool media);
     void mountpointChanged(QString path, QString mountpoint);
     void deviceErrorMessage(QString path, QString error);
+    void foundNewDevice(QString path);
 private slots:
     void setupDBus();
     void scanDevices();

@@ -35,6 +35,7 @@ private slots:
     void handleDeviceMediaChanged(QString path, bool media);
     void handleDeviceMountpointChanged(QString path, QString mountpoint);
     void openMountpoint(QString mountpoint);
+    void handleFoundNewDevice(QString path);
 };
 
 #endif // SYSTRAY_H
