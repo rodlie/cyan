@@ -30,7 +30,7 @@ Device::Device(const QString block, QObject *parent)
 
 void Device::mount()
 {
-    if (!mountpoint.isEmpty()) { return; }
+    if (!dbus->isValid() || !mountpoint.isEmpty()) { return; }
     QString reply = uDisks2::mountDevice(path);
     if (!reply.isEmpty()) {
         emit errorMessage(path, reply);
@@ -41,7 +41,7 @@ void Device::mount()
 
 void Device::unmount()
 {
-    if (mountpoint.isEmpty()) { return; }
+    if (!dbus->isValid() || mountpoint.isEmpty()) { return; }
     QString reply = uDisks2::unmountDevice(path);
     updateDeviceProperties();
     if (!reply.isEmpty() || !mountpoint.isEmpty()) {
@@ -54,6 +54,7 @@ void Device::unmount()
 
 void Device::eject()
 {
+    if (!dbus->isValid()) { return; }
     QString reply = uDisks2::ejectDevice(drive);
     updateDeviceProperties();
     if (!reply.isEmpty() || hasMedia) {
@@ -64,6 +65,8 @@ void Device::eject()
 
 void Device::updateDeviceProperties()
 {
+    if (!dbus->isValid()) { return; }
+
     bool hadMedia =  hasMedia;
     QString lastMountpoint = mountpoint;
     QString lastName = name;
@@ -101,8 +104,12 @@ void Device::handlePropertiesChanged(const QString &interfaceType, const QMap<QS
 
 Manager::Manager(QObject *parent)
     : QObject(parent)
+    , dbus(0)
 {
     setupDBus();
+    timer.setInterval(60000);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(checkUDisks()));
+    timer.start();
 }
 
 void Manager::setupDBus()
@@ -111,8 +118,9 @@ void Manager::setupDBus()
     if (system.isConnected()) {
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
+        if (dbus==NULL) { dbus = new QDBusInterface(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, system); } // only used to verify the UDisks is running
         scanDevices();
-    } else { QTimer::singleShot(300000, this, SLOT(setupDbus())); }
+    }
 }
 
 void Manager::scanDevices()
@@ -133,6 +141,7 @@ void Manager::scanDevices()
 
 void Manager::deviceAdded(const QDBusObjectPath &obj)
 {
+    if (!dbus->isValid()) { return; }
     QString path = obj.path();
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
 
@@ -142,6 +151,7 @@ void Manager::deviceAdded(const QDBusObjectPath &obj)
 
 void Manager::deviceRemoved(const QDBusObjectPath &obj)
 {
+    if (!dbus->isValid()) { return; }
     QString path = obj.path();
     bool deviceExists = devices.contains(path);
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
@@ -166,4 +176,13 @@ void Manager::handleDeviceMountpointChanged(QString devicePath, QString deviceMo
 void Manager::handleDeviceErrorMessage(QString devicePath, QString deviceError)
 {
     emit deviceErrorMessage(devicePath, deviceError);
+}
+
+void Manager::checkUDisks()
+{
+    if (!QDBusConnection::systemBus().isConnected()) {
+        setupDBus();
+        return;
+    }
+    if (!dbus->isValid()) { scanDevices(); }
 }

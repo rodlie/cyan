@@ -52,6 +52,9 @@ class Manager : public QObject
 public:
     explicit Manager(QObject *parent = NULL);
     QMap<QString,Device*> devices;
+private:
+    QDBusInterface *dbus;
+    QTimer timer;
 signals:
     void updatedDevices();
     void mediaChanged(QString path, bool media);
@@ -66,6 +69,7 @@ private slots:
     void handleDeviceMediaChanged(QString devicePath, bool mediaPresent);
     void handleDeviceMountpointChanged(QString devicePath, QString deviceMountpoint);
     void handleDeviceErrorMessage(QString devicePath, QString deviceError);
+    void checkUDisks();
 };
 
 #endif // MANAGER_H
