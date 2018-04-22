@@ -36,7 +36,9 @@ make INSTALL_ROOT=%{buildroot} install
 %defattr(-,root,root,-)
 /usr/bin/lumina-screensaver-service
 /usr/bin/lumina-disk-manager
+/usr/bin/lumina-keyboard-manager
 /etc/xdg/autostart/lumina-screensaver-service.desktop
 /etc/xdg/autostart/lumina-disk-manager.desktop
+/etc/xdg/autostart/lumina-keyboard-manager.desktop
 /usr/share/doc/*
 %changelog

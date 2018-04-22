@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Lumina Keyboard Manager
+Comment=Lumina Keyboard Manager
+Icon=keyboard
+Exec=lumina-keyboard-manager
+Terminal=false
+Type=Application
+OnlyShowIn=Lumina;
+StartupNotify=false

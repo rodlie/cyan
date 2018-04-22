@@ -9,5 +9,9 @@
 TEMPLATE = subdirs
 CONFIG -= ordered
 
-SUBDIRS += lumina-screensaver-service lumina-disk-manager
+SUBDIRS += \
+    lumina-screensaver-service \
+    lumina-disk-manager \
+    lumina-keyboard-manager
 
+OTHER_FILES += lumina-extra.spec

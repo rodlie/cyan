@@ -6,11 +6,15 @@ Additional applications to enchance the Lumina Desktop Enviroment.
 
 ### lumina-screensaver-service
 
-An D-Bus session daemon that implements the **org.freedesktop.ScreenSaver** specification for Lumina.
+An D-Bus session daemon that implements the org.freedesktop.ScreenSaver specification for Lumina.
 
 ### lumina-disk-manager
 
-An D-Bus/UDisks2(bsdisk) device manager for Lumina.
+An D-Bus/UDisks2(bsdisk) disk manager for Lumina.
+
+### lumina-keyboard-manager
+
+Enables users to set custom keyboard layout, variant and model in Lumina.
 
 ## Build
 
@@ -33,23 +37,29 @@ make INSTALL_ROOT=/path/to/where/you/want/the/package/content install
 ```
 ```
 package/
-├── etc
-│   └── xdg
-│       └── autostart
-│           ├── lumina-screensaver-service.desktop
-│           └── lumina-disk-manager.desktop
 └── usr
-    ├── bin
-    │   ├── lumina-screensaver-service
-    │   └── lumina-disk-manager
-    └── share
-        └── doc
-            ├── lumina-screensaver-service-VERSION
-            │   ├── LICENSE
-            │   └── README.md
-            └── lumina-disk-manager-VERSION
-                ├── LICENSE
-                └── README.md
+    └── local
+        ├── bin
+        │   ├── lumina-disk-manager
+        │   ├── lumina-keyboard-manager
+        │   └── lumina-screensaver-service
+        ├── etc
+        │   └── xdg
+        │       └── autostart
+        │           ├── lumina-disk-manager.desktop
+        │           ├── lumina-keyboard-manager.desktop
+        │           └── lumina-screensaver-service.desktop
+        └── share
+            └── doc
+                ├── lumina-disk-manager-VERSION
+                │   ├── LICENSE
+                │   └── README.md
+                ├── lumina-keyboard-manager-VERSION
+                │   ├── LICENSE
+                │   └── README.md
+                └── lumina-screensaver-service-VERSION
+                    ├── LICENSE
+                    └── README.md
 ```
  * The XDG destination can be customized with ``XDGDIR=``
  * The doc destination can be customized with ``DOCDIR=``
