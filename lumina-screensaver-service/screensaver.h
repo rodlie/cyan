@@ -14,6 +14,8 @@
 #include <QTime>
 #include <QMap>
 #include <QMapIterator>
+#include <QDBusConnection>
+#include <QCoreApplication>
 
 #define XSCREENSAVER "xscreensaver-command -deactivate"
 #define TIMEOUT 30000
@@ -67,11 +69,18 @@ private slots:
         if (clients.size()>0) { return true; }
         return false;
     }
+    void checkForDBusSession()
+    {
+        if (!QDBusConnection::sessionBus().isConnected()) {
+            // DBus session has probably ended(?), so quit ...
+            qApp->quit();
+        }
+    }
     void timeOut()
     {
+        checkForDBusSession();
         if (canInhibit()) { SimulateUserActivity(); }
     }
-
 public slots:
     void SimulateUserActivity()
     {
