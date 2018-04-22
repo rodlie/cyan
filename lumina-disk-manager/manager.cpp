@@ -57,7 +57,7 @@ void Device::eject()
     if (!dbus->isValid()) { return; }
     QString reply = uDisks2::ejectDevice(drive);
     updateDeviceProperties();
-    if (!reply.isEmpty() || hasMedia) {
+    if (!reply.isEmpty()/* || hasMedia*/) {
         if (reply.isEmpty()) { reply = QObject::tr("Failed to eject %1").arg(name); }
         emit errorMessage(path, reply);
     }

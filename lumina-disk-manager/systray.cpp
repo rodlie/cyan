@@ -16,7 +16,6 @@
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
     , disktray(0)
-    , msgtray(0)
     , menu(0)
     , man(0)
 {
@@ -26,12 +25,8 @@ SysTray::SysTray(QObject *parent)
     connect(disktray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(disktrayActivated(QSystemTrayIcon::ActivationReason)));
     connect(disktray, SIGNAL(messageClicked()), this, SLOT(handleDisktrayMessageClicked()));
 
-    msgtray = new QSystemTrayIcon(QIcon::fromTheme("dialog-information"), this);
-    connect(msgtray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(msgtrayActivated(QSystemTrayIcon::ActivationReason)));
-    connect(msgtray, SIGNAL(messageClicked()), this, SLOT(handleMsgtrayMessageClicked()));
-
-    man  = new Manager(this);
-    connect(man , SIGNAL(updatedDevices()), this, SLOT(generateContextMenu()));
+    man = new Manager(this);
+    connect(man, SIGNAL(updatedDevices()), this, SLOT(generateContextMenu()));
     connect(man, SIGNAL(deviceErrorMessage(QString,QString)), this, SLOT(handleDeviceError(QString,QString)));
     connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
     connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
@@ -70,11 +65,7 @@ void SysTray::generateContextMenu()
     }
 
     //qDebug() << menu->actions();
-    if (menu->actions().size()==0) {
-        if (disktray->isVisible()) { disktray->hide(); }
-    } else {
-        if (!disktray->isVisible() && disktray->isSystemTrayAvailable()) { disktray->show(); }
-    }
+    handleShowHideDisktray();
 }
 
 void SysTray::disktrayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -87,29 +78,18 @@ void SysTray::disktrayActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void SysTray::msgtrayActivated(QSystemTrayIcon::ActivationReason reason)
-{
-    Q_UNUSED(reason)
-    handleMsgtrayMessageClicked();
-}
-
 void SysTray::handleDisktrayMessageClicked()
 {
-    // Do something?
+    handleShowHideDisktray();
 }
 
-void SysTray::handleMsgtrayMessageClicked()
-{
-    if (msgtray->isVisible()) { msgtray->hide(); }
-}
 
 void SysTray::showMessage(QString title, QString message)
 {
-    if (!msgtray->isSystemTrayAvailable()) { return; }
-    if (!msgtray->isVisible()) { msgtray->show(); }
-    msgtray->setToolTip(message);
-    msgtray->showMessage(title, message);
-    QTimer::singleShot(10000, msgtray, SLOT(hide()));
+    if (!disktray->isSystemTrayAvailable()) { return; }
+    if (!disktray->isVisible()) { disktray->show(); }
+    disktray->showMessage(title, message);
+    QTimer::singleShot(10000, this, SLOT(handleShowHideDisktray()));
 }
 
 void SysTray::handleContextMenuAction()
@@ -172,4 +152,13 @@ void SysTray::handleFoundNewDevice(QString path)
 {
     if (!man->devices.contains(path)) { return; }
     showMessage(QString("Found %1").arg(man->devices[path]->name), QString("Found a new device (%1)").arg(man->devices[path]->dev));
+}
+
+void SysTray::handleShowHideDisktray()
+{
+    if (menu->actions().size()==0) {
+        if (disktray->isVisible()) { disktray->hide(); }
+    } else {
+        if (!disktray->isVisible() && disktray->isSystemTrayAvailable()) { disktray->show(); }
+    }
 }

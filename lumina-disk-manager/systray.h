@@ -20,15 +20,12 @@ public:
     explicit SysTray(QObject *parent = NULL);
 private:
     QSystemTrayIcon *disktray;
-    QSystemTrayIcon *msgtray;
     QMenu *menu;
     Manager *man;
 private slots:
     void generateContextMenu();
     void disktrayActivated(QSystemTrayIcon::ActivationReason reason);
-    void msgtrayActivated(QSystemTrayIcon::ActivationReason reason);
     void handleDisktrayMessageClicked();
-    void handleMsgtrayMessageClicked();
     void showMessage(QString title, QString message);
     void handleContextMenuAction();
     void handleDeviceError(QString path, QString error);
@@ -36,6 +33,7 @@ private slots:
     void handleDeviceMountpointChanged(QString path, QString mountpoint);
     void openMountpoint(QString mountpoint);
     void handleFoundNewDevice(QString path);
+    void handleShowHideDisktray();
 };
 
 #endif // SYSTRAY_H
