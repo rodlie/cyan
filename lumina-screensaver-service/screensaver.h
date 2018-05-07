@@ -18,7 +18,6 @@
 #include <QCoreApplication>
 
 #define XSCREENSAVER "xscreensaver-command -deactivate"
-#define XSCREENSAVER_LOCK "xscreensaver-command -lock"
 #define TIMEOUT 30000
 #define MAX_INHIBIT 18000
 
@@ -97,10 +96,6 @@ public slots:
     {
         if (clients.contains(cookie)) { clients.remove(cookie); }
         timeOut();
-    }
-    void lock()
-    {
-        QProcess::startDetached(XSCREENSAVER_LOCK);
     }
 };
 
