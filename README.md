@@ -16,7 +16,7 @@ An D-Bus/UDisks2(bsdisk) disk manager for Lumina.
 
 Enables users to set custom keyboard layout, variant and model in Lumina.
 
-## lumina-power-manager
+### lumina-power-manager
 
 WORK-IN-PROGRESS D-Bus/UPower power manager for Lumina.
 
