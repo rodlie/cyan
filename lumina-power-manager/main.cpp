@@ -11,6 +11,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QCoreApplication::setApplicationName("freedesktop");
+    QCoreApplication::setOrganizationDomain("org");
+
     SysTray tray(a.parent());
     return a.exec();
 }

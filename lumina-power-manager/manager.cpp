@@ -238,8 +238,6 @@ void Manager::deviceChanged()
     }
     wasOnBattery = onBattery();
 
-    qDebug() << "battery left" << batteryLeft();
-
     //emit lowBattery(onLowBattery());
     emit updatedDevices();
 }
@@ -263,6 +261,7 @@ void Manager::checkUPower()
 void Manager::notifyResume()
 {
     qDebug() << "system is about to resume ...";
+    lockScreen(); // in case lockScreen didn't trigger on sleep
 }
 
 void Manager::notifySleep()

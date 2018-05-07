@@ -20,6 +20,7 @@ public:
     explicit SysTray(QObject *parent = NULL);
 private:
     QSystemTrayIcon *tray;
+    QSystemTrayIcon *trayText;
     QMenu *menu;
     Manager *man;
     bool wasLowBattery;

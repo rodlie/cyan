@@ -12,6 +12,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QSettings>
+#include <QPainter>
 
 #define LOW_BATTERY 15
 #define CRITICAL_BATTERY 10
@@ -19,6 +20,7 @@
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
     , tray(0)
+    , trayText(0)
     , menu(0)
     , man(0)
     , wasLowBattery(false)
@@ -30,6 +32,10 @@ SysTray::SysTray(QObject *parent)
     tray = new QSystemTrayIcon(QIcon::fromTheme("battery"), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
     connect(tray, SIGNAL(messageClicked()), this, SLOT(handleTrayMessageClicked()));
+    if (tray->isSystemTrayAvailable()) { tray->show(); }
+
+    trayText = new QSystemTrayIcon(this);
+    if (trayText->isSystemTrayAvailable()) { trayText->show(); }
 
     man = new Manager(this);
     connect(man, SIGNAL(updatedDevices()), this, SLOT(checkDevices()));
@@ -40,6 +46,7 @@ SysTray::SysTray(QObject *parent)
     //connect(man, SIGNAL(lowBattery(bool)), this, SLOT(handleLowBattery(bool)));
     generateContextMenu();
     loadSettings();
+    QTimer::singleShot(1000, this, SLOT(checkDevices()));
 }
 
 void SysTray::generateContextMenu()
@@ -92,6 +99,21 @@ void SysTray::checkDevices()
 {
     double batteryLeft = man->batteryLeft();
     tray->setToolTip(tr("Battery at %1%").arg(batteryLeft));
+    if (batteryLeft==100) { tray->setToolTip(tr("Charged")); }
+    if (!man->onBattery() && batteryLeft<100) { tray->setToolTip(tray->toolTip().append(tr(" (Charging)"))); }
+
+    // TODO: settings!
+    QPixmap pixmap(24,24);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    //painter.setPen(QColor(Qt::white));
+    painter.drawText(pixmap.rect(), Qt::AlignCenter, QString("%1%").arg(batteryLeft));
+    trayText->setIcon(pixmap);
+    if (batteryLeft>0 && batteryLeft<100) {
+        if (!trayText->isVisible()) { trayText->show(); }
+    } else {
+        if (trayText->isVisible()) { trayText->hide(); }
+    }
 
     // set tray icon based on battery level
     if (batteryLeft<=(double)lowBatteryValue && man->onBattery()) { handleLowBattery(true); }
@@ -118,12 +140,12 @@ void SysTray::handleOpenedLid()
 
 void SysTray::handleOnBattery()
 {
-    qDebug() << "switched to battery power";
+    tray->showMessage(tr("On Battery"), tr("Switched to battery power."));
 }
 
 void SysTray::handleOnAC()
 {
-    qDebug() << "switched to ac power";
+    tray->showMessage(tr("On AC"), tr("Switched to AC power."));
 }
 
 void SysTray::handleLowBattery(bool low)
