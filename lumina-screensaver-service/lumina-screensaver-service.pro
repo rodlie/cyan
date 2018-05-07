@@ -6,7 +6,7 @@
 #
 
 TARGET = lumina-screensaver-service
-VERSION = 1.0
+VERSION = 1.0.0
 TEMPLATE = app
 
 QT += core dbus

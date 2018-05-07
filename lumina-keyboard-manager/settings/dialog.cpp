@@ -16,8 +16,7 @@ Dialog::Dialog(QWidget *parent)
     , variantBox(0)
     , modelBox(0)
 {
-    setAttribute(Qt::WA_DeleteOnClose, true);
-    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_QuitOnClose, true);
     QVBoxLayout *layout = new QVBoxLayout(this);
     layoutBox = new QComboBox(this);
     variantBox = new QComboBox(this);

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Lumina Keyboard Settings
+Comment=Lumina Keyboard Settings
+Icon=keyboard
+Exec=lumina-keyboard-settings
+Terminal=false
+Type=Application
+Categories=Settings;
+OnlyShowIn=Lumina;
+StartupNotify=false

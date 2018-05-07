@@ -9,7 +9,7 @@
 #define COMMON_H
 
 #include <QStringList>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
@@ -46,7 +46,7 @@ public:
         }
         if (findType.isEmpty()) { return result; }
 
-        QString xkbRules = QString("%1/../share/X11/xkb/rules/xfree86.lst").arg(QApplication::applicationDirPath());
+        QString xkbRules = QString("%1/../share/X11/xkb/rules/xfree86.lst").arg(QCoreApplication::applicationDirPath());
         QFileInfo xkbRulesFile;
         xkbRulesFile.setFile(xkbRules);
         if (!xkbRulesFile.exists()) {

@@ -5,21 +5,23 @@
 # See the LICENSE file for full details
 #
 
-QT += core gui dbus
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core
+QT -= gui
+CONFIG += console
+CONFIG -= app_bundle
 
-TARGET = lumina-disk-manager
+TARGET = lumina-keyboard-loader
 VERSION = 1.0.0
-TEMPLATE = app
 
-SOURCES += main.cpp systray.cpp manager.cpp
-HEADERS += systray.h udisks2.h manager.h
+SOURCES += main.cpp
+HEADERS += ../common.h
+INCLUDEPATH += ..
 
-include(../lumina-extra.pri)
+include(../../lumina-extra.pri)
 
 target.path = $${PREFIX}/bin
 target_desktop.path = $${XDGDIR}/autostart
 target_desktop.files = $${TARGET}.desktop
 target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
-target_docs.files = ../LICENSE ../README.md
+target_docs.files = ../../LICENSE ../../README.md
 INSTALLS += target target_desktop target_docs

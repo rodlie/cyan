@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Lumina Keyboard Manager
-Comment=Lumina Keyboard Manager
+Name=Lumina Keyboard Loader
+Comment=Lumina Keyboard Loader
 Icon=keyboard
-Exec=lumina-keyboard-manager
+Exec=lumina-keyboard-loader
 Terminal=false
 Type=Application
 OnlyShowIn=Lumina;

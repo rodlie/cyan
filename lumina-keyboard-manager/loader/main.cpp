@@ -5,12 +5,12 @@
 # See the LICENSE file for full details
 */
 
-#include <QApplication>
-#include "systray.h"
+#include "common.h"
+#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    SysTray tray(a.parent());
-    return a.exec();
+    QCoreApplication a(argc, argv);
+    Common::loadKeyboard();
+    return 0;
 }
