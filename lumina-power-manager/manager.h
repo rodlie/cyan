@@ -73,6 +73,7 @@ public slots:
     double batteryLeft();
     void suspend();
     void hibernate();
+    void lockScreen();
 private slots:
     void setupDBus();
     void scanDevices();

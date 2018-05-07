@@ -9,6 +9,9 @@
 #include "upower.h"
 #include <QDebug>
 #include <QTimer>
+#include <QProcess>
+
+#define XSCREENSAVER_LOCK "xscreensaver-command -lock"
 
 Device::Device(const QString block, QObject *parent)
     : QObject(parent)
@@ -147,12 +150,18 @@ void Manager::hibernate()
     if (canHibernate()) { UPower::hibernate(); }
 }
 
+void Manager::lockScreen()
+{
+    QProcess::startDetached(XSCREENSAVER_LOCK);
+}
+
 void Manager::setupDBus()
 {
     QDBusConnection system = QDBusConnection::systemBus();
     if (system.isConnected()) {
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "Changed", this, SLOT(deviceChanged()));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "DeviceChanged", this, SLOT(deviceChanged()));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "NotifyResume", this, SLOT(notifyResume()));
         system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "NotifySleep", this, SLOT(notifySleep()));
@@ -202,7 +211,7 @@ void Manager::deviceRemoved(const QDBusObjectPath &obj)
 
 void Manager::deviceChanged()
 {
-    qDebug() << "device changed";
+    qDebug() << "changed";
 
     if (wasDocked != isDocked()) {
         // TODO: untested
@@ -259,5 +268,5 @@ void Manager::notifyResume()
 void Manager::notifySleep()
 {
     qDebug() << "system is about to sleep ...";
-    // TODO: lock screen
+    lockScreen();
 }

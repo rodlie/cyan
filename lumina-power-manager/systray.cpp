@@ -106,11 +106,9 @@ void SysTray::checkDevices()
 void SysTray::handleClosedLid()
 {
     qDebug() << "user closed lid";
-    if (man->onBattery()) {
-
-    } else {
-        // TODO: lock screen
-    }
+    // TODO: settings
+    if (man->onBattery()) { man->suspend(); }
+    else { man->lockScreen(); }
 }
 
 void SysTray::handleOpenedLid()
@@ -135,10 +133,12 @@ void SysTray::handleLowBattery(bool low)
     } else if (!low && wasLowBattery) {
         tray->setIcon(QIcon::fromTheme("battery"));
     }
+    wasLowBattery = low;
 }
 
 void SysTray::loadSettings()
 {
+    // TODO: move to upower.h
     QSettings settings("lumina-desktop", "lumina-power-manager");
     settings.beginGroup("battery");
     if (settings.value("low").isValid()) { lowBatteryValue = settings.value("low").toInt(); }
