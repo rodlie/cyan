@@ -70,6 +70,9 @@ void Device::handlePropertiesChanged()
 Manager::Manager(QObject *parent)
     : QObject(parent)
     , dbus(0)
+    , wasDocked(false)
+    , wasLidClosed(false)
+    , wasOnBattery(false)
 {
     setupDBus();
     timer.setInterval(60000);
@@ -77,13 +80,83 @@ Manager::Manager(QObject *parent)
     timer.start();
 }
 
+bool Manager::isDocked()
+{
+    if (dbus->isValid()) { return dbus->property("IsDocked").toBool(); }
+    return false;
+}
+
+bool Manager::lidIsPresent()
+{
+    if (dbus->isValid()) { return dbus->property("LidIsPresent").toBool(); }
+    return false;
+}
+
+bool Manager::lidIsClosed()
+{
+    if (dbus->isValid()) { return dbus->property("LidIsClosed").toBool(); }
+    return false;
+}
+
+/*bool Manager::onLowBattery()
+{
+    // TODO: setting
+    if (onBattery() && batteryLeft()<=15) { return true; }
+    //if (dbus->isValid()) { return dbus->property("OnLowBattery").toBool(); }
+    return false;
+}*/
+
+bool Manager::onBattery()
+{
+    if (dbus->isValid()) { return dbus->property("OnBattery").toBool(); }
+    return false;
+}
+
+bool Manager::canHibernate()
+{
+    if (dbus->isValid()) { return dbus->property("CanHibernate").toBool(); }
+    return false;
+}
+
+bool Manager::canSuspend()
+{
+    if (dbus->isValid()) { return dbus->property("CanSuspend").toBool(); }
+    return false;
+}
+
+double Manager::batteryLeft()
+{
+    double batteryLeft = 0;
+    QMapIterator<QString, Device*> device(devices);
+    while (device.hasNext()) {
+        device.next();
+        if (device.value()->isBattery && device.value()->isPresent) {
+            batteryLeft += device.value()->percentage;
+        } else { continue; }
+    }
+    return batteryLeft;
+}
+
+void Manager::suspend()
+{
+    if (canSuspend()) { UPower::suspend(); }
+}
+
+void Manager::hibernate()
+{
+    if (canHibernate()) { UPower::hibernate(); }
+}
+
 void Manager::setupDBus()
 {
     QDBusConnection system = QDBusConnection::systemBus();
     if (system.isConnected()) {
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
-        if (dbus==NULL) { dbus = new QDBusInterface(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, system); } // only used to verify that UPower is running
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "DeviceChanged", this, SLOT(deviceChanged()));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "NotifyResume", this, SLOT(notifyResume()));
+        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, "NotifySleep", this, SLOT(notifySleep()));
+        if (dbus==NULL) { dbus = new QDBusInterface(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, system); }
         scanDevices();
     }
 }
@@ -96,7 +169,7 @@ void Manager::scanDevices()
         bool hasDevice = devices.contains(foundDevicePath);
         if (hasDevice) { continue; }
         Device *newDevice = new Device(foundDevicePath, this);
-        connect(newDevice, SIGNAL(deviceChanged(QString)), this, SLOT(handleDeviceChanged(QString)));
+        //connect(newDevice, SIGNAL(deviceChanged(QString)), this, SLOT(handleDeviceChanged(QString)));
         devices[foundDevicePath] = newDevice;
     }
     emit updatedDevices();
@@ -104,6 +177,7 @@ void Manager::scanDevices()
 
 void Manager::deviceAdded(const QDBusObjectPath &obj)
 {
+    qDebug() << "device added?";
     if (!dbus->isValid()) { return; }
     QString path = obj.path();
     if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
@@ -113,6 +187,7 @@ void Manager::deviceAdded(const QDBusObjectPath &obj)
 
 void Manager::deviceRemoved(const QDBusObjectPath &obj)
 {
+    qDebug() << "device removed?";
     if (!dbus->isValid()) { return; }
     QString path = obj.path();
     bool deviceExists = devices.contains(path);
@@ -125,12 +200,47 @@ void Manager::deviceRemoved(const QDBusObjectPath &obj)
     scanDevices();
 }
 
-void Manager::handleDeviceChanged(QString devicePath)
+void Manager::deviceChanged()
 {
-    if (devicePath.isEmpty()) { return; }
+    qDebug() << "device changed";
+
+    if (wasDocked != isDocked()) {
+        // TODO: untested
+        qDebug() << "docked status changed";
+    }
+    wasDocked = isDocked();
+    qDebug() << "is docked?" << wasDocked;
+
+    if (wasLidClosed != lidIsClosed()) {
+        if (!wasLidClosed && lidIsClosed()) {
+            emit closedLid();
+        } else if (wasLidClosed && !lidIsClosed()) {
+            emit openedLid();
+        }
+    }
+    wasLidClosed = lidIsClosed();
+
+    if (wasOnBattery != onBattery()) {
+        if (!wasOnBattery && onBattery()) {
+            emit switchedToBattery();
+        } else if (wasOnBattery && !onBattery()) {
+            emit switchedToAC();
+        }
+    }
+    wasOnBattery = onBattery();
+
+    qDebug() << "battery left" << batteryLeft();
+
+    //emit lowBattery(onLowBattery());
     emit updatedDevices();
 }
 
+void Manager::handleDeviceChanged(QString devicePath)
+{
+    Q_UNUSED(devicePath)
+    /*if (devicePath.isEmpty()) { return; }
+    emit updatedDevices();*/
+}
 
 void Manager::checkUPower()
 {
@@ -139,4 +249,15 @@ void Manager::checkUPower()
         return;
     }
     if (!dbus->isValid()) { scanDevices(); }
+}
+
+void Manager::notifyResume()
+{
+    qDebug() << "system is about to resume ...";
+}
+
+void Manager::notifySleep()
+{
+    qDebug() << "system is about to sleep ...";
+    // TODO: lock screen
 }

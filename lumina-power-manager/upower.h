@@ -28,6 +28,20 @@
 class UPower
 {
 public:
+    static QString suspend()
+    {
+        QDBusInterface iface(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, QDBusConnection::systemBus());
+        if (!iface.isValid()) { return QObject::tr("Failed D-Bus connection."); }
+        QDBusMessage reply = iface.call("Suspend");
+        return reply.arguments().first().toString();
+    }
+    static QString hibernate()
+    {
+        QDBusInterface iface(DBUS_SERVICE, DBUS_PATH, DBUS_SERVICE, QDBusConnection::systemBus());
+        if (!iface.isValid()) { return QObject::tr("Failed D-Bus connection."); }
+        QDBusMessage reply = iface.call("Hibernate");
+        return reply.arguments().first().toString();
+    }
     static QStringList getDevices()
     {
         QStringList result;

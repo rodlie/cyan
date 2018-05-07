@@ -52,15 +52,37 @@ public:
 private:
     QDBusInterface *dbus;
     QTimer timer;
+    bool wasDocked;
+    bool wasLidClosed;
+    bool wasOnBattery;
 signals:
     void updatedDevices();
+    void closedLid();
+    void openedLid();
+    void switchedToBattery();
+    void switchedToAC();
+    //void lowBattery(bool low);
+public slots:
+    bool isDocked();
+    bool lidIsPresent();
+    bool lidIsClosed();
+    //bool onLowBattery();
+    bool onBattery();
+    bool canHibernate();
+    bool canSuspend();
+    double batteryLeft();
+    void suspend();
+    void hibernate();
 private slots:
     void setupDBus();
     void scanDevices();
     void deviceAdded(const QDBusObjectPath &obj);
     void deviceRemoved(const QDBusObjectPath &obj);
+    void deviceChanged();
     void handleDeviceChanged(QString devicePath);
     void checkUPower();
+    void notifyResume();
+    void notifySleep();
 };
 
 #endif // MANAGER_H

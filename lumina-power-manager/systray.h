@@ -22,8 +22,9 @@ private:
     QSystemTrayIcon *tray;
     QMenu *menu;
     Manager *man;
-    bool hasBattery;
-    bool hasPower;
+    bool wasLowBattery;
+    int lowBatteryValue;
+    int critBatteryValue;
 private slots:
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -31,6 +32,12 @@ private slots:
     void showMessage(QString title, QString message);
     void handleShowHideTray();
     void checkDevices();
+    void handleClosedLid();
+    void handleOpenedLid();
+    void handleOnBattery();
+    void handleOnAC();
+    void handleLowBattery(bool low);
+    void loadSettings();
 };
 
 #endif // SYSTRAY_H
