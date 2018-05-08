@@ -23,9 +23,11 @@ SysTray::SysTray(QObject *parent)
     , trayText(0)
     , menu(0)
     , man(0)
+    , pm(0)
     , wasLowBattery(false)
     , lowBatteryValue(0)
     , critBatteryValue(0)
+    , hasService(false)
 {
     menu = new QMenu();
 
@@ -44,8 +46,13 @@ SysTray::SysTray(QObject *parent)
     connect(man, SIGNAL(switchedToBattery()), this, SLOT(handleOnBattery()));
     connect(man, SIGNAL(switchedToAC()), this, SLOT(handleOnAC()));
     //connect(man, SIGNAL(lowBattery(bool)), this, SLOT(handleLowBattery(bool)));
+
+    pm = new PowerManagement();
+    connect(pm, SIGNAL(HasInhibitChanged(bool)), this, SLOT(handleHasInhibitChanged(bool)));
+
     generateContextMenu();
     loadSettings();
+    registerService();
     QTimer::singleShot(1000, this, SLOT(checkDevices()));
 }
 
@@ -122,6 +129,8 @@ void SysTray::checkDevices()
     // hibernate on critical battery level (10% as default)
     if (batteryLeft<=(double)critBatteryValue && man->onBattery() && man->canHibernate()) { man->hibernate(); }
 
+    if (!hasService) { registerService(); }
+
     handleShowHideTray();
 }
 
@@ -168,4 +177,27 @@ void SysTray::loadSettings()
     if (settings.value("critical").isValid()) { critBatteryValue = settings.value("critical").toInt(); }
     else { critBatteryValue = CRITICAL_BATTERY; }
     settings.endGroup();
+}
+
+void SysTray::registerService()
+{
+    if (hasService) { return; }
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        qWarning("Cannot connect to D-Bus.");
+        return;
+    }
+    if (!QDBusConnection::sessionBus().registerService(SERVICE)) {
+        qWarning() << QDBusConnection::sessionBus().lastError().message();
+        return;
+    }
+    if (!QDBusConnection::sessionBus().registerObject("/PowerManagement", pm, QDBusConnection::ExportAllContents)) {
+        qWarning() << QDBusConnection::sessionBus().lastError().message();
+        return;
+    }
+    hasService = true;
+}
+
+void SysTray::handleHasInhibitChanged(bool has_inhibit)
+{
+    qDebug() << "HasInhibitChanged" << has_inhibit;
 }

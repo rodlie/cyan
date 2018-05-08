@@ -13,7 +13,7 @@ VERSION = 0.1
 TEMPLATE = app
 
 SOURCES += main.cpp systray.cpp manager.cpp
-HEADERS += systray.h upower.h manager.h
+HEADERS += systray.h upower.h manager.h powermanagement.h
 
 include(../lumina-extra.pri)
 

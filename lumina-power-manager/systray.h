@@ -12,6 +12,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include "manager.h"
+#include "powermanagement.h"
 
 class SysTray : public QObject
 {
@@ -23,9 +24,11 @@ private:
     QSystemTrayIcon *trayText;
     QMenu *menu;
     Manager *man;
+    PowerManagement *pm;
     bool wasLowBattery;
     int lowBatteryValue;
     int critBatteryValue;
+    bool hasService;
 private slots:
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -39,6 +42,8 @@ private slots:
     void handleOnAC();
     void handleLowBattery(bool low);
     void loadSettings();
+    void registerService();
+    void handleHasInhibitChanged(bool has_inhibit);
 };
 
 #endif // SYSTRAY_H
