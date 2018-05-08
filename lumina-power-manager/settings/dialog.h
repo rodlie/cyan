@@ -23,6 +23,7 @@ private:
 private slots:
     void populate();
     void loadSettings();
+    void updatePM();
     void setDefaultAction(QComboBox *box, int action);
     void handleLidActionBattery(int index);
     void handleLidActionAC(int index);

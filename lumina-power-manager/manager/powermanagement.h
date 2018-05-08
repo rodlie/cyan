@@ -40,6 +40,7 @@ private:
 
 signals:
     void HasInhibitChanged(bool has_inhibit);
+    void update();
 
 private slots:
     int randInt(int low, int high)
@@ -102,6 +103,11 @@ public slots:
     bool HasInhibit()
     {
         return canInhibit();
+    }
+    void refresh()
+    {
+        qDebug() << "refresh requested";
+        emit update();
     }
 };
 

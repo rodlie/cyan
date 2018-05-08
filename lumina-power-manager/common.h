@@ -30,6 +30,9 @@ enum criticalAction
 #define LID_AC_DEFAULT lidLock
 #define CRITICAL_DEFAULT criticalNone
 
+#define PM_SERVICE "org.freedesktop.PowerManagement"
+#define PM_PATH "/PowerManagement"
+
 class Common
 {
 public:

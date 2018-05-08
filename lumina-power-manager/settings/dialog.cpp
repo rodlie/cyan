@@ -13,6 +13,8 @@
 #include <QPixmap>
 #include <QTabWidget>
 #include "common.h"
+#include <QDBusConnection>
+#include <QDBusInterface>
 
 Dialog::Dialog(QWidget *parent)
     : QDialog(parent)
@@ -131,6 +133,16 @@ void Dialog::loadSettings()
     setDefaultAction(criticalActionBattery, defaultCriticalAction);
 }
 
+void Dialog::updatePM()
+{
+    QDBusInterface iface(PM_SERVICE, PM_PATH, PM_SERVICE, QDBusConnection::sessionBus());
+    if (!iface.isValid()) {
+        qDebug() << iface.lastError().message();
+        return;
+    }
+    iface.call("refresh");
+}
+
 void Dialog::setDefaultAction(QComboBox *box, int action)
 {
     for (int i=0;i<box->count();i++) {
@@ -144,14 +156,17 @@ void Dialog::setDefaultAction(QComboBox *box, int action)
 void Dialog::handleLidActionBattery(int index)
 {
     Common::savePowerSettings("lidBattery", index);
+    updatePM();
 }
 
 void Dialog::handleLidActionAC(int index)
 {
     Common::savePowerSettings("lidAC", index);
+    updatePM();
 }
 
 void Dialog::handleCriticalAction(int index)
 {
     Common::savePowerSettings("criticalAction", index);
+    updatePM();
 }
