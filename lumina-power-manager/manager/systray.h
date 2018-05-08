@@ -29,6 +29,9 @@ private:
     int lowBatteryValue;
     int critBatteryValue;
     bool hasService;
+    int lidActionBattery;
+    int lidActionAC;
+    int criticalAction;
 private slots:
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -44,6 +47,7 @@ private slots:
     void loadSettings();
     void registerService();
     void handleHasInhibitChanged(bool has_inhibit);
+    void handleCritical();
 };
 
 #endif // SYSTRAY_H

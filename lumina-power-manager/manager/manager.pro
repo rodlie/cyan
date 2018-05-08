@@ -14,6 +14,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp systray.cpp manager.cpp
 HEADERS += systray.h upower.h manager.h powermanagement.h
+INCLUDEPATH += ..
 
 include(../../lumina-extra.pri)
 

@@ -13,9 +13,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QPainter>
-
-#define LOW_BATTERY 15
-#define CRITICAL_BATTERY 10
+#include "common.h"
 
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
@@ -25,9 +23,12 @@ SysTray::SysTray(QObject *parent)
     , man(0)
     , pm(0)
     , wasLowBattery(false)
-    , lowBatteryValue(0)
-    , critBatteryValue(0)
+    , lowBatteryValue(LOW_BATTERY)
+    , critBatteryValue(CRITICAL_BATTERY)
     , hasService(false)
+    , lidActionBattery(LID_BATTERY_DEFAULT)
+    , lidActionAC(LID_AC_DEFAULT)
+    , criticalAction(CRITICAL_DEFAULT)
 {
     menu = new QMenu();
 
@@ -49,6 +50,7 @@ SysTray::SysTray(QObject *parent)
 
     pm = new PowerManagement();
     connect(pm, SIGNAL(HasInhibitChanged(bool)), this, SLOT(handleHasInhibitChanged(bool)));
+    connect(pm, SIGNAL(update()), this, SLOT(loadSettings()));
 
     generateContextMenu();
     loadSettings();
@@ -99,7 +101,7 @@ void SysTray::handleShowHideTray()
     } else {
         if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
     }*/
-    if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
+    //if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
 }
 
 void SysTray::checkDevices()
@@ -126,25 +128,36 @@ void SysTray::checkDevices()
     if (batteryLeft<=(double)lowBatteryValue && man->onBattery()) { handleLowBattery(true); }
     else { handleLowBattery(false); }
 
-    // hibernate on critical battery level (10% as default)
-    if (batteryLeft<=(double)critBatteryValue && man->onBattery() && man->canHibernate()) { man->hibernate(); }
+    // critical battery level
+    if (batteryLeft<=(double)critBatteryValue && man->onBattery()) { handleCritical(); }
 
     if (!hasService) { registerService(); }
 
-    handleShowHideTray();
+    //handleShowHideTray();
 }
 
 void SysTray::handleClosedLid()
 {
-    qDebug() << "user closed lid";
-    // TODO: settings
-    if (man->onBattery()) { man->suspend(); }
-    else { man->lockScreen(); }
+    int type = lidNone;
+    if (man->onBattery()) { type = lidActionBattery; }
+    else { type = lidActionAC; }
+    switch(type) {
+    case lidLock:
+        man->lockScreen();
+        break;
+    case lidSleep:
+        man->suspend();
+        break;
+    case lidHibernate:
+        man->hibernate();
+        break;
+    default: ;
+    }
 }
 
 void SysTray::handleOpenedLid()
 {
-    qDebug() << "user opened lid";
+    qDebug() << "user opened lid, should we do something?";
 }
 
 void SysTray::handleOnBattery()
@@ -169,14 +182,27 @@ void SysTray::handleLowBattery(bool low)
 
 void SysTray::loadSettings()
 {
-    // TODO: move to upower.h
-    QSettings settings("lumina-desktop", "lumina-power-manager");
-    settings.beginGroup("battery");
-    if (settings.value("low").isValid()) { lowBatteryValue = settings.value("low").toInt(); }
-    else { lowBatteryValue = LOW_BATTERY; }
-    if (settings.value("critical").isValid()) { critBatteryValue = settings.value("critical").toInt(); }
-    else { critBatteryValue = CRITICAL_BATTERY; }
-    settings.endGroup();
+    qDebug() << "load settings";
+    if (Common::validPowerSettings("lowBattery")) {
+        lowBatteryValue = Common::loadPowerSettings("lowBattery").toInt();
+    }
+    if (Common::validPowerSettings("criticalBattery")) {
+        critBatteryValue = Common::loadPowerSettings("criticalBattery").toInt();
+    }
+    if (Common::validPowerSettings("lidBattery")) {
+        lidActionBattery = Common::loadPowerSettings("lidBattery").toInt();
+    }
+    if (Common::validPowerSettings("lidAC")) {
+        lidActionAC = Common::loadPowerSettings("lidAC").toInt();
+    }
+    if (Common::validPowerSettings("criticalAction")) {
+        criticalAction = Common::loadPowerSettings("criticalAction").toInt();
+    }
+    qDebug() << "low battery setting" << lowBatteryValue;
+    qDebug() << "critical battery setting" << critBatteryValue;
+    qDebug() << "lid battery" << lidActionBattery;
+    qDebug() << "lid ac" << lidActionAC;
+    qDebug() << "critical action" << criticalAction;
 }
 
 void SysTray::registerService()
@@ -200,4 +226,18 @@ void SysTray::registerService()
 void SysTray::handleHasInhibitChanged(bool has_inhibit)
 {
     qDebug() << "HasInhibitChanged" << has_inhibit;
+}
+
+void SysTray::handleCritical()
+{
+    qDebug() << "critical battery level, action?" << criticalAction;
+    switch(criticalAction) {
+    case criticalHibernate:
+        man->hibernate();
+        break;
+    case criticalShutdown:
+        qDebug() << "feature not added!"; // TODO!!!!
+        break;
+    default: ;
+    }
 }

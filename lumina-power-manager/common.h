@@ -30,6 +30,9 @@ enum criticalAction
 #define LID_AC_DEFAULT lidLock
 #define CRITICAL_DEFAULT criticalNone
 
+#define LOW_BATTERY 15
+#define CRITICAL_BATTERY 10
+
 #define PM_SERVICE "org.freedesktop.PowerManagement"
 #define PM_PATH "/PowerManagement"
 
