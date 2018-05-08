@@ -54,10 +54,12 @@ package/
     │   ├── lumina-keyboard-loader
     │   ├── lumina-keyboard-settings
     │   ├── lumina-power-manager
+    │   ├── lumina-power-settings
     │   └── lumina-screensaver-service
     └── share
         ├── applications
-        │   └── lumina-keyboard-settings.desktop
+        │   ├── lumina-keyboard-settings.desktop
+        │   └── lumina-power-settings.desktop
         └── doc
             ├── lumina-disk-manager-1.0.0
             │   ├── LICENSE
@@ -69,6 +71,9 @@ package/
             │   ├── LICENSE
             │   └── README.md
             ├── lumina-power-manager-0.1.0
+            │   ├── LICENSE
+            │   └── README.md
+            ├── lumina-power-settings-0.1.0
             │   ├── LICENSE
             │   └── README.md
             └── lumina-screensaver-service-1.0.0
