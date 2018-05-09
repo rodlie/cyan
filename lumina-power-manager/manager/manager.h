@@ -15,6 +15,7 @@
 class Device : public QObject
 {
     Q_OBJECT
+
 public:
     explicit Device(const QString block, QObject *parent = NULL);
     QString name;
@@ -33,11 +34,13 @@ public:
     double energyFullDesign;
     double energyFull;
     double energyEmpty;
+
 private:
     QDBusInterface *dbus;
+
 signals:
     void deviceChanged(QString devicePath);
-public slots:
+
 private slots:
     void updateDeviceProperties();
     void handlePropertiesChanged();
@@ -46,27 +49,29 @@ private slots:
 class Manager : public QObject
 {
     Q_OBJECT
+
 public:
     explicit Manager(QObject *parent = NULL);
     QMap<QString,Device*> devices;
+
 private:
     QDBusInterface *dbus;
     QTimer timer;
     bool wasDocked;
     bool wasLidClosed;
     bool wasOnBattery;
+
 signals:
     void updatedDevices();
     void closedLid();
     void openedLid();
     void switchedToBattery();
     void switchedToAC();
-    //void lowBattery(bool low);
+
 public slots:
     bool isDocked();
     bool lidIsPresent();
     bool lidIsClosed();
-    //bool onLowBattery();
     bool onBattery();
     bool canHibernate();
     bool canSuspend();
@@ -74,6 +79,7 @@ public slots:
     void suspend();
     void hibernate();
     void lockScreen();
+
 private slots:
     void setupDBus();
     void scanDevices();

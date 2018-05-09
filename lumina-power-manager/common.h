@@ -32,6 +32,9 @@ enum criticalAction
 
 #define LOW_BATTERY 15
 #define CRITICAL_BATTERY 10
+#define AUTO_SLEEP_BATTERY 15
+#define DEFAULT_BATTERY_ICON "battery"
+#define DEFAULT_BATTERY_ICON_LOW "battery-caution"
 
 #define PM_SERVICE "org.freedesktop.PowerManagement"
 #define PM_PATH "/PowerManagement"

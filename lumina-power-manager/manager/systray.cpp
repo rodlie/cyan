@@ -18,7 +18,6 @@
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
     , tray(0)
-    , menu(0)
     , man(0)
     , pm(0)
     , wasLowBattery(false)
@@ -28,69 +27,52 @@ SysTray::SysTray(QObject *parent)
     , lidActionBattery(LID_BATTERY_DEFAULT)
     , lidActionAC(LID_AC_DEFAULT)
     , criticalAction(CRITICAL_DEFAULT)
-    , autoSleepBattery(0)
+    , autoSleepBattery(AUTO_SLEEP_BATTERY)
     , autoSleepAC(0)
     , timer(0)
     , timeouts(0)
+    , showNotifications(true)
 {
-    menu = new QMenu();
-
-    tray = new QSystemTrayIcon(QIcon::fromTheme("battery"), this);
+    // setup tray
+    tray = new QSystemTrayIcon(QIcon::fromTheme(DEFAULT_BATTERY_ICON), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
-    //connect(tray, SIGNAL(messageClicked()), this, SLOT(handleTrayMessageClicked()));
     if (tray->isSystemTrayAvailable()) { tray->show(); }
 
+    // setup manager
     man = new Manager(this);
     connect(man, SIGNAL(updatedDevices()), this, SLOT(checkDevices()));
     connect(man, SIGNAL(closedLid()), this, SLOT(handleClosedLid()));
     connect(man, SIGNAL(openedLid()), this, SLOT(handleOpenedLid()));
     connect(man, SIGNAL(switchedToBattery()), this, SLOT(handleOnBattery()));
     connect(man, SIGNAL(switchedToAC()), this, SLOT(handleOnAC()));
-    //connect(man, SIGNAL(lowBattery(bool)), this, SLOT(handleLowBattery(bool)));
 
+    // setup org.freedesktop.PowerManagement
     pm = new PowerManagement();
     connect(pm, SIGNAL(HasInhibitChanged(bool)), this, SLOT(handleHasInhibitChanged(bool)));
     connect(pm, SIGNAL(update()), this, SLOT(loadSettings()));
 
+    // setup timer
     timer = new QTimer(this);
     timer->setInterval(60000);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
     timer->start();
 
-    generateContextMenu();
+    // load settings and register service
     loadSettings();
     registerService();
     QTimer::singleShot(1000, this, SLOT(checkDevices()));
 }
 
-void SysTray::generateContextMenu()
-{
-    for(int i=0;i<menu->actions().size();i++) {
-        menu->actions().at(i)->disconnect();
-        delete menu->actions().at(i);
-    }
-    menu->clear();
-
-    // TODO!
-
-}
-
+// what to do when user clicks systray, at the moment nothing
 void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    switch(reason) {
+    Q_UNUSED(reason)
+    /*switch(reason) {
     case QSystemTrayIcon::Context:
     case QSystemTrayIcon::Trigger:
-        if (menu->actions().size()>0) { menu->popup(QCursor::pos()); }
+        //if (menu->actions().size()>0) { menu->popup(QCursor::pos()); }
     default:;
-    }
-}
-
-void SysTray::showMessage(QString title, QString message)
-{
-    if (!tray->isSystemTrayAvailable()) { return; }
-    if (!tray->isVisible()) { tray->show(); }
-    tray->showMessage(title, message);
-    QTimer::singleShot(10000, this, SLOT(handleShowHideTray()));
+    }*/
 }
 
 void SysTray::checkDevices()
@@ -111,15 +93,12 @@ void SysTray::checkDevices()
     if (!hasService) { registerService(); }
 }
 
+// what to do when user open/close lid
 void SysTray::handleClosedLid()
 {
-    /*if (pm->canInhibit()) {
-        qDebug() << "ignore lid action since pm is inhibited";
-        return;
-    }*/
     int type = lidNone;
-    if (man->onBattery()) { type = lidActionBattery; }
-    else { type = lidActionAC; }
+    if (man->onBattery()) { type = lidActionBattery; } // on battery
+    else { type = lidActionAC; } // on ac
     switch(type) {
     case lidLock:
         man->lockScreen();
@@ -134,24 +113,31 @@ void SysTray::handleClosedLid()
     }
 }
 
+// do something when lid is opened
 void SysTray::handleOpenedLid()
 {
-    qDebug() << "user opened lid, should we do something?";
+    // do nothing
 }
 
+// do something when switched to battery power
 void SysTray::handleOnBattery()
 {
-    tray->showMessage(tr("On Battery"), tr("Switched to battery power."));
+    if (showNotifications) {
+        tray->showMessage(tr("On Battery"), tr("Switched to battery power."));
+    }
 }
 
+// do something when switched to ac power
 void SysTray::handleOnAC()
 {
-    tray->showMessage(tr("On AC"), tr("Switched to AC power."));
+    if (showNotifications) {
+        tray->showMessage(tr("On AC"), tr("Switched to AC power."));
+    }
 }
 
+// load default settings
 void SysTray::loadSettings()
 {
-    qDebug() << "load settings";
     if (Common::validPowerSettings("autoSleepBattery")) {
         autoSleepBattery = Common::loadPowerSettings("autoSleepBattery").toInt();
     }
@@ -182,6 +168,7 @@ void SysTray::loadSettings()
     qDebug() << "critical action" << criticalAction;
 }
 
+// register session service
 void SysTray::registerService()
 {
     if (hasService) { return; }
@@ -200,12 +187,14 @@ void SysTray::registerService()
     hasService = true;
 }
 
+// dbus session inhibit status handler
 void SysTray::handleHasInhibitChanged(bool has_inhibit)
 {
-    qDebug() << "HasInhibitChanged" << has_inhibit;
+    qDebug() << "HasInhibitChanged?" << has_inhibit;
     if (has_inhibit) { resetTimer(); }
 }
 
+// handle critical battery
 void SysTray::handleCritical()
 {
     qDebug() << "critical battery level, action?" << criticalAction;
@@ -220,12 +209,12 @@ void SysTray::handleCritical()
     }
 }
 
+// draw battery percent over tray icon
 void SysTray::drawBattery(double left)
 {
-    QIcon icon = QIcon::fromTheme("battery");
-
+    QIcon icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON);
     if (left<=(double)lowBatteryValue && man->onBattery()) {
-        icon = QIcon::fromTheme("battery-caution");
+        icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_LOW);
         if (!wasLowBattery) { tray->showMessage(tr("Low Battery!"), tr("You battery is almost empty, please consider connecting your computer to a power supply.")); }
         wasLowBattery = true;
     } else { wasLowBattery = false; }
@@ -234,6 +223,7 @@ void SysTray::drawBattery(double left)
         tray->setIcon(icon);
         return;
     }
+
     QPixmap pixmap = icon.pixmap(QSize(24, 24));
     QPainter painter(&pixmap);
     painter.setPen(QColor(Qt::black));
@@ -243,11 +233,14 @@ void SysTray::drawBattery(double left)
     tray->setIcon(pixmap);
 }
 
+// timeout, check if idle
+// timeouts and xss must be >= user value and service has to be empty before auto sleep
 void SysTray::timeout()
 {
-    qDebug() << "timeout" << timeouts;
-    qDebug() << "XSS time" << xIdle();
-    qDebug() << "pm inhibit" << pm->HasInhibit();
+    qDebug() << "timeout?" << timeouts;
+    qDebug() << "XSS?" << xIdle();
+    qDebug() << "inhibit?" << pm->HasInhibit();
+
     int autoSleep = 0;
     if (man->onBattery()) { autoSleep = autoSleepBattery; }
     else { autoSleep = autoSleepAC; }
@@ -257,11 +250,11 @@ void SysTray::timeout()
     if (!doSleep) { timeouts++; }
     else {
         timeouts = 0;
-        qDebug() << "SUSPEND!";
         man->suspend();
     }
 }
 
+// get user idle time
 int SysTray::xIdle()
 {
     long idle = 0;
@@ -279,8 +272,8 @@ int SysTray::xIdle()
     return minutes;
 }
 
+// reset the idle timer
 void SysTray::resetTimer()
 {
-    qDebug() << "reset timer";
     timeouts = 0;
 }

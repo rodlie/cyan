@@ -26,19 +26,22 @@ Dialog::Dialog(QWidget *parent)
     , autoSleepBattery(0)
     , autoSleepAC(0)
 {
+    // setup dialog
     setAttribute(Qt::WA_QuitOnClose, true);
     setWindowTitle(tr("Lumina Power Settings"));
+    setWindowIcon(QIcon::fromTheme(DEFAULT_BATTERY_ICON));
 
+    // setup widgets
     QHBoxLayout *layout = new QHBoxLayout(this);
     QTabWidget *containerWidget = new QTabWidget(this);
 
     QLabel *powerLabel = new QLabel(this);
-    QIcon powerIcon = QIcon::fromTheme("battery");
+    QIcon powerIcon = QIcon::fromTheme(DEFAULT_BATTERY_ICON);
     powerLabel->setPixmap(powerIcon.pixmap(QSize(64, 64)));
     powerLabel->setMinimumSize(QSize(64, 64));
     powerLabel->setMaximumSize(QSize(64, 64));
 
-    //layout->setSizeConstraint(QLayout::SetFixedSize);
+    //layout->setSizeConstraint(QLayout::SetFixedSize); // lock dialog size
     layout->addWidget(powerLabel);
     layout->addWidget(containerWidget);
 
@@ -136,9 +139,10 @@ Dialog::Dialog(QWidget *parent)
     acContainerLayout->addStretch();
     containerWidget->addTab(acContainer, tr("On AC"));
 
-    populate();
-    loadSettings();
+    populate(); // populate boxes
+    loadSettings(); // load settings
 
+    // connect varius widgets
     connect(lidActionBattery, SIGNAL(currentIndexChanged(int)), this, SLOT(handleLidActionBattery(int)));
     connect(lidActionAC, SIGNAL(currentIndexChanged(int)), this, SLOT(handleLidActionAC(int)));
     connect(criticalActionBattery, SIGNAL(currentIndexChanged(int)), this, SLOT(handleCriticalAction(int)));
@@ -148,6 +152,7 @@ Dialog::Dialog(QWidget *parent)
     connect(autoSleepAC, SIGNAL(valueChanged(int)), this, SLOT(handleAutoSleepAC(int)));
 }
 
+// populate widgets with default values
 void Dialog::populate()
 {
     lidActionBattery->clear();
@@ -168,15 +173,16 @@ void Dialog::populate()
     criticalActionBattery->addItem(tr("Shutdown"), criticalShutdown);
 }
 
+// load settings and set as default in widgets
 void Dialog::loadSettings()
 {
-    int defaultAutoSleepBattery = 0; // TODO: add sane default
+    int defaultAutoSleepBattery = AUTO_SLEEP_BATTERY;
     if (Common::validPowerSettings("autoSleepBattery")) {
         defaultAutoSleepBattery = Common::loadPowerSettings("autoSleepBattery").toInt();
     }
     setDefaultAction(autoSleepBattery, defaultAutoSleepBattery);
 
-    int defaultAutoSleepAC = 0; // don't add default on AC
+    int defaultAutoSleepAC = 0; // don't add default on AC, not all (normal) machines support suspend.
     if (Common::validPowerSettings("autoSleepAC")) {
         defaultAutoSleepAC = Common::loadPowerSettings("autoSleepAC").toInt();
     }
@@ -213,16 +219,15 @@ void Dialog::loadSettings()
     setDefaultAction(criticalActionBattery, defaultCriticalAction);
 }
 
+// tell power manager to update settings
 void Dialog::updatePM()
 {
     QDBusInterface iface(PM_SERVICE, PM_PATH, PM_SERVICE, QDBusConnection::sessionBus());
-    if (!iface.isValid()) {
-        qDebug() << iface.lastError().message();
-        return;
-    }
+    if (!iface.isValid()) { return; }
     iface.call("refresh");
 }
 
+// set default action in combobox
 void Dialog::setDefaultAction(QComboBox *box, int action)
 {
     for (int i=0;i<box->count();i++) {
@@ -233,11 +238,13 @@ void Dialog::setDefaultAction(QComboBox *box, int action)
     }
 }
 
+// set default value in spinbox
 void Dialog::setDefaultAction(QSpinBox *box, int action)
 {
     box->setValue(action);
 }
 
+// save current value and update power manager
 void Dialog::handleLidActionBattery(int index)
 {
     Common::savePowerSettings("lidBattery", index);

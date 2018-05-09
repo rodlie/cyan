@@ -9,13 +9,16 @@ QT += core gui dbus
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = lumina-power-manager
-VERSION = 0.1.0
+VERSION = 0.2.0
 TEMPLATE = app
 
 SOURCES += main.cpp systray.cpp manager.cpp
 HEADERS += systray.h upower.h manager.h powermanagement.h
 INCLUDEPATH += ..
-LIBS += -lX11 -lXss
+
+CONFIG += link_pkgconfig
+PKGCONFIG += x11 xscrnsaver
+#LIBS += -lX11 -lXss
 
 include(../../lumina-extra.pri)
 

@@ -30,6 +30,7 @@ Device::Device(const QString block, QObject *parent)
     , energyEmpty(0)
     , dbus(0)
 {
+    // setup device dbus connection
     QDBusConnection system = QDBusConnection::systemBus();
     dbus = new QDBusInterface(DBUS_SERVICE, path, QString("%1.Device").arg(DBUS_SERVICE), system, parent);
     system.connect(dbus->service(), dbus->path(), QString("%1.Device").arg(DBUS_SERVICE), "Changed", this, SLOT(handlePropertiesChanged()));
@@ -37,6 +38,7 @@ Device::Device(const QString block, QObject *parent)
     updateDeviceProperties();
 }
 
+// get device properties
 void Device::updateDeviceProperties()
 {
     if (!dbus->isValid()) { return; }
@@ -65,6 +67,7 @@ void Device::updateDeviceProperties()
     emit deviceChanged(path);
 }
 
+// what do to when something changed
 void Device::handlePropertiesChanged()
 {
     updateDeviceProperties();
@@ -77,12 +80,14 @@ Manager::Manager(QObject *parent)
     , wasLidClosed(false)
     , wasOnBattery(false)
 {
+    // setup dbus connection and start timer
     setupDBus();
     timer.setInterval(60000);
     connect(&timer, SIGNAL(timeout()), this, SLOT(checkUPower()));
     timer.start();
 }
 
+// get dbus properties
 bool Manager::isDocked()
 {
     if (dbus->isValid()) { return dbus->property("IsDocked").toBool(); }
@@ -100,14 +105,6 @@ bool Manager::lidIsClosed()
     if (dbus->isValid()) { return dbus->property("LidIsClosed").toBool(); }
     return false;
 }
-
-/*bool Manager::onLowBattery()
-{
-    // TODO: setting
-    if (onBattery() && batteryLeft()<=15) { return true; }
-    //if (dbus->isValid()) { return dbus->property("OnLowBattery").toBool(); }
-    return false;
-}*/
 
 bool Manager::onBattery()
 {
@@ -127,6 +124,7 @@ bool Manager::canSuspend()
     return false;
 }
 
+// get total battery left
 double Manager::batteryLeft()
 {
     double batteryLeft = 0;
@@ -140,21 +138,28 @@ double Manager::batteryLeft()
     return batteryLeft;
 }
 
+// do suspend if available
 void Manager::suspend()
 {
     if (canSuspend()) { UPower::suspend(); }
 }
 
+// do hibernate if available
+// TODO:
+// Some distros (Slackware) uses Lilo, if lilo.conf don't have resume=swap_partition then hibernate will fail
+// add a check for resume= in lilo.conf
 void Manager::hibernate()
 {
     if (canHibernate()) { UPower::hibernate(); }
 }
 
+// lock screen using xscreensaver
 void Manager::lockScreen()
 {
     QProcess::startDetached(XSCREENSAVER_LOCK);
 }
 
+// setup dbus connections
 void Manager::setupDBus()
 {
     QDBusConnection system = QDBusConnection::systemBus();
@@ -170,6 +175,7 @@ void Manager::setupDBus()
     }
 }
 
+// scan for new devices
 void Manager::scanDevices()
 {
     QStringList foundDevices = UPower::getDevices();
@@ -209,17 +215,9 @@ void Manager::deviceRemoved(const QDBusObjectPath &obj)
     scanDevices();
 }
 
+// check device status when changed
 void Manager::deviceChanged()
 {
-    qDebug() << "changed";
-
-    if (wasDocked != isDocked()) {
-        // TODO: untested
-        qDebug() << "docked status changed";
-    }
-    wasDocked = isDocked();
-    qDebug() << "is docked?" << wasDocked;
-
     if (wasLidClosed != lidIsClosed()) {
         if (!wasLidClosed && lidIsClosed()) {
             emit closedLid();
@@ -238,7 +236,6 @@ void Manager::deviceChanged()
     }
     wasOnBattery = onBattery();
 
-    //emit lowBattery(onLowBattery());
     emit updatedDevices();
 }
 
@@ -249,6 +246,7 @@ void Manager::handleDeviceChanged(QString devicePath)
     emit updatedDevices();*/
 }
 
+// check if upower is connected, if not connect
 void Manager::checkUPower()
 {
     if (!QDBusConnection::systemBus().isConnected()) {
@@ -258,12 +256,14 @@ void Manager::checkUPower()
     if (!dbus->isValid()) { scanDevices(); }
 }
 
+// do stuff when resuming
 void Manager::notifyResume()
 {
     qDebug() << "system is about to resume ...";
     lockScreen(); // in case lockScreen didn't trigger on sleep
 }
 
+// do stuff before sleep
 void Manager::notifySleep()
 {
     qDebug() << "system is about to sleep ...";

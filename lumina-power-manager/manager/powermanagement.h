@@ -82,12 +82,10 @@ private slots:
 public slots:
     void SimulateUserActivity()
     {
-        qDebug() << "simulate user activity";
         emit HasInhibitChanged(true);
     }
-    quint32 Inhibit(QString application, QString reason)
+    quint32 Inhibit(QString /*application*/, QString /*reason*/)
     {
-        qDebug() << "inhibit requested" << application << reason;
         quint32 cookie = genCookie();
         timeOut();
         emit HasInhibitChanged(canInhibit());
@@ -95,7 +93,6 @@ public slots:
     }
     void UnInhibit(quint32 cookie)
     {
-        qDebug() << "uninhibit requested" << cookie;
         if (clients.contains(cookie)) { clients.remove(cookie); }
         timeOut();
         emit HasInhibitChanged(canInhibit());
@@ -106,7 +103,6 @@ public slots:
     }
     void refresh()
     {
-        qDebug() << "refresh requested";
         emit update();
     }
 };

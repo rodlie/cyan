@@ -10,7 +10,6 @@
 
 #include <QObject>
 #include <QSystemTrayIcon>
-#include <QMenu>
 #include "manager.h"
 #include "powermanagement.h"
 #include <QTimer>
@@ -18,11 +17,12 @@
 class SysTray : public QObject
 {
     Q_OBJECT
+
 public:
     explicit SysTray(QObject *parent = NULL);
+
 private:
     QSystemTrayIcon *tray;
-    QMenu *menu;
     Manager *man;
     PowerManagement *pm;
     bool wasLowBattery;
@@ -36,10 +36,10 @@ private:
     int autoSleepAC;
     QTimer *timer;
     int timeouts;
+    bool showNotifications;
+
 private slots:
-    void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
-    void showMessage(QString title, QString message);
     void checkDevices();
     void handleClosedLid();
     void handleOpenedLid();

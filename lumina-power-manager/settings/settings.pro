@@ -14,7 +14,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp dialog.cpp
 HEADERS += dialog.h ../common.h
-INCLUDEPATH += ../
+INCLUDEPATH += ..
 
 include(../../lumina-extra.pri)
 
