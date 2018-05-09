@@ -2,21 +2,28 @@
 
 Additional software to enchance the Lumina Desktop Enviroment.
 
-### Lumina screensaver service
-
-An D-Bus session daemon that implements the org.freedesktop.ScreenSaver specification for Lumina.
-
 ### Lumina disk manager
 
-An D-Bus/UDisks2(bsdisk) disk manager for Lumina.
+An D-Bus/UDisks2(bsdisk) disk manager for Lumina. Supports removable and optical devices.
+
+### Lumina power manager
+
+An D-Bus/UPower power manager for Lumina.
+
+ * Implements org.freedesktop.PowerManagement session daemon
+ * Tray icon with battery percent
+ * Supports lock screen, suspend, hibernate, shutdown (TODO)
+ * Supports lid actions
+ * Hibernate/Shutdown on cirtical battery
+ * Auto sleep
 
 ### Lumina keyboard manager
 
 Enables users to set custom keyboard layout, variant and model in Lumina.
 
-### Lumina power manager
+### Lumina screensaver service
 
-WORK-IN-PROGRESS D-Bus/UPower power manager for Lumina.
+An D-Bus session daemon that implements the org.freedesktop.ScreenSaver specification for Lumina.
 
 ## Build
 
