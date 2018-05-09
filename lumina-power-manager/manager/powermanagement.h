@@ -76,14 +76,14 @@ private slots:
     }
     void timeOut()
     {
-        qDebug() << "PM timeout, has inhibit?" << canInhibit();
         if (canInhibit()) { SimulateUserActivity(); }
     }
 
 public slots:
     void SimulateUserActivity()
     {
-        qDebug() << "simulate user activity, does nothing yet";
+        qDebug() << "simulate user activity";
+        emit HasInhibitChanged(true);
     }
     quint32 Inhibit(QString application, QString reason)
     {

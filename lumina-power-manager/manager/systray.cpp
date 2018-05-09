@@ -7,13 +7,13 @@
 
 #include "systray.h"
 #include <QIcon>
-#include <QTimer>
 #include <QMenu>
 #include <QAction>
 #include <QDebug>
 #include <QSettings>
 #include <QPainter>
 #include "common.h"
+#include <X11/extensions/scrnsaver.h>
 
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
@@ -28,6 +28,10 @@ SysTray::SysTray(QObject *parent)
     , lidActionBattery(LID_BATTERY_DEFAULT)
     , lidActionAC(LID_AC_DEFAULT)
     , criticalAction(CRITICAL_DEFAULT)
+    , autoSleepBattery(0)
+    , autoSleepAC(0)
+    , timer(0)
+    , timeouts(0)
 {
     menu = new QMenu();
 
@@ -47,6 +51,11 @@ SysTray::SysTray(QObject *parent)
     pm = new PowerManagement();
     connect(pm, SIGNAL(HasInhibitChanged(bool)), this, SLOT(handleHasInhibitChanged(bool)));
     connect(pm, SIGNAL(update()), this, SLOT(loadSettings()));
+
+    timer = new QTimer(this);
+    timer->setInterval(60000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
+    timer->start();
 
     generateContextMenu();
     loadSettings();
@@ -86,7 +95,7 @@ void SysTray::showMessage(QString title, QString message)
 
 void SysTray::checkDevices()
 {
-    // get battery left and add to tooltip
+    // get battery left and add tooltip
     double batteryLeft = man->batteryLeft();
     tray->setToolTip(tr("Battery at %1%").arg(batteryLeft));
     if (batteryLeft==100) { tray->setToolTip(tr("Charged")); }
@@ -104,6 +113,10 @@ void SysTray::checkDevices()
 
 void SysTray::handleClosedLid()
 {
+    /*if (pm->canInhibit()) {
+        qDebug() << "ignore lid action since pm is inhibited";
+        return;
+    }*/
     int type = lidNone;
     if (man->onBattery()) { type = lidActionBattery; }
     else { type = lidActionAC; }
@@ -139,6 +152,12 @@ void SysTray::handleOnAC()
 void SysTray::loadSettings()
 {
     qDebug() << "load settings";
+    if (Common::validPowerSettings("autoSleepBattery")) {
+        autoSleepBattery = Common::loadPowerSettings("autoSleepBattery").toInt();
+    }
+    if (Common::validPowerSettings("autoSleepAC")) {
+        autoSleepAC = Common::loadPowerSettings("autoSleepAC").toInt();
+    }
     if (Common::validPowerSettings("lowBattery")) {
         lowBatteryValue = Common::loadPowerSettings("lowBattery").toInt();
     }
@@ -154,6 +173,8 @@ void SysTray::loadSettings()
     if (Common::validPowerSettings("criticalAction")) {
         criticalAction = Common::loadPowerSettings("criticalAction").toInt();
     }
+    qDebug() << "auto sleep battery" << autoSleepBattery;
+    qDebug() << "auto sleep ac" << autoSleepAC;
     qDebug() << "low battery setting" << lowBatteryValue;
     qDebug() << "critical battery setting" << critBatteryValue;
     qDebug() << "lid battery" << lidActionBattery;
@@ -182,6 +203,7 @@ void SysTray::registerService()
 void SysTray::handleHasInhibitChanged(bool has_inhibit)
 {
     qDebug() << "HasInhibitChanged" << has_inhibit;
+    if (has_inhibit) { resetTimer(); }
 }
 
 void SysTray::handleCritical()
@@ -219,4 +241,46 @@ void SysTray::drawBattery(double left)
     painter.setPen(QColor(Qt::white));
     painter.drawText(pixmap.rect(), Qt::AlignCenter, QString("%1").arg(left));
     tray->setIcon(pixmap);
+}
+
+void SysTray::timeout()
+{
+    qDebug() << "timeout" << timeouts;
+    qDebug() << "XSS time" << xIdle();
+    qDebug() << "pm inhibit" << pm->HasInhibit();
+    int autoSleep = 0;
+    if (man->onBattery()) { autoSleep = autoSleepBattery; }
+    else { autoSleep = autoSleepAC; }
+
+    bool doSleep = false;
+    if (autoSleep>0 && timeouts>=autoSleep && xIdle()>=autoSleep && !pm->HasInhibit()) { doSleep = true; }
+    if (!doSleep) { timeouts++; }
+    else {
+        timeouts = 0;
+        qDebug() << "SUSPEND!";
+        man->suspend();
+    }
+}
+
+int SysTray::xIdle()
+{
+    long idle = 0;
+    Display *display = XOpenDisplay(0);
+    if (display != 0) {
+        XScreenSaverInfo *info = XScreenSaverAllocInfo();
+        XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
+        if (info) {
+            idle = info->idle;
+            XFree(info);
+        }
+    }
+    int hours = idle/(1000*60*60);
+    int minutes = (idle-(hours*1000*60*60))/(1000*60);
+    return minutes;
+}
+
+void SysTray::resetTimer()
+{
+    qDebug() << "reset timer";
+    timeouts = 0;
 }

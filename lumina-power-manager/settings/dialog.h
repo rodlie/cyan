@@ -23,6 +23,8 @@ private:
     QComboBox *criticalActionBattery;
     QSpinBox *lowBattery;
     QSpinBox *criticalBattery;
+    QSpinBox *autoSleepBattery;
+    QSpinBox *autoSleepAC;
 private slots:
     void populate();
     void loadSettings();
@@ -34,6 +36,8 @@ private slots:
     void handleCriticalAction(int index);
     void handleLowBattery(int value);
     void handleCriticalBattery(int value);
+    void handleAutoSleepBattery(int value);
+    void handleAutoSleepAC(int value);
 };
 
 #endif // DIALOG_H

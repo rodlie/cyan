@@ -13,6 +13,7 @@
 #include <QMenu>
 #include "manager.h"
 #include "powermanagement.h"
+#include <QTimer>
 
 class SysTray : public QObject
 {
@@ -31,6 +32,10 @@ private:
     int lidActionBattery;
     int lidActionAC;
     int criticalAction;
+    int autoSleepBattery;
+    int autoSleepAC;
+    QTimer *timer;
+    int timeouts;
 private slots:
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -45,6 +50,9 @@ private slots:
     void handleHasInhibitChanged(bool has_inhibit);
     void handleCritical();
     void drawBattery(double left);
+    void timeout();
+    int xIdle();
+    void resetTimer();
 };
 
 #endif // SYSTRAY_H

@@ -15,11 +15,15 @@
 #include <QMap>
 #include <QMapIterator>
 #include <QDBusConnection>
+#include <QDBusInterface>
 #include <QCoreApplication>
 
 #define XSCREENSAVER "xscreensaver-command -deactivate"
 #define TIMEOUT 30000
 #define MAX_INHIBIT 18000
+
+#define PM_SERVICE "org.freedesktop.PowerManagement"
+#define PM_PATH "/PowerManagement"
 
 class ScreenSaver : public QObject
 {
@@ -81,10 +85,19 @@ private slots:
         checkForDBusSession();
         if (canInhibit()) { SimulateUserActivity(); }
     }
+    void pingPM()
+    {
+        QDBusInterface iface(PM_SERVICE, PM_PATH, PM_SERVICE, QDBusConnection::sessionBus());
+        if (!iface.isValid()) {
+            return;
+        }
+        iface.call("SimulateUserActivity");
+    }
 public slots:
     void SimulateUserActivity()
     {
         QProcess::startDetached(XSCREENSAVER);
+        pingPM();
     }
     quint32 Inhibit(QString /*application*/, QString /*reason*/)
     {

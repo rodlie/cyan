@@ -23,6 +23,8 @@ Dialog::Dialog(QWidget *parent)
     , criticalActionBattery(0)
     , lowBattery(0)
     , criticalBattery(0)
+    , autoSleepBattery(0)
+    , autoSleepAC(0)
 {
     setAttribute(Qt::WA_QuitOnClose, true);
     setWindowTitle(tr("Lumina Power Settings"));
@@ -89,6 +91,18 @@ Dialog::Dialog(QWidget *parent)
     criticalBatteryContainerLayout->addWidget(criticalBattery);
     batteryContainerLayout->addWidget(criticalBatteryContainer);
 
+    QWidget *sleepBatteryContainer = new QWidget(this);
+    QHBoxLayout *sleepBatteryContainerLayout = new QHBoxLayout(sleepBatteryContainer);
+    autoSleepBattery = new QSpinBox(this);
+    autoSleepBattery->setMinimum(0);
+    autoSleepBattery->setMaximum(1000);
+    QLabel *sleepBatteryLabel = new QLabel(this);
+
+    sleepBatteryLabel->setText(tr("Auto sleep (min)"));
+    sleepBatteryContainerLayout->addWidget(sleepBatteryLabel);
+    sleepBatteryContainerLayout->addWidget(autoSleepBattery);
+    batteryContainerLayout->addWidget(sleepBatteryContainer);
+
     batteryContainerLayout->addStretch();
     containerWidget->addTab(batteryContainer, tr("On Battery"));
 
@@ -107,6 +121,18 @@ Dialog::Dialog(QWidget *parent)
     lidActionACContainerLayout->addWidget(lidActionAC);
     acContainerLayout->addWidget(lidActionACContainer);
 
+    QWidget *sleepACContainer = new QWidget(this);
+    QHBoxLayout *sleepACContainerLayout = new QHBoxLayout(sleepACContainer);
+    autoSleepAC = new QSpinBox(this);
+    autoSleepAC->setMinimum(0);
+    autoSleepAC->setMaximum(1000);
+    QLabel *sleepACLabel = new QLabel(this);
+
+    sleepACLabel->setText(tr("Auto sleep (min)"));
+    sleepACContainerLayout->addWidget(sleepACLabel);
+    sleepACContainerLayout->addWidget(autoSleepAC);
+    acContainerLayout->addWidget(sleepACContainer);
+
     acContainerLayout->addStretch();
     containerWidget->addTab(acContainer, tr("On AC"));
 
@@ -118,6 +144,8 @@ Dialog::Dialog(QWidget *parent)
     connect(criticalActionBattery, SIGNAL(currentIndexChanged(int)), this, SLOT(handleCriticalAction(int)));
     connect(lowBattery, SIGNAL(valueChanged(int)), this, SLOT(handleLowBattery(int)));
     connect(criticalBattery, SIGNAL(valueChanged(int)), this, SLOT(handleCriticalBattery(int)));
+    connect(autoSleepBattery, SIGNAL(valueChanged(int)), this, SLOT(handleAutoSleepBattery(int)));
+    connect(autoSleepAC, SIGNAL(valueChanged(int)), this, SLOT(handleAutoSleepAC(int)));
 }
 
 void Dialog::populate()
@@ -142,6 +170,18 @@ void Dialog::populate()
 
 void Dialog::loadSettings()
 {
+    int defaultAutoSleepBattery = 0; // TODO: add sane default
+    if (Common::validPowerSettings("autoSleepBattery")) {
+        defaultAutoSleepBattery = Common::loadPowerSettings("autoSleepBattery").toInt();
+    }
+    setDefaultAction(autoSleepBattery, defaultAutoSleepBattery);
+
+    int defaultAutoSleepAC = 0; // don't add default on AC
+    if (Common::validPowerSettings("autoSleepAC")) {
+        defaultAutoSleepAC = Common::loadPowerSettings("autoSleepAC").toInt();
+    }
+    setDefaultAction(autoSleepAC, defaultAutoSleepAC);
+
     int defaultLowBattery = LOW_BATTERY;
     if (Common::validPowerSettings("lowBattery")) {
         defaultLowBattery = Common::loadPowerSettings("lowBattery").toInt();
@@ -225,5 +265,17 @@ void Dialog::handleLowBattery(int value)
 void Dialog::handleCriticalBattery(int value)
 {
     Common::savePowerSettings("criticalBattery", value);
+    updatePM();
+}
+
+void Dialog::handleAutoSleepBattery(int value)
+{
+    Common::savePowerSettings("autoSleepBattery", value);
+    updatePM();
+}
+
+void Dialog::handleAutoSleepAC(int value)
+{
+    Common::savePowerSettings("autoSleepAC", value);
     updatePM();
 }
