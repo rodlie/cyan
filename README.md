@@ -2,27 +2,25 @@
 
 Additional software to enchance the Lumina Desktop Enviroment.
 
-## Applications
-
-### lumina-screensaver-service
+### Lumina screensaver service
 
 An D-Bus session daemon that implements the org.freedesktop.ScreenSaver specification for Lumina.
 
-### lumina-disk-manager
+### Lumina disk manager
 
 An D-Bus/UDisks2(bsdisk) disk manager for Lumina.
 
-### lumina-keyboard-manager
+### Lumina keyboard manager
 
 Enables users to set custom keyboard layout, variant and model in Lumina.
 
-### lumina-power-manager
+### Lumina power manager
 
 WORK-IN-PROGRESS D-Bus/UPower power manager for Lumina.
 
 ## Build
 
-Clone or download this repository, then make sure you have Qt 4/5 and the D-Bus bindings installed.
+Clone or download this repository, then make sure you have Qt 4/5, XSS (X11 Screen Saver extension client library) and the D-Bus bindings for Qt installed.
 
 Build and install to /usr/local:
 
