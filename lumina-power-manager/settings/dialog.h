@@ -10,6 +10,7 @@
 
 #include <QDialog>
 #include <QComboBox>
+#include <QSpinBox>
 
 class Dialog : public QDialog
 {
@@ -20,14 +21,19 @@ private:
     QComboBox *lidActionBattery;
     QComboBox *lidActionAC;
     QComboBox *criticalActionBattery;
+    QSpinBox *lowBattery;
+    QSpinBox *criticalBattery;
 private slots:
     void populate();
     void loadSettings();
     void updatePM();
     void setDefaultAction(QComboBox *box, int action);
+    void setDefaultAction(QSpinBox *box, int action);
     void handleLidActionBattery(int index);
     void handleLidActionAC(int index);
     void handleCriticalAction(int index);
+    void handleLowBattery(int value);
+    void handleCriticalBattery(int value);
 };
 
 #endif // DIALOG_H

@@ -21,6 +21,8 @@ Dialog::Dialog(QWidget *parent)
     , lidActionBattery(0)
     , lidActionAC(0)
     , criticalActionBattery(0)
+    , lowBattery(0)
+    , criticalBattery(0)
 {
     setAttribute(Qt::WA_QuitOnClose, true);
     setWindowTitle(tr("Lumina Power Settings"));
@@ -63,6 +65,30 @@ Dialog::Dialog(QWidget *parent)
     criticalActionBatteryContainerLayout->addWidget(criticalActionBattery);
     batteryContainerLayout->addWidget(criticalActionBatteryContainer);
 
+    QWidget *lowBatteryContainer = new QWidget(this);
+    QHBoxLayout *lowBatteryContainerLayout = new QHBoxLayout(lowBatteryContainer);
+    lowBattery = new QSpinBox(this);
+    lowBattery->setMinimum(0);
+    lowBattery->setMaximum(99);
+    QLabel *lowBatteryLabel = new QLabel(this);
+
+    lowBatteryLabel->setText(tr("Low battery (%)"));
+    lowBatteryContainerLayout->addWidget(lowBatteryLabel);
+    lowBatteryContainerLayout->addWidget(lowBattery);
+    batteryContainerLayout->addWidget(lowBatteryContainer);
+
+    QWidget *criticalBatteryContainer = new QWidget(this);
+    QHBoxLayout *criticalBatteryContainerLayout = new QHBoxLayout(criticalBatteryContainer);
+    criticalBattery = new QSpinBox(this);
+    criticalBattery->setMinimum(0);
+    criticalBattery->setMaximum(99);
+    QLabel *criticalBatteryLabel = new QLabel(this);
+
+    criticalBatteryLabel->setText(tr("Critical battery (%)"));
+    criticalBatteryContainerLayout->addWidget(criticalBatteryLabel);
+    criticalBatteryContainerLayout->addWidget(criticalBattery);
+    batteryContainerLayout->addWidget(criticalBatteryContainer);
+
     batteryContainerLayout->addStretch();
     containerWidget->addTab(batteryContainer, tr("On Battery"));
 
@@ -90,6 +116,8 @@ Dialog::Dialog(QWidget *parent)
     connect(lidActionBattery, SIGNAL(currentIndexChanged(int)), this, SLOT(handleLidActionBattery(int)));
     connect(lidActionAC, SIGNAL(currentIndexChanged(int)), this, SLOT(handleLidActionAC(int)));
     connect(criticalActionBattery, SIGNAL(currentIndexChanged(int)), this, SLOT(handleCriticalAction(int)));
+    connect(lowBattery, SIGNAL(valueChanged(int)), this, SLOT(handleLowBattery(int)));
+    connect(criticalBattery, SIGNAL(valueChanged(int)), this, SLOT(handleCriticalBattery(int)));
 }
 
 void Dialog::populate()
@@ -114,6 +142,18 @@ void Dialog::populate()
 
 void Dialog::loadSettings()
 {
+    int defaultLowBattery = LOW_BATTERY;
+    if (Common::validPowerSettings("lowBattery")) {
+        defaultLowBattery = Common::loadPowerSettings("lowBattery").toInt();
+    }
+    setDefaultAction(lowBattery, defaultLowBattery);
+
+    int defaultCriticalBattery = CRITICAL_BATTERY;
+    if (Common::validPowerSettings("criticalBattery")) {
+        defaultCriticalBattery = Common::loadPowerSettings("criticalBattery").toInt();
+    }
+    setDefaultAction(criticalBattery, defaultCriticalBattery);
+
     int defaultLidActionBattery = LID_BATTERY_DEFAULT;
     if (Common::validPowerSettings("lidBattery")) {
         defaultLidActionBattery = Common::loadPowerSettings("lidBattery").toInt();
@@ -153,6 +193,11 @@ void Dialog::setDefaultAction(QComboBox *box, int action)
     }
 }
 
+void Dialog::setDefaultAction(QSpinBox *box, int action)
+{
+    box->setValue(action);
+}
+
 void Dialog::handleLidActionBattery(int index)
 {
     Common::savePowerSettings("lidBattery", index);
@@ -168,5 +213,17 @@ void Dialog::handleLidActionAC(int index)
 void Dialog::handleCriticalAction(int index)
 {
     Common::savePowerSettings("criticalAction", index);
+    updatePM();
+}
+
+void Dialog::handleLowBattery(int value)
+{
+    Common::savePowerSettings("lowBattery", value);
+    updatePM();
+}
+
+void Dialog::handleCriticalBattery(int value)
+{
+    Common::savePowerSettings("criticalBattery", value);
     updatePM();
 }
