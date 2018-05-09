@@ -21,7 +21,6 @@ public:
     explicit SysTray(QObject *parent = NULL);
 private:
     QSystemTrayIcon *tray;
-    QSystemTrayIcon *trayText;
     QMenu *menu;
     Manager *man;
     PowerManagement *pm;
@@ -35,19 +34,17 @@ private:
 private slots:
     void generateContextMenu();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
-    void handleTrayMessageClicked();
     void showMessage(QString title, QString message);
-    void handleShowHideTray();
     void checkDevices();
     void handleClosedLid();
     void handleOpenedLid();
     void handleOnBattery();
     void handleOnAC();
-    void handleLowBattery(bool low);
     void loadSettings();
     void registerService();
     void handleHasInhibitChanged(bool has_inhibit);
     void handleCritical();
+    void drawBattery(double left);
 };
 
 #endif // SYSTRAY_H

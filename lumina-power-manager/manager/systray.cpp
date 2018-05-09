@@ -18,7 +18,6 @@
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
     , tray(0)
-    , trayText(0)
     , menu(0)
     , man(0)
     , pm(0)
@@ -34,11 +33,8 @@ SysTray::SysTray(QObject *parent)
 
     tray = new QSystemTrayIcon(QIcon::fromTheme("battery"), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
-    connect(tray, SIGNAL(messageClicked()), this, SLOT(handleTrayMessageClicked()));
+    //connect(tray, SIGNAL(messageClicked()), this, SLOT(handleTrayMessageClicked()));
     if (tray->isSystemTrayAvailable()) { tray->show(); }
-
-    trayText = new QSystemTrayIcon(this);
-    if (trayText->isSystemTrayAvailable()) { trayText->show(); }
 
     man = new Manager(this);
     connect(man, SIGNAL(updatedDevices()), this, SLOT(checkDevices()));
@@ -68,7 +64,6 @@ void SysTray::generateContextMenu()
 
     // TODO!
 
-    handleShowHideTray();
 }
 
 void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
@@ -81,11 +76,6 @@ void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void SysTray::handleTrayMessageClicked()
-{
-    handleShowHideTray();
-}
-
 void SysTray::showMessage(QString title, QString message)
 {
     if (!tray->isSystemTrayAvailable()) { return; }
@@ -94,46 +84,22 @@ void SysTray::showMessage(QString title, QString message)
     QTimer::singleShot(10000, this, SLOT(handleShowHideTray()));
 }
 
-void SysTray::handleShowHideTray()
-{
-    /*if (!hasBattery) {
-        if (tray->isVisible()) { tray->hide(); }
-    } else {
-        if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
-    }*/
-    //if (!tray->isVisible() && tray->isSystemTrayAvailable()) { tray->show(); }
-}
-
 void SysTray::checkDevices()
 {
+    // get battery left and add to tooltip
     double batteryLeft = man->batteryLeft();
     tray->setToolTip(tr("Battery at %1%").arg(batteryLeft));
     if (batteryLeft==100) { tray->setToolTip(tr("Charged")); }
     if (!man->onBattery() && batteryLeft<100) { tray->setToolTip(tray->toolTip().append(tr(" (Charging)"))); }
 
-    // TODO: settings!
-    QPixmap pixmap(24,24);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    //painter.setPen(QColor(Qt::white));
-    painter.drawText(pixmap.rect(), Qt::AlignCenter, QString("%1%").arg(batteryLeft));
-    trayText->setIcon(pixmap);
-    if (batteryLeft>0 && batteryLeft<100) {
-        if (!trayText->isVisible()) { trayText->show(); }
-    } else {
-        if (trayText->isVisible()) { trayText->hide(); }
-    }
+    // draw battery systray
+    drawBattery(batteryLeft);
 
-    // set tray icon based on battery level
-    if (batteryLeft<=(double)lowBatteryValue && man->onBattery()) { handleLowBattery(true); }
-    else { handleLowBattery(false); }
-
-    // critical battery level
+    // critical battery?
     if (batteryLeft<=(double)critBatteryValue && man->onBattery()) { handleCritical(); }
 
+    // Register service if not already registered
     if (!hasService) { registerService(); }
-
-    //handleShowHideTray();
 }
 
 void SysTray::handleClosedLid()
@@ -168,16 +134,6 @@ void SysTray::handleOnBattery()
 void SysTray::handleOnAC()
 {
     tray->showMessage(tr("On AC"), tr("Switched to AC power."));
-}
-
-void SysTray::handleLowBattery(bool low)
-{
-    if (low && !wasLowBattery) {
-        tray->setIcon(QIcon::fromTheme("battery-caution"));
-    } else if (!low && wasLowBattery) {
-        tray->setIcon(QIcon::fromTheme("battery"));
-    }
-    wasLowBattery = low;
 }
 
 void SysTray::loadSettings()
@@ -240,4 +196,27 @@ void SysTray::handleCritical()
         break;
     default: ;
     }
+}
+
+void SysTray::drawBattery(double left)
+{
+    QIcon icon = QIcon::fromTheme("battery");
+
+    if (left<=(double)lowBatteryValue && man->onBattery()) {
+        icon = QIcon::fromTheme("battery-caution");
+        if (!wasLowBattery) { tray->showMessage(tr("Low Battery!"), tr("You battery is almost empty, please consider connecting your computer to a power supply.")); }
+        wasLowBattery = true;
+    } else { wasLowBattery = false; }
+
+    if (left > 99 || left == 0) {
+        tray->setIcon(icon);
+        return;
+    }
+    QPixmap pixmap = icon.pixmap(QSize(24, 24));
+    QPainter painter(&pixmap);
+    painter.setPen(QColor(Qt::black));
+    painter.drawText(pixmap.rect().adjusted(1, 1, 1, 1), Qt::AlignCenter, QString("%1").arg(left));
+    painter.setPen(QColor(Qt::white));
+    painter.drawText(pixmap.rect(), Qt::AlignCenter, QString("%1").arg(left));
+    tray->setIcon(pixmap);
 }
