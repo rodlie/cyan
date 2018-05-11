@@ -32,9 +32,10 @@ signals:
     void mountpointChanged(QString path, QString mountpoint);
     void deviceErrorMessage(QString path, QString error);
     void foundNewDevice(QString path);
+    void removedDevice(QString path);
 
-public slots:
-    QStringList getDevices();
+//public slots:
+    //QStringList getDevices();
 
 private slots:
     void setupDBus();

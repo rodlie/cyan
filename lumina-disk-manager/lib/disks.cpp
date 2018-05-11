@@ -20,10 +20,10 @@ Disks::Disks(QObject *parent)
     timer.start();
 }
 
-QStringList Disks::getDevices()
+/*QStringList Disks::getDevices()
 {
     return uDisks2::getDevices();
-}
+}*/
 
 void Disks::setupDBus()
 {
@@ -74,6 +74,7 @@ void Disks::deviceRemoved(const QDBusObjectPath &obj)
         delete devices.take(path);
     }
     scanDevices();
+    emit removedDevice(path);
 }
 
 void Disks::handleDeviceMediaChanged(QString devicePath, bool mediaPresent)
