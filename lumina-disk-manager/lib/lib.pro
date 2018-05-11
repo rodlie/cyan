@@ -17,8 +17,12 @@ TEMPLATE = lib
 SOURCES += disks.cpp device.cpp
 HEADERS += disks.h udisks2.h device.h
 
-include(../../lumina-extra.pri)
-
+exists(../../lumina-extra.pri) {
+    include(../../lumina-extra.pri)
+}
+exists(../qtfm.pri) {
+    include(../qtfm.pri)
+}
 target.path = $${PREFIX}/lib$${LIBSUFFIX}
 target_docs.path = $${DOCDIR}/libdisks-$${VERSION}
 target_docs.files = ../../LICENSE ../../README.md
