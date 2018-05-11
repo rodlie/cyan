@@ -112,7 +112,10 @@ public:
         QDBusMessage reply = QDBusConnection::systemBus().call(message);
         QStringList mountpoints;
         QList<QByteArray> argList;
-        foreach (QVariant arg, reply.arguments()) { arg.value<QDBusVariant>().variant().value<QDBusArgument>() >> argList; }
+        foreach (QVariant arg, reply.arguments()) {
+            if (!arg.value<QDBusVariant>().variant().isValid()) { continue; }
+            arg.value<QDBusVariant>().variant().value<QDBusArgument>() >> argList;
+        }
         foreach (QByteArray point, argList) { mountpoints.append(point); }
         mountpoint = mountpoints.join("");
         return mountpoint;
