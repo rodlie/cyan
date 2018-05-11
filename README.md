@@ -4,7 +4,7 @@ Additional software to enchance the Lumina Desktop Enviroment.
 
 ### Lumina disk manager
 
-An D-Bus/UDisks2(bsdisk) disk manager for Lumina. Supports removable and optical devices.
+An D-Bus/UDisks2(bsdisk) disk manager and library for Lumina. Supports removable and optical devices.
 
 ### Lumina power manager
 
@@ -40,7 +40,7 @@ make install
 Package for distribution:
 
 ```
-qmake CONFIG+=release PREFIX=/usr
+qmake CONFIG+=release PREFIX=/usr LIBSUFFIX=64
 make
 make INSTALL_ROOT=/path/to/where/you/want/the/package/content install
 ```
@@ -61,11 +61,23 @@ package/
     │   ├── lumina-power-manager
     │   ├── lumina-power-settings
     │   └── lumina-screensaver-service
+    ├── include
+    │   └── libdisks
+    │       ├── device.h
+    │       └── disks.h
+    ├── lib64
+    │   ├── libDisks.so -> libDisks.so.1.0.0
+    │   ├── libDisks.so.1 -> libDisks.so.1.0.0
+    │   ├── libDisks.so.1.0 -> libDisks.so.1.0.0
+    │   └── libDisks.so.1.0.0
     └── share
         ├── applications
         │   ├── lumina-keyboard-settings.desktop
         │   └── lumina-power-settings.desktop
         └── doc
+            ├── libdisks-1.0.0
+            │   ├── LICENSE
+            │   └── README.md
             ├── lumina-disk-manager-1.0.0
             │   ├── LICENSE
             │   └── README.md
@@ -75,7 +87,7 @@ package/
             ├── lumina-keyboard-settings-1.0.0
             │   ├── LICENSE
             │   └── README.md
-            ├── lumina-power-manager-0.1.0
+            ├── lumina-power-manager-0.2.0
             │   ├── LICENSE
             │   └── README.md
             ├── lumina-power-settings-0.1.0
