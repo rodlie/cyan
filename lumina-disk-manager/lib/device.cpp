@@ -5,10 +5,8 @@
 # See the LICENSE file for full details
 */
 
-#include "manager.h"
+#include "device.h"
 #include "udisks2.h"
-#include <QDebug>
-#include <QTimer>
 
 Device::Device(const QString block, QObject *parent)
     : QObject(parent)
@@ -100,89 +98,4 @@ void Device::handlePropertiesChanged(const QString &interfaceType, const QMap<QS
     Q_UNUSED(interfaceType)
     Q_UNUSED(changedProperties)
     updateDeviceProperties();
-}
-
-Manager::Manager(QObject *parent)
-    : QObject(parent)
-    , dbus(0)
-{
-    setupDBus();
-    timer.setInterval(60000);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(checkUDisks()));
-    timer.start();
-}
-
-void Manager::setupDBus()
-{
-    QDBusConnection system = QDBusConnection::systemBus();
-    if (system.isConnected()) {
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_ADDED, this, SLOT(deviceAdded(const QDBusObjectPath&)));
-        system.connect(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, DBUS_DEVICE_REMOVED, this, SLOT(deviceRemoved(const QDBusObjectPath&)));
-        if (dbus==NULL) { dbus = new QDBusInterface(DBUS_SERVICE, DBUS_PATH, DBUS_OBJMANAGER, system); } // only used to verify the UDisks is running
-        scanDevices();
-    }
-}
-
-void Manager::scanDevices()
-{
-    QStringList foundDevices = uDisks2::getDevices();
-    for (int i=0;i<foundDevices.size();i++) {
-        QString foundDevicePath = foundDevices.at(i);
-        bool hasDevice = devices.contains(foundDevicePath);
-        if (hasDevice) { continue; }
-        Device *newDevice = new Device(foundDevicePath, this);
-        connect(newDevice, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
-        connect(newDevice, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
-        connect(newDevice, SIGNAL(errorMessage(QString,QString)), this, SLOT(handleDeviceErrorMessage(QString,QString)));
-        devices[foundDevicePath] = newDevice;
-    }
-    emit updatedDevices();
-}
-
-void Manager::deviceAdded(const QDBusObjectPath &obj)
-{
-    if (!dbus->isValid()) { return; }
-    QString path = obj.path();
-    if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
-
-    scanDevices();
-    emit foundNewDevice(path);
-}
-
-void Manager::deviceRemoved(const QDBusObjectPath &obj)
-{
-    if (!dbus->isValid()) { return; }
-    QString path = obj.path();
-    bool deviceExists = devices.contains(path);
-    if (path.startsWith(QString("%1/jobs").arg(DBUS_PATH))) { return; }
-
-    if (deviceExists) {
-        if (uDisks2::getDevices().contains(path)) { return; }
-        delete devices.take(path);
-    }
-    scanDevices();
-}
-
-void Manager::handleDeviceMediaChanged(QString devicePath, bool mediaPresent)
-{
-    emit mediaChanged(devicePath, mediaPresent);
-}
-
-void Manager::handleDeviceMountpointChanged(QString devicePath, QString deviceMountpoint)
-{
-    emit mountpointChanged(devicePath, deviceMountpoint);
-}
-
-void Manager::handleDeviceErrorMessage(QString devicePath, QString deviceError)
-{
-    emit deviceErrorMessage(devicePath, deviceError);
-}
-
-void Manager::checkUDisks()
-{
-    if (!QDBusConnection::systemBus().isConnected()) {
-        setupDBus();
-        return;
-    }
-    if (!dbus->isValid()) { scanDevices(); }
 }

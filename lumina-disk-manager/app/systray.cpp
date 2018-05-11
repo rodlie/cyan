@@ -25,7 +25,7 @@ SysTray::SysTray(QObject *parent)
     connect(disktray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(disktrayActivated(QSystemTrayIcon::ActivationReason)));
     connect(disktray, SIGNAL(messageClicked()), this, SLOT(handleDisktrayMessageClicked()));
 
-    man = new Manager(this);
+    man = new Disks(this);
     connect(man, SIGNAL(updatedDevices()), this, SLOT(generateContextMenu()));
     connect(man, SIGNAL(deviceErrorMessage(QString,QString)), this, SLOT(handleDeviceError(QString,QString)));
     connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));

@@ -11,7 +11,7 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QMenu>
-#include "manager.h"
+#include "disks.h"
 
 class SysTray : public QObject
 {
@@ -21,7 +21,7 @@ public:
 private:
     QSystemTrayIcon *disktray;
     QMenu *menu;
-    Manager *man;
+    Disks *man;
 private slots:
     void generateContextMenu();
     void disktrayActivated(QSystemTrayIcon::ActivationReason reason);
