@@ -9,6 +9,7 @@
 QT += dbus
 QT -= gui
 CONFIG += create_prl no_install_prl create_pc
+CONFIG += install_lib
 
 TARGET = Disks
 VERSION = 1.0.0
@@ -23,16 +24,18 @@ exists(../../lumina-extra.pri) {
 exists(../qtfm.pri) {
     include(../qtfm.pri)
 }
-target.path = $${PREFIX}/lib$${LIBSUFFIX}
-target_docs.path = $${DOCDIR}/libdisks-$${VERSION}
-target_docs.files = ../../LICENSE ../../README.md
-target_inc.path = $${PREFIX}/include/libdisks
-target_inc.files = disks.h device.h
+CONFIG(install_lib) {
+    target.path = $${PREFIX}/lib$${LIBSUFFIX}
+    target_docs.path = $${DOCDIR}/libdisks-$${VERSION}
+    target_docs.files = ../../LICENSE ../../README.md
+    target_inc.path = $${PREFIX}/include/libdisks
+    target_inc.files = disks.h device.h
 
-QMAKE_PKGCONFIG_NAME = $${TARGET}
-QMAKE_PKGCONFIG_DESCRIPTION = UDisks library for Qt
-QMAKE_PKGCONFIG_LIBDIR = $$target.path
-QMAKE_PKGCONFIG_INCDIR = $$target_inc.path
-QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+    QMAKE_PKGCONFIG_NAME = $${TARGET}
+    QMAKE_PKGCONFIG_DESCRIPTION = UDisks library for Qt
+    QMAKE_PKGCONFIG_LIBDIR = $$target.path
+    QMAKE_PKGCONFIG_INCDIR = $$target_inc.path
+    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
 
-INSTALLS += target target_docs target_inc
+    INSTALLS += target target_docs target_inc
+}

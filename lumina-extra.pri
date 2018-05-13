@@ -18,3 +18,4 @@ isEmpty(DOCDIR) {
 isEmpty(XDGDIR) {
     XDGDIR = /etc/xdg
 }
+CONFIG -= install_lib
