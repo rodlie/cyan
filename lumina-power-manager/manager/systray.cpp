@@ -39,7 +39,7 @@ SysTray::SysTray(QObject *parent)
     if (tray->isSystemTrayAvailable()) { tray->show(); }
 
     // setup manager
-    man = new Manager(this);
+    man = new Power(this);
     connect(man, SIGNAL(updatedDevices()), this, SLOT(checkDevices()));
     connect(man, SIGNAL(closedLid()), this, SLOT(handleClosedLid()));
     connect(man, SIGNAL(openedLid()), this, SLOT(handleOpenedLid()));
@@ -159,13 +159,13 @@ void SysTray::loadSettings()
     if (Common::validPowerSettings("criticalAction")) {
         criticalAction = Common::loadPowerSettings("criticalAction").toInt();
     }
-    qDebug() << "auto sleep battery" << autoSleepBattery;
+    /*qDebug() << "auto sleep battery" << autoSleepBattery;
     qDebug() << "auto sleep ac" << autoSleepAC;
     qDebug() << "low battery setting" << lowBatteryValue;
     qDebug() << "critical battery setting" << critBatteryValue;
     qDebug() << "lid battery" << lidActionBattery;
     qDebug() << "lid ac" << lidActionAC;
-    qDebug() << "critical action" << criticalAction;
+    qDebug() << "critical action" << criticalAction;*/
 }
 
 // register session service
@@ -176,7 +176,7 @@ void SysTray::registerService()
         qWarning("Cannot connect to D-Bus.");
         return;
     }
-    if (!QDBusConnection::sessionBus().registerService(SERVICE)) {
+    if (!QDBusConnection::sessionBus().registerService(PM_SERVICE)) {
         qWarning() << QDBusConnection::sessionBus().lastError().message();
         return;
     }

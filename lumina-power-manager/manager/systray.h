@@ -10,7 +10,7 @@
 
 #include <QObject>
 #include <QSystemTrayIcon>
-#include "manager.h"
+#include "power.h"
 #include "powermanagement.h"
 #include <QTimer>
 
@@ -23,7 +23,7 @@ public:
 
 private:
     QSystemTrayIcon *tray;
-    Manager *man;
+    Power *man;
     PowerManagement *pm;
     bool wasLowBattery;
     int lowBatteryValue;
