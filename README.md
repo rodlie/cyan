@@ -40,7 +40,7 @@ make install
 Package for distribution:
 
 ```
-qmake CONFIG+=release PREFIX=/usr LIBSUFFIX=64
+qmake CONFIG+=release PREFIX=/usr
 make
 make INSTALL_ROOT=/path/to/where/you/want/the/package/content install
 ```
