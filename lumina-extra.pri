@@ -19,3 +19,4 @@ isEmpty(XDGDIR) {
     XDGDIR = /etc/xdg
 }
 CONFIG -= install_lib
+CONFIG += staticlib

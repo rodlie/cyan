@@ -9,3 +9,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += lib app
+lib.file = lib/libdisks.pro
