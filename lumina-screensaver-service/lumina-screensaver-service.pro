@@ -15,7 +15,8 @@ CONFIG += console
 CONFIG -= app_bundle
 
 SOURCES += main.cpp
-HEADERS += screensaver.h
+HEADERS += ../lumina-power-manager/lib/screensaver.h
+INCLUDEPATH += ../lumina-power-manager/lib
 
 include(../lumina-extra.pri)
 

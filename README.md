@@ -27,7 +27,7 @@ An D-Bus session daemon that implements the org.freedesktop.ScreenSaver specific
 
 ## Build
 
-Clone or download this repository, then make sure you have Qt 4/5, XSS (X11 Screen Saver extension client library) and the D-Bus bindings for Qt installed.
+Clone (note: has submodules) or download this repository, then make sure you have Qt 4/5, XSS (X11 Screen Saver extension client library) and the D-Bus bindings for Qt installed.
 
 Build and install to /usr/local:
 
@@ -61,23 +61,11 @@ package/
     │   ├── lumina-power-manager
     │   ├── lumina-power-settings
     │   └── lumina-screensaver-service
-    ├── include
-    │   └── libdisks
-    │       ├── device.h
-    │       └── disks.h
-    ├── lib64
-    │   ├── libDisks.so -> libDisks.so.1.0.0
-    │   ├── libDisks.so.1 -> libDisks.so.1.0.0
-    │   ├── libDisks.so.1.0 -> libDisks.so.1.0.0
-    │   └── libDisks.so.1.0.0
     └── share
         ├── applications
         │   ├── lumina-keyboard-settings.desktop
         │   └── lumina-power-settings.desktop
         └── doc
-            ├── libdisks-1.0.0
-            │   ├── LICENSE
-            │   └── README.md
             ├── lumina-disk-manager-1.0.0
             │   ├── LICENSE
             │   └── README.md
@@ -87,10 +75,10 @@ package/
             ├── lumina-keyboard-settings-1.0.0
             │   ├── LICENSE
             │   └── README.md
-            ├── lumina-power-manager-0.2.0
+            ├── lumina-power-manager-1.0.0
             │   ├── LICENSE
             │   └── README.md
-            ├── lumina-power-settings-0.1.0
+            ├── lumina-power-settings-1.0.0
             │   ├── LICENSE
             │   └── README.md
             └── lumina-screensaver-service-1.0.0
