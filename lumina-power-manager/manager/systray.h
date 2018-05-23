@@ -10,9 +10,10 @@
 
 #include <QObject>
 #include <QSystemTrayIcon>
+#include <QTimer>
 #include "power.h"
 #include "powermanagement.h"
-#include <QTimer>
+#include "screensaver.h"
 
 class SysTray : public QObject
 {
@@ -25,6 +26,7 @@ private:
     QSystemTrayIcon *tray;
     Power *man;
     PowerManagement *pm;
+    ScreenSaver *ss;
     bool wasLowBattery;
     int lowBatteryValue;
     int critBatteryValue;
@@ -37,6 +39,10 @@ private:
     QTimer *timer;
     int timeouts;
     bool showNotifications;
+    bool desktopSS;
+    bool desktopPM;
+    bool showBatteryPercent;
+    bool showTray;
 
 private slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);

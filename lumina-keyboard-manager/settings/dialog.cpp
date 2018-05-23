@@ -19,14 +19,14 @@ Dialog::Dialog(QWidget *parent)
     , modelBox(0)
 {
     setAttribute(Qt::WA_QuitOnClose, true);
-    setWindowTitle(tr("Lumina Keyboard Settings"));
+    setWindowTitle(tr("Keyboard Settings"));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     QWidget *containerWidget = new QWidget(this);
     QVBoxLayout *containerLayout = new QVBoxLayout(containerWidget);
 
     QLabel *keyboardLabel = new QLabel(this);
-    QIcon keyboardIcon = QIcon::fromTheme("keyboard");
+    QIcon keyboardIcon = QIcon::fromTheme("input-keyboard");
     keyboardLabel->setPixmap(keyboardIcon.pixmap(QSize(64, 64)));
     keyboardLabel->setMinimumSize(QSize(64, 64));
     keyboardLabel->setMaximumSize(QSize(64, 64));

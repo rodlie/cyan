@@ -9,7 +9,6 @@ QT += core gui dbus
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = lumina-disk-manager
-VERSION = 1.0.0
 TEMPLATE = app
 
 SOURCES += main.cpp systray.cpp

@@ -20,6 +20,7 @@ SysTray::SysTray(QObject *parent)
     , tray(0)
     , man(0)
     , pm(0)
+    , ss(0)
     , wasLowBattery(false)
     , lowBatteryValue(LOW_BATTERY)
     , critBatteryValue(CRITICAL_BATTERY)
@@ -32,9 +33,13 @@ SysTray::SysTray(QObject *parent)
     , timer(0)
     , timeouts(0)
     , showNotifications(true)
+    , desktopSS(true)
+    , desktopPM(true)
+    , showBatteryPercent(true)
+    , showTray(true)
 {
     // setup tray
-    tray = new QSystemTrayIcon(QIcon::fromTheme(DEFAULT_BATTERY_ICON), this);
+    tray = new QSystemTrayIcon(QIcon::fromTheme(DEFAULT_BATTERY_ICON, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON))), this);
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
     if (tray->isSystemTrayAvailable()) { tray->show(); }
 
@@ -50,6 +55,9 @@ SysTray::SysTray(QObject *parent)
     pm = new PowerManagement();
     connect(pm, SIGNAL(HasInhibitChanged(bool)), this, SLOT(handleHasInhibitChanged(bool)));
     connect(pm, SIGNAL(update()), this, SLOT(loadSettings()));
+
+    // setup org.freedesktop.ScreenSaver
+    ss = new ScreenSaver();
 
     // setup timer
     timer = new QTimer(this);
@@ -77,6 +85,9 @@ void SysTray::trayActivated(QSystemTrayIcon::ActivationReason reason)
 
 void SysTray::checkDevices()
 {
+    if (tray->isSystemTrayAvailable() && !tray->isVisible() && showTray) { tray->show(); }
+    if (!showTray && tray->isVisible()) { tray->hide(); }
+
     // get battery left and add tooltip
     double batteryLeft = man->batteryLeft();
     tray->setToolTip(tr("Battery at %1%").arg(batteryLeft));
@@ -122,7 +133,7 @@ void SysTray::handleOpenedLid()
 // do something when switched to battery power
 void SysTray::handleOnBattery()
 {
-    if (showNotifications) {
+    if (showNotifications && tray->isVisible()) {
         tray->showMessage(tr("On Battery"), tr("Switched to battery power."));
     }
 }
@@ -130,7 +141,7 @@ void SysTray::handleOnBattery()
 // do something when switched to ac power
 void SysTray::handleOnAC()
 {
-    if (showNotifications) {
+    if (showNotifications && tray->isVisible()) {
         tray->showMessage(tr("On AC"), tr("Switched to AC power."));
     }
 }
@@ -159,13 +170,34 @@ void SysTray::loadSettings()
     if (Common::validPowerSettings("criticalAction")) {
         criticalAction = Common::loadPowerSettings("criticalAction").toInt();
     }
-    /*qDebug() << "auto sleep battery" << autoSleepBattery;
+    if (Common::validPowerSettings("desktop_ss")) {
+        desktopSS = Common::loadPowerSettings("desktop_ss").toBool();
+    }
+    if (Common::validPowerSettings("desktop_pm")) {
+        desktopPM = Common::loadPowerSettings("desktop_pm").toBool();
+    }
+    if (Common::validPowerSettings("tray_notify")) {
+        showNotifications = Common::loadPowerSettings("tray_notify").toBool();
+    }
+    if (Common::validPowerSettings("show_battery_percent")) {
+        showBatteryPercent = Common::loadPowerSettings("show_battery_percent").toBool();
+    }
+    if (Common::validPowerSettings("show_tray")) {
+        showTray = Common::loadPowerSettings("show_tray").toBool();
+    }
+
+    qDebug() << "show tray" << showTray;
+    qDebug() << "battery percent" << showBatteryPercent;
+    qDebug() << "tray notify" << showNotifications;
+    qDebug() << "desktop ss" << desktopSS;
+    qDebug() << "desktop pm" << desktopPM;
+    qDebug() << "auto sleep battery" << autoSleepBattery;
     qDebug() << "auto sleep ac" << autoSleepAC;
     qDebug() << "low battery setting" << lowBatteryValue;
     qDebug() << "critical battery setting" << critBatteryValue;
     qDebug() << "lid battery" << lidActionBattery;
     qDebug() << "lid ac" << lidActionAC;
-    qDebug() << "critical action" << criticalAction;*/
+    qDebug() << "critical action" << criticalAction;
 }
 
 // register session service
@@ -176,13 +208,27 @@ void SysTray::registerService()
         qWarning("Cannot connect to D-Bus.");
         return;
     }
+    if (desktopPM) {
     if (!QDBusConnection::sessionBus().registerService(PM_SERVICE)) {
         qWarning() << QDBusConnection::sessionBus().lastError().message();
         return;
     }
-    if (!QDBusConnection::sessionBus().registerObject("/PowerManagement", pm, QDBusConnection::ExportAllContents)) {
+        if (!QDBusConnection::sessionBus().registerObject(PM_PATH, pm, QDBusConnection::ExportAllContents)) {
         qWarning() << QDBusConnection::sessionBus().lastError().message();
         return;
+    }
+        qDebug() << "Enabled org.freedesktop.PowerManagement";
+    }
+    if (desktopSS) {
+        if (!QDBusConnection::sessionBus().registerService(SS_SERVICE)) {
+            qWarning() << QDBusConnection::sessionBus().lastError().message();
+            return;
+        }
+        if (!QDBusConnection::sessionBus().registerObject(SS_PATH, ss, QDBusConnection::ExportAllContents)) {
+            qWarning() << QDBusConnection::sessionBus().lastError().message();
+            return;
+        }
+        qDebug() << "Enabled org.freedesktop.ScreenSaver";
     }
     hasService = true;
 }
@@ -212,14 +258,57 @@ void SysTray::handleCritical()
 // draw battery percent over tray icon
 void SysTray::drawBattery(double left)
 {
-    QIcon icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON);
+    if (!showTray && tray->isVisible()) {
+        tray->hide();
+        return;
+    }
+    if (tray->isSystemTrayAvailable() && !tray->isVisible() && showTray) { tray->show(); }
+
+    QIcon icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON)));
     if (left<=(double)lowBatteryValue && man->onBattery()) {
-        icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_LOW);
+        icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_LOW, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_LOW)));
         if (!wasLowBattery) { tray->showMessage(tr("Low Battery!"), tr("You battery is almost empty, please consider connecting your computer to a power supply.")); }
         wasLowBattery = true;
-    } else { wasLowBattery = false; }
+    } else {
+        wasLowBattery = false;
+        if (left<=(double)lowBatteryValue) { // low (on ac)
+            qDebug() << "low on ac";
+            icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_LOW_AC, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_LOW_AC)));
+        } else if (left<=critBatteryValue) { // critical
+            qDebug() << "critical";
+            if (man->onBattery()) {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_CRIT, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_CRIT)));
+            } else {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_CRIT_AC, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_CRIT_AC)));
+            }
+        } else if (left>(double)lowBatteryValue && left<90) { // good
+            qDebug() << "good";
+            if (man->onBattery()) {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_GOOD, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_GOOD)));
+            } else {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_GOOD_AC, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_GOOD_AC)));
+            }
+        } else if (left>=90 && left<99) { // almost full
+            qDebug() << "almost full";
+            if (man->onBattery()) {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_FULL, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_FULL)));
+            } else {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_FULL_AC, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_FULL_AC)));
+            }
+        } else if(left>=99) { // full
+            qDebug() << "full";
+            if (man->onBattery()) {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_FULL, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_FULL)));
+            } else {
+                icon = QIcon::fromTheme(DEFAULT_BATTERY_ICON_CHARGED, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON_CHARGED)));
+            }
+        } else {
+            qDebug() << "something else";
+            // TODO
+        }
+    }
 
-    if (left > 99 || left == 0) {
+    if (left > 99 || left == 0 || !man->onBattery() || !showBatteryPercent) {
         tray->setIcon(icon);
         return;
     }
@@ -237,6 +326,9 @@ void SysTray::drawBattery(double left)
 // timeouts and xss must be >= user value and service has to be empty before auto sleep
 void SysTray::timeout()
 {
+    if (!showTray && tray->isVisible()) { tray->hide(); }
+    if (tray->isSystemTrayAvailable() && !tray->isVisible() && showTray) { tray->show(); }
+
     qDebug() << "timeout?" << timeouts;
     qDebug() << "XSS?" << xIdle();
     qDebug() << "inhibit?" << pm->HasInhibit();

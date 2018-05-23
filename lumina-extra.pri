@@ -20,3 +20,4 @@ isEmpty(XDGDIR) {
 }
 CONFIG -= install_lib
 CONFIG += staticlib
+VERSION = 1.4.2
