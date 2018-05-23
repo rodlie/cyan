@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rodlie/lumina-extra.svg?branch=master)](https://travis-ci.org/rodlie/lumina-extra)
+
 # Lumina Desktop Extras
 
 Additional software to enchance the Lumina Desktop Enviroment.
