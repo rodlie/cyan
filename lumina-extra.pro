@@ -13,4 +13,3 @@ SUBDIRS += \
     lumina-disk-manager \
     lumina-keyboard-manager \
     lumina-power-manager
-

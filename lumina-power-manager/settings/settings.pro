@@ -13,7 +13,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp dialog.cpp
 HEADERS += dialog.h ../common.h
-RES_FILE += ../lumina-power-manager.qrc
+RESOURCES += ../lumina-power-manager.qrc
 
 INCLUDEPATH += ..
 

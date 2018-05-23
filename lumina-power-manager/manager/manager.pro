@@ -11,9 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = lumina-power-manager
 TEMPLATE = app
 
-SOURCES += main.cpp systray.cpp ../lib/power.cpp
-HEADERS += systray.h ../lib/upower.h ../lib/power.h ../lib/powermanagement.h ../lib/screensaver.h
-RES_FILE += ../lumina-power-manager.qrc
+SOURCES += main.cpp systray.cpp
+HEADERS += systray.h
+RESOURCES += ../lumina-power-manager.qrc
+LIBS += -L../lib -lPower
 INCLUDEPATH += ..  ../lib
 
 CONFIG += link_pkgconfig

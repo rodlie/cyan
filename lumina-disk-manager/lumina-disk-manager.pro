@@ -7,6 +7,8 @@
 #
 
 TEMPLATE = subdirs
-CONFIG += ordered
+CONFIG -= ordered
 SUBDIRS += lib app
+
 lib.file = lib/libdisks.pro
+app.depends += lib

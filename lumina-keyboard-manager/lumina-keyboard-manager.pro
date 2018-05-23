@@ -8,7 +8,4 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-
-SUBDIRS += \
-    settings \
-    loader
+SUBDIRS += settings loader

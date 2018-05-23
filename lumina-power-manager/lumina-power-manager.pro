@@ -8,7 +8,7 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
+SUBDIRS += lib settings manager
 
-SUBDIRS += \
-    settings \
-    manager
+lib.file = lib/libpower.pro
+manager.depends += lib
