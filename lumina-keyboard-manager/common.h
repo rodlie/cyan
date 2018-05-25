@@ -15,6 +15,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QSettings>
+#include <QDebug>
 
 #define SETXKBMAP "setxkbmap"
 
@@ -50,8 +51,22 @@ public:
         QFileInfo xkbRulesFile;
         xkbRulesFile.setFile(xkbRules);
         if (!xkbRulesFile.exists()) {
-            xkbRulesFile.setFile("/usr/share/X11/xkb/rules/xfree86.lst");
-            if (!xkbRulesFile.exists()) { return result; }
+            QStringList fallback;
+            fallback << "/usr/share/X11/xkb/rules/xfree86.lst" << "/usr/local/share/X11/xkb/rules/xfree86.lst";
+            fallback << "/usr/pkg/X11/xkb/rules/xfree86.lst" << "/usr/X11R7/share/X11/xkb/rules/xfree86.lst";
+            fallback << "/usr/X11R6/share/X11/xkb/rules/xfree86.lst";
+            for (int i=0;i<fallback.size();++i) {
+                xkbRulesFile.setFile(fallback.at(i));
+                if (!xkbRulesFile.exists()) { continue; }
+                if (xkbRulesFile.exists()) {
+                    qDebug() << "using" << xkbRulesFile.absoluteFilePath();
+                    break;
+                }
+            }
+            if (!xkbRulesFile.exists()) {
+                qDebug() << "unable to find xfree86.lst!";
+                return result;
+            }
         }
 
         QFile xkbFile(xkbRulesFile.absoluteFilePath());
