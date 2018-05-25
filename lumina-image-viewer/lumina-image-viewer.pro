@@ -1,18 +1,13 @@
-#-------------------------------------------------
 #
-# Project created by QtCreator 2018-05-25T03:58:23
+# lumina-extra
+# Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
 #
-#-------------------------------------------------
+# Available under the 3-clause BSD license
+# See the LICENSE file for full details
+#
 
-QT       += core gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+TEMPLATE = subdirs
+CONFIG += ordered
 
-TARGET = lumina-image-viewer
-TEMPLATE = app
+SUBDIRS += filters app
 
-SOURCES += main.cpp viewer.cpp
-HEADERS += viewer.h \
-    interfaces.h
-
-CONFIG += link_pkgconfig
-PKGCONFIG += Magick++

@@ -205,8 +205,11 @@ void Viewer::setupUI()
 
     filterMenu = new QMenu(this);
     filterMenu->setTitle(tr("Filters"));
+    filterMenu->setVisible(false);
+    filterMenu->setEnabled(false);
 
     mainMenu->addMenu(fileMenu);
+    mainMenu->addMenu(filterMenu);
 }
 
 void Viewer::saveSettings()
@@ -309,7 +312,6 @@ void Viewer::populatePlugins(QObject *plugin)
 {
     FilterInterface *filter = qobject_cast<FilterInterface *>(plugin);
     if (!filter) { return; }
-    qDebug() << "is filter";
     addToMenu(plugin, filter->filters(), filterMenu, SLOT(applyFilter()));
 }
 
@@ -317,6 +319,7 @@ void Viewer::loadPlugins()
 {
     foreach (QObject *plugin, QPluginLoader::staticInstances()) { populatePlugins(plugin); }
     filterMenu->setEnabled(!filterMenu->actions().isEmpty());
+    filterMenu->setVisible(!filterMenu->actions().isEmpty());
 }
 
 void Viewer::applyFilter()
@@ -324,7 +327,6 @@ void Viewer::applyFilter()
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
     if (!filter || action->text().isEmpty()) { return; }
-    qDebug() << "apply filter";
     imageData = filter->filterImage(action->text(), imageData);
     viewImage();
 }
