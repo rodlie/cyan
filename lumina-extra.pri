@@ -18,6 +18,10 @@ isEmpty(DOCDIR) {
 isEmpty(XDGDIR) {
     XDGDIR = /etc/xdg
 }
+
+CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+
 CONFIG -= install_lib
 CONFIG += staticlib
+
 VERSION = 20180525

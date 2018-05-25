@@ -31,7 +31,8 @@ SysTray::SysTray(QObject *parent)
     connect(man, SIGNAL(mediaChanged(QString,bool)), this, SLOT(handleDeviceMediaChanged(QString,bool)));
     connect(man, SIGNAL(mountpointChanged(QString,QString)), this, SLOT(handleDeviceMountpointChanged(QString,QString)));
     connect(man, SIGNAL(foundNewDevice(QString)), this, SLOT(handleFoundNewDevice(QString)));
-    generateContextMenu();
+    //generateContextMenu();
+    QTimer::singleShot(1000, this, SLOT(generateContextMenu()));
 }
 
 void SysTray::generateContextMenu()
