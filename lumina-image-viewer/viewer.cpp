@@ -1,3 +1,4 @@
+#include "interfaces.h"
 #include "viewer.h"
 #include <QDebug>
 #include <QFileDialog>
@@ -8,6 +9,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QUrl>
+#include <QPluginLoader>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -143,6 +145,7 @@ Viewer::Viewer(QWidget *parent)
     , openImageAct(0)
     , saveImageAct(0)
     , quitAct(0)
+    , filterMenu(0)
     , imageBackend(0)
 {
     qRegisterMetaType<Magick::Image>("Magick::Image");
@@ -152,6 +155,7 @@ Viewer::Viewer(QWidget *parent)
     connect(imageBackend, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     setupUI();
     loadSettings();
+    loadPlugins();
 }
 
 Viewer::~Viewer()
@@ -198,6 +202,9 @@ void Viewer::setupUI()
     fileMenu->addAction(openImageAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
+
+    filterMenu = new QMenu(this);
+    filterMenu->setTitle(tr("Filters"));
 
     mainMenu->addMenu(fileMenu);
 }
@@ -296,4 +303,41 @@ Magick::Blob Viewer::makePreview()
         qDebug() << warn_.what();
     }
     return Magick::Blob();
+}
+
+void Viewer::populatePlugins(QObject *plugin)
+{
+    FilterInterface *filter = qobject_cast<FilterInterface *>(plugin);
+    if (!filter) { return; }
+    qDebug() << "is filter";
+    addToMenu(plugin, filter->filters(), filterMenu, SLOT(applyFilter()));
+}
+
+void Viewer::loadPlugins()
+{
+    foreach (QObject *plugin, QPluginLoader::staticInstances()) { populatePlugins(plugin); }
+    filterMenu->setEnabled(!filterMenu->actions().isEmpty());
+}
+
+void Viewer::applyFilter()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
+    if (!filter || action->text().isEmpty()) { return; }
+    qDebug() << "apply filter";
+    imageData = filter->filterImage(action->text(), imageData);
+    viewImage();
+}
+
+void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup)
+{
+    foreach (QString text, texts) {
+        QAction *action = new QAction(text, plugin);
+        connect(action, SIGNAL(triggered()), this, member);
+        menu->addAction(action);
+        if (actionGroup) {
+            action->setCheckable(true);
+            actionGroup->addAction(action);
+        }
+    }
 }

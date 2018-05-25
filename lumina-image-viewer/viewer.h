@@ -15,6 +15,7 @@
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QThread>
+#include <QActionGroup>
 #include <Magick++.h>
 
 class ImageHandler : public QObject
@@ -89,6 +90,8 @@ private:
     QAction *saveImageAct;
     QAction *quitAct;
 
+    QMenu *filterMenu;
+
     Magick::Image imageData;
     ImageHandler *imageBackend;
 
@@ -107,6 +110,10 @@ private slots:
     void resetImageZoom();
     void viewImage();
     Magick::Blob makePreview();
+    void populatePlugins(QObject *plugin);
+    void loadPlugins();
+    void applyFilter();
+    void addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup = 0);
 };
 
 #endif // VIEWER_H

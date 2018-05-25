@@ -11,7 +11,8 @@ TARGET = lumina-image-viewer
 TEMPLATE = app
 
 SOURCES += main.cpp viewer.cpp
-HEADERS += viewer.h
+HEADERS += viewer.h \
+    interfaces.h
 
 CONFIG += link_pkgconfig
 PKGCONFIG += Magick++
