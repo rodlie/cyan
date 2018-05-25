@@ -7,7 +7,6 @@
 #include <QMatrix>
 #include <QImage>
 #include <QPixmap>
-#include <Magick++.h>
 #include <QUrl>
 
 ImageHandler::ImageHandler(QObject *parent) :
@@ -30,28 +29,20 @@ void ImageHandler::requestImage(QString filename)
 
 void ImageHandler::readImage(QString filename)
 {
-    if (filename.isEmpty()) {
-        emit errorMessage(filename, tr("Empty File!"));
-        return;
-    }
+    if (filename.isEmpty()) { return; }
     try {
         Magick::Image image;
-        Magick::Blob tmp;
         image.read(filename.toUtf8().data());
-        if (image.depth()>8) { image.depth(8); }
-        image.magick("BMP");
-        image.write(&tmp);
-        if (tmp.length()>0) {
-            QByteArray result = QByteArray((char*)tmp.data(), tmp.length());
-            emit returnImage(result, QByteArray(), filename);
+        if (image.rows()>0 && image.columns()>0) {
+            emit returnImage(image);
         }
     }
     catch(Magick::Error &error_ ) {
-        emit errorMessage(filename, error_.what());
+        emit errorMessage(error_.what());
         return;
     }
     catch(Magick::Warning &warn_ ) {
-        emit warningMessage(filename, warn_.what());
+        emit warningMessage(warn_.what());
     }
 }
 
@@ -154,10 +145,11 @@ Viewer::Viewer(QWidget *parent)
     , quitAct(0)
     , imageBackend(0)
 {
+    qRegisterMetaType<Magick::Image>("Magick::Image");
     imageBackend = new ImageHandler();
-    connect(imageBackend, SIGNAL(returnImage(QByteArray,QByteArray,QString)), this, SLOT(handleImage(QByteArray,QByteArray,QString)));
-    connect(imageBackend, SIGNAL(errorMessage(QString,QString)), this, SLOT(handleError(QString,QString)));
-    connect(imageBackend, SIGNAL(warningMessage(QString,QString)), this, SLOT(handleWarning(QString,QString)));
+    connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleImage(Magick::Image)));
+    connect(imageBackend, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
+    connect(imageBackend, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     setupUI();
     loadSettings();
 }
@@ -227,7 +219,6 @@ void Viewer::saveImage(QString filename)
 
 void Viewer::loadImage(QString filename)
 {
-    qDebug() << "load image" << filename;
     if (filename.isEmpty()) { return; }
     imageBackend->requestImage(filename);
 }
@@ -239,37 +230,32 @@ void Viewer::saveImageDialog()
 
 void Viewer::loadImageDialog()
 {
-    qDebug() << "open image dialog";
     QString filename = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files (*.*)"));
     if (!filename.isEmpty()) { loadImage(filename); }
 }
 
-void Viewer::handleImage(QByteArray image, QByteArray profile, QString filename)
+void Viewer::handleImage(Magick::Image image)
 {
-    qDebug() << "handle image" << image.size() << profile.size() << filename;
-    if (image.size()>0 && !filename.isEmpty()) {
+    if (image.columns()>0 && image.rows()>0) {
         clearImage();
         imageData = image;
-        imageFilename = filename;
         viewImage();
     }
 }
 
-void Viewer::handleError(QString filename, QString message)
+void Viewer::handleError(QString message)
 {
-    qDebug() << "error" << filename << message;
+    qDebug() << "error" << message;
 }
 
-void Viewer::handleWarning(QString filename, QString message)
+void Viewer::handleWarning(QString message)
 {
-    qDebug() << "warning" << filename << message;
+    qDebug() << "warning" << message;
 }
 
 void Viewer::clearImage()
 {
-    imageData.clear();
-    imageFilename.clear();
-    imageProfile.clear();
+    imageData = Magick::Image();
     resetImageZoom();
 }
 
@@ -282,10 +268,32 @@ void Viewer::resetImageZoom()
 
 void Viewer::viewImage()
 {
-    if (imageData.size()==0) { return; }
-    QPixmap pixmap(QPixmap::fromImage(QImage::fromData(imageData)));
+    if (imageData.rows()==0 || imageData.columns()==0) { return; }
+    Magick::Blob preview = makePreview();
+    if (preview.length()==0) { return; }
+    QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
     if (pixmap.isNull()) { return; }
     mainScene->clear();
     mainScene->addPixmap(pixmap);
     mainScene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
+}
+
+Magick::Blob Viewer::makePreview()
+{
+    try {
+        Magick::Image preview = imageData;
+        Magick::Blob result;
+        if (preview.depth()>8) { preview.depth(8); }
+        preview.strip();
+        preview.magick("BMP");
+        preview.write(&result);
+        return result;
+    }
+    catch(Magick::Error &error_ ) {
+        qDebug() << error_.what();
+    }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+    return Magick::Blob();
 }

@@ -14,4 +14,4 @@ SOURCES += main.cpp viewer.cpp
 HEADERS += viewer.h
 
 CONFIG += link_pkgconfig
-PKGCONFIG += lcms2 Magick++
+PKGCONFIG += Magick++

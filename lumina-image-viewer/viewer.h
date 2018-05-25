@@ -15,6 +15,7 @@
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <QThread>
+#include <Magick++.h>
 
 class ImageHandler : public QObject
 {
@@ -25,9 +26,9 @@ public:
     ~ImageHandler();
 
 signals:
-    void returnImage(QByteArray image, QByteArray profile, QString filename);
-    void errorMessage(QString filename, QString message);
-    void warningMessage(QString filename, QString message);
+    void returnImage(Magick::Image image);
+    void errorMessage(QString message);
+    void warningMessage(QString message);
 
 public slots:
     void requestImage(QString filename);
@@ -88,10 +89,7 @@ private:
     QAction *saveImageAct;
     QAction *quitAct;
 
-    QByteArray imageData;
-    QByteArray imageProfile;
-    QString imageFilename;
-
+    Magick::Image imageData;
     ImageHandler *imageBackend;
 
 private slots:
@@ -102,12 +100,13 @@ private slots:
     void loadImage(QString filename);
     void saveImageDialog();
     void loadImageDialog();
-    void handleImage(QByteArray image, QByteArray profile, QString filename);
-    void handleError(QString filename, QString message);
-    void handleWarning(QString filename, QString message);
+    void handleImage(Magick::Image image);
+    void handleError(QString message);
+    void handleWarning(QString message);
     void clearImage();
     void resetImageZoom();
     void viewImage();
+    Magick::Blob makePreview();
 };
 
 #endif // VIEWER_H
