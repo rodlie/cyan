@@ -12,4 +12,5 @@ CONFIG -= ordered
 SUBDIRS += \
     lumina-disk-manager \
     lumina-keyboard-manager \
-    lumina-power-manager
+    lumina-power-manager \
+    lumina-image-viewer
