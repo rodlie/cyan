@@ -8,6 +8,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <Magick++.h>
+#include <QUrl>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -33,13 +34,17 @@ void ImageHandler::readImage(QString filename)
         emit errorMessage(filename, tr("Empty File!"));
         return;
     }
-    Magick::Blob tmp;
     try {
         Magick::Image image;
+        Magick::Blob tmp;
         image.read(filename.toUtf8().data());
         if (image.depth()>8) { image.depth(8); }
         image.magick("BMP");
         image.write(&tmp);
+        if (tmp.length()>0) {
+            QByteArray result = QByteArray((char*)tmp.data(), tmp.length());
+            emit returnImage(result, QByteArray(), filename);
+        }
     }
     catch(Magick::Error &error_ ) {
         emit errorMessage(filename, error_.what());
@@ -47,10 +52,6 @@ void ImageHandler::readImage(QString filename)
     }
     catch(Magick::Warning &warn_ ) {
         emit warningMessage(filename, warn_.what());
-    }
-    if (tmp.length()>0) {
-        QByteArray result = QByteArray((char*)tmp.data(), tmp.length());
-        emit returnImage(result, QByteArray(), filename);
     }
 }
 
