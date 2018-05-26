@@ -17,4 +17,4 @@ INCLUDEPATH += ../
 CONFIG += link_pkgconfig
 PKGCONFIG += Magick++
 
-LIBS += -Lplugins -limageFilters
+#LIBS += -Lplugins -limageFilters

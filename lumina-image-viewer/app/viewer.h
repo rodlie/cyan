@@ -110,7 +110,7 @@ private slots:
     void resetImageZoom();
     void viewImage();
     Magick::Blob makePreview();
-    void populatePlugins(QObject *plugin);
+    void addPlugin(QObject *plugin, QString filename);
     void loadPlugins();
     void applyFilter();
     void addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup = 0);

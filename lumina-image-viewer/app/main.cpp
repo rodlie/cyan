@@ -3,11 +3,11 @@
 #include <QtPlugin>
 #include <Magick++.h>
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+/*#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 Q_IMPORT_PLUGIN(ImageFilters)
 #else
 Q_IMPORT_PLUGIN(imageFilters)
-#endif
+#endif*/
 
 int main(int argc, char *argv[])
 {

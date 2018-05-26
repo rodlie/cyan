@@ -4,7 +4,6 @@
 #include <QtPlugin>
 #include <Magick++.h>
 
-//class Magick::Image;
 class QString;
 class QStringList;
 

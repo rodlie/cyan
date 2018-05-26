@@ -10,6 +10,7 @@
 #include <QPixmap>
 #include <QUrl>
 #include <QPluginLoader>
+#include <QApplication>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -308,16 +309,38 @@ Magick::Blob Viewer::makePreview()
     return Magick::Blob();
 }
 
-void Viewer::populatePlugins(QObject *plugin)
+void Viewer::addPlugin(QObject *plugin, QString filename)
 {
     FilterInterface *filter = qobject_cast<FilterInterface *>(plugin);
     if (!filter) { return; }
+    qDebug() << "Loaded plugin" << filename << filter->filters();
     addToMenu(plugin, filter->filters(), filterMenu, SLOT(applyFilter()));
 }
 
 void Viewer::loadPlugins()
 {
-    foreach (QObject *plugin, QPluginLoader::staticInstances()) { populatePlugins(plugin); }
+    //foreach (QObject *plugin, QPluginLoader::staticInstances()) { populatePlugins(plugin); }
+    QStringList paths;
+    QString suffix = QString("share/%1/plugins").arg(qApp->applicationName());
+    paths << QString("%1/.local/%1").arg(QDir::homePath()).arg(suffix);
+    paths << QString("%1/../%2").arg(qApp->applicationDirPath()).arg(suffix);
+    paths << QString("/usr/%1").arg(suffix);
+    paths << QString("/usr/local/%1").arg(suffix);
+    paths << QString("%1/plugins").arg(qApp->applicationDirPath());
+    qDebug() << "plugin search path" << paths;
+
+    for(int i=0;i<paths.size();++i) {
+        QDir dir(paths.at(i));
+        foreach (QString fileName, dir.entryList(QDir::Files)) {
+            QPluginLoader loader(dir.absoluteFilePath(fileName));
+            qDebug() << "Found possible plugin" << loader.fileName();
+            QObject *plugin = loader.instance();
+            if (!plugin) { continue; }
+            qDebug() << "Seems like a plugin, try to load" << loader.fileName();
+            addPlugin(plugin, loader.fileName());
+        }
+    }
+
     filterMenu->setEnabled(!filterMenu->actions().isEmpty());
     filterMenu->setVisible(!filterMenu->actions().isEmpty());
 }
