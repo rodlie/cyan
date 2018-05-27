@@ -81,6 +81,7 @@ signals:
 
 private:
     QToolBar *mainToolBar;
+    QToolBar *pluginsToolBar;
     QMenuBar *mainMenu;
     QStatusBar *mainStatusBar;
     View *mainView;

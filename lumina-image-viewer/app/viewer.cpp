@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QPluginLoader>
 #include <QApplication>
+#include <QToolButton>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -139,6 +140,7 @@ void View::setFit(bool value)
 Viewer::Viewer(QWidget *parent)
     : QMainWindow(parent)
     , mainToolBar(0)
+    , pluginsToolBar(0)
     , mainMenu(0)
     , mainStatusBar(0)
     , mainView(0)
@@ -172,6 +174,10 @@ void Viewer::setupUI()
     mainToolBar->setObjectName(QString("mainToolBar"));
     addToolBar(mainToolBar);
 
+    pluginsToolBar = new QToolBar(this);
+    pluginsToolBar->setObjectName(QString("pluginsToolBar"));
+    addToolBar(/*Qt::LeftToolBarArea,*/ pluginsToolBar);
+
     mainMenu = new QMenuBar(this);
     mainMenu->setObjectName(QString("mainMenu"));
     setMenuBar(mainMenu);
@@ -191,6 +197,7 @@ void Viewer::setupUI()
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open Image"));
+    openImageAct->setIcon(QIcon::fromTheme("document-open"));
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     mainToolBar->addAction(openImageAct);
 
@@ -205,7 +212,7 @@ void Viewer::setupUI()
     fileMenu->addAction(quitAct);
 
     filterMenu = new QMenu(this);
-    filterMenu->setTitle(tr("Filters"));
+    filterMenu->setTitle(tr("Options"));
     filterMenu->setVisible(false);
     filterMenu->setEnabled(false);
 
@@ -348,17 +355,46 @@ void Viewer::applyFilter()
 {
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
-    if (!filter || action->text().isEmpty()) { return; }
-    imageData = filter->filterImage(action->text(), imageData);
+    if (!filter || action->data().toString().isEmpty()) { return; }
+    imageData = filter->filterImage(action->data().toString(), imageData);
     viewImage();
 }
 
 void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup)
 {
     foreach (QString text, texts) {
-        QAction *action = new QAction(text, plugin);
+        QString filterCategory = text.split("/").takeFirst();
+        QString filterName = text.split("/").takeLast();
+        QAction *action = new QAction(filterName, plugin);
+        action->setIcon(QIcon::fromTheme("applications-other"));
+        action->setData(text);
         connect(action, SIGNAL(triggered()), this, member);
-        menu->addAction(action);
+        bool hasCategory = false;
+        foreach (QAction *menuAction, menu->actions()) {
+            if (!menuAction->menu()) { continue; }
+            if (menuAction->menu()->title() == filterCategory) {
+                hasCategory = true;
+                menuAction->menu()->addAction(action);
+                break;
+            }
+        }
+        if(!hasCategory && !filterCategory.isEmpty()) {
+            QMenu *catMenu = new QMenu(this);
+            catMenu->setTitle(filterCategory);
+            catMenu->setIcon(QIcon::fromTheme("applications-other"));
+            catMenu->addAction(action);
+            menu->addMenu(catMenu);
+            QToolButton *catButton = new QToolButton(this);
+            catButton->setText(filterCategory);
+            catButton->setToolTip(filterCategory);
+            catButton->setIcon(QIcon::fromTheme("applications-other"));
+            catButton->setMenu(catMenu);
+            catButton->setPopupMode(QToolButton::InstantPopup);
+            pluginsToolBar->addWidget(catButton);
+        } else if (filterCategory.isEmpty()) {
+            menu->addAction(action);
+            pluginsToolBar->addAction(action);
+        }
         if (actionGroup) {
             action->setCheckable(true);
             actionGroup->addAction(action);
