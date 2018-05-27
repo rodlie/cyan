@@ -52,7 +52,6 @@ private:
     QToolBar *pluginsToolBar;
     QMenuBar *mainMenu;
     QStatusBar *mainStatusBar;
-    View *mainView;
 
     QAction *openImageAct;
     QAction *saveImageAct;
@@ -62,6 +61,9 @@ private:
 
     Magick::Image imageData;
     ImageHandler *imageBackend;
+
+public slots:
+    View* getCurrentView();
 
 private slots:
     void setupUI();
@@ -74,14 +76,11 @@ private slots:
     void handleNewImage(Magick::Image image);
     void handleError(QString message);
     void handleWarning(QString message);
-    void clearImage();
-    void resetImageZoom();
-    void viewImage();
-    Magick::Blob makePreview();
     void addPlugin(QObject *plugin, QString filename);
     void loadPlugins();
     void applyFilter();
     void addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup = 0);
+    void newTab(Magick::Image image);
 };
 
 #endif // VIEWER_H

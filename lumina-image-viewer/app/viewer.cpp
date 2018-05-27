@@ -3,15 +3,12 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDir>
-//#include <QMimeData>
-//#include <QFileInfo>
-//#include <QMatrix>
 #include <QImage>
 #include <QPixmap>
-//#include <QUrl>
 #include <QPluginLoader>
 #include <QApplication>
 #include <QToolButton>
+#include <QMdiSubWindow>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -58,7 +55,6 @@ Viewer::Viewer(QWidget *parent)
     , pluginsToolBar(0)
     , mainMenu(0)
     , mainStatusBar(0)
-    , mainView(0)
     , openImageAct(0)
     , saveImageAct(0)
     , quitAct(0)
@@ -70,6 +66,7 @@ Viewer::Viewer(QWidget *parent)
     connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleNewImage(Magick::Image)));
     connect(imageBackend, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(imageBackend, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
+
     setupUI();
     loadSettings();
     loadPlugins();
@@ -80,12 +77,21 @@ Viewer::~Viewer()
     saveSettings();
 }
 
+View *Viewer::getCurrentView()
+{
+    QMdiSubWindow *tab = mdi->currentSubWindow();
+    if (!tab) { return NULL; }
+    View *view = qobject_cast<View*>(tab->widget());
+    if (!view) { return NULL; }
+    return view;
+}
+
 void Viewer::setupUI()
 {
     qDebug() << "setup ui";
 
     mdi = new QMdiArea(this);
-    //setCentralWidget(mdi);
+    setCentralWidget(mdi);
 
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
@@ -102,15 +108,6 @@ void Viewer::setupUI()
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));
     setStatusBar(mainStatusBar);
-
-    mainView = new View(this);
-    mainView->fit = true;
-    //connect(mainView, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
-    connect(mainView, SIGNAL(openImage(QString)), this, SLOT(loadImage(QString)));
-    setCentralWidget(mainView);
-
-    //mainScene = new QGraphicsScene(this);
-    //mainView->setScene(mainScene);
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open Image"));
@@ -171,12 +168,7 @@ void Viewer::loadImageDialog()
 
 void Viewer::handleNewImage(Magick::Image image)
 {
-    if (image.columns()>0 && image.rows()>0) {
-        /*clearImage();
-        imageData = image;
-        viewImage();*/
-        mainView->setImage(image);
-    }
+    if (image.columns()>0 && image.rows()>0) { newTab(image); }
 }
 
 void Viewer::handleError(QString message)
@@ -187,52 +179,6 @@ void Viewer::handleError(QString message)
 void Viewer::handleWarning(QString message)
 {
     qDebug() << "warning" << message;
-}
-
-void Viewer::clearImage()
-{
-    imageData = Magick::Image();
-    //resetImageZoom();
-    mainView->resetImageZoom();
-}
-
-void Viewer::resetImageZoom()
-{
-    /*QMatrix matrix;
-    matrix.scale(1.0, 1.0);
-    mainView->setMatrix(matrix);*/
-}
-
-void Viewer::viewImage()
-{
-    /*if (imageData.rows()==0 || imageData.columns()==0) { return; }
-    Magick::Blob preview = makePreview();
-    if (preview.length()==0) { return; }
-    QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
-    if (pixmap.isNull()) { return; }
-    mainScene->clear();
-    mainScene->addPixmap(pixmap);
-    mainScene->setSceneRect(0, 0, pixmap.width(), pixmap.height());*/
-}
-
-Magick::Blob Viewer::makePreview()
-{
-    /*try {
-        Magick::Image preview = imageData;
-        Magick::Blob result;
-        if (preview.depth()>8) { preview.depth(8); }
-        preview.strip();
-        preview.magick("BMP");
-        preview.write(&result);
-        return result;
-    }
-    catch(Magick::Error &error_ ) {
-        qDebug() << error_.what();
-    }
-    catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
-    }*/
-    return Magick::Blob();
 }
 
 void Viewer::addPlugin(QObject *plugin, QString filename)
@@ -275,8 +221,8 @@ void Viewer::applyFilter()
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
     if (!filter || action->data().toString().isEmpty()) { return; }
-    mainView->setImage(filter->filterImage(action->data().toString(), mainView->getImage()));
-    viewImage();
+    if (!getCurrentView()) { return; }
+    getCurrentView()->setImage(filter->filterImage(action->data().toString(), getCurrentView()->getImage()));
 }
 
 void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup)
@@ -319,4 +265,14 @@ void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, c
             actionGroup->addAction(action);
         }
     }
+}
+
+void Viewer::newTab(Magick::Image image)
+{
+    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
+    View *view = new View(this);
+    view->setImage(image);
+    view->setFit(true);
+    tab->setWidget(view);
+    tab->show/*Maximized*/();
 }
