@@ -17,8 +17,12 @@ class ImageFilters : public QObject, public FilterInterface
 public:
     QStringList filters() const;
     Magick::Image filterImage(const QString &filter, const Magick::Image &image);
+private:
+    Magick::Image filteredImage;
 private slots:
     Magick::Image swirlImage(const Magick::Image &image);
+    Magick::Image waveImage(const Magick::Image &image);
+    void handleFilterDialogDone();
 };
 
 #endif

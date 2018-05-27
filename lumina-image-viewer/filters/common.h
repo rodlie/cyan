@@ -23,7 +23,8 @@ enum filterTypes {
 
 enum filterEffect {
     filterEffectNone,
-    filterEffectSwirl
+    filterEffectSwirl,
+    filterEffectWave
 };
 
 // Swirl
@@ -35,5 +36,18 @@ enum filterEffect {
 #define SWIRL_DEGREES_MAX 360
 #define SWIRL_DEGREES_TYPE filterTypeDoubleSpinBox
 
+// Wave
+#define WAVE_FILTER tr("Wave")
+#define WAVE_EFFECT filterEffectWave
+#define WAVE_AMPLITUDE tr("Amplitude")
+#define WAVE_AMPLITUDE_VALUE 25
+#define WAVE_AMPLITUDE_MIN 0
+#define WAVE_AMPLITUDE_MAX 1000
+#define WAVE_AMPLITUDE_TYPE filterTypeDoubleSpinBox
+#define WAVE_LENGTH tr("Length")
+#define WAVE_LENGTH_VALUE 150
+#define WAVE_LENGTH_MIN 0
+#define WAVE_LENGTH_MAX 1000
+#define WAVE_LENGTH_TYPE filterTypeDoubleSpinBox
 
 #endif // COMMON_H
