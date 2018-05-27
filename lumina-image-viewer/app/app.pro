@@ -10,8 +10,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = lumina-image-viewer
 TEMPLATE = app
 
-SOURCES += main.cpp viewer.cpp
-HEADERS += viewer.h ../interfaces.h
+SOURCES += main.cpp viewer.cpp \
+    view.cpp
+HEADERS += viewer.h ../interfaces.h \
+    view.h
 INCLUDEPATH += ../
 
 CONFIG += link_pkgconfig

@@ -6,17 +6,12 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QAction>
-#include <QGraphicsView>
-#include <QWheelEvent>
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDragLeaveEvent>
-#include <QDropEvent>
-#include <QResizeEvent>
-#include <QGraphicsScene>
 #include <QThread>
 #include <QActionGroup>
+#include <QMdiArea>
 #include <Magick++.h>
+
+#include "view.h"
 
 class ImageHandler : public QObject
 {
@@ -39,34 +34,6 @@ private:
     QThread t;
 };
 
-class View : public QGraphicsView
-{
-    Q_OBJECT
-
-public:
-    explicit View(QWidget* parent = NULL);
-    bool fit;
-
-signals:
-    void resetZoom();
-    void myZoom(double scaleX, double scaleY);
-    void myFit(bool value);
-    void openImage(QString filename);
-    void openProfile(QString filename);
-
-public slots:
-    void doZoom(double scaleX, double scaleY);
-    void setFit(bool value);
-
-protected:
-    void wheelEvent(QWheelEvent* event);
-    void mousePressEvent(QMouseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dragLeaveEvent(QDragLeaveEvent *event);
-    void dropEvent(QDropEvent *event);
-    void resizeEvent(QResizeEvent *event);
-};
 
 class Viewer : public QMainWindow
 {
@@ -80,12 +47,12 @@ signals:
     void openImage(QString filename);
 
 private:
+    QMdiArea *mdi;
     QToolBar *mainToolBar;
     QToolBar *pluginsToolBar;
     QMenuBar *mainMenu;
     QStatusBar *mainStatusBar;
     View *mainView;
-    QGraphicsScene *mainScene;
 
     QAction *openImageAct;
     QAction *saveImageAct;
@@ -104,7 +71,7 @@ private slots:
     void loadImage(QString filename);
     void saveImageDialog();
     void loadImageDialog();
-    void handleImage(Magick::Image image);
+    void handleNewImage(Magick::Image image);
     void handleError(QString message);
     void handleWarning(QString message);
     void clearImage();

@@ -3,12 +3,12 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDir>
-#include <QMimeData>
-#include <QFileInfo>
-#include <QMatrix>
+//#include <QMimeData>
+//#include <QFileInfo>
+//#include <QMatrix>
 #include <QImage>
 #include <QPixmap>
-#include <QUrl>
+//#include <QUrl>
 #include <QPluginLoader>
 #include <QApplication>
 #include <QToolButton>
@@ -50,101 +50,15 @@ void ImageHandler::readImage(QString filename)
     }
 }
 
-View::View(QWidget* parent) : QGraphicsView(parent)
-, fit(false) {
-    setAcceptDrops(true);
-    setBackgroundBrush(Qt::darkGray);
-    setDragMode(QGraphicsView::ScrollHandDrag);
-}
-
-void View::wheelEvent(QWheelEvent* event) {
-    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    double scaleFactor = 1.15;
-    if (event->delta() > 0) { // up
-        fit = false;
-        scale(scaleFactor, scaleFactor);
-        emit myZoom(scaleFactor, scaleFactor);
-    } else { // down
-        scale(1.0 / scaleFactor, 1.0 / scaleFactor);
-        emit myZoom(1.0 / scaleFactor, 1.0 / scaleFactor);
-    }
-}
-
-void View::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::MiddleButton) {
-        fit = false;
-        emit resetZoom();
-    } else {
-        if (event->button() == Qt::RightButton) { setFit(true); }
-        else { QGraphicsView::mousePressEvent(event); }
-    }
-}
-
-void View::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void View::dragMoveEvent(QDragMoveEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void View::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    event->accept();
-}
-
-void View::dropEvent(QDropEvent *event)
-{
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        if (!mimeData->urls().at(0).isEmpty()) {
-            QUrl url = mimeData->urls().at(0);
-            QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
-            if (suffix == "PNG"
-                || suffix == "JPG"
-                || suffix == "JPEG"
-                || suffix == "TIF"
-                || suffix == "TIFF"
-                || suffix == "PSD")
-            {
-                emit openImage(url.toLocalFile());
-            } else if (suffix == "ICC" || suffix == "ICM") {
-                emit openProfile(url.toLocalFile());
-            }
-        }
-    }
-}
-
-void View::resizeEvent(QResizeEvent */*event*/)
-{
-    if (fit) {
-        fitInView(0, 0, scene()->width(), scene()->height(), Qt::KeepAspectRatio);
-    }
-}
-
-void View::doZoom(double scaleX, double scaleY)
-{
-    scale(scaleX,scaleY);
-}
-
-void View::setFit(bool value)
-{
-    if (!scene()) { return; }
-    fit = value;
-    fitInView(0, 0, scene()->width(), scene()->height(), Qt::KeepAspectRatio);
-}
 
 Viewer::Viewer(QWidget *parent)
     : QMainWindow(parent)
+    , mdi(0)
     , mainToolBar(0)
     , pluginsToolBar(0)
     , mainMenu(0)
     , mainStatusBar(0)
     , mainView(0)
-    , mainScene(0)
     , openImageAct(0)
     , saveImageAct(0)
     , quitAct(0)
@@ -153,7 +67,7 @@ Viewer::Viewer(QWidget *parent)
 {
     qRegisterMetaType<Magick::Image>("Magick::Image");
     imageBackend = new ImageHandler();
-    connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleImage(Magick::Image)));
+    connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleNewImage(Magick::Image)));
     connect(imageBackend, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(imageBackend, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     setupUI();
@@ -169,6 +83,9 @@ Viewer::~Viewer()
 void Viewer::setupUI()
 {
     qDebug() << "setup ui";
+
+    mdi = new QMdiArea(this);
+    //setCentralWidget(mdi);
 
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
@@ -188,12 +105,12 @@ void Viewer::setupUI()
 
     mainView = new View(this);
     mainView->fit = true;
-    connect(mainView, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
+    //connect(mainView, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
     connect(mainView, SIGNAL(openImage(QString)), this, SLOT(loadImage(QString)));
     setCentralWidget(mainView);
 
-    mainScene = new QGraphicsScene(this);
-    mainView->setScene(mainScene);
+    //mainScene = new QGraphicsScene(this);
+    //mainView->setScene(mainScene);
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open Image"));
@@ -252,12 +169,13 @@ void Viewer::loadImageDialog()
     if (!filename.isEmpty()) { loadImage(filename); }
 }
 
-void Viewer::handleImage(Magick::Image image)
+void Viewer::handleNewImage(Magick::Image image)
 {
     if (image.columns()>0 && image.rows()>0) {
-        clearImage();
+        /*clearImage();
         imageData = image;
-        viewImage();
+        viewImage();*/
+        mainView->setImage(image);
     }
 }
 
@@ -274,31 +192,32 @@ void Viewer::handleWarning(QString message)
 void Viewer::clearImage()
 {
     imageData = Magick::Image();
-    resetImageZoom();
+    //resetImageZoom();
+    mainView->resetImageZoom();
 }
 
 void Viewer::resetImageZoom()
 {
-    QMatrix matrix;
+    /*QMatrix matrix;
     matrix.scale(1.0, 1.0);
-    mainView->setMatrix(matrix);
+    mainView->setMatrix(matrix);*/
 }
 
 void Viewer::viewImage()
 {
-    if (imageData.rows()==0 || imageData.columns()==0) { return; }
+    /*if (imageData.rows()==0 || imageData.columns()==0) { return; }
     Magick::Blob preview = makePreview();
     if (preview.length()==0) { return; }
     QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
     if (pixmap.isNull()) { return; }
     mainScene->clear();
     mainScene->addPixmap(pixmap);
-    mainScene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
+    mainScene->setSceneRect(0, 0, pixmap.width(), pixmap.height());*/
 }
 
 Magick::Blob Viewer::makePreview()
 {
-    try {
+    /*try {
         Magick::Image preview = imageData;
         Magick::Blob result;
         if (preview.depth()>8) { preview.depth(8); }
@@ -312,7 +231,7 @@ Magick::Blob Viewer::makePreview()
     }
     catch(Magick::Warning &warn_ ) {
         qDebug() << warn_.what();
-    }
+    }*/
     return Magick::Blob();
 }
 
@@ -356,7 +275,7 @@ void Viewer::applyFilter()
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
     if (!filter || action->data().toString().isEmpty()) { return; }
-    imageData = filter->filterImage(action->data().toString(), imageData);
+    mainView->setImage(filter->filterImage(action->data().toString(), mainView->getImage()));
     viewImage();
 }
 

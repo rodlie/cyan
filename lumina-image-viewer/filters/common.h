@@ -37,7 +37,7 @@ enum filterEffect {
 #define SWIRL_DEGREES_TYPE filterTypeDoubleSpinBox
 
 // Wave
-#define WAVE_FILTER tr("Filter/Wave")
+#define WAVE_FILTER tr("Distort/Wave")
 #define WAVE_EFFECT filterEffectWave
 #define WAVE_AMPLITUDE tr("Amplitude")
 #define WAVE_AMPLITUDE_VALUE 25
