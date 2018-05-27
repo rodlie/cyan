@@ -9,10 +9,11 @@
 #define FILTERDIALOG_H
 
 #include <QDialog>
-#include <QSpinBox>
+//#include <QSpinBox>
 #include <Magick++.h>
 #include <QLabel>
 #include <QPushButton>
+#include "common.h"
 
 #define PREVIEW_WIDTH 640
 #define PREVIEW_HEIGHT 480
@@ -21,18 +22,22 @@ class Dialog : public QDialog
 {
     Q_OBJECT
 public:
-   explicit Dialog(QWidget *parent = NULL, const Magick::Image &image = Magick::Image(), int *option1 = 0);
+   explicit Dialog(QWidget *parent = NULL, const Magick::Image &image = Magick::Image(), filterOptions effectOptions = filterOptions());
+    filterOptions options;
 private:
-    QSpinBox *option1Box;
+    /*QSpinBox *option1Box;
     int *option1Value;
-    int defaultValue;
+    int defaultValue;*/
     Magick::Image preview;
     QLabel *previewLabel;
     QPushButton *applyButton;
     QPushButton *cancelButton;
 private slots:
-    void handleOption1Box(int value);
-    void handlePreview(int value, bool effect = true);
+  //  void handleOption1Box(int value);
+    void handleOption(int value);
+    void handleOption(double value);
+    void handleOption(QString option, QVariant value);
+    void handlePreview(bool effect = true);
     void adjustPreview();
     void cancelAction();
 };

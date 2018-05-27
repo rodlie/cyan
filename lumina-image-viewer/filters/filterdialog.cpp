@@ -11,12 +11,13 @@
 #include <QDebug>
 #include <QLabel>
 #include <QPixmap>
+#include <QDoubleSpinBox>
+#include <QSpinBox>
+#include <QMapIterator>
 
-Dialog::Dialog(QWidget *parent, const Magick::Image &image, int *option1)
+Dialog::Dialog(QWidget *parent, const Magick::Image &image, filterOptions effectOptions)
     : QDialog(parent)
-    , option1Box(0)
-    , option1Value(option1)
-    , defaultValue(*option1)
+    , options(effectOptions)
     , preview(image)
     , previewLabel(0)
     , applyButton(0)
@@ -37,14 +38,35 @@ Dialog::Dialog(QWidget *parent, const Magick::Image &image, int *option1)
     containerLayout->setContentsMargins(0,0,0,0);
     containerLayout->setSpacing(0);
 
-    option1Box = new QSpinBox(this);
-    option1Box->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    connect(option1Box, SIGNAL(valueChanged(int)), this, SLOT(handleOption1Box(int)));
+    QMapIterator<QString, QVariant> i(options.option);
+    while (i.hasNext()) {
+        i.next();
+        qDebug() << i.key() << i.value();
+        if (options.type[i.key()] == filterTypeDoubleSpinBox) {
+            QDoubleSpinBox *optionbox = new QDoubleSpinBox(this);
+            optionbox->setObjectName(i.key());
+            optionbox->setToolTip(optionbox->objectName());
+            optionbox->setMinimum(options.min[i.key()].toDouble());
+            optionbox->setMaximum(options.max[i.key()].toDouble());
+            optionbox->setValue(i.value().toDouble());
+            connect(optionbox, SIGNAL(valueChanged(double)), this, SLOT(handleOption(double)));
+            containerLayout->addWidget(optionbox);
+        } else if (options.type[i.key()] == filterTypeIntSpinBox) {
+            QSpinBox *optionbox = new QSpinBox(this);
+            optionbox->setObjectName(i.key());
+            optionbox->setToolTip(optionbox->objectName());
+            optionbox->setMinimum(options.min[i.key()].toDouble());
+            optionbox->setMaximum(options.max[i.key()].toDouble());
+            optionbox->setValue(i.value().toDouble());
+            connect(optionbox, SIGNAL(valueChanged(int)), this, SLOT(handleOption(int)));
+            containerLayout->addWidget(optionbox);
+        }
+    }
 
     previewLabel = new QLabel(this);
     previewLabel->setMinimumSize(QSize(PREVIEW_WIDTH, PREVIEW_HEIGHT));
     previewLabel->setMaximumSize(previewLabel->minimumSize());
-    handlePreview(0, false);
+    handlePreview(/*false*/);
 
     applyButton = new QPushButton(this);
     applyButton->setText(tr("Apply"));
@@ -58,18 +80,33 @@ Dialog::Dialog(QWidget *parent, const Magick::Image &image, int *option1)
 
     layout->addWidget(previewLabel);
     layout->addWidget(containerWidget);
-    containerLayout->addWidget(option1Box);
     containerLayout->addWidget(applyButton);
     containerLayout->addWidget(cancelButton);
 }
 
-void Dialog::handleOption1Box(int value)
+void Dialog::handleOption(int value)
 {
-    *option1Value = value;
-    handlePreview(value);
+    QSpinBox *optionbox = qobject_cast<QSpinBox*>(sender());
+    if (!optionbox) { return;}
+    handleOption(optionbox->objectName(), value);
 }
 
-void Dialog::handlePreview(int value, bool effect)
+void Dialog::handleOption(double value)
+{
+    QDoubleSpinBox *optionbox = qobject_cast<QDoubleSpinBox*>(sender());
+    if (!optionbox) { return;}
+    handleOption(optionbox->objectName(), value);
+}
+
+void Dialog::handleOption(QString option, QVariant value)
+{
+    qDebug() << "handle option" << option << value;
+    if (option.isEmpty()) { return; }
+    options.option[option] = value;
+    handlePreview();
+}
+
+void Dialog::handlePreview(bool effect)
 {
     try {
         if ((int)preview.columns() > PREVIEW_WIDTH) {
@@ -82,7 +119,9 @@ void Dialog::handlePreview(int value, bool effect)
         Magick::Blob blob;
         Magick::Image tmp = preview;
         if (effect) {
-            tmp.swirl(value);
+            if (options.effect == filterEffectSwirl) {
+                tmp.swirl(options.option[SWIRL_DEGREES].toDouble());
+            }
         }
         tmp.magick("BMP");
         tmp.write(&blob);
@@ -104,6 +143,5 @@ void Dialog::adjustPreview()
 
 void Dialog::cancelAction()
 {
-    *option1Value = defaultValue;
     close();
 }

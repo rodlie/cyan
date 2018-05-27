@@ -2,7 +2,8 @@ QT += core gui widgets
 TEMPLATE      = lib
 CONFIG       += plugin shared
 INCLUDEPATH  += ../
-HEADERS       = filters.h filterdialog.h
+HEADERS       = filters.h filterdialog.h \
+    common.h
 SOURCES       = filters.cpp filterdialog.cpp
 TARGET        = $$qtLibraryTarget(ImageFilters)
 DESTDIR       = ../app/plugins

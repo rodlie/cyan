@@ -6,7 +6,6 @@
 
 class QString;
 class QStringList;
-
 class FilterInterface
 {
 public:
@@ -16,6 +15,4 @@ public:
 };
 
 Q_DECLARE_INTERFACE(FilterInterface, "org.lumina-desktop.viewer.FilterInterface/1.0")
-
-
 #endif // INTERFACES_H

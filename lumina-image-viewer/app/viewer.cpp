@@ -313,13 +313,12 @@ void Viewer::addPlugin(QObject *plugin, QString filename)
 {
     FilterInterface *filter = qobject_cast<FilterInterface *>(plugin);
     if (!filter) { return; }
-    qDebug() << "Loaded plugin" << filename << filter->filters();
+    qDebug() << "Loaded filter" << filename << filter->filters();
     addToMenu(plugin, filter->filters(), filterMenu, SLOT(applyFilter()));
 }
 
 void Viewer::loadPlugins()
 {
-    //foreach (QObject *plugin, QPluginLoader::staticInstances()) { populatePlugins(plugin); }
     QStringList paths;
     QString suffix = QString("share/%1/plugins").arg(qApp->applicationName());
     paths << QString("%1/.local/%1").arg(QDir::homePath()).arg(suffix);
@@ -336,7 +335,7 @@ void Viewer::loadPlugins()
             qDebug() << "Found possible plugin" << loader.fileName();
             QObject *plugin = loader.instance();
             if (!plugin) { continue; }
-            qDebug() << "Seems like a plugin, try to load" << loader.fileName();
+            qDebug() << "Seems like a plugin, try to add" << loader.fileName();
             addPlugin(plugin, loader.fileName());
         }
     }
