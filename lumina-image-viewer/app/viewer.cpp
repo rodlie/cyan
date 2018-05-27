@@ -274,5 +274,6 @@ void Viewer::newTab(Magick::Image image)
     view->setImage(image);
     view->setFit(true);
     tab->setWidget(view);
+    tab->setAttribute(Qt::WA_DeleteOnClose);
     tab->show/*Maximized*/();
 }
