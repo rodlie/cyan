@@ -19,8 +19,10 @@
 #include <QActionGroup>
 #include <QMdiArea>
 #include <Magick++.h>
+#include <QDockWidget>
 
 #include "view.h"
+#include "layertree.h"
 
 class ImageHandler : public QObject
 {
@@ -71,6 +73,8 @@ private:
 
     Magick::Image imageData;
     ImageHandler *imageBackend;
+    LayerTree *layersTree;
+    QDockWidget *layersDock;
 
 public slots:
     View* getCurrentView();

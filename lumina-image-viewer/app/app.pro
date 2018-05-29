@@ -11,8 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = lumina-pixel
 TEMPLATE = app
 
-SOURCES += main.cpp viewer.cpp view.cpp
-HEADERS += viewer.h ../interfaces.h view.h
+SOURCES += main.cpp viewer.cpp view.cpp \
+    layertree.cpp
+HEADERS += viewer.h ../interfaces.h view.h \
+    layertree.h
 INCLUDEPATH += ../
 
 CONFIG += link_pkgconfig

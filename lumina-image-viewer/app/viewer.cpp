@@ -70,6 +70,8 @@ Viewer::Viewer(QWidget *parent)
     , quitAct(0)
     , filterMenu(0)
     , imageBackend(0)
+    , layersTree(0)
+    , layersDock(0)
 {
     setWindowTitle(QString("Lumina Pixel"));
     setWindowIcon(QIcon::fromTheme("applications-graphics"));
@@ -152,6 +154,14 @@ void Viewer::setupUI()
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(filterMenu);
+
+    layersTree = new LayerTree(this);
+    //connect(layersTree, SIGNAL());
+
+    layersDock = new QDockWidget(this);
+    layersDock->setWindowTitle(tr("Layers"));
+    layersDock->setWidget(layersTree);
+    addDockWidget(Qt::RightDockWidgetArea, layersDock);
 }
 
 void Viewer::saveSettings()
@@ -292,6 +302,12 @@ void Viewer::newTab(Magick::Image image)
 {
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
+
+    //connect(view, SIGNAL())
+
+
+
+
     view->addLayer(image);
 
     image.flip(); //layer test

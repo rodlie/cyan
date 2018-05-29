@@ -20,6 +20,40 @@
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <Magick++.h>
+#include<QGraphicsRectItem>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPixmapItem>
+
+class LayerItem : public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
+public:
+    //explicit rectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
+    //~rectItem();
+
+signals:
+    void movedItem(QPointF pos, int layerID);
+private:
+    //bool releaseMouse = false;
+    /*void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+        qDebug() << "release event";
+     //   releaseMouse = true;
+        this->setPos(mapToScene(event->pos()));
+        emit movedItem(this->pos(),data(1).toString());
+        QGraphicsRectItem::mouseReleaseEvent(event);
+    }*/
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+      //  qDebug() << "moved layer";
+
+        //    releaseMouse = false;
+            this->setPos(mapToScene(event->pos()));
+            emit movedItem(this->pos(),data(1).toInt());
+
+        QGraphicsRectItem::mouseMoveEvent(event);
+    }
+
+public slots:
+};
 
 class View : public QGraphicsView
 {
@@ -33,6 +67,7 @@ private:
     Magick::Image _image;
     Magick::Image _canvas;
     QGraphicsScene *_scene;
+    QGraphicsPixmapItem *_pixmap;
     QMap<int, Magick::Image> _layers;
     QMap<int, QSize> _layersPOS;
     QMap<int, Magick::CompositeOperator> _layersComp;
@@ -46,6 +81,7 @@ signals:
     void openImage(QString filename);
     void openProfile(QString filename);
     void updatedLayers();
+    void addedLayer(int layer);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -53,7 +89,7 @@ public slots:
     void resetImageZoom();
     Magick::Image getImage();
     void setImage(Magick::Image image);
-    void addLayer(Magick::Image image);
+    void addLayer(Magick::Image image, bool updateView = true);
     void clearLayers();
     Magick::Image getCanvas();
     void setLayerVisibility(int layer, bool layerIsVisible);
@@ -74,6 +110,7 @@ private slots:
     void procLayers();
     void viewImage();
     Magick::Blob makePreview();
+    void handleLayerMoved(QPointF pos, int id);
 
 protected:
     void wheelEvent(QWheelEvent* event);

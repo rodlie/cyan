@@ -18,17 +18,19 @@
 View::View(QWidget* parent, int width, int height, int depth, Magick::ColorspaceType colorspace) : QGraphicsView(parent)
   , fit(false)
   , _scene(0)
+  , _pixmap(0)
 {
-    clearCanvas(width, height, depth, colorspace);
-
     setAcceptDrops(true);
     setBackgroundBrush(Qt::darkGray);
     setDragMode(QGraphicsView::ScrollHandDrag);
+
     _scene = new QGraphicsScene(this);
     setScene(_scene);
     resetImageZoom();
     connect(this, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
     connect(this, SIGNAL(updatedLayers()), this, SLOT(procLayers()));
+    clearCanvas(width, height, depth, colorspace);
+    _pixmap = _scene->addPixmap(QPixmap());
 }
 
 void View::wheelEvent(QWheelEvent* event) {
@@ -130,16 +132,28 @@ void View::setImage(Magick::Image image)
     addLayer(image);
 }
 
-void View::addLayer(Magick::Image image)
+void View::addLayer(Magick::Image image, bool updateView)
 {
-    int layer = _layers.size();
-    _layers[layer] = image;
-    _layersPOS[layer] = QSize(0, 0);
-    _layersComp[layer] = MagickCore::OverCompositeOp;
-    _layersVisibility[layer] = true;
-    qDebug() << "added layer" << layer << QString::fromStdString(_layers[layer].fileName()) << _layersPOS[layer];
-    if (layer == 0) { setCanvasSpecsFromImage(image); }
-    emit updatedLayers();
+    int id = _layers.size();
+    _layers[id] = image;
+    _layersPOS[id] = QSize(0, 0);
+    _layersComp[id] = MagickCore::OverCompositeOp;
+    _layersVisibility[id] = true;
+    qDebug() << "added layer" << id << QString::fromStdString(_layers[id].fileName()) << _layersPOS[id];
+    if (id == 0) { setCanvasSpecsFromImage(image); }
+
+    LayerItem *layer = new LayerItem(/*this*/);
+    layer->setRect(0, 0, image.columns(), image.rows());
+    layer->setFlag(QGraphicsItem::ItemIsMovable);
+    layer->setData(1, id);
+    connect(layer, SIGNAL(movedItem(QPointF,int)), this, SLOT(handleLayerMoved(QPointF,int)));
+
+    _scene->addItem(layer);
+
+
+
+    emit addedLayer(id);
+    if (updateView) { emit updatedLayers(); }
 }
 
 void View::clearLayers()
@@ -236,6 +250,7 @@ void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType 
     _canvas=canvas;
     //_canvas.backgroundColor(_canvas.pixelColor(0,0));
     //_canvas.transparent(_canvas.pixelColor(0,0));
+    _scene->setSceneRect(0, 0, width, height);
 }
 
 void View::setCanvasSpecsFromImage(Magick::Image image)
@@ -244,6 +259,7 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _canvas.size(Magick::Geometry(image.columns(), image.rows()));
     _canvas.depth(image.depth());
     _canvas.colorSpace(image.colorSpace());
+    _scene->setSceneRect(0, 0, image.columns(), image.rows());
 }
 
 void View::procLayers()
@@ -268,9 +284,10 @@ void View::viewImage()
     if (preview.length()==0) { return; }
     QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
     if (pixmap.isNull()) { return; }
-    _scene->clear();
-    _scene->addPixmap(pixmap);
-    _scene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
+    _pixmap->setPixmap(pixmap);
+    //_scene->clear();
+    //_scene->addPixmap(pixmap);
+    //_scene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
 }
 
 Magick::Blob View::makePreview()
@@ -292,4 +309,11 @@ Magick::Blob View::makePreview()
         qDebug() << warn_.what();
     }
     return Magick::Blob();
+}
+
+void View::handleLayerMoved(QPointF pos, int id)
+{
+    qDebug() << "handle layer moved" << id << pos;
+    _layersPOS[id] = QSize((int)pos.x(), (int)pos.y());
+    emit updatedLayers();
 }
