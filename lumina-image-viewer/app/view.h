@@ -36,7 +36,7 @@ private:
     QMap<int, Magick::Image> _layers;
     QMap<int, QSize> _layersPOS;
     QMap<int, Magick::CompositeOperator> _layersComp;
-    QMap<int, QVector<Magick::Image>> _layersHistory;
+    QMap<int, QVector<Magick::Image> > _layersHistory;
 
 signals:
     void resetZoom();
