@@ -37,6 +37,7 @@ private:
     QMap<int, QSize> _layersPOS;
     QMap<int, Magick::CompositeOperator> _layersComp;
     QMap<int, QVector<Magick::Image> > _layersHistory;
+    QMap<int, bool> _layersVisibility;
 
 signals:
     void resetZoom();
@@ -54,6 +55,18 @@ public slots:
     void setImage(Magick::Image image);
     void addLayer(Magick::Image image);
     void clearLayers();
+    Magick::Image getCanvas();
+    void setLayerVisibility(int layer, bool layerIsVisible);
+    void setLayerComposite(int layer, Magick::CompositeOperator composite);
+    Magick::CompositeOperator getLayerComposite(int layer);
+    int getLayerCount();
+    Magick::Image getLayer(int layer);
+    void setLayer(int layer, Magick::Image image);
+    QSize getLayerOffset(int layer);
+    void setLayerOffset(int layer, QSize offset);
+    QString getLayerName(int layer);
+    void setLayerName(int layer, QString name);
+    void removeLayer(int layer);
 
 private slots:
     void clearCanvas(int width = 640, int height = 480, int depth = 8, Magick::ColorspaceType colorspace = MagickCore::sRGBColorspace);
@@ -61,6 +74,7 @@ private slots:
     void procLayers();
     void viewImage();
     Magick::Blob makePreview();
+
 protected:
     void wheelEvent(QWheelEvent* event);
     void mousePressEvent(QMouseEvent *event);

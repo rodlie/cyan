@@ -120,7 +120,7 @@ void View::resetImageZoom()
 
 Magick::Image View::getImage()
 {
-    return _image;
+    return _canvas;
 }
 
 void View::setImage(Magick::Image image)
@@ -133,10 +133,10 @@ void View::setImage(Magick::Image image)
 void View::addLayer(Magick::Image image)
 {
     int layer = _layers.size();
-    if (layer>0) { layer++; }
     _layers[layer] = image;
     _layersPOS[layer] = QSize(0, 0);
     _layersComp[layer] = MagickCore::OverCompositeOp;
+    _layersVisibility[layer] = true;
     qDebug() << "added layer" << layer << QString::fromStdString(_layers[layer].fileName()) << _layersPOS[layer];
     if (layer == 0) { setCanvasSpecsFromImage(image); }
     emit updatedLayers();
@@ -146,6 +146,80 @@ void View::clearLayers()
 {
     qDebug() << "clear layers";
     _layers.clear();
+    emit updatedLayers();
+}
+
+Magick::Image View::getCanvas()
+{
+    return _canvas;
+}
+
+void View::setLayerVisibility(int layer, bool layerIsVisible)
+{
+    if (_layersVisibility[layer] != layerIsVisible) {
+        _layersVisibility[layer] = layerIsVisible;
+        emit updatedLayers();
+    }
+}
+
+void View::setLayerComposite(int layer, Magick::CompositeOperator composite)
+{
+    if (_layersComp[layer] != composite) {
+        _layersComp[layer] = composite;
+        emit updatedLayers();
+    }
+}
+
+Magick::CompositeOperator View::getLayerComposite(int layer)
+{
+    return _layersComp[layer];
+}
+
+int View::getLayerCount()
+{
+    return _layers.size();
+}
+
+Magick::Image View::getLayer(int layer)
+{
+    return _layers[layer];
+}
+
+void View::setLayer(int layer, Magick::Image image)
+{
+    _layers[layer] = image;
+    emit updatedLayers();
+}
+
+QSize View::getLayerOffset(int layer)
+{
+    return _layersPOS[layer];
+}
+
+void View::setLayerOffset(int layer, QSize offset)
+{
+    _layersPOS[layer] = offset;
+    emit updatedLayers();
+}
+
+QString View::getLayerName(int layer)
+{
+    return QString::fromStdString(_layers[layer].fileName());
+}
+
+void View::setLayerName(int layer, QString name)
+{
+    _layers[layer].fileName(name.toStdString());
+    emit updatedLayers();
+}
+
+void View::removeLayer(int layer)
+{
+    _layers.remove(layer);
+    _layersComp.remove(layer);
+    _layersHistory.remove(layer);
+    _layersPOS.remove(layer);
+    _layersVisibility.remove(layer);
     emit updatedLayers();
 }
 
@@ -177,10 +251,10 @@ void View::procLayers()
     qDebug() << "proc layers";
     clearCanvas(_canvas.columns(), _canvas.rows(), _canvas.depth(), _canvas.colorspaceType());
     QMapIterator<int, Magick::Image> i(_layers);
-    i.toBack();
-    while (i.hasPrevious()) {
-        i.previous();
+    while (i.hasNext()) {
+        i.next();
         qDebug() << i.key() << QString::fromStdString(i.value().fileName());
+        if (!_layersVisibility[i.key()]) { continue; }
         _canvas.composite(i.value(), _layersPOS[i.key()].width(), _layersPOS[i.key()].height(), _layersComp[i.key()]);
     }
     viewImage();

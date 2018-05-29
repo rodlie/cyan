@@ -238,6 +238,7 @@ void Viewer::loadPlugins()
 
 void Viewer::applyFilter()
 {
+    // TODO: fix layer support
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
     if (!filter || action->data().toString().isEmpty()) { return; }
@@ -291,13 +292,16 @@ void Viewer::newTab(Magick::Image image)
 {
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
-    //view->setImage(image);
     view->addLayer(image);
+
+    image.flip(); //layer test
+    view->addLayer(image); // layer test
+
     view->setFit(true);
     tab->setWidget(view);
     tab->setWindowTitle(QString::fromStdString(image.fileName()));
     tab->setAttribute(Qt::WA_DeleteOnClose);
-    tab->show/*Maximized*/();
+    tab->showMaximized();
 }
 
 void Viewer::newImage()
@@ -311,6 +315,7 @@ void Viewer::newImage()
     tab->setWidget(view);
     tab->setWindowTitle(tr("New Image"));
     tab->setAttribute(Qt::WA_DeleteOnClose);
-    tab->show/*Maximized*/();
+    tab->showMaximized();
 
 }
+
