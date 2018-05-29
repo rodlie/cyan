@@ -317,7 +317,7 @@ void Viewer::newTab(Magick::Image image)
 {
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
-
+    connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
     //connect(view, SIGNAL())
 
 
@@ -571,4 +571,11 @@ void Viewer::handleLayerActivated(QTreeWidgetItem *item, int col)
     if (!item) { return;}
     qDebug() << item->data(0, Qt::UserRole+2).toInt();
     layersComp->setCurrentIndex(item->data(0, Qt::UserRole+2).toInt());
+}
+
+void Viewer::handleLayerSelected(int layer)
+{
+    QTreeWidgetItem *item = layersTree->topLevelItem(layer);
+    if (!item) { return; }
+    layersTree->setCurrentItem(item);
 }

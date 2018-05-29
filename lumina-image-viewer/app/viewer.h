@@ -104,6 +104,7 @@ private slots:
     //int comp2magick(Magick::CompositeOperator comp);
     void populateCompBox();
     void handleLayerActivated(QTreeWidgetItem *item, int col);
+    void handleLayerSelected(int layer);
 };
 
 #endif // VIEWER_H

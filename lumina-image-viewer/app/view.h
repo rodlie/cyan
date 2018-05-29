@@ -27,32 +27,23 @@
 class LayerItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
-public:
-    //explicit rectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem *parent = 0);
-    //~rectItem();
 
 signals:
     void movedItem(QPointF pos, int layerID);
+    void selectedItem(int LayerID);
+
 private:
-    //bool releaseMouse = false;
-    /*void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-        qDebug() << "release event";
-     //   releaseMouse = true;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event)
+    {
+        emit selectedItem(data(1).toInt());
+        QGraphicsRectItem::mousePressEvent(event);
+    }
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+    {
         this->setPos(mapToScene(event->pos()));
-        emit movedItem(this->pos(),data(1).toString());
-        QGraphicsRectItem::mouseReleaseEvent(event);
-    }*/
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-      //  qDebug() << "moved layer";
-
-        //    releaseMouse = false;
-            this->setPos(mapToScene(event->pos()));
-            emit movedItem(this->pos(),data(1).toInt());
-
+        emit movedItem(this->pos(),data(1).toInt());
         QGraphicsRectItem::mouseMoveEvent(event);
     }
-
-public slots:
 };
 
 class View : public QGraphicsView
@@ -82,6 +73,7 @@ signals:
     void openProfile(QString filename);
     void updatedLayers();
     void addedLayer(int layer);
+    void selectedLayer(int layer);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -111,6 +103,7 @@ private slots:
     void viewImage();
     Magick::Blob makePreview();
     void handleLayerMoved(QPointF pos, int id);
+    void handleLayerSelected(int id);
 
 protected:
     void wheelEvent(QWheelEvent* event);

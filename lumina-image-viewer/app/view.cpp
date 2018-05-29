@@ -147,6 +147,7 @@ void View::addLayer(Magick::Image image, bool updateView)
     layer->setFlag(QGraphicsItem::ItemIsMovable);
     layer->setData(1, id);
     connect(layer, SIGNAL(movedItem(QPointF,int)), this, SLOT(handleLayerMoved(QPointF,int)));
+    connect(layer, SIGNAL(selectedItem(int)), this, SLOT(handleLayerSelected(int)));
 
     _scene->addItem(layer);
 
@@ -318,4 +319,10 @@ void View::handleLayerMoved(QPointF pos, int id)
     qDebug() << "handle layer moved" << id << pos;
     _layersPOS[id] = QSize((int)pos.x(), (int)pos.y());
     emit updatedLayers();
+}
+
+void View::handleLayerSelected(int id)
+{
+    qDebug() << "handle layer seleted" << id;
+    emit selectedLayer(id);
 }
