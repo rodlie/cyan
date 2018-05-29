@@ -1,3 +1,12 @@
+/*
+#
+# Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
+#
+# Available under the 3-clause BSD license
+# See the LICENSE file for full details
+#
+*/
+
 #include "interfaces.h"
 #include "viewer.h"
 #include <QDebug>
@@ -57,11 +66,16 @@ Viewer::Viewer(QWidget *parent)
     , mainStatusBar(0)
     , openImageAct(0)
     , saveImageAct(0)
+    , newImageAct(0)
     , quitAct(0)
     , filterMenu(0)
     , imageBackend(0)
 {
+    setWindowTitle(QString("Lumina Pixel"));
+    setWindowIcon(QIcon::fromTheme("applications-graphics"));
+
     qRegisterMetaType<Magick::Image>("Magick::Image");
+
     imageBackend = new ImageHandler();
     connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleNewImage(Magick::Image)));
     connect(imageBackend, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
@@ -108,6 +122,12 @@ void Viewer::setupUI()
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));
     setStatusBar(mainStatusBar);
+
+    newImageAct = new QAction(this);
+    newImageAct->setText(tr("New Image"));
+    newImageAct->setIcon(QIcon::fromTheme("document-new"));
+    connect(newImageAct, SIGNAL(triggered(bool)), this, SLOT(newImage()));
+    mainToolBar->addAction(newImageAct);
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open Image"));
@@ -271,9 +291,26 @@ void Viewer::newTab(Magick::Image image)
 {
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
-    view->setImage(image);
+    //view->setImage(image);
+    view->addLayer(image);
     view->setFit(true);
     tab->setWidget(view);
+    tab->setWindowTitle(QString::fromStdString(image.fileName()));
     tab->setAttribute(Qt::WA_DeleteOnClose);
     tab->show/*Maximized*/();
+}
+
+void Viewer::newImage()
+{
+    qDebug() << "new image";
+
+    // tmp just to test ...
+    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
+    View *view = new View(this);
+    view->setFit(true);
+    tab->setWidget(view);
+    tab->setWindowTitle(tr("New Image"));
+    tab->setAttribute(Qt::WA_DeleteOnClose);
+    tab->show/*Maximized*/();
+
 }

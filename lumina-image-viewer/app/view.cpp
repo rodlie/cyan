@@ -1,3 +1,12 @@
+/*
+#
+# Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
+#
+# Available under the 3-clause BSD license
+# See the LICENSE file for full details
+#
+*/
+
 #include "view.h"
 #include <QMimeData>
 #include <QUrl>
@@ -6,10 +15,12 @@
 #include <QPixmap>
 #include <QImage>
 
-View::View(QWidget* parent) : QGraphicsView(parent)
+View::View(QWidget* parent, int width, int height, int depth, Magick::ColorspaceType colorspace) : QGraphicsView(parent)
   , fit(false)
   , _scene(0)
 {
+    clearCanvas(width, height, depth, colorspace);
+
     setAcceptDrops(true);
     setBackgroundBrush(Qt::darkGray);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -17,6 +28,7 @@ View::View(QWidget* parent) : QGraphicsView(parent)
     setScene(_scene);
     resetImageZoom();
     connect(this, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
+    connect(this, SIGNAL(updatedLayers()), this, SLOT(procLayers()));
 }
 
 void View::wheelEvent(QWheelEvent* event) {
@@ -61,7 +73,7 @@ void View::dragLeaveEvent(QDragLeaveEvent *event)
 void View::dropEvent(QDropEvent *event)
 {
     const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
+    /*if (mimeData->hasUrls()) {
         if (!mimeData->urls().at(0).isEmpty()) {
             QUrl url = mimeData->urls().at(0);
             QString suffix = QFileInfo(url.toLocalFile()).suffix().toUpper();
@@ -77,7 +89,7 @@ void View::dropEvent(QDropEvent *event)
                 emit openProfile(url.toLocalFile());
             }
         }
-    }
+    }*/
 }
 
 void View::resizeEvent(QResizeEvent */*event*/)
@@ -113,13 +125,71 @@ Magick::Image View::getImage()
 
 void View::setImage(Magick::Image image)
 {
-    _image = image;
+    /*_image = image;
+    viewImage();*/
+    addLayer(image);
+}
+
+void View::addLayer(Magick::Image image)
+{
+    int layer = _layers.size();
+    if (layer>0) { layer++; }
+    _layers[layer] = image;
+    _layersPOS[layer] = QSize(0, 0);
+    _layersComp[layer] = MagickCore::OverCompositeOp;
+    qDebug() << "added layer" << layer << QString::fromStdString(_layers[layer].fileName()) << _layersPOS[layer];
+    if (layer == 0) { setCanvasSpecsFromImage(image); }
+    emit updatedLayers();
+}
+
+void View::clearLayers()
+{
+    qDebug() << "clear layers";
+    _layers.clear();
+    emit updatedLayers();
+}
+
+void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType colorspace)
+{
+    qDebug() << "clear canvas" << width << height << depth << colorspace;
+    Magick::Image canvas;
+    canvas.size(Magick::Geometry(width, height));
+    canvas.depth(depth);
+    canvas.colorSpace(colorspace);
+    canvas.matte(true); // TODO magick7
+    //canvas.backgroundColor(_canvas.pixelColor(0,0));
+    //canvas.transparent(_canvas.pixelColor(0,0));
+    _canvas=canvas;
+    //_canvas.backgroundColor(_canvas.pixelColor(0,0));
+    //_canvas.transparent(_canvas.pixelColor(0,0));
+}
+
+void View::setCanvasSpecsFromImage(Magick::Image image)
+{
+    qDebug() << "set canvas specs from image" << image.columns() << image.rows() << image.depth() << image.colorSpace();
+    _canvas.size(Magick::Geometry(image.columns(), image.rows()));
+    _canvas.depth(image.depth());
+    _canvas.colorSpace(image.colorSpace());
+}
+
+void View::procLayers()
+{
+    qDebug() << "proc layers";
+    clearCanvas(_canvas.columns(), _canvas.rows(), _canvas.depth(), _canvas.colorspaceType());
+    QMapIterator<int, Magick::Image> i(_layers);
+    i.toBack();
+    while (i.hasPrevious()) {
+        i.previous();
+        qDebug() << i.key() << QString::fromStdString(i.value().fileName());
+        _canvas.composite(i.value(), _layersPOS[i.key()].width(), _layersPOS[i.key()].height(), _layersComp[i.key()]);
+    }
     viewImage();
 }
 
 void View::viewImage()
 {
-    if (_image.rows()==0 || _image.columns()==0) { return; }
+    qDebug() << "view image";
+    //if (_image.rows()==0 || _image.columns()==0) { return; }
     Magick::Blob preview = makePreview();
     if (preview.length()==0) { return; }
     QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
@@ -131,8 +201,9 @@ void View::viewImage()
 
 Magick::Blob View::makePreview()
 {
+    qDebug() << "make preview";
     try {
-        Magick::Image preview = _image;
+        Magick::Image preview = _canvas;
         Magick::Blob result;
         if (preview.depth()>8) { preview.depth(8); }
         preview.strip();

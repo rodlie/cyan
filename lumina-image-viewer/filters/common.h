@@ -1,3 +1,12 @@
+/*
+#
+# Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
+#
+# Available under the 3-clause BSD license
+# See the LICENSE file for full details
+#
+*/
+
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -28,7 +37,7 @@ enum filterEffect {
 };
 
 // Swirl
-#define SWIRL_FILTER tr("Filter/Swirl")
+#define SWIRL_FILTER tr("Distort/Swirl")
 #define SWIRL_EFFECT filterEffectSwirl
 #define SWIRL_DEGREES tr("Degrees")
 #define SWIRL_DEGREES_VALUE 45
@@ -46,7 +55,7 @@ enum filterEffect {
 #define WAVE_AMPLITUDE_TYPE filterTypeDoubleSpinBox
 #define WAVE_LENGTH tr("Length")
 #define WAVE_LENGTH_VALUE 150
-#define WAVE_LENGTH_MIN 0
+#define WAVE_LENGTH_MIN 0.1
 #define WAVE_LENGTH_MAX 1000
 #define WAVE_LENGTH_TYPE filterTypeDoubleSpinBox
 
