@@ -18,6 +18,7 @@
 #include <QApplication>
 #include <QToolButton>
 #include <QMdiSubWindow>
+#include <QVBoxLayout>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
@@ -72,6 +73,7 @@ Viewer::Viewer(QWidget *parent)
     , imageBackend(0)
     , layersTree(0)
     , layersDock(0)
+    , layersComp(0)
 {
     setWindowTitle(QString("Lumina Pixel"));
     setWindowIcon(QIcon::fromTheme("applications-graphics"));
@@ -156,11 +158,24 @@ void Viewer::setupUI()
     mainMenu->addMenu(filterMenu);
 
     layersTree = new LayerTree(this);
-    //connect(layersTree, SIGNAL());
+    //connect(layersTree, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(handleLayerActivated(QTreeWidgetItem*,int)));
+    connect(layersTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(handleLayerActivated(QTreeWidgetItem*,int)));
+    connect(mdi, SIGNAL(subWindowActivated(QMdiSubWindow*)), layersTree, SLOT(handleTabActivated(QMdiSubWindow*)));
+
+    layersComp = new QComboBox(this);
+    populateCompBox();
+    connect(layersComp, SIGNAL(currentIndexChanged(int)), this, SLOT(handleLayerCompChanged(int)));
 
     layersDock = new QDockWidget(this);
     layersDock->setWindowTitle(tr("Layers"));
-    layersDock->setWidget(layersTree);
+
+    QWidget *layersContainer = new QWidget(this);
+    QVBoxLayout *layersContainerLayout = new QVBoxLayout(layersContainer);
+
+    layersContainerLayout->addWidget(layersComp);
+    layersContainerLayout->addWidget(layersTree);
+    layersDock->setWidget(layersContainer);
+
     addDockWidget(Qt::RightDockWidgetArea, layersDock);
 }
 
@@ -335,3 +350,225 @@ void Viewer::newImage()
 
 }
 
+void Viewer::handleLayerCompChanged(int comp)
+{
+    qDebug() << "handle layer comp changed" << comp;
+    QTreeWidgetItem *layer = layersTree->currentItem();
+    QMdiSubWindow *tab = mdi->currentSubWindow();
+    if (!layer || !tab) { return; }
+    View *view = qobject_cast<View*>(tab->widget());
+    if (!view) { return; }
+    int layerID = layer->data(0,Qt::UserRole+1).toInt();
+    layer->setData(0, Qt::UserRole+2, comp);
+    view->setLayerComposite(layerID, magick2comp(comp));
+}
+
+/*
+  using MagickCore::UndefinedCompositeOp;
+  using MagickCore::NoCompositeOp;
+  using MagickCore::BumpmapCompositeOp;
+  using MagickCore::ChangeMaskCompositeOp;
+  using MagickCore::ClearCompositeOp;
+  using MagickCore::ColorizeCompositeOp;
+  using MagickCore::CopyBlackCompositeOp;
+  using MagickCore::CopyBlueCompositeOp;
+  using MagickCore::CopyCompositeOp;
+  using MagickCore::CopyCyanCompositeOp;
+  using MagickCore::CopyGreenCompositeOp;
+  using MagickCore::CopyMagentaCompositeOp;
+  using MagickCore::CopyOpacityCompositeOp;
+  using MagickCore::CopyRedCompositeOp;
+  using MagickCore::CopyYellowCompositeOp;
+*/
+
+Magick::CompositeOperator Viewer::magick2comp(int comp)
+{
+    switch(comp) {
+    case 2:
+        return MagickCore::ModulusAddCompositeOp;
+    case 3:
+        return MagickCore::AtopCompositeOp;
+    case 4:
+        return MagickCore::BlendCompositeOp;
+    case 5:
+        return MagickCore::ColorBurnCompositeOp;
+    case 6:
+        return MagickCore::ColorDodgeCompositeOp;
+    case 7:
+        return MagickCore::DarkenCompositeOp;
+    case 8:
+        return MagickCore::DissolveCompositeOp;
+    case 9:
+        return MagickCore::HardLightCompositeOp;
+    case 10:
+        return MagickCore::HueCompositeOp;
+    case 11:
+        return MagickCore::LightenCompositeOp;
+    case 12:
+        return MagickCore::MinusDstCompositeOp;
+    case 13:
+        return MagickCore::MultiplyCompositeOp;
+    case 14:
+        return MagickCore::SubtractCompositeOp;
+    case 15:
+        return MagickCore::OverlayCompositeOp;
+    case 16:
+        return MagickCore::PlusCompositeOp;
+    case 17:
+        return MagickCore::SaturateCompositeOp;
+    case 18:
+        return MagickCore::ScreenCompositeOp;
+    case 19:
+        return MagickCore::AddCompositeOp;
+    case 20:
+        return MagickCore::MinusCompositeOp;
+    case 21:
+        return MagickCore::DivideCompositeOp;
+    case 22:
+        return MagickCore::LightenIntensityCompositeOp;
+    case 23:
+        return MagickCore::DarkenIntensityCompositeOp;
+    case 24:
+        return MagickCore::MinusSrcCompositeOp;
+    case 25:
+        return MagickCore::DivideSrcCompositeOp;
+    case 26:
+        return MagickCore::MathematicsCompositeOp;
+    case 27:
+        return MagickCore::LinearBurnCompositeOp;
+    case 28:
+        return MagickCore::LinearDodgeCompositeOp;
+    case 29:
+        return MagickCore::PinLightCompositeOp;
+    case 30:
+        return MagickCore::VividLightCompositeOp;
+    case 31:
+        return MagickCore::PegtopLightCompositeOp;
+    case 32:
+        return MagickCore::BlurCompositeOp;
+    case 33:
+        return MagickCore::DistortCompositeOp;
+    case 34:
+        return MagickCore::DivideDstCompositeOp;
+    case 35:
+        return MagickCore::XorCompositeOp;
+    case 36:
+        return MagickCore::ThresholdCompositeOp;
+    case 37:
+        return MagickCore::ModulusSubtractCompositeOp;
+    case 38:
+        return MagickCore::SrcOverCompositeOp;
+    case 39:
+        return MagickCore::SrcOutCompositeOp;
+    case 40:
+        return MagickCore::SrcInCompositeOp;
+    case 41:
+        return MagickCore::SrcCompositeOp;
+    case 42:
+        return MagickCore::SrcAtopCompositeOp;
+    case 43:
+        return MagickCore::SoftLightCompositeOp;
+    case 44:
+        return MagickCore::ReplaceCompositeOp;
+    case 45:
+        return MagickCore::OutCompositeOp;
+    case 46:
+        return MagickCore::ModulateCompositeOp;
+    case 47:
+        return MagickCore::LuminizeCompositeOp;
+    case 48:
+        return MagickCore::LinearLightCompositeOp;
+    case 49:
+        return MagickCore::InCompositeOp;
+    case 50:
+        return MagickCore::HardMixCompositeOp;
+    case 51:
+        return MagickCore::ExclusionCompositeOp;
+    case 52:
+        return MagickCore::DisplaceCompositeOp;
+    case 53:
+        return MagickCore::DifferenceCompositeOp;
+    case 54:
+        return MagickCore::DstOverCompositeOp;
+    case 55:
+        return MagickCore::DstOutCompositeOp;
+    case 56:
+        return MagickCore::DstInCompositeOp;
+    case 57:
+        return MagickCore::DstCompositeOp;
+    case 58:
+        return MagickCore::DstAtopCompositeOp;
+    default:
+        return MagickCore::OverCompositeOp;
+    }
+}
+
+void Viewer::populateCompBox()
+{
+    layersComp->addItem(tr("Over"));
+    layersComp->addItem(tr("Modulus Add"));
+    layersComp->addItem(tr("Atop"));
+    layersComp->addItem(tr("Blend"));
+    layersComp->addItem(tr("Color Burn"));
+    layersComp->addItem(tr("Color Dodge"));
+    layersComp->addItem(tr("Darken"));
+    layersComp->addItem(tr("Dissolve"));
+    layersComp->addItem(tr("Hard Light"));
+    layersComp->addItem(tr("Hue"));
+    layersComp->addItem(tr("Lighten"));
+    layersComp->addItem(tr("Minus Dst"));
+    layersComp->addItem(tr("Multiply"));
+    layersComp->addItem(tr("Subtract"));
+    layersComp->addItem(tr("Overlay"));
+    layersComp->addItem(tr("Plus"));
+    layersComp->addItem(tr("Saturate"));
+    layersComp->addItem(tr("Add"));
+    layersComp->addItem(tr("Minus"));
+    layersComp->addItem(tr("Divide"));
+    layersComp->addItem(tr("Lighten Intensity"));
+    layersComp->addItem(tr("Darken Intensity"));
+    layersComp->addItem(tr("Minus Src"));
+    layersComp->addItem(tr("Divide Src"));
+    layersComp->addItem(tr("Mathematics"));
+    layersComp->addItem(tr("Linear Burn"));
+    layersComp->addItem(tr("Linear Dodge"));
+    layersComp->addItem(tr("Pin Light"));
+    layersComp->addItem(tr("Vivid Light"));
+    layersComp->addItem(tr("Pegtop Light"));
+    layersComp->addItem(tr("Blur"));
+    layersComp->addItem(tr("Distort"));
+    layersComp->addItem(tr("Divide Dst"));
+    layersComp->addItem(tr("Xor"));
+    layersComp->addItem(tr("Threshold"));
+    layersComp->addItem(tr("Modulus Subtract"));
+    layersComp->addItem(tr("Src Over"));
+    layersComp->addItem(tr("Src Out"));
+    layersComp->addItem(tr("Src In"));
+    layersComp->addItem(tr("Src"));
+    layersComp->addItem(tr("Src Atop"));
+    layersComp->addItem(tr("Soft Light"));
+    layersComp->addItem(tr("Replace"));
+    layersComp->addItem(tr("Out"));
+    layersComp->addItem(tr("Modulate"));
+    layersComp->addItem(tr("Luminize"));
+    layersComp->addItem(tr("Linear Light"));
+    layersComp->addItem(tr("In"));
+    layersComp->addItem(tr("Hard Mix"));
+    layersComp->addItem(tr("Exclusion"));
+    layersComp->addItem(tr("Displace"));
+    layersComp->addItem(tr("Difference"));
+    layersComp->addItem(tr("Dst Over"));
+    layersComp->addItem(tr("Dst Out"));
+    layersComp->addItem(tr("Dst In"));
+    layersComp->addItem(tr("Dst"));
+    layersComp->addItem(tr("Dst Atop"));
+}
+
+void Viewer::handleLayerActivated(QTreeWidgetItem *item, int col)
+{
+    qDebug() << "layer activated?";
+    Q_UNUSED(col)
+    if (!item) { return;}
+    qDebug() << item->data(0, Qt::UserRole+2).toInt();
+    layersComp->setCurrentIndex(item->data(0, Qt::UserRole+2).toInt());
+}

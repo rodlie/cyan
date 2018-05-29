@@ -178,6 +178,7 @@ void View::setLayerVisibility(int layer, bool layerIsVisible)
 
 void View::setLayerComposite(int layer, Magick::CompositeOperator composite)
 {
+    qDebug() << "set layer composite" << layer << composite;
     if (_layersComp[layer] != composite) {
         _layersComp[layer] = composite;
         emit updatedLayers();
@@ -297,7 +298,7 @@ Magick::Blob View::makePreview()
         Magick::Image preview = _canvas;
         Magick::Blob result;
         if (preview.depth()>8) { preview.depth(8); }
-        preview.strip();
+        //preview.strip();
         preview.magick("BMP");
         preview.write(&result);
         return result;
@@ -313,6 +314,7 @@ Magick::Blob View::makePreview()
 
 void View::handleLayerMoved(QPointF pos, int id)
 {
+    // TODO offset
     qDebug() << "handle layer moved" << id << pos;
     _layersPOS[id] = QSize((int)pos.x(), (int)pos.y());
     emit updatedLayers();
