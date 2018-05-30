@@ -18,6 +18,7 @@
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
 {
+    qRegisterMetaType<filterOptions>("filterOptions");
     moveToThread(&t);
     t.start();
 }
