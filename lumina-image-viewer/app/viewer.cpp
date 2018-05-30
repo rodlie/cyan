@@ -163,7 +163,7 @@ void Viewer::setupUI()
 
     layersComp = new QComboBox(this);
     populateCompBox();
-    connect(layersComp, SIGNAL(currentTextChanged(QString)), this, SLOT(handleLayerCompChanged(QString)));
+    connect(layersComp, SIGNAL(currentIndexChanged(QString)), this, SLOT(handleLayerCompChanged(QString)));
 
     layersDock = new QDockWidget(this);
     layersDock->setWindowTitle(tr("Layers"));
@@ -368,7 +368,9 @@ void Viewer::populateCompBox()
         i.next();
         layersComp->addItem(i.value());
     }
-    layersComp->setCurrentText(tr("Over"));
+    //layersComp->setCurrentText(tr("Over"));
+    // make qt4 happy
+    layersComp->setCurrentIndex(layersComp->findText(tr("Over")));
 }
 
 void Viewer::handleLayerActivated(QTreeWidgetItem *item, int col)
@@ -382,7 +384,9 @@ void Viewer::handleLayerActivated(QTreeWidgetItem *item, QTreeWidgetItem *old)
     Q_UNUSED(old)
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!layer) { return; }
-    layersComp->setCurrentText(Common::compositeModes()[layer->getComposite()]);
+    //layersComp->setCurrentText(Common::compositeModes()[layer->getComposite()]);
+    // make qt4 happy
+    layersComp->setCurrentIndex(layersComp->findText(Common::compositeModes()[layer->getComposite()]));
 }
 
 void Viewer::handleLayerSelected(int layer)
