@@ -19,6 +19,7 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
   , fit(false)
   , _scene(0)
   , _pixmap(0)
+  , _rect(0)
 {
     setAcceptDrops(true);
     setBackgroundBrush(Qt::darkGray);
@@ -29,8 +30,13 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
     resetImageZoom();
     connect(this, SIGNAL(resetZoom()), this, SLOT(resetImageZoom()));
     connect(this, SIGNAL(updatedLayers()), this, SLOT(procLayers()));
-    clearCanvas(width, height, depth, colorspace);
+
+    _rect = new QGraphicsRectItem();
+    _rect->setRect(0, 0, width, height);
+    _rect->setPen(QPen(Qt::blue));
+    _scene->addItem(_rect);
     _pixmap = _scene->addPixmap(QPixmap());
+    clearCanvas(width, height, depth, colorspace);
 }
 
 void View::wheelEvent(QWheelEvent* event) {
@@ -150,10 +156,12 @@ void View::addLayer(Magick::Image image, bool updateView)
     connect(layer, SIGNAL(movedItem(QPointF,int)), this, SLOT(handleLayerMoved(QPointF,int)));
     connect(layer, SIGNAL(selectedItem(int)), this, SLOT(handleLayerSelected(int)));
     connect(layer, SIGNAL(cachePixmap(int)), this, SLOT(handleLayerCache(int)));
+    connect(this, SIGNAL(updatePixmaps()), layer, SLOT(updatePixmap()));
 
     _scene->addItem(layer);
 
 
+    layer->updatePixmap();
 
     emit addedLayer(id);
     if (updateView) { emit updatedLayers(); }
@@ -244,6 +252,7 @@ void View::removeLayer(int layer)
 void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType colorspace)
 {
     qDebug() << "clear canvas" << width << height << depth << colorspace;
+    _rect->setRect(0, 0, width, height);
     /*Magick::Image canvas;
     canvas.size(Magick::Geometry(width, height));
     canvas.depth(depth);
@@ -343,4 +352,9 @@ void View::handleLayerCache(int id)
     Magick::Blob cache = makePreview(id);
     QPixmap pix = QPixmap::fromImage(QImage::fromData(QByteArray((char*)cache.data(), cache.length())));
     if (!pix.isNull()) { item->setPixmap(pix); }
+}
+
+void View::handlePixmapRefresh()
+{
+    emit updatePixmaps();
 }

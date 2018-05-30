@@ -43,14 +43,14 @@ private:
         mouseIsDown = true;
         //setCursor(QCursor(Qt::ClosedHandCursor));
         emit selectedItem(data(1).toInt());
-        emit cachePixmap(data(1).toInt());
+        //emit cachePixmap(data(1).toInt());
         Q_UNUSED(event)
     }
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         mouseIsDown = false;
         //setCursor(QCursor(Qt::ArrowCursor));
-        clearPixmap();
+        //clearPixmap();
         mouseMoveEvent(event);
     }
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -70,16 +70,17 @@ private:
         Q_UNUSED(option)
         Q_UNUSED(widget)
         if (!mouseIsDown) {
-            QPen pen(Qt::green);
+            QPen pen(Qt::red);
             painter->setPen(pen);
             painter->drawRect(rect());
-        }
-        if (!_pixmap.isNull()) {
-            painter->setOpacity(0.5);
-            painter->drawImage(QPoint(0,0), _pixmap.toImage());
+        } else {
+            if (!_pixmap.isNull()) {
+                painter->setOpacity(0.5);
+                painter->drawImage(QPoint(0,0), _pixmap.toImage());
+            }
         }
     }
-public:
+public slots:
     void setPixmap(QPixmap pixmap)
     {
         qDebug() << "set pixmap";
@@ -88,9 +89,14 @@ public:
     }
     void clearPixmap()
     {
-        qDebug() << "clear pixmap";
-        _pixmap = QPixmap();
+        /*qDebug() << "clear pixmap";
+        _pixmap = QPixmap();*/
         update();
+    }
+    void updatePixmap()
+    {
+        qDebug() << "layer must update pixmap";
+        emit cachePixmap(data(1).toInt());
     }
 };
 
@@ -107,6 +113,7 @@ private:
     Magick::Image _canvas;
     QGraphicsScene *_scene;
     QGraphicsPixmapItem *_pixmap;
+    QGraphicsRectItem *_rect;
     QMap<int, Magick::Image> _layers;
     QMap<int, QSize> _layersPOS;
     QMap<int, Magick::CompositeOperator> _layersComp;
@@ -122,6 +129,7 @@ signals:
     void updatedLayers();
     void addedLayer(int layer);
     void selectedLayer(int layer);
+    void updatePixmaps();
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -143,6 +151,7 @@ public slots:
     QString getLayerName(int layer);
     void setLayerName(int layer, QString name);
     void removeLayer(int layer);
+    void handlePixmapRefresh();
 
 private slots:
     void clearCanvas(int width = 640, int height = 480, int depth = 8, Magick::ColorspaceType colorspace = MagickCore::sRGBColorspace);

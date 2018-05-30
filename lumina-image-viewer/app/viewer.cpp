@@ -318,6 +318,8 @@ void Viewer::newTab(Magick::Image image)
 
     view->addLayer(image);
     view->addLayer(image); // layer test
+    view->addLayer(image); // layer test
+    view->addLayer(image); // layer test
     view->setFit(true);
 
     tab->setWidget(view);
