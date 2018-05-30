@@ -18,6 +18,7 @@ CONFIG += link_pkgconfig
 PKGCONFIG += Magick++
 
 include(../../lumina-extra.pri)
+CONFIG -= staticlib
 
 target.path = $${PIXEL_PLUGINS}
 INSTALLS += target

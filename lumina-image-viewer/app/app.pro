@@ -14,7 +14,8 @@ TEMPLATE = app
 SOURCES += main.cpp viewer.cpp view.cpp \
     layertree.cpp
 HEADERS += viewer.h ../interfaces.h view.h \
-    layertree.h
+    layertree.h \
+    common.h
 INCLUDEPATH += ../
 
 CONFIG += link_pkgconfig

@@ -99,11 +99,10 @@ private slots:
     void addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup = 0);
     void newTab(Magick::Image image);
     void newImage();
-    void handleLayerCompChanged(int comp);
-    Magick::CompositeOperator magick2comp(int comp);
-    //int comp2magick(Magick::CompositeOperator comp);
+    void handleLayerCompChanged(QString comp);
     void populateCompBox();
     void handleLayerActivated(QTreeWidgetItem *item, int col);
+    void handleLayerActivated(QTreeWidgetItem *item, QTreeWidgetItem *old);
     void handleLayerSelected(int layer);
 };
 

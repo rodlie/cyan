@@ -1,9 +1,57 @@
 #include "layertree.h"
 #include <QDebug>
-#include <QTreeWidgetItem>
+
+LayerTreeItem::LayerTreeItem(QTreeWidget *parent) : QTreeWidgetItem(parent)
+  , _composite(MagickCore::OverCompositeOp)
+  , _id(0)
+  , _name(tr("Untitled Layer"))
+{
+}
+
+LayerTreeItem::~LayerTreeItem()
+{
+}
+
+Magick::CompositeOperator LayerTreeItem::getComposite()
+{
+    return _composite;
+}
+
+void LayerTreeItem::setComposite(Magick::CompositeOperator composite)
+{
+    if (composite == MagickCore::UndefinedCompositeOp || composite == MagickCore::NoCompositeOp) { return; }
+    _composite = composite;
+}
+
+int LayerTreeItem::getLayerID()
+{
+    return _id;
+}
+
+void LayerTreeItem::setLayerID(int id)
+{
+    if (id<0) { return; }
+    _id = id;
+}
+
+QString LayerTreeItem::getLayerName()
+{
+    return _name;
+}
+
+void LayerTreeItem::setLayerName(QString name)
+{
+    if (name.isEmpty()) { return; }
+    _name = name;
+}
 
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 {
+    setHeaderHidden(true);
+    setHeaderLabels(QStringList() << tr("ID") << tr("Title"));
+    setSortingEnabled(true);
+    //setColumnHidden(0, true);
+    setColumnWidth(0, 50);
 }
 
 LayerTree::~LayerTree()
@@ -23,15 +71,17 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab)
 void LayerTree::populateTree(View *image)
 {
     if (!image) { return; }
-    this->clear();
+    clear();
     for (int i=0;i<image->getLayerCount();++i) {
-        qDebug() << "adding layer" << image->getLayerName(i);
-        QTreeWidgetItem *item = new QTreeWidgetItem(this);
-        item->setText(0,image->getLayerName(i));
-        item->setData(0, Qt::UserRole+1, i);
-        item->setData(0, Qt::UserRole+2, 0);
-        item->setToolTip(0, tr("Layer %1").arg(i));
-        this->addTopLevelItem(item);
+        qDebug() << "adding layer to tree" << i << image->getLayerName(i);
+        LayerTreeItem *item = new LayerTreeItem(this);
+        item->setText(0, QString::number(i));
+        item->setText(1,image->getLayerName(i));
+        item->setLayerID(i);
+        item->setLayerName(image->getLayerName(i));
+        item->setComposite(image->getLayerComposite(i));
+        addTopLevelItem(item);
         if (i==0) { setCurrentItem(item); }
     }
+    sortByColumn(0);
 }
