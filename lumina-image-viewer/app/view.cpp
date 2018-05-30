@@ -74,7 +74,8 @@ void View::dragLeaveEvent(QDragLeaveEvent *event)
 
 void View::dropEvent(QDropEvent *event)
 {
-    const QMimeData *mimeData = event->mimeData();
+    Q_UNUSED(event)
+    //const QMimeData *mimeData = event->mimeData();
     /*if (mimeData->hasUrls()) {
         if (!mimeData->urls().at(0).isEmpty()) {
             QUrl url = mimeData->urls().at(0);
@@ -148,6 +149,7 @@ void View::addLayer(Magick::Image image, bool updateView)
     layer->setData(1, id);
     connect(layer, SIGNAL(movedItem(QPointF,int)), this, SLOT(handleLayerMoved(QPointF,int)));
     connect(layer, SIGNAL(selectedItem(int)), this, SLOT(handleLayerSelected(int)));
+    connect(layer, SIGNAL(cachePixmap(int)), this, SLOT(handleLayerCache(int)));
 
     _scene->addItem(layer);
 
@@ -242,16 +244,21 @@ void View::removeLayer(int layer)
 void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType colorspace)
 {
     qDebug() << "clear canvas" << width << height << depth << colorspace;
-    Magick::Image canvas;
+    /*Magick::Image canvas;
     canvas.size(Magick::Geometry(width, height));
     canvas.depth(depth);
     canvas.colorSpace(colorspace);
     canvas.matte(true); // TODO magick7
-    //canvas.backgroundColor(_canvas.pixelColor(0,0));
-    //canvas.transparent(_canvas.pixelColor(0,0));
-    _canvas=canvas;
-    //_canvas.backgroundColor(_canvas.pixelColor(0,0));
-    //_canvas.transparent(_canvas.pixelColor(0,0));
+    canvas.backgroundColor(canvas.pixelColor(0,0));
+    canvas.transparent(canvas.pixelColor(0,0));*/
+    //_canvas=canvas;
+    _canvas = Magick::Image();
+    _canvas.size(Magick::Geometry(width, height));
+    _canvas.depth(depth);
+    _canvas.colorSpace(colorspace);
+    _canvas.matte(true); // TODO magick7
+    _canvas.backgroundColor(_canvas.pixelColor(0,0));
+    _canvas.transparent(_canvas.pixelColor(0,0));
     _scene->setSceneRect(0, 0, width, height);
 }
 
@@ -287,16 +294,15 @@ void View::viewImage()
     QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
     if (pixmap.isNull()) { return; }
     _pixmap->setPixmap(pixmap);
-    //_scene->clear();
-    //_scene->addPixmap(pixmap);
-    //_scene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
 }
 
-Magick::Blob View::makePreview()
+Magick::Blob View::makePreview(int LayerID)
 {
     qDebug() << "make preview";
     try {
-        Magick::Image preview = _canvas;
+        Magick::Image preview;
+        if (LayerID>=0) { preview = getLayer(LayerID); }
+        else { preview = _canvas; }
         Magick::Blob result;
         if (preview.depth()>8) { preview.depth(8); }
         //preview.strip();
@@ -315,8 +321,10 @@ Magick::Blob View::makePreview()
 
 void View::handleLayerMoved(QPointF pos, int id)
 {
-    // TODO offset
     qDebug() << "handle layer moved" << id << pos;
+    LayerItem *item = dynamic_cast<LayerItem*>(sender());
+    if (item) { item->clearPixmap(); }
+
     _layersPOS[id] = QSize((int)pos.x(), (int)pos.y());
     emit updatedLayers();
 }
@@ -325,4 +333,14 @@ void View::handleLayerSelected(int id)
 {
     qDebug() << "handle layer seleted" << id;
     emit selectedLayer(id);
+}
+
+void View::handleLayerCache(int id)
+{
+    qDebug() << "handle layer cache" << id;
+    LayerItem *item = dynamic_cast<LayerItem*>(sender());
+    if (!item) { return; }
+    Magick::Blob cache = makePreview(id);
+    QPixmap pix = QPixmap::fromImage(QImage::fromData(QByteArray((char*)cache.data(), cache.length())));
+    if (!pix.isNull()) { item->setPixmap(pix); }
 }

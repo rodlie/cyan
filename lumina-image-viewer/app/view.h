@@ -20,9 +20,11 @@
 #include <QResizeEvent>
 #include <QGraphicsScene>
 #include <Magick++.h>
-#include<QGraphicsRectItem>
+#include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsPixmapItem>
+#include <QDebug>
+#include <QPainter>
 
 class LayerItem : public QObject, public QGraphicsRectItem
 {
@@ -30,19 +32,65 @@ class LayerItem : public QObject, public QGraphicsRectItem
 
 signals:
     void movedItem(QPointF pos, int layerID);
+    void cachePixmap(int layerID);
     void selectedItem(int LayerID);
 
 private:
+    bool mouseIsDown = false;
+    QPixmap _pixmap;
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
+        mouseIsDown = true;
+        //setCursor(QCursor(Qt::ClosedHandCursor));
         emit selectedItem(data(1).toInt());
-        QGraphicsRectItem::mousePressEvent(event);
+        emit cachePixmap(data(1).toInt());
+        Q_UNUSED(event)
+    }
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+    {
+        mouseIsDown = false;
+        //setCursor(QCursor(Qt::ArrowCursor));
+        clearPixmap();
+        mouseMoveEvent(event);
     }
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
-        this->setPos(mapToScene(event->pos()));
-        emit movedItem(this->pos(),data(1).toInt());
-        QGraphicsRectItem::mouseMoveEvent(event);
+        QPointF epos = mapToScene(event->pos());
+        //qDebug() << "==============>layer" << this->boundingRect().width() << this->boundingRect().height() << this->boundingRect().center();
+        //qDebug() << "==============>pos" << epos.x() << epos.y();
+        // TODO: offset proper!
+        epos.setX(epos.x()-this->boundingRect().center().x());
+        epos.setY(epos.y()-this->boundingRect().center().y());
+        this->setPos(epos);
+        if (!mouseIsDown) { emit movedItem(this->pos(), data(1).toInt()); }
+        //else { emit cachePixmap(data(1).toInt()); }
+    }
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+    {
+        Q_UNUSED(option)
+        Q_UNUSED(widget)
+        if (!mouseIsDown) {
+            QPen pen(Qt::green);
+            painter->setPen(pen);
+            painter->drawRect(rect());
+        }
+        if (!_pixmap.isNull()) {
+            painter->setOpacity(0.5);
+            painter->drawImage(QPoint(0,0), _pixmap.toImage());
+        }
+    }
+public:
+    void setPixmap(QPixmap pixmap)
+    {
+        qDebug() << "set pixmap";
+        _pixmap = pixmap;
+        update();
+    }
+    void clearPixmap()
+    {
+        qDebug() << "clear pixmap";
+        _pixmap = QPixmap();
+        update();
     }
 };
 
@@ -101,9 +149,10 @@ private slots:
     void setCanvasSpecsFromImage(Magick::Image image);
     void procLayers();
     void viewImage();
-    Magick::Blob makePreview();
+    Magick::Blob makePreview(int LayerID = -1);
     void handleLayerMoved(QPointF pos, int id);
     void handleLayerSelected(int id);
+    void handleLayerCache(int id);
 
 protected:
     void wheelEvent(QWheelEvent* event);
