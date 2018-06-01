@@ -151,16 +151,11 @@ void View::resetImageZoom()
     setMatrix(matrix);
 }
 
-// remove when filters has been fixed for layer support
-Magick::Image View::getImage()
+void View::setLayer(Magick::Image image, int id)
 {
-    return _canvas;
-}
-
-// remove when filters has been fixed for layer support
-void View::setImage(Magick::Image image)
-{
-    addLayer(image);
+    qDebug() << "set image for layer" << id;
+    _layers[id] = image;
+    emit updatedLayers();
 }
 
 void View::addLayer(Magick::Image image, bool updateView)

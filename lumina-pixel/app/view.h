@@ -188,8 +188,7 @@ public slots:
     void doZoom(double scaleX, double scaleY);
     void setFit(bool value);
     void resetImageZoom();
-    Magick::Image getImage();
-    void setImage(Magick::Image image);
+    void setLayer(Magick::Image image, int id);
     void addLayer(Magick::Image image, bool updateView = true);
     void clearLayers();
     Magick::Image getCanvas();

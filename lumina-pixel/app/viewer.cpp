@@ -318,12 +318,16 @@ void Viewer::loadPlugins()
 
 void Viewer::applyFilter()
 {
-    // TODO: fix layer support
     QAction *action = qobject_cast<QAction *>(sender());
     FilterInterface *filter =qobject_cast<FilterInterface *>(action->parent());
     if (!filter || action->data().toString().isEmpty()) { return; }
     if (!getCurrentView()) { return; }
-    getCurrentView()->setImage(filter->filterImage(action->data().toString(), getCurrentView()->getImage()));
+    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    if (!layer) { return; }
+    int id = layer->getLayerID();
+    QString layerName = layer->getLayerName();
+    getCurrentView()->setLayer(filter->filterImage(action->data().toString(), getCurrentView()->getLayer(id)), id);
+    if (layerName != layer->getLayerName()) { layer->setLayerName(layerName); }
 }
 
 void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup)
