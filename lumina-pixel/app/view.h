@@ -39,23 +39,25 @@ signals:
 private:
     bool mouseIsDown = false;
     QPixmap _pixmap;
+    bool _movable = false;
+    QPointF lastPOS;
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
+        lastPOS = event->pos();
         mouseIsDown = true;
         //setCursor(QCursor(Qt::ClosedHandCursor));
         emit selectedItem(data(1).toInt());
-        //emit cachePixmap(data(1).toInt());
-        Q_UNUSED(event)
     }
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         mouseIsDown = false;
         //setCursor(QCursor(Qt::ArrowCursor));
-        //clearPixmap();
-        mouseMoveEvent(event);
+        if (event->pos()==lastPOS) { return; }
+        if (_movable) { mouseMoveEvent(event); }
     }
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
+        if (!_movable) { return; }
         QPointF epos = mapToScene(event->pos());
         //qDebug() << "==============>layer" << this->boundingRect().width() << this->boundingRect().height() << this->boundingRect().center();
         //qDebug() << "==============>pos" << epos.x() << epos.y();
@@ -106,11 +108,15 @@ public slots:
     void setMovable(bool movable)
     {
         qDebug() << "set layer movable" << movable;
-        setFlag(QGraphicsItem::ItemIsMovable, movable);
+        _movable = movable;
     }
     void setMovable(LayerItem *layer, bool movable)
     {
         if (layer == this) { setMovable(movable); }
+    }
+    bool isMovable()
+    {
+        return _movable;
     }
 };
 

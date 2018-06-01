@@ -26,7 +26,7 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
     setBackgroundBrush(QColor(100,100,100));
 
     setDragMode(QGraphicsView::ScrollHandDrag);
-    setInteractive(false);
+    //setInteractive(false);
 
     _scene = new QGraphicsScene(this);
     setScene(_scene);
