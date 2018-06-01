@@ -102,9 +102,15 @@ void View::dragLeaveEvent(QDragLeaveEvent *event)
 
 void View::dropEvent(QDropEvent *event)
 {
-    // TODO
-    Q_UNUSED(event)
-    //const QMimeData *mimeData = event->mimeData();
+    qDebug() << "drop event on view";
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        qDebug() << "DROPPED ITEMS" << mimeData->urls();
+        for (int i=0;i<mimeData->urls().size();++i) {
+            emit openImage(mimeData->urls().at(i).toLocalFile());
+        }
+    }
+
     /*if (mimeData->hasUrls()) {
         if (!mimeData->urls().at(0).isEmpty()) {
             QUrl url = mimeData->urls().at(0);
@@ -155,6 +161,7 @@ void View::setLayer(Magick::Image image, int id)
 {
     qDebug() << "set image for layer" << id;
     _layers[id] = image;
+
     emit updatedLayers();
 }
 

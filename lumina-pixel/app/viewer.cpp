@@ -328,6 +328,7 @@ void Viewer::applyFilter()
     QString layerName = layer->getLayerName();
     getCurrentView()->setLayer(filter->filterImage(action->data().toString(), getCurrentView()->getLayer(id)), id);
     if (layerName != layer->getLayerName()) { layer->setLayerName(layerName); }
+
 }
 
 void Viewer::addToMenu(QObject *plugin, const QStringList &texts, QMenu *menu, const char *member, QActionGroup *actionGroup)
@@ -384,6 +385,7 @@ void Viewer::newTab(Magick::Image image)
     connect(view, SIGNAL(requestComposite(Magick::Image,layersMap,compMap,posMap,visibilityMap)), imageBackend, SLOT(requestComp(Magick::Image,layersMap,compMap,posMap,visibilityMap)));
     connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
     connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
+    connect(view, SIGNAL(openImage(QString)), imageBackend, SLOT(readImage(QString)));
 
     tab->setWidget(view);
     tab->setWindowTitle(QString::fromStdString(image.fileName()).split("/").takeLast());
@@ -392,9 +394,6 @@ void Viewer::newTab(Magick::Image image)
     mdi->tileSubWindows();
 
     view->addLayer(image);
-    //view->addLayer(image); // layer test
-    //view->addLayer(image); // layer test
-    //view->addLayer(image); // layer test
     view->setFit(true);
 }
 
@@ -405,12 +404,22 @@ void Viewer::newImage()
     // tmp just to test ...
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
-    view->setFit(true);
+    connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
+    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
+    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
+    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
+    connect(imageBackend, SIGNAL(returnComp(Magick::Image)), view, SLOT(handleCompImage(Magick::Image)));
+    connect(view, SIGNAL(requestComposite(Magick::Image,layersMap,compMap,posMap,visibilityMap)), imageBackend, SLOT(requestComp(Magick::Image,layersMap,compMap,posMap,visibilityMap)));
+    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
+    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
+    connect(view, SIGNAL(openImage(QString)), imageBackend, SLOT(readImage(QString)));
+
     tab->setWidget(view);
     tab->setWindowTitle(tr("New Image"));
     tab->setAttribute(Qt::WA_DeleteOnClose);
-    tab->showMaximized();
-
+    tab->showNormal();
+    mdi->tileSubWindows();
+    view->setFit(true);
 }
 
 void Viewer::handleLayerCompChanged(QString comp)
