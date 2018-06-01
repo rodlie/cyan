@@ -22,9 +22,12 @@
 #include <QDockWidget>
 #include <QMdiSubWindow>
 #include <QComboBox>
+#include <QStatusBar>
+#include <QMap>
 
 #include "view.h"
 #include "layertree.h"
+#include "common.h"
 
 class ImageHandler : public QObject
 {
@@ -36,12 +39,24 @@ public:
 
 signals:
     void returnImage(Magick::Image image);
+    void returnComp(Magick::Image image);
     void errorMessage(QString message);
     void warningMessage(QString message);
+    void statusMessage(QString message);
 
 public slots:
     void requestImage(QString filename);
     void readImage(QString filename);
+    void requestComp(Magick::Image canvas,
+                     layersMap layers,
+                     compMap comps,
+                     posMap pos,
+                     visibilityMap visibility);
+    void compImage(Magick::Image canvas,
+                   layersMap layers,
+                   compMap comps,
+                   posMap pos,
+                   visibilityMap visibility);
 
 private:
     QThread t;
@@ -78,6 +93,7 @@ private:
     LayerTree *layersTree;
     QDockWidget *layersDock;
     QComboBox *layersComp;
+    QStatusBar *statBar;
 
 public slots:
     View* getCurrentView();
@@ -93,6 +109,7 @@ private slots:
     void handleNewImage(Magick::Image image);
     void handleError(QString message);
     void handleWarning(QString message);
+    void handleStatus(QString message);
     void addPlugin(QObject *plugin, QString filename);
     void loadPlugins();
     void applyFilter();
@@ -104,6 +121,8 @@ private slots:
     void handleLayerActivated(QTreeWidgetItem *item, int col);
     void handleLayerActivated(QTreeWidgetItem *item, QTreeWidgetItem *old);
     void handleLayerSelected(int layer);
+    void handleViewClosed();
+    void handleLayersUpdated();
 };
 
 #endif // VIEWER_H

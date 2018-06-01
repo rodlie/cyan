@@ -25,6 +25,7 @@
 #include <QGraphicsPixmapItem>
 #include <QDebug>
 #include <QPainter>
+#include "common.h"
 
 class LayerItem : public QObject, public QGraphicsRectItem
 {
@@ -63,7 +64,6 @@ private:
         epos.setY(epos.y()-this->boundingRect().center().y());
         this->setPos(epos);
         if (!mouseIsDown) { emit movedItem(this->pos(), data(1).toInt()); }
-        //else { emit cachePixmap(data(1).toInt()); }
     }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
     {
@@ -80,6 +80,7 @@ private:
             }
         }
     }
+
 public slots:
     void setPixmap(QPixmap pixmap)
     {
@@ -89,14 +90,27 @@ public slots:
     }
     void clearPixmap()
     {
-        /*qDebug() << "clear pixmap";
-        _pixmap = QPixmap();*/
+        qDebug() << "clear pixmap";
+        _pixmap = QPixmap();
+        update();
+    }
+    void refreshPixmap()
+    {
         update();
     }
     void updatePixmap()
     {
         qDebug() << "layer must update pixmap";
         emit cachePixmap(data(1).toInt());
+    }
+    void setMovable(bool movable)
+    {
+        qDebug() << "set layer movable" << movable;
+        setFlag(QGraphicsItem::ItemIsMovable, movable);
+    }
+    void setMovable(LayerItem *layer, bool movable)
+    {
+        if (layer == this) { setMovable(movable); }
     }
 };
 
@@ -106,10 +120,10 @@ class View : public QGraphicsView
 
 public:
     explicit View(QWidget* parent = NULL, int width = 640, int height = 480, int depth = 8, Magick::ColorspaceType colorspace = MagickCore::sRGBColorspace);
+    ~View();
     bool fit;
 
 private:
-    Magick::Image _image;
     Magick::Image _canvas;
     QGraphicsScene *_scene;
     QGraphicsPixmapItem *_pixmap;
@@ -117,7 +131,6 @@ private:
     QMap<int, Magick::Image> _layers;
     QMap<int, QSize> _layersPOS;
     QMap<int, Magick::CompositeOperator> _layersComp;
-    QMap<int, QVector<Magick::Image> > _layersHistory;
     QMap<int, bool> _layersVisibility;
 
 signals:
@@ -130,6 +143,18 @@ signals:
     void addedLayer(int layer);
     void selectedLayer(int layer);
     void updatePixmaps();
+    void clearPixmaps();
+    void errorMessage(QString message);
+    void warningMessage(QString message);
+    void statusMessage(QString message);
+    void viewClosed();
+    void requestComposite(Magick::Image canvas,
+                          layersMap layers,
+                          compMap comps,
+                          posMap pos,
+                          visibilityMap visibility);
+    void lockLayers(bool lock);
+    void lockLayer(LayerItem *layer, bool lock);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -154,7 +179,10 @@ public slots:
     void handlePixmapRefresh();
 
 private slots:
-    void clearCanvas(int width = 640, int height = 480, int depth = 8, Magick::ColorspaceType colorspace = MagickCore::sRGBColorspace);
+    void clearCanvas(int width = 640,
+                     int height = 480,
+                     int depth = 8,
+                     Magick::ColorspaceType colorspace = MagickCore::sRGBColorspace);
     void setCanvasSpecsFromImage(Magick::Image image);
     void procLayers();
     void viewImage();
@@ -162,6 +190,7 @@ private slots:
     void handleLayerMoved(QPointF pos, int id);
     void handleLayerSelected(int id);
     void handleLayerCache(int id);
+    void handleCompImage(Magick::Image comp);
 
 protected:
     void wheelEvent(QWheelEvent* event);

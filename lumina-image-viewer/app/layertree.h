@@ -34,8 +34,9 @@ public:
     explicit LayerTree(QWidget *parent = NULL);
     ~LayerTree();
 
-private slots:
+public slots:
     void handleTabActivated(QMdiSubWindow *tab);
+private slots:
     void populateTree(View *image);
 };
 

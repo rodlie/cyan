@@ -19,11 +19,20 @@
 #include <QToolButton>
 #include <QMdiSubWindow>
 #include <QVBoxLayout>
+#include <QTimer>
 #include "common.h"
+#include <Magick++.h>
 
 ImageHandler::ImageHandler(QObject *parent) :
     QObject(parent)
 {
+    qRegisterMetaType<Magick::Image>("Magick::Image");
+    qRegisterMetaType<Magick::CompositeOperator>("Magick::CompositeOperator");
+    qRegisterMetaType<layersMap>("layersMap");
+    qRegisterMetaType<compMap>("compMap");
+    qRegisterMetaType<posMap>("posMap");
+    qRegisterMetaType<visibilityMap>("visibilityMap");
+
     moveToThread(&t);
     t.start();
 }
@@ -58,6 +67,40 @@ void ImageHandler::readImage(QString filename)
     }
 }
 
+void ImageHandler::requestComp(Magick::Image canvas, layersMap layers, compMap comps, posMap pos, visibilityMap visibility)
+{
+    QMetaObject::invokeMethod(this,"compImage",
+                              Q_ARG(Magick::Image, canvas),
+                              Q_ARG(layersMap, layers),
+                              Q_ARG(compMap, comps),
+                              Q_ARG(posMap, pos),
+                              Q_ARG(visibilityMap, visibility));
+}
+
+void ImageHandler::compImage(Magick::Image canvas, layersMap layers, compMap comps, posMap pos, visibilityMap visibility)
+{
+    try {
+        QMapIterator<int, Magick::Image> i(layers);
+        emit statusMessage(tr("Processing layers ..."));
+        while (i.hasNext()) {
+            i.next();
+            if (!visibility[i.key()]) { continue; }
+            int offX = pos[i.key()].width();
+            int offY = pos[i.key()].height();
+            emit statusMessage(tr("Compositing layer %1 ...").arg(QString::fromStdString(i.value().fileName()).split("/").takeLast()));
+            canvas.composite(i.value(), offX, offY, comps[i.key()]);
+        }
+        emit statusMessage(tr("Done"));
+        emit returnComp(canvas);
+    }
+    catch(Magick::Error &error_ ) {
+        emit errorMessage(error_.what());
+    }
+    catch(Magick::Warning &warn_ ) {
+        emit warningMessage(warn_.what());
+    }
+}
+
 Viewer::Viewer(QWidget *parent)
     : QMainWindow(parent)
     , mdi(0)
@@ -74,6 +117,7 @@ Viewer::Viewer(QWidget *parent)
     , layersTree(0)
     , layersDock(0)
     , layersComp(0)
+    , statBar(0)
 {
     setWindowTitle(QString("Lumina Pixel"));
     setWindowIcon(QIcon::fromTheme("applications-graphics"));
@@ -84,6 +128,7 @@ Viewer::Viewer(QWidget *parent)
     connect(imageBackend, SIGNAL(returnImage(Magick::Image)), this, SLOT(handleNewImage(Magick::Image)));
     connect(imageBackend, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(imageBackend, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
+    connect(imageBackend, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
 
     setupUI();
     loadSettings();
@@ -111,10 +156,12 @@ void Viewer::setupUI()
 
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
+    mainToolBar->setWindowTitle(tr("Main"));
     addToolBar(mainToolBar);
 
     pluginsToolBar = new QToolBar(this);
     pluginsToolBar->setObjectName(QString("pluginsToolBar"));
+    pluginsToolBar->setWindowTitle(tr("Options"));
     addToolBar(/*Qt::LeftToolBarArea,*/ pluginsToolBar);
 
     mainMenu = new QMenuBar(this);
@@ -149,7 +196,6 @@ void Viewer::setupUI()
 
     filterMenu = new QMenu(this);
     filterMenu->setTitle(tr("Options"));
-    filterMenu->setVisible(false);
     filterMenu->setEnabled(false);
 
     mainMenu->addMenu(fileMenu);
@@ -176,6 +222,9 @@ void Viewer::setupUI()
     layersDock->setWidget(layersContainer);
 
     addDockWidget(Qt::RightDockWidgetArea, layersDock);
+
+    statBar = new QStatusBar(this);
+    setStatusBar(statBar);
 }
 
 void Viewer::saveSettings()
@@ -223,6 +272,13 @@ void Viewer::handleError(QString message)
 void Viewer::handleWarning(QString message)
 {
     qDebug() << "warning" << message;
+    statBar->showMessage(message);
+}
+
+void Viewer::handleStatus(QString message)
+{
+    qDebug() << "status" << message;
+    statBar->showMessage(message, 6000);
 }
 
 void Viewer::addPlugin(QObject *plugin, QString filename)
@@ -236,13 +292,16 @@ void Viewer::addPlugin(QObject *plugin, QString filename)
 void Viewer::loadPlugins()
 {
     QStringList paths;
-    QString suffix = QString("share/%1/plugins").arg(qApp->applicationName());
+    QString suffix = QString("lib/%1/%2/plugins").arg(qApp->organizationName()).arg(qApp->applicationName());
     paths << QString("%1/.local/%2").arg(QDir::homePath()).arg(suffix);
     paths << QString("%1/../%2").arg(qApp->applicationDirPath()).arg(suffix);
+    paths << QString("%1/../%2").arg(qApp->applicationDirPath()).arg(QString(suffix).replace("lib/", "lib64/"));
     paths << QString("/usr/%1").arg(suffix);
+    paths << QString("/usr/%1").arg(QString(suffix).replace("lib/", "lib64/"));
     paths << QString("/usr/local/%1").arg(suffix);
+    paths << QString("/usr/local/%1").arg(QString(suffix).replace("lib/", "lib64/"));
     paths << QString("%1/plugins").arg(qApp->applicationDirPath());
-    qDebug() << "plugin search path" << paths;
+    qDebug() << "plugins search path" << paths;
 
     for(int i=0;i<paths.size();++i) {
         QDir dir(paths.at(i));
@@ -255,7 +314,6 @@ void Viewer::loadPlugins()
     }
 
     filterMenu->setEnabled(!filterMenu->actions().isEmpty());
-    filterMenu->setVisible(!filterMenu->actions().isEmpty());
 }
 
 void Viewer::applyFilter()
@@ -315,17 +373,25 @@ void Viewer::newTab(Magick::Image image)
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this);
     connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
-
-    view->addLayer(image);
-    view->addLayer(image); // layer test
-    view->addLayer(image); // layer test
-    view->addLayer(image); // layer test
-    view->setFit(true);
+    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
+    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
+    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
+    connect(imageBackend, SIGNAL(returnComp(Magick::Image)), view, SLOT(handleCompImage(Magick::Image)));
+    connect(view, SIGNAL(requestComposite(Magick::Image,layersMap,compMap,posMap,visibilityMap)), imageBackend, SLOT(requestComp(Magick::Image,layersMap,compMap,posMap,visibilityMap)));
+    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
+    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
 
     tab->setWidget(view);
-    tab->setWindowTitle(QString::fromStdString(image.fileName()));
+    tab->setWindowTitle(QString::fromStdString(image.fileName()).split("/").takeLast());
     tab->setAttribute(Qt::WA_DeleteOnClose);
-    tab->showMaximized();
+    tab->showNormal();
+    mdi->tileSubWindows();
+
+    view->addLayer(image);
+    //view->addLayer(image); // layer test
+    //view->addLayer(image); // layer test
+    //view->addLayer(image); // layer test
+    view->setFit(true);
 }
 
 void Viewer::newImage()
@@ -370,8 +436,6 @@ void Viewer::populateCompBox()
         i.next();
         layersComp->addItem(i.value());
     }
-    //layersComp->setCurrentText(tr("Over"));
-    // make qt4 happy
     layersComp->setCurrentIndex(layersComp->findText(tr("Over")));
 }
 
@@ -386,8 +450,6 @@ void Viewer::handleLayerActivated(QTreeWidgetItem *item, QTreeWidgetItem *old)
     Q_UNUSED(old)
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!layer) { return; }
-    //layersComp->setCurrentText(Common::compositeModes()[layer->getComposite()]);
-    // make qt4 happy
     layersComp->setCurrentIndex(layersComp->findText(Common::compositeModes()[layer->getComposite()]));
 }
 
@@ -402,4 +464,16 @@ void Viewer::handleLayerSelected(int layer)
             return;
         }
     }
+}
+
+void Viewer::handleViewClosed()
+{
+    qDebug() << "view closed";
+    layersTree->clear();
+    layersTree->handleTabActivated(mdi->currentSubWindow());
+}
+
+void Viewer::handleLayersUpdated()
+{
+    if (layersTree->topLevelItemCount()==0) { layersTree->handleTabActivated(mdi->currentSubWindow()); }
 }

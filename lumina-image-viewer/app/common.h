@@ -1,9 +1,3 @@
-#ifndef COMMON_H
-#define COMMON_H
-
-#include <QObject>
-#include <QMap>
-#include <Magick++.h>
 /*
 #
 # Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
@@ -13,9 +7,27 @@
 #
 */
 
+#ifndef COMMON_H
+#define COMMON_H
+
+#include <QObject>
+#include <QMap>
+#include <Magick++.h>
+#include <QDateTime>
+
+typedef QMap<int, Magick::Image> layersMap;
+typedef QMap<int, Magick::CompositeOperator> compMap;
+typedef QMap<int, QSize> posMap;
+typedef QMap<int, bool> visibilityMap;
+
 class Common
 {
 public:
+    static QString timestamp()
+    {
+        QDateTime date;
+        return date.currentDateTime().toString("yyyyMMddHHmmsszzz");
+    }
     static QMap<Magick::CompositeOperator, QString> compositeModes()
     {
         QMap<Magick::CompositeOperator, QString> result;

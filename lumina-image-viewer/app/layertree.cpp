@@ -10,6 +10,7 @@ LayerTreeItem::LayerTreeItem(QTreeWidget *parent) : QTreeWidgetItem(parent)
 
 LayerTreeItem::~LayerTreeItem()
 {
+    qDebug() << "kill layer tree item";
 }
 
 Magick::CompositeOperator LayerTreeItem::getComposite()
@@ -56,12 +57,11 @@ LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 
 LayerTree::~LayerTree()
 {
-
 }
 
 void LayerTree::handleTabActivated(QMdiSubWindow *tab)
 {
-    qDebug() << "tab activated";
+    qDebug() << "handle tab activated";
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
@@ -70,13 +70,14 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab)
 
 void LayerTree::populateTree(View *image)
 {
+    qDebug() << "populate tree";
     if (!image) { return; }
     clear();
     for (int i=0;i<image->getLayerCount();++i) {
         qDebug() << "adding layer to tree" << i << image->getLayerName(i);
         LayerTreeItem *item = new LayerTreeItem(this);
         item->setText(0, QString::number(i));
-        item->setText(1,image->getLayerName(i));
+        item->setText(1,image->getLayerName(i).split("/").takeLast());
         item->setLayerID(i);
         item->setLayerName(image->getLayerName(i));
         item->setComposite(image->getLayerComposite(i));

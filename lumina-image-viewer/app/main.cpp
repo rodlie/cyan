@@ -15,7 +15,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QApplication::setApplicationName(QString("viewer"));
+    QApplication::setApplicationName(QString("pixel"));
+    QApplication::setOrganizationName(QString("lumina"));
     QApplication::setOrganizationDomain(QString("org.lumina-desktop"));
     Magick::InitializeMagick(NULL);
     Viewer w;

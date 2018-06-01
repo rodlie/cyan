@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QImage>
+#include "common.h"
 
 View::View(QWidget* parent, int width, int height, int depth, Magick::ColorspaceType colorspace) : QGraphicsView(parent)
   , fit(false)
@@ -22,8 +23,10 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
   , _rect(0)
 {
     setAcceptDrops(true);
-    setBackgroundBrush(Qt::darkGray);
+    setBackgroundBrush(QColor(100,100,100));
+
     setDragMode(QGraphicsView::ScrollHandDrag);
+    setInteractive(false);
 
     _scene = new QGraphicsScene(this);
     setScene(_scene);
@@ -33,10 +36,18 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
 
     _rect = new QGraphicsRectItem();
     _rect->setRect(0, 0, width, height);
-    _rect->setPen(QPen(Qt::blue));
+    //_rect->setPen(QPen(Qt::black));
+    _rect->setBrush(QBrush(Qt::darkGray));
     _scene->addItem(_rect);
     _pixmap = _scene->addPixmap(QPixmap());
     clearCanvas(width, height, depth, colorspace);
+}
+
+View::~View()
+{
+    emit viewClosed();
+    clearLayers();
+    _scene->deleteLater();
 }
 
 void View::wheelEvent(QWheelEvent* event) {
@@ -80,6 +91,7 @@ void View::dragLeaveEvent(QDragLeaveEvent *event)
 
 void View::dropEvent(QDropEvent *event)
 {
+    // TODO
     Q_UNUSED(event)
     //const QMimeData *mimeData = event->mimeData();
     /*if (mimeData->hasUrls()) {
@@ -127,15 +139,15 @@ void View::resetImageZoom()
     setMatrix(matrix);
 }
 
+// remove when filters has been fixed for layer support
 Magick::Image View::getImage()
 {
     return _canvas;
 }
 
+// remove when filters has been fixed for layer support
 void View::setImage(Magick::Image image)
 {
-    /*_image = image;
-    viewImage();*/
     addLayer(image);
 }
 
@@ -146,22 +158,23 @@ void View::addLayer(Magick::Image image, bool updateView)
     _layersPOS[id] = QSize(0, 0);
     _layersComp[id] = MagickCore::OverCompositeOp;
     _layersVisibility[id] = true;
-    qDebug() << "added layer" << id << QString::fromStdString(_layers[id].fileName()) << _layersPOS[id];
     if (id == 0) { setCanvasSpecsFromImage(image); }
 
-    LayerItem *layer = new LayerItem(/*this*/);
+    LayerItem *layer = new LayerItem();
     layer->setRect(0, 0, image.columns(), image.rows());
-    layer->setFlag(QGraphicsItem::ItemIsMovable);
     layer->setData(1, id);
     connect(layer, SIGNAL(movedItem(QPointF,int)), this, SLOT(handleLayerMoved(QPointF,int)));
     connect(layer, SIGNAL(selectedItem(int)), this, SLOT(handleLayerSelected(int)));
     connect(layer, SIGNAL(cachePixmap(int)), this, SLOT(handleLayerCache(int)));
-    connect(this, SIGNAL(updatePixmaps()), layer, SLOT(updatePixmap()));
+    connect(this, SIGNAL(updatePixmaps()), layer, SLOT(refreshPixmap()));
+    connect(this, SIGNAL(clearPixmaps()), layer, SLOT(clearPixmap()));
+    connect(this, SIGNAL(viewClosed()), layer, SLOT(deleteLater()));
+    connect(this, SIGNAL(lockLayer(LayerItem*,bool)), layer, SLOT(setMovable(LayerItem*,bool)));
+    connect(this, SIGNAL(lockLayers(bool)), layer, SLOT(setMovable(bool)));
 
     _scene->addItem(layer);
-
-
     layer->updatePixmap();
+    layer->setMovable(true);
 
     emit addedLayer(id);
     if (updateView) { emit updatedLayers(); }
@@ -169,8 +182,10 @@ void View::addLayer(Magick::Image image, bool updateView)
 
 void View::clearLayers()
 {
-    qDebug() << "clear layers";
     _layers.clear();
+    _layersComp.clear();
+    _layersPOS.clear();
+    _layersVisibility.clear();
     emit updatedLayers();
 }
 
@@ -181,6 +196,7 @@ Magick::Image View::getCanvas()
 
 void View::setLayerVisibility(int layer, bool layerIsVisible)
 {
+    emit statusMessage(tr("Set layer %1 visibility to %2").arg(layer).arg(layerIsVisible?"on":"off"));
     if (_layersVisibility[layer] != layerIsVisible) {
         _layersVisibility[layer] = layerIsVisible;
         emit updatedLayers();
@@ -189,7 +205,7 @@ void View::setLayerVisibility(int layer, bool layerIsVisible)
 
 void View::setLayerComposite(int layer, Magick::CompositeOperator composite)
 {
-    qDebug() << "set layer composite" << layer << composite;
+    emit statusMessage(tr("Set layer %1 composite to %2").arg(layer).arg(Common::compositeModes()[composite]));
     if (_layersComp[layer] != composite) {
         _layersComp[layer] = composite;
         emit updatedLayers();
@@ -243,24 +259,17 @@ void View::removeLayer(int layer)
 {
     _layers.remove(layer);
     _layersComp.remove(layer);
-    _layersHistory.remove(layer);
     _layersPOS.remove(layer);
     _layersVisibility.remove(layer);
     emit updatedLayers();
+    emit statusMessage(tr("Removed layer %1").arg(layer));
 }
 
 void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType colorspace)
 {
+
     qDebug() << "clear canvas" << width << height << depth << colorspace;
     _rect->setRect(0, 0, width, height);
-    /*Magick::Image canvas;
-    canvas.size(Magick::Geometry(width, height));
-    canvas.depth(depth);
-    canvas.colorSpace(colorspace);
-    canvas.matte(true); // TODO magick7
-    canvas.backgroundColor(canvas.pixelColor(0,0));
-    canvas.transparent(canvas.pixelColor(0,0));*/
-    //_canvas=canvas;
     _canvas = Magick::Image();
     _canvas.size(Magick::Geometry(width, height));
     _canvas.depth(depth);
@@ -269,89 +278,88 @@ void View::clearCanvas(int width, int height, int depth, Magick::ColorspaceType 
     _canvas.backgroundColor(_canvas.pixelColor(0,0));
     _canvas.transparent(_canvas.pixelColor(0,0));
     _scene->setSceneRect(0, 0, width, height);
+    if (_canvas.comment().empty()) { _canvas.comment(Common::timestamp().toStdString()); }
 }
 
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
+    emit statusMessage(tr("Set canvas specifications from image ..."));
     qDebug() << "set canvas specs from image" << image.columns() << image.rows() << image.depth() << image.colorSpace();
     _canvas.size(Magick::Geometry(image.columns(), image.rows()));
     _canvas.depth(image.depth());
     _canvas.colorSpace(image.colorSpace());
     _scene->setSceneRect(0, 0, image.columns(), image.rows());
+    emit statusMessage(tr("Done"));
 }
 
 void View::procLayers()
 {
-    qDebug() << "proc layers";
     clearCanvas(_canvas.columns(), _canvas.rows(), _canvas.depth(), _canvas.colorspaceType());
-    QMapIterator<int, Magick::Image> i(_layers);
-    while (i.hasNext()) {
-        i.next();
-        qDebug() << i.key() << QString::fromStdString(i.value().fileName());
-        if (!_layersVisibility[i.key()]) { continue; }
-        _canvas.composite(i.value(), _layersPOS[i.key()].width(), _layersPOS[i.key()].height(), _layersComp[i.key()]);
-    }
-    viewImage();
+    emit requestComposite(_canvas, _layers, _layersComp, _layersPOS, _layersVisibility);
 }
 
 void View::viewImage()
 {
-    qDebug() << "view image";
-    //if (_image.rows()==0 || _image.columns()==0) { return; }
+    emit statusMessage(tr("Generating preview ..."));
     Magick::Blob preview = makePreview();
     if (preview.length()==0) { return; }
     QPixmap pixmap(QPixmap::fromImage(QImage::fromData(QByteArray((char*)preview.data(), preview.length()))));
     if (pixmap.isNull()) { return; }
     _pixmap->setPixmap(pixmap);
+    emit statusMessage(tr("Done"));
 }
 
 Magick::Blob View::makePreview(int LayerID)
 {
-    qDebug() << "make preview";
     try {
         Magick::Image preview;
         if (LayerID>=0) { preview = getLayer(LayerID); }
         else { preview = _canvas; }
         Magick::Blob result;
         if (preview.depth()>8) { preview.depth(8); }
-        //preview.strip();
         preview.magick("BMP");
         preview.write(&result);
+        emit updatePixmaps();
         return result;
     }
     catch(Magick::Error &error_ ) {
-        qDebug() << error_.what();
+        emit errorMessage(error_.what());
     }
     catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
+        emit warningMessage(warn_.what());
     }
     return Magick::Blob();
 }
 
 void View::handleLayerMoved(QPointF pos, int id)
 {
-    qDebug() << "handle layer moved" << id << pos;
-    LayerItem *item = dynamic_cast<LayerItem*>(sender());
-    if (item) { item->clearPixmap(); }
-
+    emit statusMessage(tr("Moved layer %1 to %2x%3").arg(id).arg(pos.x()).arg(pos.y()));
     _layersPOS[id] = QSize((int)pos.x(), (int)pos.y());
     emit updatedLayers();
 }
 
 void View::handleLayerSelected(int id)
 {
-    qDebug() << "handle layer seleted" << id;
+    emit statusMessage(tr("Selected layer %1").arg(id));
     emit selectedLayer(id);
 }
 
 void View::handleLayerCache(int id)
 {
-    qDebug() << "handle layer cache" << id;
+    emit statusMessage(tr("Generating cache for layer %1...").arg(id));
     LayerItem *item = dynamic_cast<LayerItem*>(sender());
     if (!item) { return; }
     Magick::Blob cache = makePreview(id);
     QPixmap pix = QPixmap::fromImage(QImage::fromData(QByteArray((char*)cache.data(), cache.length())));
     if (!pix.isNull()) { item->setPixmap(pix); }
+    emit statusMessage(tr("Done"));
+}
+
+void View::handleCompImage(Magick::Image comp)
+{
+    if (_canvas.comment() != comp.comment()) { return; }
+    _canvas = comp;
+    viewImage();
 }
 
 void View::handlePixmapRefresh()
