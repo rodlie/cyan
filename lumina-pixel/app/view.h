@@ -40,31 +40,48 @@ private:
     bool mouseIsDown = false;
     QPixmap _pixmap;
     bool _movable = false;
-    QPointF lastPOS;
+    QPointF lpos;
+    bool _drag = false;
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
-        lastPOS = event->pos();
+        if (_drag) {
+            QGraphicsItem::mousePressEvent(event);
+            return;
+        }
+
+        lpos = mapToScene(event->pos());
         mouseIsDown = true;
-        //setCursor(QCursor(Qt::ClosedHandCursor));
+        setCursor(QCursor(Qt::ClosedHandCursor));
         emit selectedItem(data(1).toInt());
     }
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
+        if (_drag) { QGraphicsItem::mouseReleaseEvent(event); }
         mouseIsDown = false;
-        //setCursor(QCursor(Qt::ArrowCursor));
-        if (event->pos()==lastPOS) { return; }
+        setCursor(QCursor(Qt::ArrowCursor));
         if (_movable) { mouseMoveEvent(event); }
     }
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
+        if (_drag) {
+            QGraphicsItem::mouseMoveEvent(event);
+            return;
+        }
         if (!_movable) { return; }
+
         QPointF epos = mapToScene(event->pos());
+        if (epos==lpos) {
+            qDebug() << "same don't move" << epos << lpos;
+            return;
+        }
+
         //qDebug() << "==============>layer" << this->boundingRect().width() << this->boundingRect().height() << this->boundingRect().center();
         //qDebug() << "==============>pos" << epos.x() << epos.y();
         // TODO: offset proper!
         epos.setX(epos.x()-this->boundingRect().center().x());
         epos.setY(epos.y()-this->boundingRect().center().y());
         this->setPos(epos);
+        lpos = epos;
         if (!mouseIsDown) { emit movedItem(this->pos(), data(1).toInt()); }
     }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -118,6 +135,10 @@ public slots:
     {
         return _movable;
     }
+    void setDrag(bool drag)
+    {
+        _drag = drag;
+    }
 };
 
 class View : public QGraphicsView
@@ -161,6 +182,7 @@ signals:
                           visibilityMap visibility);
     void lockLayers(bool lock);
     void lockLayer(LayerItem *layer, bool lock);
+    void isDrag(bool drag);
 
 public slots:
     void doZoom(double scaleX, double scaleY);
@@ -201,6 +223,7 @@ private slots:
 protected:
     void wheelEvent(QWheelEvent* event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);

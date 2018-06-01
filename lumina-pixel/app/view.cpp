@@ -25,7 +25,7 @@ View::View(QWidget* parent, int width, int height, int depth, Magick::Colorspace
     setAcceptDrops(true);
     setBackgroundBrush(QColor(100,100,100));
 
-    setDragMode(QGraphicsView::ScrollHandDrag);
+    //setDragMode(QGraphicsView::ScrollHandDrag);
     //setInteractive(false);
 
     _scene = new QGraphicsScene(this);
@@ -66,12 +66,23 @@ void View::wheelEvent(QWheelEvent* event) {
 void View::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::MiddleButton) {
-        fit = false;
-        emit resetZoom();
-    } else {
-        if (event->button() == Qt::RightButton) { setFit(true); }
-        else { QGraphicsView::mousePressEvent(event); }
-    }
+        setDragMode(QGraphicsView::ScrollHandDrag);
+        emit isDrag(true);
+        QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
+        QGraphicsView::mousePressEvent(&fake);
+    } else if (event->button() == Qt::RightButton) { emit resetZoom(); }
+    else { QGraphicsView::mousePressEvent(event); }
+}
+
+void View::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MiddleButton) {
+        setDragMode(QGraphicsView::NoDrag);
+        QMouseEvent fake(event->type(), event->pos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
+        QGraphicsView::mouseReleaseEvent(&fake);
+        emit isDrag(false);
+        setCursor(QCursor(Qt::ArrowCursor));
+    } else { QGraphicsView::mouseReleaseEvent(event); }
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event)
@@ -134,6 +145,7 @@ void View::setFit(bool value)
 
 void View::resetImageZoom()
 {
+    fit = false;
     QMatrix matrix;
     matrix.scale(1.0, 1.0);
     setMatrix(matrix);
@@ -171,6 +183,7 @@ void View::addLayer(Magick::Image image, bool updateView)
     connect(this, SIGNAL(viewClosed()), layer, SLOT(deleteLater()));
     connect(this, SIGNAL(lockLayer(LayerItem*,bool)), layer, SLOT(setMovable(LayerItem*,bool)));
     connect(this, SIGNAL(lockLayers(bool)), layer, SLOT(setMovable(bool)));
+    connect(this, SIGNAL(isDrag(bool)), layer, SLOT(setDrag(bool)));
 
     _scene->addItem(layer);
     layer->updatePixmap();
