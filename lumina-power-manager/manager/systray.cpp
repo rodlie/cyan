@@ -6,14 +6,6 @@
 */
 
 #include "systray.h"
-#include <QIcon>
-#include <QMenu>
-#include <QAction>
-#include <QDebug>
-#include <QSettings>
-#include <QPainter>
-#include "common.h"
-#include <X11/extensions/scrnsaver.h>
 
 SysTray::SysTray(QObject *parent)
     : QObject(parent)
@@ -21,6 +13,7 @@ SysTray::SysTray(QObject *parent)
     , man(0)
     , pm(0)
     , ss(0)
+    , ht(0)
     , wasLowBattery(false)
     , lowBatteryValue(LOW_BATTERY)
     , critBatteryValue(CRITICAL_BATTERY)
@@ -59,6 +52,13 @@ SysTray::SysTray(QObject *parent)
     // setup org.freedesktop.ScreenSaver
     ss = new ScreenSaver();
 
+    // setup monitor hotplug watcher
+    ht = new HotPlug();
+    qRegisterMetaType<QMap<QString,bool>>("QMap<QString,bool>");
+    connect(ht, SIGNAL(status(QString,bool)), this, SLOT(handleDisplay(QString,bool)));
+    connect(ht, SIGNAL(found(QMap<QString,bool>)), this, SLOT(handleFoundDisplays(QMap<QString,bool>)));
+    ht->requestScan();
+
     // setup timer
     timer = new QTimer(this);
     timer->setInterval(60000);
@@ -69,6 +69,14 @@ SysTray::SysTray(QObject *parent)
     loadSettings();
     registerService();
     QTimer::singleShot(1000, this, SLOT(checkDevices()));
+}
+
+SysTray::~SysTray()
+{
+    man->deleteLater();
+    pm->deleteLater();
+    ss->deleteLater();
+    ht->deleteLater();
 }
 
 // what to do when user clicks systray, at the moment nothing
@@ -369,4 +377,16 @@ int SysTray::xIdle()
 void SysTray::resetTimer()
 {
     timeouts = 0;
+}
+
+void SysTray::handleDisplay(QString display, bool connected)
+{
+    qDebug() << display << connected;
+    monitors[display] = connected;
+}
+
+void SysTray::handleFoundDisplays(QMap<QString, bool> displays)
+{
+    qDebug() << displays;
+    monitors = displays;
 }

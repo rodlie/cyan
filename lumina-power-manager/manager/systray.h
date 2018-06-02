@@ -11,9 +11,26 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QTimer>
+
+#include <QIcon>
+#include <QMenu>
+#include <QAction>
+#include <QDebug>
+#include <QSettings>
+#include <QPainter>
+#include <QMap>
+
+#include "common.h"
 #include "power.h"
 #include "powermanagement.h"
 #include "screensaver.h"
+
+#include <X11/extensions/scrnsaver.h>
+#include "hotplug.h"
+// fix X11 inc
+#undef CursorShape
+//#undef Bool // done in hotplug.h
+#undef Status
 
 class SysTray : public QObject
 {
@@ -21,12 +38,14 @@ class SysTray : public QObject
 
 public:
     explicit SysTray(QObject *parent = NULL);
+    ~SysTray();
 
 private:
     QSystemTrayIcon *tray;
     Power *man;
     PowerManagement *pm;
     ScreenSaver *ss;
+    HotPlug *ht;
     bool wasLowBattery;
     int lowBatteryValue;
     int critBatteryValue;
@@ -43,6 +62,7 @@ private:
     bool desktopPM;
     bool showBatteryPercent;
     bool showTray;
+    QMap<QString, bool> monitors;
 
 private slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -59,6 +79,8 @@ private slots:
     void timeout();
     int xIdle();
     void resetTimer();
+    void handleDisplay(QString display, bool connected);
+    void handleFoundDisplays(QMap<QString,bool> displays);
 };
 
 #endif // SYSTRAY_H

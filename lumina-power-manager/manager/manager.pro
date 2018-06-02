@@ -11,15 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = lumina-power-manager
 TEMPLATE = app
 
-SOURCES += main.cpp systray.cpp
-HEADERS += systray.h
+SOURCES += main.cpp systray.cpp hotplug.cpp
+HEADERS += systray.h hotplug.h
 RESOURCES += ../lumina-power-manager.qrc
 LIBS += -L../lib -lPower
 INCLUDEPATH += ..  ../lib
 
 CONFIG += link_pkgconfig
-PKGCONFIG += x11 xscrnsaver
-#LIBS += -lX11 -lXss
+PKGCONFIG += x11 xscrnsaver xrandr xinerama
 
 include(../../lumina-extra.pri)
 
