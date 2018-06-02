@@ -54,7 +54,7 @@ SysTray::SysTray(QObject *parent)
 
     // setup monitor hotplug watcher
     ht = new HotPlug();
-    qRegisterMetaType<QMap<QString,bool>>("QMap<QString,bool>");
+    qRegisterMetaType<QMap<QString,bool> >("QMap<QString,bool>");
     connect(ht, SIGNAL(status(QString,bool)), this, SLOT(handleDisplay(QString,bool)));
     connect(ht, SIGNAL(found(QMap<QString,bool>)), this, SLOT(handleFoundDisplays(QMap<QString,bool>)));
     ht->requestScan();
