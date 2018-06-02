@@ -22,6 +22,9 @@
 
 #define INTERNAL_MONITOR "LVDS"
 #define VIRTUAL_MONITOR "VIRTUAL"
+#define TURN_OFF_MONITOR "xrandr --output %1 --off"
+#define TURN_ON_MONITOR "xrandr --output %1 --auto"
+#define XCONFIG "lumina-xconfig --reset-monitors"
 
 #define OCNE(X) ((XRROutputChangeNotifyEvent*)X)
 

@@ -408,7 +408,21 @@ void SysTray::resetTimer()
 void SysTray::handleDisplay(QString display, bool connected)
 {
     qDebug() << display << connected;
+    if (monitors[display] == connected) { return; }
+
+    bool wasConnected = monitors[display];
     monitors[display] = connected;
+    if (wasConnected && !connected) {
+        // Turn off monitor using xrandr when disconnected.
+        // This is needed else we end up with a virtual screen with the apps from that screen.
+        qDebug() << "remove screen" << display;
+        QProcess::startDetached(QString(TURN_OFF_MONITOR).arg(display));
+    } else if (!wasConnected && connected) {
+        // Turn on monitor using xrandr, then launch lumina-xconfig
+        qDebug() << "add screen" << display;
+        QProcess::startDetached(QString(TURN_ON_MONITOR).arg(display));
+        QProcess::startDetached(XCONFIG);
+    }
 }
 
 void SysTray::handleFoundDisplays(QMap<QString, bool> displays)

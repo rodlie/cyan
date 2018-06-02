@@ -20,6 +20,7 @@
 #include <QPainter>
 #include <QMap>
 #include <QMapIterator>
+#include <QProcess>
 
 #include "common.h"
 #include "power.h"
