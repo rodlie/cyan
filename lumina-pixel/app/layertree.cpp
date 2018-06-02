@@ -37,7 +37,8 @@ void LayerTreeItem::setLayerID(int id)
 
 QString LayerTreeItem::getLayerName()
 {
-    return _name;
+    return tr("Untitled Layer");
+    //return _name;
 }
 
 void LayerTreeItem::setLayerName(QString name)
