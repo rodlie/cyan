@@ -31,6 +31,8 @@ Dialog::Dialog(QWidget *parent)
     , showNotifications(0)
     , showBatteryPercent(0)
     , showSystemTray(0)
+    , disableLidActionAC(0)
+    , disableLidActionBattery(0)
 {
     // setup dialog
     setAttribute(Qt::WA_QuitOnClose, true);
@@ -66,10 +68,14 @@ Dialog::Dialog(QWidget *parent)
     lidActionBattery = new QComboBox(this);
     QLabel *lidActionBatteryLabel = new QLabel(this);
 
+    disableLidActionBattery = new QCheckBox(this);
+    disableLidActionBattery->setText(tr("Disable if external monitor is connected."));
+
     lidActionBatteryLabel->setText(tr("Lid Action"));
     lidActionBatteryContainerLayout->addWidget(lidActionBatteryLabel);
     lidActionBatteryContainerLayout->addWidget(lidActionBattery);
     batteryContainerLayout->addWidget(lidActionBatteryContainer);
+    batteryContainerLayout->addWidget(disableLidActionBattery);
 
     QWidget *criticalActionBatteryContainer = new QWidget(this);
     QHBoxLayout *criticalActionBatteryContainerLayout = new QHBoxLayout(criticalActionBatteryContainer);
@@ -130,10 +136,14 @@ Dialog::Dialog(QWidget *parent)
     lidActionAC = new QComboBox(this);
     QLabel *lidActionACLabel = new QLabel(this);
 
+    disableLidActionAC = new QCheckBox(this);
+    disableLidActionAC->setText(tr("Disable if external monitor is connected."));
+
     lidActionACLabel->setText(tr("Lid Action"));
     lidActionACContainerLayout->addWidget(lidActionACLabel);
     lidActionACContainerLayout->addWidget(lidActionAC);
     acContainerLayout->addWidget(lidActionACContainer);
+    acContainerLayout->addWidget(disableLidActionAC);
 
     QWidget *sleepACContainer = new QWidget(this);
     QHBoxLayout *sleepACContainerLayout = new QHBoxLayout(sleepACContainer);
@@ -197,6 +207,8 @@ Dialog::Dialog(QWidget *parent)
     connect(showNotifications, SIGNAL(toggled(bool)), this, SLOT(handleShowNotifications(bool)));
     connect(showBatteryPercent, SIGNAL(toggled(bool)), this, SLOT(handleShowBatteryPercent(bool)));
     connect(showSystemTray, SIGNAL(toggled(bool)), this, SLOT(handleShowSystemTray(bool)));
+    connect(disableLidActionAC, SIGNAL(toggled(bool)), this, SLOT(handleDisableLidActionAC(bool)));
+    connect(disableLidActionBattery, SIGNAL(toggled(bool)), this, SLOT(handleDisableLidActionBattery(bool)));
 }
 
 // populate widgets with default values
@@ -294,6 +306,18 @@ void Dialog::loadSettings()
         defaultShowTray = Common::loadPowerSettings("show_tray").toBool();
     }
     showSystemTray->setChecked(defaultShowTray);
+
+    bool defaultDisableLidActionBattery = true;
+    if (Common::validPowerSettings("disable_lid_action_battery_external_monitor")) {
+        defaultDisableLidActionBattery = Common::loadPowerSettings("disable_lid_action_battery_external_monitor").toBool();
+    }
+    disableLidActionBattery->setChecked(defaultDisableLidActionBattery);
+
+    bool defaultDisableLidActionAC = true;
+    if (Common::validPowerSettings("disable_lid_action_ac_external_monitor")) {
+        defaultDisableLidActionAC = Common::loadPowerSettings("disable_lid_action_ac_external_monitor").toBool();
+    }
+    disableLidActionAC->setChecked(defaultDisableLidActionAC);
 }
 
 // tell power manager to update settings
@@ -393,5 +417,17 @@ void Dialog::handleShowBatteryPercent(bool triggered)
 void Dialog::handleShowSystemTray(bool triggered)
 {
     Common::savePowerSettings("show_tray", triggered);
+    updatePM();
+}
+
+void Dialog::handleDisableLidActionAC(bool triggered)
+{
+    Common::savePowerSettings("disable_lid_action_ac_external_monitor", triggered);
+    updatePM();
+}
+
+void Dialog::handleDisableLidActionBattery(bool triggered)
+{
+    Common::savePowerSettings("disable_lid_action_battery_external_monitor", triggered);
     updatePM();
 }

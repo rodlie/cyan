@@ -33,6 +33,8 @@ private:
     QCheckBox *showNotifications;
     QCheckBox *showBatteryPercent;
     QCheckBox *showSystemTray;
+    QCheckBox *disableLidActionAC;
+    QCheckBox *disableLidActionBattery;
 
 private slots:
     void populate();
@@ -52,6 +54,8 @@ private slots:
     void handleShowNotifications(bool triggered);
     void handleShowBatteryPercent(bool triggered);
     void handleShowSystemTray(bool triggered);
+    void handleDisableLidActionAC(bool triggered);
+    void handleDisableLidActionBattery(bool triggered);
 };
 
 #endif // DIALOG_H

@@ -30,6 +30,8 @@ SysTray::SysTray(QObject *parent)
     , desktopPM(true)
     , showBatteryPercent(true)
     , showTray(true)
+    , disableLidACOnExternalMonitors(true)
+    , disableLidBatteryOnExternalMonitors(true)
 {
     // setup tray
     tray = new QSystemTrayIcon(QIcon::fromTheme(DEFAULT_BATTERY_ICON, QIcon(QString(":/icons/%1.png").arg(DEFAULT_BATTERY_ICON))), this);
@@ -115,9 +117,25 @@ void SysTray::checkDevices()
 // what to do when user open/close lid
 void SysTray::handleClosedLid()
 {
+
+    qDebug() << "enabled video output" << monitors;
+    qDebug() << "internal monitor connected?" << internalMonitorIsConnected();
+    qDebug() << "has external monitor?" << externalMonitorIsConnected();
+
     int type = lidNone;
-    if (man->onBattery()) { type = lidActionBattery; } // on battery
-    else { type = lidActionAC; } // on ac
+    if (man->onBattery()) {  // on battery
+        type = lidActionBattery;
+        if (disableLidBatteryOnExternalMonitors && externalMonitorIsConnected()) {
+            qDebug() << "external monitor is connected, ignore lid action";
+            return;
+        }
+    } else { // on ac
+        type = lidActionAC;
+        if (disableLidACOnExternalMonitors && externalMonitorIsConnected()) {
+            qDebug() << "external monitor is connected, ignore lid action";
+            return;
+        }
+    }
     switch(type) {
     case lidLock:
         man->lockScreen();
@@ -193,7 +211,15 @@ void SysTray::loadSettings()
     if (Common::validPowerSettings("show_tray")) {
         showTray = Common::loadPowerSettings("show_tray").toBool();
     }
+    if (Common::validPowerSettings("disable_lid_action_battery_external_monitor")) {
+        disableLidBatteryOnExternalMonitors = Common::loadPowerSettings("disable_lid_action_battery_external_monitor").toBool();
+    }
+    if (Common::validPowerSettings("disable_lid_action_ac_external_monitor")) {
+        disableLidACOnExternalMonitors = Common::loadPowerSettings("disable_lid_action_ac_external_monitor").toBool();
+    }
 
+    qDebug() << "no lid action ac external monitor" << disableLidACOnExternalMonitors;
+    qDebug() << "no lid action battery external monitor" << disableLidBatteryOnExternalMonitors;
     qDebug() << "show tray" << showTray;
     qDebug() << "battery percent" << showBatteryPercent;
     qDebug() << "tray notify" << showNotifications;
@@ -389,4 +415,30 @@ void SysTray::handleFoundDisplays(QMap<QString, bool> displays)
 {
     qDebug() << displays;
     monitors = displays;
+}
+
+bool SysTray::internalMonitorIsConnected()
+{
+    QMapIterator<QString, bool> i(monitors);
+    while (i.hasNext()) {
+        i.next();
+        if (i.key().startsWith(INTERNAL_MONITOR)) {
+            qDebug() << "internal monitor connected?" << i.key() << i.value();
+            return i.value();
+        }
+    }
+    return false;
+}
+
+bool SysTray::externalMonitorIsConnected()
+{
+    QMapIterator<QString, bool> i(monitors);
+    while (i.hasNext()) {
+        i.next();
+        if (!i.key().startsWith(INTERNAL_MONITOR) && !i.key().startsWith(VIRTUAL_MONITOR)) {
+            qDebug() << "external monitor connected?" << i.key() << i.value();
+            if (i.value()) { return true; }
+        }
+    }
+    return false;
 }

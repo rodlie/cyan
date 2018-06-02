@@ -20,6 +20,9 @@
 
 #undef Bool // fix X11 inc
 
+#define INTERNAL_MONITOR "LVDS"
+#define VIRTUAL_MONITOR "VIRTUAL"
+
 #define OCNE(X) ((XRROutputChangeNotifyEvent*)X)
 
 class HotPlug : public QObject

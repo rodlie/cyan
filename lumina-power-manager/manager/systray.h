@@ -19,6 +19,7 @@
 #include <QSettings>
 #include <QPainter>
 #include <QMap>
+#include <QMapIterator>
 
 #include "common.h"
 #include "power.h"
@@ -63,6 +64,8 @@ private:
     bool showBatteryPercent;
     bool showTray;
     QMap<QString, bool> monitors;
+    bool disableLidACOnExternalMonitors;
+    bool disableLidBatteryOnExternalMonitors;
 
 private slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
@@ -81,6 +84,8 @@ private slots:
     void resetTimer();
     void handleDisplay(QString display, bool connected);
     void handleFoundDisplays(QMap<QString,bool> displays);
+    bool internalMonitorIsConnected();
+    bool externalMonitorIsConnected();
 };
 
 #endif // SYSTRAY_H
