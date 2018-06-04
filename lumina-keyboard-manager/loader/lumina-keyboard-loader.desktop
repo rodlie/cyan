@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Lumina Keyboard Loader
-Comment=Lumina Keyboard Loader
-Icon=keyboard
-Exec=lumina-keyboard-loader
-Terminal=false
-Type=Application
-OnlyShowIn=Lumina;
-StartupNotify=false

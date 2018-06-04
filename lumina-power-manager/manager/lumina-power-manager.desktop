@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Lumina Power Manager
-Comment=Lumina Power Manager
-Icon=battery
-Exec=lumina-power-manager
-Terminal=false
-Type=Application
-OnlyShowIn=Lumina;
-StartupNotify=false

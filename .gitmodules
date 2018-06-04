@@ -1,6 +1,0 @@
-[submodule "lumina-disk-manager/lib"]
-	path = lumina-disk-manager/lib
-	url = https://github.com/rodlie/libdisks
-[submodule "lumina-power-manager/lib"]
-	path = lumina-power-manager/lib
-	url = https://github.com/rodlie/libpower

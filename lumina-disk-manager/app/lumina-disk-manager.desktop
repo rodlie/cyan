@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Lumina Device Manager
-Comment=Lumina Device Manager
-Icon=drive-removable-media
-Exec=lumina-disk-manager
-Terminal=false
-Type=Application
-OnlyShowIn=Lumina;
-StartupNotify=false
