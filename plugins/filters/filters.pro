@@ -23,11 +23,7 @@ SOURCES = filters.cpp filterdialog.cpp
 TARGET = $$qtLibraryTarget(ImageFilters)
 DESTDIR = ../../app/plugins
 
-CONFIG += link_pkgconfig
-PKGCONFIG += Magick++
-
 include(../../cyan.pri)
-CONFIG -= staticlib
 
-target.path = $${PIXEL_PLUGINS}
+target.path = $${CYAN_PLUGINS}
 INSTALLS += target

@@ -17,3 +17,4 @@
 TEMPLATE = subdirs
 CONFIG -= ordered
 SUBDIRS += plugins app
+OTHER_FILES += README.md COPYING

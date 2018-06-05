@@ -14,6 +14,8 @@
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 #
 
+VERSION = 2.0.0
+
 isEmpty(PREFIX) {
     PREFIX = /usr/local
     isEmpty(XDGDIR) {
@@ -26,13 +28,11 @@ isEmpty(DOCDIR) {
 isEmpty(XDGDIR) {
     XDGDIR = /etc/xdg
 }
-isEmpty(PIXEL_PLUGINS) {
-    PIXEL_PLUGINS = $${PREFIX}/lib$${LIBSUFFIX}/cyan
+isEmpty(CYAN_PLUGINS) {
+    CYAN_PLUGINS = $${PREFIX}/lib$${LIBSUFFIX}/cyan
 }
 
 CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
-CONFIG -= install_lib
-CONFIG += staticlib
-
-VERSION = 2.0.0
+CONFIG += link_pkgconfig
+PKGCONFIG += Magick++
