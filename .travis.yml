@@ -7,10 +7,9 @@ before_install:
   - sudo apt-get update
 
 install:
-  - sudo apt-get install qt4-dev-tools qtbase5-dev libxss-dev qt4-qmake qt5-qmake tree libmagick++-dev liblcms2-dev libxrandr-dev libxinerama-dev
+  - sudo apt-get install qt4-dev-tools qtbase5-dev qt4-qmake qt5-qmake tree libmagick++-dev liblcms2-dev
   
 script:
-  - git submodule update --init --recursive
   - export CWD=`pwd`
   - mkdir $CWD/qt5
   - cd $CWD/qt5

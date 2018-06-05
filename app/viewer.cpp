@@ -2,8 +2,17 @@
 #
 # Copyright (c) 2018, Ole-André Rodlie <ole.andre.rodlie@gmail.com> All rights reserved.
 #
-# Available under the 3-clause BSD license
-# See the LICENSE file for full details
+# Cyan is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as published
+# by the Free Software Foundation.
+#
+# Cyan is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 #
 */
 
@@ -119,7 +128,7 @@ Viewer::Viewer(QWidget *parent)
     , layersComp(0)
     , statBar(0)
 {
-    setWindowTitle(QString("Lumina Pixel"));
+    setWindowTitle(QString("Cyan"));
     setWindowIcon(QIcon::fromTheme("applications-graphics"));
 
     qRegisterMetaType<Magick::Image>("Magick::Image");
@@ -292,7 +301,7 @@ void Viewer::addPlugin(QObject *plugin, QString filename)
 void Viewer::loadPlugins()
 {
     QStringList paths;
-    QString suffix = QString("lib/%1/%2/plugins").arg(qApp->organizationName()).arg(qApp->applicationName());
+    QString suffix = QString("lib/%1/plugins").arg(qApp->applicationName());
     paths << QString("%1/.local/%2").arg(QDir::homePath()).arg(suffix);
     paths << QString("%1/../%2").arg(qApp->applicationDirPath()).arg(suffix);
     paths << QString("%1/../%2").arg(qApp->applicationDirPath()).arg(QString(suffix).replace("lib/", "lib64/"));
