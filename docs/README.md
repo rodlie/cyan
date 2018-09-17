@@ -1,7 +1,3 @@
-# Cyan
-
-Free cross-platform prepress image viewer and converter.
-
 [![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/latest/download)
 
 [![Build Status](https://travis-ci.org/rodlie/cyan.svg?branch=master)](https://travis-ci.org/rodlie/cyan)
