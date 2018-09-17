@@ -2,3 +2,7 @@ theme: jekyll-theme-minimal
 title: Cyan
 description: Prepress image viewer and converter
 logo: https://github.com/rodlie/cyan/raw/master/res/cyan-header.png
+show_downloads: true
+github:
+  zip_url: https://sourceforge.net/projects/prepress/files/latest/download
+  tar_url: https://github.com/rodlie/cyan/archive/master.tar.gz
