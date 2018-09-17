@@ -36,7 +36,6 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QProgressBar>
 
@@ -54,7 +53,7 @@ class CyanView : public QGraphicsView
     Q_OBJECT
 
 public:
-    explicit CyanView(QWidget* parent = NULL);
+    explicit CyanView(QWidget* parent = Q_NULLPTR);
     bool fit;
 
 signals:
@@ -84,16 +83,12 @@ class CyanProfile : public QDialog
     Q_OBJECT
 
 public:
-    CyanProfile(QWidget *parent = 0);
-    ~CyanProfile();
+    CyanProfile(QWidget *parent = Q_NULLPTR);
     QLineEdit *profileFileName;
     QLineEdit *profileDescription;
     QLineEdit *profileCopyright;
     QPushButton *profileSaveButton;
     QPushButton *profileCloseButton;
-
-private slots:
-    void closeDialog();
 };
 
 class Cyan : public QMainWindow
@@ -101,7 +96,7 @@ class Cyan : public QMainWindow
     Q_OBJECT
 
 public:
-    Cyan(QWidget *parent = 0);
+    Cyan(QWidget *parent = Q_NULLPTR);
     ~Cyan();
 
 private:
@@ -135,20 +130,6 @@ private:
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     CyanProfile profileDialog;
-    QDoubleSpinBox *cmyLevel;
-    QDoubleSpinBox *kLevel;
-    QLabel *cmyLevelLabel;
-    QLabel *kLevelLabel;
-    QLabel *inkDensity;
-    QToolBar *cmykBar;
-    QLabel *colorCyanMin;
-    QLabel *colorCyanMax;
-    QLabel *colorMagentaMin;
-    QLabel *colorMagentaMax;
-    QLabel *colorYellowMin;
-    QLabel *colorYellowMax;
-    QLabel *colorBlackMin;
-    QLabel *colorBlackMax;
     QProgressBar *progBar;
 #ifdef Q_OS_UNIX
 #ifndef Q_OS_MAC

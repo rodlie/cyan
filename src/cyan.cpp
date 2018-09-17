@@ -132,19 +132,20 @@ void CyanView::setFit(bool value)
 
 CyanProfile::CyanProfile(QWidget *parent)
     : QDialog(parent)
-    , profileFileName(0)
-    , profileDescription(0)
-    , profileCopyright(0)
-    , profileSaveButton(0)
-    , profileCloseButton(0)
+    , profileFileName(Q_NULLPTR)
+    , profileDescription(Q_NULLPTR)
+    , profileCopyright(Q_NULLPTR)
+    , profileSaveButton(Q_NULLPTR)
+    , profileCloseButton(Q_NULLPTR)
 {
     setWindowTitle(tr("Edit Color Profile"));
     setWindowIcon(QIcon(":/cyan.png"));
+    setAttribute(Qt::WA_DeleteOnClose);
 
-    QFrame *containerFrame = new QFrame();
-    QFrame *buttonFrame = new QFrame();
-    QFrame *descriptionFrame = new QFrame();
-    QFrame *copyrightFrame = new QFrame();
+    QFrame *containerFrame = new QFrame(this);
+    QFrame *buttonFrame = new QFrame(this);
+    QFrame *descriptionFrame = new QFrame(this);
+    QFrame *copyrightFrame = new QFrame(this);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     QVBoxLayout *containerLayout = new QVBoxLayout(containerFrame);
@@ -155,32 +156,32 @@ CyanProfile::CyanProfile(QWidget *parent)
     descriptionLayout->setContentsMargins(0,0,0,0);
     copyrightLayout->setContentsMargins(0,0,0,0);
 
-    QLabel *profileLabel = new QLabel();
+    QLabel *profileLabel = new QLabel(this);
     profileLabel->setPixmap(QPixmap::fromImage(QImage(":/profile.png")));
     profileLabel->setAlignment(Qt::AlignTop);
 
-    QLabel *descriptionLabel = new QLabel();
+    QLabel *descriptionLabel = new QLabel(this);
     descriptionLabel->setText(tr("Description"));
     descriptionLabel->setMinimumWidth(100);
 
-    QLabel *copyrightLabel = new QLabel();
+    QLabel *copyrightLabel = new QLabel(this);
     copyrightLabel->setText(tr("Copyright"));
     copyrightLabel->setMinimumWidth(100);
 
-    profileFileName = new QLineEdit();
+    profileFileName = new QLineEdit(this);
     profileFileName->hide();
     profileFileName->setReadOnly(true);
 
-    profileDescription = new QLineEdit();
+    profileDescription = new QLineEdit(this);
     profileDescription->setMinimumWidth(400);
-    profileCopyright = new QLineEdit();
+    profileCopyright = new QLineEdit(this);
     profileCopyright->setMinimumWidth(400);
 
-    profileSaveButton = new QPushButton();
+    profileSaveButton = new QPushButton(this);
     profileSaveButton->setText(tr("Save"));
     profileSaveButton->setIcon(QIcon(":/cyan-save.png"));
 
-    profileCloseButton = new QPushButton();
+    profileCloseButton = new QPushButton(this);
     profileCloseButton->setText(tr("Cancel"));
 
     mainLayout->addWidget(profileLabel);
@@ -202,65 +203,41 @@ CyanProfile::CyanProfile(QWidget *parent)
     buttonLayout->addWidget(profileCloseButton);
     buttonLayout->addWidget(profileSaveButton);
 
-    connect(profileCloseButton, SIGNAL(released()), this, SLOT(closeDialog()));
-}
-
-CyanProfile::~CyanProfile()
-{
-}
-
-void CyanProfile::closeDialog()
-{
-    profileCopyright->clear();
-    profileDescription->clear();
-    profileFileName->clear();
-    hide();
+    connect(profileCloseButton, SIGNAL(released()), this, SLOT(close()));
 }
 
 Cyan::Cyan(QWidget *parent)
     : QMainWindow(parent)
-    , scene(0)
-    , view(0)
-    , mainBar(0)
-    , convertBar(0)
-    , profileBar(0)
-    , rgbProfile(0)
-    , cmykProfile(0)
-    , grayProfile(0)
-    , inputProfile(0)
-    , outputProfile(0)
-    , monitorProfile(0)
-    , renderingIntent(0)
-    , blackPoint(0)
-    , mainBarLoadButton(0)
-    , mainBarSaveButton(0)
-    , menuBar(0)
-    , fileMenu(0)
-    , helpMenu(0)
-    , openImageAction(0)
-    , saveImageAction(0)
-    , quitAction(0)
-    , currentImageData(0)
-    , currentImageProfile(0)
-    , currentImageNewProfile(0)
-    , exportEmbeddedProfileAction(0)
-    , bitDepth(0)
-    , cmyLevel(0)
-    , kLevel(0)
-    , inkDensity(0)
-    , cmykBar(0)
-    , colorCyanMin(0)
-    , colorCyanMax(0)
-    , colorMagentaMin(0)
-    , colorMagentaMax(0)
-    , colorYellowMin(0)
-    , colorYellowMax(0)
-    , colorBlackMin(0)
-    , colorBlackMax(0)
-    , progBar(0)
+    , scene(Q_NULLPTR)
+    , view(Q_NULLPTR)
+    , mainBar(Q_NULLPTR)
+    , convertBar(Q_NULLPTR)
+    , profileBar(Q_NULLPTR)
+    , rgbProfile(Q_NULLPTR)
+    , cmykProfile(Q_NULLPTR)
+    , grayProfile(Q_NULLPTR)
+    , inputProfile(Q_NULLPTR)
+    , outputProfile(Q_NULLPTR)
+    , monitorProfile(Q_NULLPTR)
+    , renderingIntent(Q_NULLPTR)
+    , blackPoint(Q_NULLPTR)
+    , mainBarLoadButton(Q_NULLPTR)
+    , mainBarSaveButton(Q_NULLPTR)
+    , menuBar(Q_NULLPTR)
+    , fileMenu(Q_NULLPTR)
+    , helpMenu(Q_NULLPTR)
+    , openImageAction(Q_NULLPTR)
+    , saveImageAction(Q_NULLPTR)
+    , quitAction(Q_NULLPTR)
+    , currentImageData(Q_NULLPTR)
+    , currentImageProfile(Q_NULLPTR)
+    , currentImageNewProfile(Q_NULLPTR)
+    , exportEmbeddedProfileAction(Q_NULLPTR)
+    , bitDepth(Q_NULLPTR)
+    , progBar(Q_NULLPTR)
     #ifdef Q_OS_UNIX
     #ifndef Q_OS_MAC
-    , loadGamma(0)
+    , loadGamma(Q_NULLPTR)
     #endif
     #endif
 {
@@ -289,17 +266,16 @@ Cyan::Cyan(QWidget *parent)
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
 
-    scene = new QGraphicsScene();
-    view = new CyanView();
+    scene = new QGraphicsScene(this);
+    view = new CyanView(this);
     view->setScene(scene);
     view->fit = true;
 
     setCentralWidget(view);
 
-    mainBar = new QToolBar();
-    convertBar = new QToolBar();
-    profileBar = new QToolBar();
-    cmykBar = new QToolBar();
+    mainBar = new QToolBar(this);
+    convertBar = new QToolBar(this);
+    profileBar = new QToolBar(this);
 
     mainBar->setObjectName("MainToolbar");
     mainBar->setWindowTitle(tr("Toolbar"));
@@ -310,33 +286,25 @@ Cyan::Cyan(QWidget *parent)
     profileBar->setObjectName("ColorManagement");
     profileBar->setWindowTitle(tr("Color Management"));
 
-    cmykBar->setObjectName("CMYK");
-    cmykBar->setWindowTitle(tr("CMYK"));
-
     addToolBar(Qt::TopToolBarArea, mainBar);
     addToolBar(Qt::TopToolBarArea, convertBar);
-    addToolBar(Qt::TopToolBarArea, cmykBar);
     addToolBar(Qt::BottomToolBarArea, profileBar);
 
-    insertToolBarBreak(cmykBar);
-
-    rgbProfile = new QComboBox();
-    cmykProfile = new QComboBox();
-    grayProfile = new QComboBox();
-    inputProfile = new QComboBox();
-    outputProfile = new QComboBox();
-    monitorProfile = new QComboBox();
-    renderingIntent = new QComboBox();
-    blackPoint = new QCheckBox();
-    bitDepth = new QComboBox();
-    cmyLevel = new QDoubleSpinBox();
-    kLevel = new QDoubleSpinBox();
-    progBar = new QProgressBar();
+    rgbProfile = new QComboBox(this);
+    cmykProfile = new QComboBox(this);
+    grayProfile = new QComboBox(this);
+    inputProfile = new QComboBox(this);
+    outputProfile = new QComboBox(this);
+    monitorProfile = new QComboBox(this);
+    renderingIntent = new QComboBox(this);
+    blackPoint = new QCheckBox(this);
+    bitDepth = new QComboBox(this);
+    progBar = new QProgressBar(this);
 
 #ifdef Q_OS_UNIX
 #ifndef Q_OS_MAC
-    loadGamma = new QCheckBox();
-    QLabel *gammaLabel = new QLabel();
+    loadGamma = new QCheckBox(this);
+    QLabel *gammaLabel = new QLabel(this);
     gammaLabel->setText(tr("Calibrate"));
     gammaLabel->setToolTip(tr("Calibrate monitor with the selected profile. Will override other gamma loaders on the system."));
 #endif
@@ -352,10 +320,6 @@ Cyan::Cyan(QWidget *parent)
     bitDepth->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     progBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    cmyLevel->setMaximum(100);
-    cmyLevel->setMinimum(0);
-    kLevel->setMaximum(100);
-    kLevel->setMinimum(0);
     progBar->setMaximumWidth(75);
     progBar->setRange(0,0);
     progBar->hide();
@@ -380,32 +344,15 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent->addItem(renderIcon, tr("Absolute"), 3);
     renderingIntent->addItem(renderIcon, tr("Relative"), 4);
 
-    QLabel *inputLabel = new QLabel();
-    QLabel *outputLabel = new QLabel();
-    QLabel *monitorLabel = new QLabel();
-    QLabel *renderLabel = new QLabel();
-    QLabel *blackLabel = new QLabel();
-    QLabel *rgbLabel = new QLabel();
-    QLabel *cmykLabel = new QLabel();
-    QLabel *grayLabel = new QLabel();
-    QLabel *bitDepthLabel = new QLabel();
-    QLabel *colorCyanLabel = new QLabel();
-    QLabel *colorMagentaLabel = new QLabel();
-    QLabel *colorYellowLabel = new QLabel();
-    QLabel *colorBlackLabel = new QLabel();
-    QLabel *inkDensityLabel = new QLabel();
-
-    cmyLevelLabel = new QLabel();
-    kLevelLabel = new QLabel();
-    inkDensity = new QLabel();
-    colorCyanMin = new QLabel();
-    colorCyanMax = new QLabel();
-    colorMagentaMin = new QLabel();
-    colorMagentaMax = new QLabel();
-    colorYellowMin = new QLabel();
-    colorYellowMax = new QLabel();
-    colorBlackMin = new QLabel();
-    colorBlackMax = new QLabel();
+    QLabel *inputLabel = new QLabel(this);
+    QLabel *outputLabel = new QLabel(this);
+    QLabel *monitorLabel = new QLabel(this);
+    QLabel *renderLabel = new QLabel(this);
+    QLabel *blackLabel = new QLabel(this);
+    QLabel *rgbLabel = new QLabel(this);
+    QLabel *cmykLabel = new QLabel(this);
+    QLabel *grayLabel = new QLabel(this);
+    QLabel *bitDepthLabel = new QLabel(this);
 
     inputLabel->setText(tr("Input"));
     outputLabel->setText(tr("Output"));
@@ -416,29 +363,6 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setText(tr("CMYK"));
     grayLabel->setText(tr("GRAY"));
     bitDepthLabel->setText(tr("Depth"));
-    colorCyanLabel->setText(tr("Cyan"));
-    colorCyanLabel->setPixmap(QPixmap::fromImage(QImage(":/cyan-color.png")));
-    colorMagentaLabel->setText(tr("Magenta"));
-    colorMagentaLabel->setPixmap(QPixmap::fromImage(QImage(":/magenta-color.png")));
-    colorYellowLabel->setText(tr("Yellow"));
-    colorYellowLabel->setPixmap(QPixmap::fromImage(QImage(":/yellow-color.png")));
-    colorBlackLabel->setText(tr("Black"));
-    colorBlackLabel->setPixmap(QPixmap::fromImage(QImage(":/black-color.png")));
-    inkDensityLabel->setPixmap(QPixmap::fromImage(QImage(":/ink.png")));
-
-    cmyLevelLabel->setText(tr("Color Add"));
-    cmyLevelLabel->setPixmap(QPixmap::fromImage(QImage(":/cmy-color.png")));
-    kLevelLabel->setText(tr("Black Substract"));
-    kLevelLabel->setPixmap(QPixmap::fromImage(QImage(":/black-color.png")));
-    inkDensity->setText(tr("N/A"));
-    colorCyanMin->setText(tr("Min: N/A"));
-    colorCyanMax->setText(tr("Max: N/A"));
-    colorMagentaMin->setText(tr("Min: N/A"));
-    colorMagentaMax->setText(tr("Max: N/A"));
-    colorYellowMin->setText(tr("Min: N/A"));
-    colorYellowMax->setText(tr("Max: N/A"));
-    colorBlackMin->setText(tr("Min: N/A"));
-    colorBlackMax->setText(tr("Max: N/A"));
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -449,14 +373,6 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setToolTip(tr("Default CMYK profile, used when image don't have an embedded profile"));
     grayLabel->setToolTip(tr("Default GRAY profile, used when image don't have an embedded profile"));
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
-    colorCyanLabel->setToolTip(tr("Cyan"));
-    colorMagentaLabel->setToolTip(tr("Magenta"));
-    colorYellowLabel->setToolTip(tr("Yellow"));
-    colorBlackLabel->setToolTip(tr("Black"));
-    inkDensityLabel->setToolTip(tr("Ink density"));
-
-    cmyLevelLabel->setToolTip(tr("Adjust CMY levels (Add) in percent."));
-    kLevelLabel->setToolTip(tr("Adjust K levels in (Substract) percent."));
 
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
@@ -493,32 +409,8 @@ Cyan::Cyan(QWidget *parent)
     profileBar->addSeparator();
     profileBar->addWidget(progBar);
 
-    cmykBar->addWidget(colorCyanLabel);
-    cmykBar->addWidget(colorCyanMin);
-    cmykBar->addWidget(colorCyanMax);
-    cmykBar->addSeparator();
-    cmykBar->addWidget(colorMagentaLabel);
-    cmykBar->addWidget(colorMagentaMin);
-    cmykBar->addWidget(colorMagentaMax);
-    cmykBar->addSeparator();
-    cmykBar->addWidget(colorYellowLabel);
-    cmykBar->addWidget(colorYellowMin);
-    cmykBar->addWidget(colorYellowMax);
-    cmykBar->addSeparator();
-    cmykBar->addWidget(colorBlackLabel);
-    cmykBar->addWidget(colorBlackMin);
-    cmykBar->addWidget(colorBlackMax);
-    cmykBar->addSeparator();
-    cmykBar->addWidget(inkDensityLabel);
-    cmykBar->addWidget(inkDensity);
-    cmykBar->addSeparator();
-    cmykBar->addWidget(cmyLevelLabel);
-    cmykBar->addWidget(cmyLevel);
-    cmykBar->addWidget(kLevelLabel);
-    cmykBar->addWidget(kLevel);
-
-    mainBarLoadButton = new QPushButton();
-    mainBarSaveButton = new QPushButton();
+    mainBarLoadButton = new QPushButton(this);
+    mainBarSaveButton = new QPushButton(this);
 
     mainBarLoadButton->setToolTip(tr("Open image"));
     mainBarLoadButton->setIcon(QIcon(":/cyan-open.png"));
@@ -529,7 +421,7 @@ Cyan::Cyan(QWidget *parent)
     mainBar->addWidget(mainBarLoadButton);
     mainBar->addWidget(mainBarSaveButton);
 
-    menuBar = new QMenuBar();
+    menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
 
     fileMenu = new QMenu(tr("File"));
@@ -598,9 +490,6 @@ Cyan::Cyan(QWidget *parent)
     connect(view, SIGNAL(openProfile(QString)), this, SLOT(openProfile(QString)));
 
     connect(profileDialog.profileSaveButton, SIGNAL(released()), this, SLOT(saveProfile()));
-
-    connect(cmyLevel, SIGNAL(editingFinished()), this, SLOT(updateImage()));
-    connect(kLevel, SIGNAL(editingFinished()), this, SLOT(updateImage()));
 
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
@@ -748,15 +637,6 @@ void Cyan::aboutCyan()
     aboutCyan.setInformativeText(infoText);
 
     QString detailedText;
-    QFile changes(":/CHANGES");
-    if (changes.open(QIODevice::ReadOnly)) {
-        detailedText.append("==============================\n");
-        detailedText.append(tr("CHANGELOG")+"\n");
-        detailedText.append("==============================\n\n");
-        detailedText.append(QString::fromUtf8(changes.readAll()));
-        detailedText.append("\n\n");
-        changes.close();
-    }
     QFile license(":/COPYING");
     if (license.open(QIODevice::ReadOnly)) {
         detailedText.append("==============================\n");
@@ -876,12 +756,6 @@ void Cyan::saveImage(QString file)
         adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
         adjust.depth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
-        if (cmyLevel->value() > 0.0) {
-            adjust.cmyLevel = cmyLevel->value();
-        }
-        if (kLevel->value() > 0.0) {
-            adjust.kLevel = kLevel->value();
-        }
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
         if (!selectedInputProfile.isEmpty()) {
@@ -1102,41 +976,6 @@ void Cyan::getImage(magentaImage result)
         QMessageBox::warning(this, tr("Cyan Warning"), result.warning);
     }
     if (result.error.isEmpty() && result.data.length() > 0 && result.profile.length() > 0) {
-        if (result.inkDensity>0.0) {
-            QString inkValue = QString::number(result.inkDensity);
-            inkValue.append("%");
-            inkDensity->setText(inkValue);
-        } else {
-            inkDensity->setText(tr("N/A"));
-        }
-        if (result.cyanMin > -1 && result.cyanMax > -1) {
-            colorCyanMin->setText(tr("Min: ") + QString::number(result.cyanMin));
-            colorCyanMax->setText(tr("Max: ") + QString::number(result.cyanMax));
-        } else {
-            colorCyanMin->setText(tr("Min: N/A"));
-            colorCyanMax->setText(tr("Max: N/A"));
-        }
-        if (result.magentaMin > -1 && result.magentaMax > -1) {
-            colorMagentaMin->setText(tr("Min: ") + QString::number(result.magentaMin));
-            colorMagentaMax->setText(tr("Max: ") + QString::number(result.magentaMax));
-        } else {
-            colorMagentaMin->setText(tr("Min: N/A"));
-            colorMagentaMax->setText(tr("Max: N/A"));
-        }
-        if (result.yellowMin > -1 && result.yellowMax > -1) {
-            colorYellowMin->setText(tr("Min: ") + QString::number(result.yellowMin));
-            colorYellowMax->setText(tr("Max: ") + QString::number(result.yellowMax));
-        } else {
-            colorYellowMin->setText(tr("Min: N/A"));
-            colorYellowMax->setText(tr("Max: N/A"));
-        }
-        if (result.blackMin > -1 && result.blackMax > -1) {
-            colorBlackMin->setText(tr("Min: ") + QString::number(result.blackMin));
-            colorBlackMax->setText(tr("Max: ") + QString::number(result.blackMax));
-        } else {
-            colorBlackMin->setText(tr("Min: N/A"));
-            colorBlackMax->setText(tr("Max: N/A"));
-        }
         if (!result.preview) {
             imageClear();
             currentImageData = result.data;
@@ -1187,17 +1026,6 @@ void Cyan::imageClear()
     mainBarSaveButton->setDisabled(true);
     saveImageAction->setDisabled(true);
     exportEmbeddedProfileAction->setDisabled(true);
-    colorCyanMin->setText(tr("Min: N/A"));
-    colorCyanMax->setText(tr("Max: N/A"));
-    colorMagentaMin->setText(tr("Min: N/A"));
-    colorMagentaMax->setText(tr("Max: N/A"));
-    colorYellowMin->setText(tr("Min: N/A"));
-    colorYellowMax->setText(tr("Max: N/A"));
-    colorBlackMin->setText(tr("Min: N/A"));
-    colorBlackMax->setText(tr("Max: N/A"));
-    inkDensity->setText(tr("N/A"));
-    cmyLevel->setValue(0.0);
-    kLevel->setValue(0.0);
 }
 
 void Cyan::resetImageZoom()
@@ -1229,12 +1057,6 @@ void Cyan::updateImage()
         adjust.hue = 100;
         adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
         adjust.saturation = 100;
-        if (cmyLevel->value() > 0.0) {
-            adjust.cmyLevel = cmyLevel->value();
-        }
-        if (kLevel->value() > 0.0) {
-            adjust.kLevel = kLevel->value();
-        }
         QByteArray currentInputProfile;
         QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
         if (!selectedInputProfile.isEmpty()) {
@@ -1362,7 +1184,6 @@ void Cyan::enableUI()
     mainBar->setEnabled(true);
     convertBar->setEnabled(true);
     profileBar->setEnabled(true);
-    cmykBar->setEnabled(true);
 }
 
 void Cyan::disableUI()
@@ -1371,7 +1192,6 @@ void Cyan::disableUI()
     mainBar->setDisabled(true);
     convertBar->setDisabled(true);
     profileBar->setDisabled(true);
-    cmykBar->setDisabled(true);
 }
 
 void Cyan::exportEmbeddedProfileDialog()
@@ -1486,7 +1306,7 @@ void Cyan::bitDepthChanged(int index)
 void Cyan::gimpPlugin()
 {
     QStringList versions,folders;
-    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10";
+    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "2.11" << "2.12";
     foreach (QString version, versions) {
         bool hasDir = false;
         QDir gimpDir;

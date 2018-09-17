@@ -7,7 +7,7 @@ before_install:
   - sudo apt-get update
 
 install:
-  - sudo apt-get install qt4-dev-tools qtbase5-dev qt4-qmake qt5-qmake tree libmagick++-dev liblcms2-dev
+  - sudo apt-get install qtbase5-dev qt5-qmake tree libmagick++-dev liblcms2-dev libqt5x11extras5-dev
   
 script:
   - export CWD=`pwd`
@@ -17,11 +17,3 @@ script:
   - make
   - make INSTALL_ROOT=`pwd`/pkg install
   - tree pkg
-  - cd $CWD
-  - mkdir $CWD/qt4
-  - cd $CWD/qt4
-  - qmake -qt=qt4 CONFIG+=release PREFIX=/usr ..
-  - make
-  - make INSTALL_ROOT=`pwd`/pkg install
-  - tree pkg
-  - cd $CWD

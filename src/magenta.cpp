@@ -156,10 +156,10 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
 */
             }
             if (edit.kLevel >0.0 && edit.kLevel <=100.0) {
-                double value = edit.kLevel/100;
+                /*double value = edit.kLevel/100;
                 QString fxValue = "u-";
                 fxValue.append(QString::number(value));
-                image.fx(fxValue.toStdString().c_str(), Magick::BlackChannel);
+                image.fx(fxValue.toStdString().c_str(), Magick::BlackChannel);*/
 /*
 #ifdef MAGICK7
                 image.evaluate(Magick::BlackChannel, Magick::SubtractEvaluateOperator, value);
@@ -184,7 +184,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             qDebug() << "yellow channel min max" << yellow.minima()) / (double)QuantumRange << yellow.maxima()) / (double)QuantumRange;
             qDebug() << "black channel min max" << black.minima()) / (double)QuantumRange << black.maxima()) / (double)QuantumRange;
 #else
-            result.inkDensity = 100.0 * MagickCore::GetImageTotalInkDensity(image.image()) / (double)QuantumRange;
+            /*result.inkDensity = 100.0 * MagickCore::GetImageTotalInkDensity(image.image()) / (double)QuantumRange;
 
             MagickCore::ExceptionInfo exception;
             MagickCore::ChannelStatistics *stats = MagickCore::GetImageChannelStatistics(image.image(), &exception);
@@ -220,7 +220,7 @@ magentaImage Magenta::readImage(bool isPreview, bool doSave, QString file, QByte
             if (result.blackMax > 1) {
                 result.blackMax = 1;
             }
-            free(stats);
+            free(stats);*/
 #endif
         }
 
