@@ -1,3 +1,4 @@
 theme: jekyll-theme-minimal
 title: Cyan
-description: Cross-platform prepress viewer and converter
+description: Prepress image viewer and converter
+logo: https://github.com/rodlie/cyan/raw/master/res/cyan-header.png
