@@ -1,6 +1,6 @@
-![cyan](https://github.com/rodlie/cyan/raw/master/res/cyan-header.png)
 # Cyan
-Free cross-platform prepress toolkit.
+
+Free cross-platform prepress image viewer and converter.
 
 # Features
 
@@ -15,15 +15,6 @@ Free cross-platform prepress toolkit.
 * GIMP integration (import/export)
 * Gamma loader (Linux)
 
-# Requirements
-
-System requirements for downloads:
-
- * Windows XP or higher
- * Mac OS X Lion (10.7) or higher
- * Linux (GCC 4.8.5+/Glibc 2.17+)
-   * Ubuntu requires libxcb-xinerama0 (sudo apt-get install libxcb-xinerama0)
-
 # Build
 
 Build requirements:
@@ -37,17 +28,3 @@ qmake CONFIG+=release PREFIX=XXX (/usr/local is default install path)
 make
 make install (optional, use INSTALL_ROOT=XXX for packaging)
 ```
-
-# Issues
-
- * Mac OS X binaries does not support multi-threading
-
-# Roadmap
-
- * Rewrite backend from qt to c++ for use in other utils (libFXX)
- * GUI changes
- * Batch converter
-
-# License
-Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
-
