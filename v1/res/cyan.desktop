@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Cyan
+GenericName=Cyan
+Comment=Prepress viewer and converter
+Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
+Exec=Cyan %U
+Icon=cyan
+StartupNotify=true
+Terminal=false
+Type=Application

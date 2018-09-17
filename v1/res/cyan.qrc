@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cyan-display.png</file>
+        <file>cyan-wheel.png</file>
+        <file>cyan.png</file>
+        <file>../COPYING</file>
+        <file>../CHANGES</file>
+        <file>cyan-icc2.png</file>
+        <file>cyan-icc4.png</file>
+        <file>cyan-open.png</file>
+        <file>cyan-quit.png</file>
+        <file>cyan-save.png</file>
+        <file>gimp.py</file>
+        <file>3rdparty.txt</file>
+        <file>profile.png</file>
+        <file>icc/cmyk.icc</file>
+        <file>icc/gray.icc</file>
+        <file>icc/rgb.icc</file>
+        <file>black-color.png</file>
+        <file>cyan-color.png</file>
+        <file>yellow-color.png</file>
+        <file>magenta-color.png</file>
+        <file>ink.png</file>
+        <file>cmy-color.png</file>
+    </qresource>
+</RCC>
