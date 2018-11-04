@@ -19,15 +19,12 @@
 #define CYAN_H
 
 #include <QMainWindow>
-#include <QGraphicsScene>
 #include <QToolBar>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QScrollBar>
-#include <QMouseEvent>
-#include <QWheelEvent>
 #include <QPushButton>
 #include <QMenu>
 #include <QMenuBar>
@@ -38,58 +35,18 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QProgressBar>
+#include <QObject>
+#include <QDockWidget>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+//#include <QStatusBar>
+#include <QMap>
 
-#include "yellow.h"
-#include "magenta.h"
+#include "imageloader.h"
+#include "imageview.h"
+#include "profiledialog.h"
 
-#ifdef Q_OS_UNIX
-#ifndef Q_OS_MAC
-#include "gamma.h"
-#endif
-#endif
-
-class CyanView : public QGraphicsView
-{
-    Q_OBJECT
-
-public:
-    explicit CyanView(QWidget* parent = Q_NULLPTR);
-    bool fit;
-
-signals:
-    void resetZoom();
-    void myZoom(double scaleX, double scaleY);
-    void proof();
-    void myFit(bool value);
-    void openImage(QString file);
-    void openProfile(QString file);
-
-public slots:
-    void doZoom(double scaleX, double scaleY);
-    void setFit(bool value);
-
-protected:
-    void wheelEvent(QWheelEvent* event);
-    void mousePressEvent(QMouseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dragLeaveEvent(QDragLeaveEvent *event);
-    void dropEvent(QDropEvent *event);
-    void resizeEvent(QResizeEvent *event);
-};
-
-class CyanProfile : public QDialog
-{
-    Q_OBJECT
-
-public:
-    CyanProfile(QWidget *parent = Q_NULLPTR);
-    QLineEdit *profileFileName;
-    QLineEdit *profileDescription;
-    QLineEdit *profileCopyright;
-    QPushButton *profileSaveButton;
-    QPushButton *profileCloseButton;
-};
+#include "FXX.h"
 
 class Cyan : public QMainWindow
 {
@@ -100,10 +57,10 @@ public:
     ~Cyan();
 
 private:
-    Yellow cms;
-    Magenta proc;
+    ImageLoader loader;
+    FXX fx;
     QGraphicsScene *scene;
-    CyanView *view;
+    ImageView *view;
     QToolBar *mainBar;
     QToolBar *convertBar;
     QToolBar *profileBar;
@@ -129,62 +86,89 @@ private:
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
-    CyanProfile profileDialog;
+    ProfileDialog profileDialog;
     QProgressBar *progBar;
-#ifdef Q_OS_UNIX
-#ifndef Q_OS_MAC
-    Gamma gamma;
-    QCheckBox *loadGamma;
-#endif
-#endif
+
+    FXX::Image imageData;
+    QByteArray imageDataInputProfile;
+
+  //  FXX::Image inputProfileData;
+    //FXX::Image outputProfileData;
+    QDockWidget *imageInfoDock;
+    QTreeWidget *imageInfoTree;
+    //QStatusBar *sBar;
 
 private slots:
     void readConfig();
     void writeConfig();
+
     void aboutCyan();
+
     void openImageDialog();
     void saveImageDialog();
+
     void openImage(QString file);
     void saveImage(QString file);
-    void getColorProfiles(int colorspace, QComboBox *box, bool isMonitor);
+
+    void getColorProfiles(FXX::ColorSpace colorspace,
+                          QComboBox *box,
+                          bool isMonitor = false);
+
     void loadDefaultProfiles();
     void saveDefaultProfiles();
+
     void updateRgbDefaultProfile(int index);
     void updateCmykDefaultProfile(int index);
     void updateGrayDefaultProfile(int index);
     void updateMonitorDefaultProfile(int index);
-    void getImage(magentaImage result);
+
     void imageClear();
+
     void resetImageZoom();
+
     void setImage(QByteArray image);
     void updateImage();
+
     QByteArray getMonitorProfile();
     QByteArray getOutputProfile();
+
     void getConvertProfiles();
+
     void inputProfileChanged(int);
     void outputProfileChanged(int);
+
     void enableUI();
     void disableUI();
+
     void exportEmbeddedProfileDialog();
     void exportEmbeddedProfile(QString file);
+
     bool imageModified();
+
     void handleSaveState();
+
     bool hasProfiles();
     bool hasRGB();
     bool hasCMYK();
     bool hasGRAY();
+
     void bitDepthChanged(int index);
     void gimpPlugin();
+
     void openProfile(QString file);
     void saveProfile();
-    void handleConvertAdv();
+
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
-#ifdef Q_OS_UNIX
-#ifndef Q_OS_MAC
-    void handleGamma(bool use);
-#endif
-#endif
+
+
+    // new
+    void loadedImage(FXX::Image image);
+    void clearImageBuffer();
+    void parseImageInfo();
+
+    QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
+    QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
 };
 
 #endif // CYAN_H
