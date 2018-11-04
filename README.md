@@ -2,29 +2,23 @@
 
 Free cross-platform prepress image viewer and converter.
 
+[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/latest/download)
+
+[![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
 # Features
 
 * Supports RGB/CMYK/GRAY 8/16/32 bit images
 * Supports ICC/ICM v2/v4 color profiles
-* Supports PNG/JPEG/TIFF/PSD input
-* Supports TIFF and PSD output
-* Manage embedded ICC color profiles
-* Edit ICC color profiles
+* Supports PNG/JPEG/TIFF/PSD image input
+* Supports TIFF and PSD image output
+* Extract embedded ICC color profiles
+* Edit ICC color profiles tags
 * Convert to and from RGB/CMYK/GRAY
 * Change image bit depth
 * GIMP integration (import/export)
-* Gamma loader (Linux)
 
-# Build
+# Requirements
 
-Build requirements:
-
-* ImageMagick (MagickCore/Magick++) Q32(HDRI)/PNG/JPEG/TIFF/LCMS2
-* LCMS 2.x
-* Qt 4/5 (Core/GUI with PNG/TIFF support)
-
-```
-qmake CONFIG+=release PREFIX=XXX (/usr/local is default install path)
-make
-make install (optional, use INSTALL_ROOT=XXX for packaging)
-```
+ * Microsoft Windows XP (or higher)
+ * Apple Mac OS X Lion (or higher)
