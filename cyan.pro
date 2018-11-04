@@ -15,12 +15,68 @@
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 #
 
-lessThan(QT_MAJOR_VERSION, 5): error("Qt4 is not supported anymore.")
+TARGET = Cyan
+VERSION = 1.2.0
+VERSION_TYPE = "alpha1"
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += viewer
+SOURCES += \
+    src/main.cpp \
+    src/cyan.cpp \
+    src/FXX.cxx \
+    src/imageloader.cpp \
+    src/imageview.cpp \
+    src/profiledialog.cpp
+HEADERS  += \
+    src/cyan.h \
+    src/FXX.h \
+    src/imageloader.h \
+    src/imageview.h \
+    src/profiledialog.h
+RESOURCES += \
+    res/cyan.qrc
 
-CONFIG(enable_editor) {
-    SUBDIRS += editor
+INCLUDEPATH += lib
+DESTDIR = build
+OBJECTS_DIR = $${DESTDIR}/.obj
+MOC_DIR = $${DESTDIR}/.moc
+RCC_DIR = $${DESTDIR}/.qrc
+
+QT += core gui widgets
+CONFIG += c++11
+TEMPLATE = app
+
+QT_CONFIG -= no-pkg-config
+CONFIG += link_pkgconfig
+PKGCONFIG += lcms2 Magick++
+
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+QMAKE_TARGET_COMPANY = "$${TARGET}"
+QMAKE_TARGET_PRODUCT = "$${TARGET}"
+QMAKE_TARGET_DESCRIPTION = "Prepress Toolkit"
+QMAKE_TARGET_COPYRIGHT = "Copyright (c)2018 Ole-Andre Rodlie"
+
+unix:!mac {
+    isEmpty(PREFIX) {
+        PREFIX = /usr/local
+    }
+    isEmpty(DOCDIR) {
+        DOCDIR = $$PREFIX/share/doc
+    }
+    target.path = $${PREFIX}/bin
+    target_icon.path = $${PREFIX}/share/pixmaps
+    target_icon.files = res/cyan.png
+    target_desktop.path = $${PREFIX}/share/applications
+    target_desktop.files = res/cyan.desktop
+    target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
+    target_docs.files = COPYING README.md
+    INSTALLS += target target_icon target_desktop target_docs
+}
+mac {
+    ICON = res/Cyan.icns
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+}
+win32 {
+    RC_ICONS += res/cyan.ico
+    LIBS += -lpthread
+    #-lws2_32 -lole32
 }
