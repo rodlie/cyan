@@ -1,6 +1,6 @@
 #
-# Cyan <http://cyan.fxarena.net> <https://github.com/olear/cyan>,
-# Copyright (C) 2016, 2017 Ole-André Rodlie
+# Cyan <http://prepress.sf.net> <https://cyan.fxarena.net>,
+# Copyright (C) 2016, 2017, 2018 Ole-André Rodlie<ole.andre.rodlie@gmail.com>
 #
 # Cyan is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as published
