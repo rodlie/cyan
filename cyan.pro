@@ -48,6 +48,7 @@ TEMPLATE = app
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG += lcms2 Magick++
+LIBS += `pkg-config --libs --static Magick++`
 
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 QMAKE_TARGET_COMPANY = "$${TARGET}"

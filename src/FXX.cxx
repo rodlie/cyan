@@ -17,6 +17,7 @@ FXX::Image FXX::readImage(std::string file,
             Magick::Blob output;
             Magick::Blob preview;
             image.read(file.c_str());
+            image.magick("MIFF");
 
             // get colorspace
             switch(image.colorSpace()) {
@@ -108,6 +109,104 @@ FXX::Image FXX::readImage(std::string file,
         catch(Magick::Warning &warn_ ) {
             result.warning.append(warn_.what());
         }
+    }
+    return result;
+}
+
+FXX::Image FXX::convertImage(FXX::Image input, bool getInfo)
+{
+    FXX::Image result;
+    if (input.imageBuffer.size()>0 &&
+        input.iccInputBuffer.size()>0)
+    {
+        std::cout << "converting image" << input.filename << input.depth << std::endl;
+        try {
+            Magick::Image image;
+            Magick::Blob tmp(input.imageBuffer.data(),
+                             input.imageBuffer.size());
+            image.read(tmp); // read image
+
+            // change bit depth
+            if (input.depth>0) {
+               //image.channelDepth(Magick::ChannelType::AllChannels, input.depth);
+                image.depth(input.depth);
+            }
+
+            // strip existing profiles from image
+            image.profile("ICC", Magick::Blob());
+            image.profile("ICM", Magick::Blob());
+
+            // set rendering intent and blackpoint
+            if (input.intent != FXX::UndefinedRenderingIntent) {
+                switch (input.intent) {
+                case FXX::SaturationRenderingIntent:
+                    image.renderingIntent(Magick::SaturationIntent);
+                    break;
+                case FXX::PerceptualRenderingIntent:
+                    image.renderingIntent(Magick::PerceptualIntent);
+                    break;
+                case FXX::AbsoluteRenderingIntent:
+                    image.renderingIntent(Magick::AbsoluteIntent);
+                    break;
+                case FXX::RelativeRenderingIntent:
+                    image.renderingIntent(Magick::RelativeIntent);
+                    break;
+                default:;
+                }
+            }
+            image.blackPointCompensation(input.blackpoint);
+
+            // apply source color profile
+            Magick::Blob sourceProfile(input.iccInputBuffer.data(),
+                                       input.iccInputBuffer.size());
+            image.profile("ICC", sourceProfile);
+
+            // apply destination color profile (if any)
+            if (input.iccOutputBuffer.size()>0) {
+                Magick::Blob destinationProfile(input.iccOutputBuffer.data(),
+                                                input.iccOutputBuffer.size());
+                image.profile("ICC", destinationProfile);
+                result.iccInputBuffer = input.iccOutputBuffer;
+            } else {
+                result.iccInputBuffer = input.iccInputBuffer;
+            }
+
+            // write image
+            result.filename = input.filename;
+            Magick::Blob output;
+            image.write(&output);
+            unsigned char *imgBuffer = (unsigned char*)output.data();
+            std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
+            result.imageBuffer = imgData;
+
+            // make preview
+            Magick::Blob preview;
+            if (input.iccMonitorBuffer.size()>0) {
+                // apply monitor color profile (if any)
+                Magick::Blob monitorProfile(input.iccMonitorBuffer.data(),
+                                            input.iccMonitorBuffer.size());
+                image.profile("ICC", monitorProfile);
+            }
+            if (image.depth()>8) { image.depth(8); }
+            image.magick("BMP");
+            image.write(&preview);
+            unsigned char *preBuffer = (unsigned char*)preview.data();
+            std::vector<unsigned char> preData(preBuffer, preBuffer + preview.length());
+            result.previewBuffer = preData;
+
+            // get image stats
+            if (getInfo) {
+                result.info = identify(result.imageBuffer);
+            }
+        }
+        catch(Magick::Error &error_ ) {
+            result.error.append(error_.what());
+        }
+        catch(Magick::Warning &warn_ ) {
+            result.warning.append(warn_.what());
+        }
+    } else {
+        result.error.append("Missing image or ICC profiles, unable to convert.");
     }
     return result;
 }
@@ -274,6 +373,11 @@ std::string FXX::identify(std::string file)
         wand = DestroyMagickWand(wand);
     }
     return result;
+}
+
+std::string FXX::supportedQuantumDepth()
+{
+    return MagickQuantumDepth;
 }
 
 void FXX::clearImage(FXX::Image data)

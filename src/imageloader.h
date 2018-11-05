@@ -19,12 +19,15 @@ private:
 
 signals:
     void loadedImage(FXX::Image result);
+    void convertedImage(FXX::Image result);
 
 public slots:
     void requestImage(const QString &file);
+    void requestConvert(const FXX::Image &image);
 
 private slots:
     void readImage(const QString &file);
+    void convertImage(const FXX::Image &image);
 };
 
 #endif // IMAGELOADER_H

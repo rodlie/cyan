@@ -22,17 +22,27 @@ public:
         ICCCopyright
     };
 
+    enum RenderingIntent {
+        UndefinedRenderingIntent,
+        SaturationRenderingIntent,
+        PerceptualRenderingIntent,
+        AbsoluteRenderingIntent,
+        RelativeRenderingIntent
+    };
+
     struct Image
     {
         std::vector<unsigned char> imageBuffer;
         std::vector<unsigned char> previewBuffer;
         std::vector<unsigned char> iccInputBuffer;
         std::vector<unsigned char> iccOutputBuffer;
+        std::vector<unsigned char> iccMonitorBuffer;
         size_t width = 0;
         size_t height = 0;
         size_t depth = 0;
         int channels = 0;
         FXX::ColorSpace colorspace = FXX::UnknownColorSpace;
+        FXX::RenderingIntent intent = FXX::UndefinedRenderingIntent;
         std::string iccDescription;
         std::string iccManufacturer;
         std::string iccModel;
@@ -45,6 +55,7 @@ public:
         std::string modified;
         std::string error;
         std::string warning;
+        bool blackpoint = false;
         bool hasEXIF = false;
         bool hasIPTC = false;
     };
@@ -53,6 +64,8 @@ public:
 
     FXX::Image readImage(std::string file,
                       bool getInfo = true);
+    FXX::Image convertImage(FXX::Image input,
+                            bool getInfo = true);
 
     bool editProfile(std::string file,
                      std::string description,
@@ -72,6 +85,8 @@ public:
 
     std::string identify(std::vector<unsigned char> buffer);
     std::string identify(std::string file);
+
+    std::string supportedQuantumDepth();
 
     void clearImage(FXX::Image data);
 

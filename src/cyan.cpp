@@ -187,24 +187,29 @@ Cyan::Cyan(QWidget *parent)
   //  progBar->hide();
 
     QIcon bitDepthIcon(":/cyan-display.png");
-    bitDepth->addItem(bitDepthIcon, tr("Default"));
-    /*if (proc.quantumDepth()>=8) {
+    bitDepth->addItem(bitDepthIcon, tr("Source"));
+    if (supportedDepth()>=8) {
         bitDepth->addItem(bitDepthIcon, tr("8-bit"), 8);
     }
-    if (proc.quantumDepth()>=16) {
+    if (supportedDepth()>=16) {
         bitDepth->addItem(bitDepthIcon, tr("16-bit"), 16);
     }
-    if (proc.quantumDepth()>=32) {
+    if (supportedDepth()>=32) {
         bitDepth->addItem(bitDepthIcon, tr("32-bit"), 32);
-    }*/
+    }
     bitDepth->setMaximumWidth(150);
 
     QIcon renderIcon(":/cyan-display.png");
-    renderingIntent->addItem(renderIcon, tr("Undefined"), 0);
-    renderingIntent->addItem(renderIcon, tr("Saturation"), 1);
-    renderingIntent->addItem(renderIcon, tr("Perceptual"), 2);
-    renderingIntent->addItem(renderIcon, tr("Absolute"), 3);
-    renderingIntent->addItem(renderIcon, tr("Relative"), 4);
+    renderingIntent->addItem(renderIcon, tr("Undefined"),
+                             FXX::UndefinedRenderingIntent);
+    renderingIntent->addItem(renderIcon, tr("Saturation"),
+                             FXX::SaturationRenderingIntent);
+    renderingIntent->addItem(renderIcon, tr("Perceptual"),
+                             FXX::PerceptualRenderingIntent);
+    renderingIntent->addItem(renderIcon, tr("Absolute"),
+                             FXX::AbsoluteRenderingIntent);
+    renderingIntent->addItem(renderIcon, tr("Relative"),
+                             FXX::RelativeRenderingIntent);
 
     QLabel *inputLabel = new QLabel(this);
     QLabel *outputLabel = new QLabel(this);
@@ -326,6 +331,7 @@ Cyan::Cyan(QWidget *parent)
     qRegisterMetaType<FXX::Image>("FXX::Image");
 
     connect(&loader, SIGNAL(loadedImage(FXX::Image)), this, SLOT(loadedImage(FXX::Image)));
+    connect(&loader, SIGNAL(convertedImage(FXX::Image)), this, SLOT(convertedImage(FXX::Image)));
 
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutCyan()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -846,23 +852,55 @@ void Cyan::setImage(QByteArray image)
 void Cyan::updateImage()
 {
     qDebug() << "UPDATE IMAGE";
-    /*if (currentImageData.length() > 0 && currentImageProfile.length() > 0) {
-        disableUI();
-        magentaAdjust adjust;
-        adjust.black = blackPoint->isChecked();
-        adjust.brightness = 100;
-        adjust.hue = 100;
-        adjust.intent = renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
-        adjust.saturation = 100;
-        QByteArray currentInputProfile;
-        QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
-        if (!selectedInputProfile.isEmpty()) {
-            currentInputProfile = currentImageNewProfile;
-        } else {
-            currentInputProfile = currentImageProfile;
+
+    FXX::Image image;
+    image.imageBuffer = imageData.imageBuffer;
+    QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
+    QString selectedOutputProfile = outputProfile->itemData(outputProfile->currentIndex()).toString();
+    QString selectedMonitorProfile = monitorProfile->itemData(monitorProfile->currentIndex()).toString();
+    int currentDepth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
+
+    image.intent = (FXX::RenderingIntent)renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
+    image.blackpoint = blackPoint->isChecked();
+    image.depth = (size_t)currentDepth;
+
+    // add input profile
+    if (!selectedInputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedInputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccInputBuffer = buffer;
         }
-        proc.requestImage(true, false, "", currentImageData, currentInputProfile, getOutputProfile(), getMonitorProfile(), adjust);
-    }*/
+    } else {
+        image.iccInputBuffer = imageData.iccInputBuffer;
+    }
+
+    // add output profile
+    if (!selectedOutputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedOutputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccOutputBuffer = buffer;
+        }
+    } else {
+        image.iccOutputBuffer = imageData.iccOutputBuffer;
+    }
+
+    // add monitor profile
+    if (!selectedMonitorProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedMonitorProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccMonitorBuffer = buffer;
+        }
+    }
+
+    // check if input profile exists
+    if (image.iccInputBuffer.size()==0) { return; }
+
+    // proc
+    disableUI();
+    loader.requestConvert(image);
 }
 
 QByteArray Cyan::getMonitorProfile()
@@ -887,6 +925,17 @@ QByteArray Cyan::getOutputProfile()
             result = outProfileName.readAll();
             outProfileName.close();
         }
+    }
+    return result;
+}
+
+QByteArray Cyan::readColorProfile(QString file)
+{
+    QByteArray result;
+    QFile outProfileName(file);
+    if (outProfileName.open(QIODevice::ReadOnly)) {
+        result = outProfileName.readAll();
+        outProfileName.close();
     }
     return result;
 }
@@ -918,6 +967,9 @@ void Cyan::getConvertProfiles()
     QIcon itemIcon(":/cyan-wheel.png");
     QString embeddedProfile = QString::fromStdString(fx.getProfileTag(imageData.iccInputBuffer));
     //embeddedProfile.append(tr(" (embedded)"));
+
+    inputProfile->clear();
+    outputProfile->clear();
 
     inputProfile->addItem(itemIcon, embeddedProfile);
     inputProfile->addItem("----------");
@@ -1229,7 +1281,12 @@ void Cyan::blackPointUpdated(int)
     updateImage();
 }
 
-
+int Cyan::supportedDepth()
+{
+    QString quantum = QString::fromStdString(fx.supportedQuantumDepth());
+    quantum.remove("Q");
+    return quantum.toInt();
+}
 
 void Cyan::loadedImage(FXX::Image image)
 {
@@ -1238,6 +1295,7 @@ void Cyan::loadedImage(FXX::Image image)
     if (image.imageBuffer.size()>0 && image.error.empty()) {
         clearImageBuffer();
         if (image.previewBuffer.size()>0) {
+            resetImageZoom();
             setImage(QByteArray((char*)image.previewBuffer.data(),
                                 (int)image.previewBuffer.size()));
         } else {
@@ -1249,6 +1307,20 @@ void Cyan::loadedImage(FXX::Image image)
         getConvertProfiles();
     } else if (!image.error.empty()) {
         qDebug() << "image error" << QString::fromStdString(image.error);
+    }
+}
+
+void Cyan::convertedImage(FXX::Image image)
+{
+    qDebug() << "handle converted image" << QString::fromStdString(image.filename);
+    enableUI();
+    if (image.previewBuffer.size()>0) {
+        setImage(QByteArray((char*)image.previewBuffer.data(),
+                            (int)image.previewBuffer.size()));
+        imageData.info = image.info;
+        parseImageInfo();
+    } else {
+        qDebug() << "image preview missing!!!";
     }
 }
 

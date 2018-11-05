@@ -90,7 +90,7 @@ private:
     QProgressBar *progBar;
 
     FXX::Image imageData;
-    QByteArray imageDataInputProfile;
+   // QByteArray imageDataInputProfile;
 
   //  FXX::Image inputProfileData;
     //FXX::Image outputProfileData;
@@ -131,6 +131,7 @@ private slots:
 
     QByteArray getMonitorProfile();
     QByteArray getOutputProfile();
+    QByteArray readColorProfile(QString file);
 
     void getConvertProfiles();
 
@@ -163,7 +164,9 @@ private slots:
 
 
     // new
+    int supportedDepth();
     void loadedImage(FXX::Image image);
+    void convertedImage(FXX::Image image);
     void clearImageBuffer();
     void parseImageInfo();
 
