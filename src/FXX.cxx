@@ -7,7 +7,8 @@ FXX::FXX()
     Magick::InitializeMagick(nullptr);
 }
 
-FXX::Image FXX::readImage(std::string file,
+FXX::Image FXX::readImage(const std::string &file,
+                          FXX::Image failsafe,
                           bool getInfo)
 {
     FXX::Image result;
@@ -52,16 +53,39 @@ FXX::Image FXX::readImage(std::string file,
                 unsigned char *iccBuffer = (unsigned char*)image.iccColorProfile().data();
                 std::vector<unsigned char> iccData(iccBuffer, iccBuffer + image.iccColorProfile().length());
                 result.iccInputBuffer = iccData;
-                result.iccDescription = getProfileTag(iccData,
-                                                      FXX::ICCDescription);
-                result.iccManufacturer = getProfileTag(iccData,
-                                                       FXX::ICCManufacturer);
-                result.iccModel = getProfileTag(iccData,
-                                                FXX::ICCModel);
-                result.iccCopyright = getProfileTag(iccData,
-                                                    FXX::ICCCopyright);
-                //image.profile("ICC", Magick::Blob());
-                //image.profile("ICM", Magick::Blob());
+            } else { // apply failsafe profile if missing input profile
+                if (failsafe.iccRGB.size()==0 ||
+                    failsafe.iccCMYK.size()==0 ||
+                    failsafe.iccGRAY.size()==0)
+                {
+                    result.error = "No default input profiles!";
+                    return  result;
+                }
+                Magick::Blob profile;
+                switch(result.colorspace) {
+                case FXX::RGBColorSpace:
+                    profile = Magick::Blob(failsafe.iccRGB.data(),
+                                           failsafe.iccRGB.size());
+                    result.iccInputBuffer = failsafe.iccRGB;
+                    break;
+                case FXX::CMYKColorSpace:
+                    profile = Magick::Blob(failsafe.iccCMYK.data(),
+                                           failsafe.iccCMYK.size());
+                    result.iccInputBuffer = failsafe.iccCMYK;
+                    break;
+                case FXX::GRAYColorSpace:
+                    profile = Magick::Blob (failsafe.iccGRAY.data(),
+                                            failsafe.iccGRAY.size());
+                    result.iccInputBuffer = failsafe.iccGRAY;
+                    break;
+                default:;
+                }
+                if (profile.length()>0) {
+                    image.profile("ICC", profile);
+                } else {
+                    result.error = "No input profile!";
+                    return result;
+                }
             }
 
             // get meta info
@@ -390,12 +414,13 @@ void FXX::clearImage(FXX::Image data)
     data.hasIPTC = false;
     data.iccInputBuffer.clear();
     data.iccOutputBuffer.clear();
-    data.iccCopyright.clear();
-    data.iccDescription.clear();
-    data.iccManufacturer.clear();
-    data.iccModel.clear();
+    data.iccMonitorBuffer.clear();
     data.imageBuffer.clear();
     data.previewBuffer.clear();
+    data.workBuffer.clear();
+    data.iccCMYK.clear();
+    data.iccGRAY.clear();
+    data.iccRGB.clear();
     data.channels = 0;
     data.colorspace = FXX::UnknownColorSpace;
     data.depth = 0;

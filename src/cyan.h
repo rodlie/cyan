@@ -22,9 +22,6 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QCheckBox>
-#include <QGraphicsView>
-#include <QGraphicsRectItem>
-#include <QScrollBar>
 #include <QPushButton>
 #include <QMenu>
 #include <QMenuBar>
@@ -39,7 +36,6 @@
 #include <QDockWidget>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-//#include <QStatusBar>
 #include <QMap>
 
 #include "imageloader.h"
@@ -80,23 +76,13 @@ private:
     QAction *openImageAction;
     QAction *saveImageAction;
     QAction *quitAction;
-    QByteArray currentImageData;
-    QByteArray currentImageProfile;
-    QByteArray currentImageNewProfile;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     ProfileDialog profileDialog;
-    QProgressBar *progBar;
-
     FXX::Image imageData;
-   // QByteArray imageDataInputProfile;
-
-  //  FXX::Image inputProfileData;
-    //FXX::Image outputProfileData;
     QDockWidget *imageInfoDock;
     QTreeWidget *imageInfoTree;
-    //QStatusBar *sBar;
 
 private slots:
     void readConfig();
@@ -131,6 +117,7 @@ private slots:
 
     QByteArray getMonitorProfile();
     QByteArray getOutputProfile();
+    QByteArray getInputProfile();
     QByteArray readColorProfile(QString file);
 
     void getConvertProfiles();
@@ -143,10 +130,6 @@ private slots:
 
     void exportEmbeddedProfileDialog();
     void exportEmbeddedProfile(QString file);
-
-    bool imageModified();
-
-    void handleSaveState();
 
     bool hasProfiles();
     bool hasRGB();
@@ -162,8 +145,6 @@ private slots:
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
 
-
-    // new
     int supportedDepth();
     void loadedImage(FXX::Image image);
     void convertedImage(FXX::Image image);

@@ -34,19 +34,19 @@ public:
     {
         std::vector<unsigned char> imageBuffer;
         std::vector<unsigned char> previewBuffer;
+        std::vector<unsigned char> workBuffer;
         std::vector<unsigned char> iccInputBuffer;
         std::vector<unsigned char> iccOutputBuffer;
         std::vector<unsigned char> iccMonitorBuffer;
+        std::vector<unsigned char> iccRGB;
+        std::vector<unsigned char> iccCMYK;
+        std::vector<unsigned char> iccGRAY;
         size_t width = 0;
         size_t height = 0;
         size_t depth = 0;
         int channels = 0;
         FXX::ColorSpace colorspace = FXX::UnknownColorSpace;
         FXX::RenderingIntent intent = FXX::UndefinedRenderingIntent;
-        std::string iccDescription;
-        std::string iccManufacturer;
-        std::string iccModel;
-        std::string iccCopyright;
         std::string comment;
         std::string info;
         std::string format;
@@ -62,8 +62,9 @@ public:
 
     FXX();
 
-    FXX::Image readImage(std::string file,
-                      bool getInfo = true);
+    FXX::Image readImage(const std::string &file,
+                         FXX::Image failsafe,
+                         bool getInfo = true);
     FXX::Image convertImage(FXX::Image input,
                             bool getInfo = true);
 

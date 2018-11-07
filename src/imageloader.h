@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QByteArray>
 #include "FXX.h"
 
 class ImageLoader : public QObject
@@ -22,11 +23,11 @@ signals:
     void convertedImage(FXX::Image result);
 
 public slots:
-    void requestImage(const QString &file);
+    void requestImage(const QString &file, const FXX::Image &failsafe);
     void requestConvert(const FXX::Image &image);
 
 private slots:
-    void readImage(const QString &file);
+    void readImage(const QString &file, const FXX::Image &failsafe);
     void convertImage(const FXX::Image &image);
 };
 

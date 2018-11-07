@@ -12,9 +12,11 @@ ImageLoader::~ImageLoader()
     t.wait();
 }
 
-void ImageLoader::requestImage(const QString &file)
+void ImageLoader::requestImage(const QString &file, const FXX::Image &failsafe)
 {
-    QMetaObject::invokeMethod(this, "readImage", Q_ARG(QString, file));
+    QMetaObject::invokeMethod(this, "readImage",
+                              Q_ARG(QString, file),
+                              Q_ARG(FXX::Image, failsafe));
 }
 
 void ImageLoader::requestConvert(const FXX::Image &image)
@@ -22,11 +24,12 @@ void ImageLoader::requestConvert(const FXX::Image &image)
     QMetaObject::invokeMethod(this, "convertImage", Q_ARG(FXX::Image, image));
 }
 
-void ImageLoader::readImage(const QString &file)
+void ImageLoader::readImage(const QString &file, const FXX::Image &failsafe)
 {
     FXX::Image imageData;
     if (!file.isEmpty()) {
-        imageData = fx.readImage(file.toStdString());
+        //std::vector<unsigned char> profile(failsafe.begin(), failsafe.end());
+        imageData = fx.readImage(file.toStdString(), failsafe);
     }
     emit loadedImage(imageData);
 }

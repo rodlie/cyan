@@ -67,19 +67,16 @@ Cyan::Cyan(QWidget *parent)
     , quitAction(Q_NULLPTR)
     , exportEmbeddedProfileAction(Q_NULLPTR)
     , bitDepth(Q_NULLPTR)
-    , progBar(Q_NULLPTR)
     , imageInfoDock(Q_NULLPTR)
     , imageInfoTree(Q_NULLPTR)
 {
+    // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
-
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(53,53,53));
     palette.setColor(QPalette::WindowText, Qt::white);
     palette.setColor(QPalette::Base, QColor(15,15,15));
     palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-    //palette.setColor(QPalette::ToolTipBase, Qt::white);
-    //palette.setColor(QPalette::ToolTipText, Qt::white);
     palette.setColor(QPalette::Link, Qt::white);
     palette.setColor(QPalette::LinkVisited, Qt::white);
     palette.setColor(QPalette::ToolTipText, Qt::black);
@@ -87,16 +84,19 @@ Cyan::Cyan(QWidget *parent)
     palette.setColor(QPalette::Button, QColor(53,53,53));
     palette.setColor(QPalette::ButtonText, Qt::white);
     palette.setColor(QPalette::BrightText, Qt::red);
-    //palette.setColor(QPalette::Highlight, QColor(142,45,197).lighter());
     palette.setColor(QPalette::Highlight, QColor(0,124,151));
     palette.setColor(QPalette::HighlightedText, Qt::black);
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
-
+    setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;}"
+                          "QComboBox {padding:3px;}"
+                          "QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}")
+                  .arg(QString::number(CYAN_FONT_SIZE)));
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
 
+    // add widgets
     scene = new QGraphicsScene(this);
     view = new ImageView(this);
     view->setScene(scene);
@@ -258,7 +258,6 @@ Cyan::Cyan(QWidget *parent)
     mainBarLoadButton->setIcon(QIcon(":/cyan-open.png"));
     mainBarSaveButton->setToolTip(tr("Save image"));
     mainBarSaveButton->setIcon(QIcon(":/cyan-save.png"));
-    mainBarSaveButton->setDisabled(true);
 
     mainBar->addWidget(mainBarLoadButton);
     mainBar->addWidget(mainBarSaveButton);
@@ -272,7 +271,7 @@ Cyan::Cyan(QWidget *parent)
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
 
-    QAction *aboutAction = new QAction(tr("About ") + qApp->applicationName(), this);
+    QAction *aboutAction = new QAction(tr("About %1").arg(qApp->applicationName()), this);
     aboutAction->setIcon(QIcon(":/cyan.png"));
     helpMenu->addAction(aboutAction);
 
@@ -287,7 +286,6 @@ Cyan::Cyan(QWidget *parent)
     saveImageAction = new QAction(tr("Save image"), this);
     saveImageAction->setIcon(QIcon(":/cyan-save.png"));
     saveImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
-    saveImageAction->setDisabled(true);
     fileMenu->addAction(saveImageAction);
 
     fileMenu->addSeparator();
@@ -309,7 +307,6 @@ Cyan::Cyan(QWidget *parent)
 
     connect(&loader, SIGNAL(loadedImage(FXX::Image)), this, SLOT(loadedImage(FXX::Image)));
     connect(&loader, SIGNAL(convertedImage(FXX::Image)), this, SLOT(convertedImage(FXX::Image)));
-
     connect(aboutAction, SIGNAL(triggered()),this, SLOT(aboutCyan()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(openImageAction, SIGNAL(triggered()), this, SLOT(openImageDialog()));
@@ -332,11 +329,6 @@ Cyan::Cyan(QWidget *parent)
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)), this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)), this, SLOT(blackPointUpdated(int)));
 
-    setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;}"
-                          "QComboBox {padding:3px;}"
-                          "QLabel, QComboBox, QDoubleSpinBox, QMenuBar {font-size: %1pt;}")
-                  .arg(QString::number(CYAN_FONT_SIZE)));
-
     clearImageBuffer();
     QTimer::singleShot(0, this, SLOT(readConfig()));
 }
@@ -356,7 +348,6 @@ void Cyan::readConfig()
     if (settings.value("render").isValid()) {
         renderingIntent->setCurrentIndex(settings.value("render").toInt());
     }
-
     settings.endGroup();
 
     settings.beginGroup("ui");
@@ -430,16 +421,37 @@ void Cyan::aboutCyan()
 {
     QMessageBox aboutCyan;
     aboutCyan.setTextFormat(Qt::RichText);
-    aboutCyan.setWindowTitle(tr("About Cyan"));
+    aboutCyan.setWindowTitle(tr("About %1").arg(qApp->applicationName()));
     aboutCyan.setIconPixmap(QPixmap::fromImage(QImage(":/cyan.png")));
-    aboutCyan.setText("<h1 style=\"font-weight:normal;\">" + qApp->applicationName() + " " + qApp->applicationVersion() + "</h1><h3 style=\"font-weight:normal;\">Prepress image viewer and converter.</h3>");
+    aboutCyan.setText(QString("<h1 style=\"font-weight:normal;\">%1 %2</h1>"
+                      "<h3 style=\"font-weight:normal;\">%3.</h3>")
+                      .arg(qApp->applicationName())
+                      .arg(qApp->applicationVersion())
+                      .arg(tr("Prepress image viewer and converter")));
 
-    QString infoText = "<p>Copyright &copy;2016-2018 Ole-Andr&eacute; Rodlie. All rights reserved.</p><p>Cyan is free software: you can redistribute it and/or modify it under the terms of the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\">GNU General Public License version 2</a> as published by the Free Software Foundation.<br><br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>";
-    infoText.append("<p>Includes ICC color profiles from <a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> License. Includes icons from the <a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">Tango Icon Library</a>.");
+    QString infoText = "<p>Copyright &copy;2016-2018 Ole-Andr&eacute; Rodlie. All rights reserved.</p>"
+                       "<p>Cyan is free software: you can redistribute it and/or modify it "
+                       "under the terms of the "
+                       "<a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\">"
+                       "GNU General Public License version 2</a> as published by the "
+                       "Free Software Foundation."
+                       "<br><br>"
+                       "Cyan is distributed in the hope that it will be useful, "
+                       "but WITHOUT ANY WARRANTY; without even the implied warranty "
+                       "of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
+                       "See the GNU General Public License for more details.</p>";
+    infoText.append("<p>Includes ICC color profiles from "
+                    "<a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, "
+                    "licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">"
+                    "Creative Commons Attribution-No Derivative Works 3.0</a> License. "
+                    "Includes icons from the "
+                    "<a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">"
+                    "Tango Icon Library</a>.</p>");
 
-    infoText.append("</p>");
+    //infoText.append("</p>");
     //infoText.append(proc.version());
-    infoText.append("<p>Visit <a href=\"http://prepress.sf.net\">prepress.sf.net</a> or <a href=\"https://cyan.fxarena.net\">cyan.fxarena.net</a> for news and updates.");
+    infoText.append("<p>Visit <a href=\"http://prepress.sf.net\">prepress.sf.net</a> "
+                    "or <a href=\"https://cyan.fxarena.net\">cyan.fxarena.net</a> for news and updates.");
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
     aboutCyan.setInformativeText(infoText);
 
@@ -486,6 +498,7 @@ void Cyan::openImageDialog()
 
 void Cyan::saveImageDialog()
 {
+    if (imageData.imageBuffer.size()==0) { return; }
     if (!lockedSaveFileName.isEmpty()) {
         saveImage(lockedSaveFileName);
     } else {
@@ -501,7 +514,8 @@ void Cyan::saveImageDialog()
             dir = QDir::homePath();
         }
 
-        file = QFileDialog::getSaveFileName(this, tr("Save image"), dir, tr("Image files (*.tif *.psd)"));
+        file = QFileDialog::getSaveFileName(this, tr("Save image"), dir,
+                                            tr("Image files (*.tif *.psd *.jpg)"));
         if (!file.isEmpty()) {
             QFileInfo imageFile(file);
             if (imageFile.suffix().isEmpty()) {
@@ -510,7 +524,8 @@ void Cyan::saveImageDialog()
                 return;
             }
             saveImage(file);
-            settings.setValue("lastSaveDir", imageFile.absoluteDir().absolutePath());
+            settings.setValue("lastSaveDir",
+                              imageFile.absoluteDir().absolutePath());
         }
 
         settings.endGroup();
@@ -529,7 +544,18 @@ void Cyan::openImage(QString file)
         return;
     }
     disableUI();
-    loader.requestImage(file);
+
+    // add default input profiles
+    FXX::Image profiles;
+    QByteArray rgbProfile = getDefaultProfile(FXX::RGBColorSpace);
+    QByteArray cmykProfile = getDefaultProfile(FXX::CMYKColorSpace);
+    QByteArray grayProfile = getDefaultProfile(FXX::GRAYColorSpace);
+    profiles.iccRGB = std::vector<unsigned char>(rgbProfile.begin(), rgbProfile.end());
+    profiles.iccCMYK = std::vector<unsigned char>(cmykProfile.begin(), cmykProfile.end());
+    profiles.iccGRAY = std::vector<unsigned char>(grayProfile.begin(), grayProfile.end());
+
+    // load image
+    loader.requestImage(file, profiles);
 }
 
 void Cyan::saveImage(QString file)
@@ -713,8 +739,6 @@ void Cyan::updateMonitorDefaultProfile(int index)
     settings.sync();
 
     updateImage();
-
-
 }
 
 /*void Cyan::getImage(magentaImage result)
@@ -788,8 +812,7 @@ void Cyan::imageClear()
 {
     scene->clear();
     resetImageZoom();
-    mainBarSaveButton->setDisabled(true);
-    saveImageAction->setDisabled(true);
+    clearImageBuffer();
     exportEmbeddedProfileAction->setDisabled(true);
 }
 
@@ -816,9 +839,12 @@ void Cyan::updateImage()
 
     FXX::Image image;
     image.imageBuffer = imageData.imageBuffer;
-    QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex()).toString();
-    QString selectedOutputProfile = outputProfile->itemData(outputProfile->currentIndex()).toString();
-    QString selectedMonitorProfile = monitorProfile->itemData(monitorProfile->currentIndex()).toString();
+    QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
+                                   .toString();
+    QString selectedOutputProfile = outputProfile->itemData(outputProfile->currentIndex())
+                                    .toString();
+    QString selectedMonitorProfile = monitorProfile->itemData(monitorProfile->currentIndex())
+                                     .toString();
     int currentDepth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
 
     image.intent = (FXX::RenderingIntent)renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
@@ -890,6 +916,19 @@ QByteArray Cyan::getOutputProfile()
     return result;
 }
 
+QByteArray Cyan::getInputProfile()
+{
+    QByteArray result;
+    if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
+        QFile outProfileName(inputProfile->itemData(inputProfile->currentIndex()).toString());
+        if (outProfileName.open(QIODevice::ReadOnly)) {
+            result = outProfileName.readAll();
+            outProfileName.close();
+        }
+    }
+    return result;
+}
+
 QByteArray Cyan::readColorProfile(QString file)
 {
     QByteArray result;
@@ -926,7 +965,8 @@ void Cyan::getConvertProfiles()
     inputProfiles = genProfiles(inputColorSpace);
 
     QIcon itemIcon(":/cyan-wheel.png");
-    QString embeddedProfile = QString::fromStdString(fx.getProfileTag(imageData.iccInputBuffer));
+    QString embeddedProfile = QString::fromStdString(fx.getProfileTag(imageData
+                                                                      .iccInputBuffer));
     //embeddedProfile.append(tr(" (embedded)"));
 
     inputProfile->clear();
@@ -951,18 +991,11 @@ void Cyan::getConvertProfiles()
 
 void Cyan::inputProfileChanged(int)
 {
-    QFile inputProfileName(inputProfile->itemData(inputProfile->currentIndex()).toString());
-    if (inputProfileName.open(QIODevice::ReadOnly)) {
-        currentImageNewProfile = inputProfileName.readAll();
-        inputProfileName.close();
-    }
-    handleSaveState();
     updateImage();
 }
 
 void Cyan::outputProfileChanged(int)
 {
-    handleSaveState();
     updateImage();
 }
 
@@ -997,9 +1030,10 @@ void Cyan::exportEmbeddedProfileDialog()
     }
 
     dir.append(QString("/%1.icc")
-               .arg(QString::fromStdString(imageData.iccDescription)));
+               .arg(QString::fromStdString(fx.getProfileTag(imageData.iccInputBuffer))));
 
-    file = QFileDialog::getSaveFileName(this, tr("Save profile"), dir, tr("Color Profiles (*.icc)"));
+    file = QFileDialog::getSaveFileName(this, tr("Save profile"), dir,
+                                        tr("Color Profiles (*.icc)"));
     if (!file.isEmpty()) {
         QFileInfo proFile(file);
         if (proFile.suffix().isEmpty()) {
@@ -1036,31 +1070,6 @@ void Cyan::exportEmbeddedProfile(QString file)
     }
 }
 
-bool Cyan::imageModified()
-{
-    if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
-        return true;
-    }
-    if (!outputProfile->itemData(outputProfile->currentIndex()).toString().isEmpty()) {
-        return true;
-    }
-    if (bitDepth->itemData(bitDepth->currentIndex()).toString().toInt() > 0) {
-        return true;
-    }
-    return false;
-}
-
-void Cyan::handleSaveState()
-{
-    if (!imageModified()) {
-        saveImageAction->setDisabled(true);
-        mainBarSaveButton->setDisabled(true);
-    } else {
-        saveImageAction->setEnabled(true);
-        mainBarSaveButton->setEnabled(true);
-    }
-}
-
 bool Cyan::hasProfiles()
 {
     if (genProfiles(FXX::RGBColorSpace).size()>0) {
@@ -1093,7 +1102,6 @@ bool Cyan::hasGRAY()
 void Cyan::bitDepthChanged(int index)
 {
     Q_UNUSED(index)
-    handleSaveState();
     updateImage();
 }
 
@@ -1263,7 +1271,7 @@ void Cyan::loadedImage(FXX::Image image)
             qDebug() << "image preview missing!!!";
         }
         imageData = image;
-        exportEmbeddedProfileAction->setDisabled(imageData.iccDescription.empty());
+        exportEmbeddedProfileAction->setDisabled(/*imageData.iccDescription.empty()*/imageData.iccInputBuffer.size()==0);
         if (!imageData.info.empty()) { parseImageInfo(); }
         getConvertProfiles();
     } else if (!image.error.empty()) {
@@ -1279,6 +1287,7 @@ void Cyan::convertedImage(FXX::Image image)
         setImage(QByteArray((char*)image.previewBuffer.data(),
                             (int)image.previewBuffer.size()));
         imageData.info = image.info;
+        imageData.workBuffer = image.imageBuffer;
         parseImageInfo();
     } else {
         qDebug() << "image preview missing!!!";
