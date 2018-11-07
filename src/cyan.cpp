@@ -447,9 +447,7 @@ void Cyan::aboutCyan()
                     "Includes icons from the "
                     "<a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">"
                     "Tango Icon Library</a>.</p>");
-
-    //infoText.append("</p>");
-    //infoText.append(proc.version());
+    infoText.append(QString::fromStdString(fx.backendInfo()));
     infoText.append("<p>Visit <a href=\"http://prepress.sf.net\">prepress.sf.net</a> "
                     "or <a href=\"https://cyan.fxarena.net\">cyan.fxarena.net</a> for news and updates.");
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");

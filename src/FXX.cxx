@@ -404,6 +404,33 @@ std::string FXX::supportedQuantumDepth()
     return MagickQuantumDepth;
 }
 
+std::string FXX::backendInfo()
+{
+    std::string result;
+    result.append("<p>Powered by ");
+    result.append("<a href=\"http://www.imagemagick.org\">");
+    result.append(MagickPackageName);
+    result.append("</a> ");
+    result.append(MagickQuantumDepth);
+    result.append(" ");
+    result.append(MagickLibVersionText);
+    result.append("<br>");
+    result.append(MagickCopyright);
+    result.append("<br>");
+    result.append("ImageMagick is distributed under the <a href=\"https://www.imagemagick.org/script/license.php\">Apache 2.0 license</a>.<br>");
+    result.append("<small><i>");
+    result.append(MagickCore::GetMagickFeatures());
+    result.append(" ");
+    result.append(MagickCore::GetMagickDelegates());
+    result.append("</i></small>");
+    result.append("</p>");
+    result.append("<p>Powered by <a href=\"http://www.littlecms.com\">Little CMS</a> ");
+    result.append("&copy; Marti Maria Saguer. All rights reserved.<br>");
+    result.append("LCMS is distributed under the <a href=\"http://www.opensource.org/licenses/mit-license.php\">MIT license</a>.");
+    result.append("</p>");
+    return  result;
+}
+
 void FXX::clearImage(FXX::Image data)
 {
     data.comment.clear();

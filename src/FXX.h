@@ -88,6 +88,7 @@ public:
     std::string identify(std::string file);
 
     std::string supportedQuantumDepth();
+    std::string backendInfo();
 
     void clearImage(FXX::Image data);
 
