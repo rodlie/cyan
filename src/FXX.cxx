@@ -13,13 +13,21 @@ FXX::Image FXX::readImage(const std::string &file,
 {
     FXX::Image result;
     if (!file.empty()) {
+        Magick::Image image;
+        Magick::Blob output;
+        Magick::Blob preview;
         try {
-            Magick::Image image;
-            Magick::Blob output;
-            Magick::Blob preview;
             image.read(file.c_str());
             image.magick("MIFF");
-
+        }
+        catch(Magick::Error &error_ ) {
+            result.error.append(error_.what());
+            return result;
+        }
+        catch(Magick::Warning &warn_ ) {
+            result.warning.append(warn_.what());
+        }
+        try {
             // get colorspace
             switch(image.colorSpace()) {
             case Magick::CMYKColorspace:
@@ -455,4 +463,37 @@ void FXX::clearImage(FXX::Image data)
     data.modified.clear();
     data.warning.clear();
     data.format.clear();
+}
+
+bool FXX::saveImage(FXX::Image data)
+{
+    if (data.imageBuffer.size()==0 || data.filename.empty()) {
+        return false;
+    }
+    Magick::Image image;
+    try {
+        Magick::Blob buffer(data.imageBuffer.data(),
+                            data.imageBuffer.size());
+        if (buffer.length()==0) { return false; }
+        image.read(buffer);
+    }
+    catch(Magick::Error &error_ ) {
+        std::cout << "save image error!" << error_.what() << std::endl;
+        return false;
+    }
+    catch(Magick::Warning &warn_ ) {
+        std::cout << "save image warning! " << warn_.what() << std::endl;
+    }
+    if (image.columns() == 0 && image.rows() == 0) { return false; }
+    try {
+        image.write(data.filename);
+    }
+    catch(Magick::Error &error_ ) {
+        std::cout << "save image error!" << error_.what() << std::endl;
+        return false;
+    }
+    catch(Magick::Warning &warn_ ) {
+        std::cout << "save image warning! " << warn_.what() << std::endl;
+    }
+    return true;
 }

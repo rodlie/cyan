@@ -91,6 +91,7 @@ public:
     std::string backendInfo();
 
     void clearImage(FXX::Image data);
+    bool saveImage(FXX::Image data);
 
     /*bool hasJPEG;
     bool hasPNG;
