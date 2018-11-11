@@ -1,4 +1,4 @@
-/*
+#
 # Cyan <http://prepress.sf.net> <https://cyan.fxarena.net>,
 # Copyright (C) 2016, 2017, 2018 Ole-André Rodlie<ole.andre.rodlie@gmail.com>
 #
@@ -13,20 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
-*/
+#
 
-#include "cyan.h"
-#include <QApplication>
+QT_CONFIG -= no-pkg-config
+CONFIG += link_pkgconfig
+PKGCONFIG += lcms2 Magick++
+LIBS += `pkg-config --libs --static Magick++`
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    QCoreApplication::setApplicationName("Cyan");
-    QCoreApplication::setOrganizationName("Cyan");
-    QCoreApplication::setOrganizationDomain("net.fxarena");
-    QCoreApplication::setApplicationVersion(CYAN_VERSION);
-    Cyan w;
-    w.show();
-
-    return a.exec();
-}

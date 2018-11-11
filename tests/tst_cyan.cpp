@@ -15,18 +15,37 @@
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 */
 
-#include "cyan.h"
-#include <QApplication>
+#include <QtTest>
 
-int main(int argc, char *argv[])
+class Cyan : public QObject
 {
-    QApplication a(argc, argv);
-    QCoreApplication::setApplicationName("Cyan");
-    QCoreApplication::setOrganizationName("Cyan");
-    QCoreApplication::setOrganizationDomain("net.fxarena");
-    QCoreApplication::setApplicationVersion(CYAN_VERSION);
-    Cyan w;
-    w.show();
+    Q_OBJECT
 
-    return a.exec();
+public:
+    Cyan();
+    ~Cyan();
+
+private slots:
+    void test_case1();
+
+};
+
+Cyan::Cyan()
+{
+
 }
+
+Cyan::~Cyan()
+{
+
+}
+
+void Cyan::test_case1()
+{
+    QString str = "Hello";
+    QVERIFY(str.toUpper() == "HELLO");
+}
+
+QTEST_APPLESS_MAIN(Cyan)
+
+#include "tst_cyan.moc"
