@@ -362,7 +362,6 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(openImage(QString)));
     connect(view, SIGNAL(openProfile(QString)),
             this, SLOT(openProfile(QString)));
-    connect(profileDialog.profileSaveButton, SIGNAL(released()), this, SLOT(saveProfile()));
     connect(renderingIntent, SIGNAL(currentIndexChanged(int)),
             this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)),
@@ -1174,62 +1173,11 @@ void Cyan::gimpPlugin()
 
 void Cyan::openProfile(QString file)
 {
-    qDebug() << "OPEN PROFILE" << file;
     if (!file.isEmpty()) {
-        /*profileDialog.profileCopyright->clear();
-        profileDialog.profileDescription->clear();
-        profileDialog.profileFileName->clear();
-
-        profileDialog.profileCopyright->setText(cms.profileCopyrightFromFile(file));
-        profileDialog.profileDescription->setText(cms.profileDescFromFile(file));
-        profileDialog.profileFileName->setText(file);
-
-        QString specs = QString::fromStdString(fx.identify(file.toStdString()));
-        if (!profileDialog.profileDescription->text().isEmpty()) {
-            profileDialog.show();
-        } else {
-            QMessageBox::warning(this, tr("Unsupported Color Profile"), tr("Unable to read the requested color profile."));
-        }*/
+        ProfileDialog *dialog = new ProfileDialog(this, file);
+        dialog->exec();
     }
 }
-
-void Cyan::saveProfile()
-{
-    if (!profileDialog.profileDescription->text().isEmpty() && !profileDialog.profileFileName->text().isEmpty()) {
-        /*QSettings settings;
-        settings.beginGroup("default");
-
-        QString dir;
-        if (settings.value("lastSaveDir").isValid()) {
-            dir = settings.value("lastSaveDir").toString();
-        } else {
-            dir = QDir::homePath();
-        }
-        QString output = QFileDialog::getSaveFileName(this, tr("Save Color Profile"), dir, tr("Color profiles (*.icc)"));
-        if (!output.isEmpty()) {
-            QFileInfo outFile(output);
-            if (outFile.suffix().isEmpty() || outFile.suffix() != "icc") {
-                output.append(".icc");
-            }
-            if (cms.editProfile(profileDialog.profileFileName->text(), output, profileDialog.profileDescription->text(), profileDialog.profileCopyright->text())) {
-                QMessageBox::information(this, tr("Saved Color Profile"), tr("Color profile saved to disk."));
-                profileDialog.profileCopyright->clear();
-                profileDialog.profileDescription->clear();
-                profileDialog.profileFileName->clear();
-                profileDialog.hide();
-            } else {
-                QMessageBox::warning(this, tr("Unable to save"), tr("Failed to save color profile."));
-            }
-            settings.setValue("lastSaveDir", outFile.absoluteDir().absolutePath());
-        }
-        settings.endGroup();
-        settings.sync();*/
-    } else {
-        QMessageBox::warning(this, tr("Unable to save"), tr("Nothing to save, please check the profile information."));
-    }
-}
-
-
 
 void Cyan::renderingIntentUpdated(int)
 {

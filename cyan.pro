@@ -53,8 +53,8 @@ LIBS += `pkg-config --libs --static Magick++`
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
-QMAKE_TARGET_DESCRIPTION = "Prepress Toolkit"
-QMAKE_TARGET_COPYRIGHT = "Copyright (c)2018 Ole-Andre Rodlie"
+QMAKE_TARGET_DESCRIPTION = "Prepress Editor"
+QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016-2018 Ole-Andre Rodlie"
 
 unix:!mac {
     isEmpty(PREFIX) {

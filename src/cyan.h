@@ -79,7 +79,6 @@ private:
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
-    ProfileDialog profileDialog;
     FXX::Image imageData;
     QDockWidget *imageInfoDock;
     QTreeWidget *imageInfoTree;
@@ -140,7 +139,6 @@ private slots:
     void gimpPlugin();
 
     void openProfile(QString file);
-    void saveProfile();
 
     void renderingIntentUpdated(int);
     void blackPointUpdated(int);
