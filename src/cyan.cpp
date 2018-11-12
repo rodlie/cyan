@@ -1215,7 +1215,10 @@ void Cyan::loadedImage(FXX::Image image)
         if (!imageData.info.empty()) { parseImageInfo(); }
         getConvertProfiles();
     } else if (!image.error.empty()) {
-        qDebug() << "image error" << QString::fromStdString(image.error);
+        QMessageBox::warning(this, tr("Image error"), QString::fromStdString(image.error));
+    }
+    if (!image.warning.empty()) {
+        QMessageBox::warning(this, tr("Image warning"), QString::fromStdString(image.warning));
     }
 }
 
@@ -1223,14 +1226,17 @@ void Cyan::convertedImage(FXX::Image image)
 {
     qDebug() << "handle converted image" << QString::fromStdString(image.filename);
     enableUI();
-    if (image.previewBuffer.size()>0) {
+    if (image.previewBuffer.size()>0 && image.error.empty()) {
         setImage(QByteArray((char*)image.previewBuffer.data(),
                             (int)image.previewBuffer.size()));
         imageData.info = image.info;
         imageData.workBuffer = image.imageBuffer;
         parseImageInfo();
-    } else {
-        qDebug() << "image preview missing!!!";
+    } else if (!image.error.empty()) {
+        QMessageBox::warning(this, tr("Image error"), QString::fromStdString(image.error));
+    }
+    if (!image.warning.empty()) {
+        QMessageBox::warning(this, tr("Image warning"), QString::fromStdString(image.warning));
     }
 }
 

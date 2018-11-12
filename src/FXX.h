@@ -110,12 +110,12 @@ public:
     void clearImage(FXX::Image data);
     bool saveImage(FXX::Image data);
 
-    /*bool hasJPEG;
-    bool hasPNG;
-    bool hasTIFF;
-    bool hasLCMS;
-    bool hasPSD;
-    int hasDepth;*/
+    bool hasJPEG();
+    bool hasPNG();
+    bool hasTIFF();
+    bool hasLCMS();
+    bool hasHDRI();
+    bool hasMP();
 };
 
 #endif // FXX_H

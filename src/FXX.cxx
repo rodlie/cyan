@@ -168,13 +168,20 @@ FXX::Image FXX::convertImage(FXX::Image input, bool getInfo)
     if (input.imageBuffer.size()>0 &&
         input.iccInputBuffer.size()>0)
     {
-        std::cout << "converting image" << input.filename << input.depth << std::endl;
+        Magick::Image image;
         try {
-            Magick::Image image;
             Magick::Blob tmp(input.imageBuffer.data(),
                              input.imageBuffer.size());
             image.read(tmp); // read image
-
+        }
+        catch(Magick::Error &error_ ) {
+            result.error.append(error_.what());
+            return result;
+        }
+        catch(Magick::Warning &warn_ ) {
+            result.warning.append(warn_.what());
+        }
+        try {
             // change bit depth
             if (input.depth>0) {
                //image.channelDepth(Magick::ChannelType::AllChannels, input.depth);
@@ -513,4 +520,34 @@ bool FXX::saveImage(FXX::Image data)
         std::cout << "save image warning! " << warn_.what() << std::endl;
     }
     return true;
+}
+
+bool FXX::hasJPEG()
+{
+    return false;
+}
+
+bool FXX::hasPNG()
+{
+    return false;
+}
+
+bool FXX::hasTIFF()
+{
+    return false;
+}
+
+bool FXX::hasLCMS()
+{
+    return false;
+}
+
+bool FXX::hasHDRI()
+{
+    return false;
+}
+
+bool FXX::hasMP()
+{
+    return false;
 }
