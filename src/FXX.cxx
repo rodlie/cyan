@@ -325,9 +325,6 @@ std::string FXX::getProfileTag(cmsHPROFILE profile,
         cmsUInt32Number size = 0;
         cmsInfoType cmsSelectedType;
         switch(tag) {
-        case FXX::ICCDescription:
-            cmsSelectedType = cmsInfoDescription;
-            break;
         case FXX::ICCManufacturer:
             cmsSelectedType = cmsInfoManufacturer;
             break;
@@ -337,6 +334,8 @@ std::string FXX::getProfileTag(cmsHPROFILE profile,
         case FXX::ICCCopyright:
             cmsSelectedType = cmsInfoCopyright;
             break;
+        default:
+            cmsSelectedType = cmsInfoDescription;
         }
         size = cmsGetProfileInfoASCII(profile, cmsSelectedType,
                                       "en", "US", nullptr, 0);
@@ -524,30 +523,42 @@ bool FXX::saveImage(FXX::Image data)
 
 bool FXX::hasJPEG()
 {
+    std::string result = MagickCore::GetMagickDelegates();
+    if (result.find("jpeg") != std::string::npos) { return true; }
     return false;
 }
 
 bool FXX::hasPNG()
 {
+    std::string result = MagickCore::GetMagickDelegates();
+    if (result.find("png") != std::string::npos) { return true; }
     return false;
 }
 
 bool FXX::hasTIFF()
 {
+    std::string result = MagickCore::GetMagickDelegates();
+    if (result.find("tiff") != std::string::npos) { return true; }
     return false;
 }
 
 bool FXX::hasLCMS()
 {
+    std::string result = MagickCore::GetMagickDelegates();
+    if (result.find("lcms") != std::string::npos) { return true; }
     return false;
 }
 
 bool FXX::hasHDRI()
 {
+    std::string result = MagickCore::GetMagickFeatures();
+    if (result.find("HDRI") != std::string::npos) { return true; }
     return false;
 }
 
 bool FXX::hasMP()
 {
+    std::string result = MagickCore::GetMagickFeatures();
+    if (result.find("OpenMP") != std::string::npos) { return true; }
     return false;
 }

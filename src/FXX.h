@@ -100,7 +100,6 @@ public:
     FXX::ColorSpace getProfileColorspace(std::string file);
     FXX::ColorSpace getProfileColorspace(cmsHPROFILE profile);
 
-
     std::string identify(std::vector<unsigned char> buffer);
     std::string identify(std::string file);
 
