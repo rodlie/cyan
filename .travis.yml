@@ -12,6 +12,7 @@ install:
 script:
   - export CWD=`pwd`
   - wget https://sourceforge.net/projects/prepress/files/opensource/ImageMagick-6.9.8-10.tar.xz/download
+  - mv download ImageMagick-6.9.8-10.tar.xz
   - tar xvf ImageMagick-6.9.8-10.tar.xz
   - cd ImageMagick-6.9.8-10
   - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
