@@ -1,0 +1,24 @@
+language: cpp
+compiler: g++
+dist: trusty
+sudo: required
+
+before_install:
+  - sudo apt-get update
+
+install:
+  - sudo apt-get install tree qtbase5-dev libpng-dev libjpeg-dev lcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
+  
+script:
+  - export CWD=`pwd`
+  - git clone https://github.com/ImageMagick/ImageMagick6
+  - cd ImageMagick6
+  - git checkout 6.9.8-10
+  - ./configure --prefix=/usr --disable-shared --enable-static --enable-hdri --with-quantum-depth=16 --without-x
+  - make
+  - sudo make install
+  - mkdir -p $CWD/ci
+  - cd $CWD/ci
+  - qmake -qt=qt5 CONFIG+=release PREFIX=/usr $CWD/cyan.pro
+  - make && make INSTALL_ROOT=`pwd`/pkg install
+  - tree pkg
