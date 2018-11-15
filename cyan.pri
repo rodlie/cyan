@@ -17,6 +17,11 @@
 
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
-PKGCONFIG += lcms2 Magick++
-LIBS += `pkg-config --libs --static Magick++`
+PKGCONFIG += lcms2
+MAGICK_CONFIG = ImageMagick++
+#!CONFIG(magick): MAGICK_CONFIG = $${magick}
+!isEmpty(MAGICK): MAGICK_CONFIG=$${MAGICK}
+
+PKGCONFIG += $${MAGICK_CONFIG}
+LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
 
