@@ -11,14 +11,15 @@ install:
   
 script:
   - export CWD=`pwd`
-  - git clone https://github.com/ImageMagick/ImageMagick6
-  - cd ImageMagick6
-  - git checkout 6.9.8-10
+  - wget https://sourceforge.net/projects/prepress/files/opensource/ImageMagick-6.9.8-10.tar.xz/download
+  - tar xvf ImageMagick-6.9.8-10.tar.xz
+  - cd ImageMagick-6.9.8-10
   - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
   - make
   - sudo make install
   - mkdir -p $CWD/ci
   - cd $CWD/ci
   - qmake -qt=qt5 CONFIG+=release PREFIX=/usr $CWD/cyan.pro
-  - make && make INSTALL_ROOT=`pwd`/pkg install
+  - make
+  - make INSTALL_ROOT=`pwd`/pkg install
   - tree pkg
