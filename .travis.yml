@@ -7,14 +7,14 @@ before_install:
   - sudo apt-get update
 
 install:
-  - sudo apt-get install tree qtbase5-dev libpng-dev libjpeg-dev lcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
+  - sudo apt-get install tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
   
 script:
   - export CWD=`pwd`
   - git clone https://github.com/ImageMagick/ImageMagick6
   - cd ImageMagick6
   - git checkout 6.9.8-10
-  - ./configure --prefix=/usr --disable-shared --enable-static --enable-hdri --with-quantum-depth=16 --without-x
+  - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
   - make
   - sudo make install
   - mkdir -p $CWD/ci
