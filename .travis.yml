@@ -7,6 +7,7 @@ before_install:
   - sudo apt-get update
 
 install:
+  - sudo apt remove --purge imagemagick
   - sudo apt-get install tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
   
 script:
