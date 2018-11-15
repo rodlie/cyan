@@ -494,14 +494,6 @@ void Cyan::aboutCyan()
     infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
     aboutCyan.setInformativeText(infoText);
 
-    QString detailedText;
-    QFile licenseOther(":/3rdparty.txt");
-    if (licenseOther.open(QIODevice::ReadOnly)) {
-        detailedText.append(QString::fromUtf8(licenseOther.readAll()));
-        licenseOther.close();
-    }
-    aboutCyan.setDetailedText(detailedText);
-
     aboutCyan.exec();
 }
 

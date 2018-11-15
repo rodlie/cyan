@@ -59,8 +59,7 @@ unix:!mac {
     target_docs.files = ../COPYING
     INSTALLS += target target_desktop target_docs
 
-    icon128.files = ../res/hicolor/128x128/apps/cyan.png
-    icon128.path = $${PREFIX}/share/icons/hicolor/128x128/apps
+
     icon16.files = ../res/hicolor/16x16/apps/cyan.png
     icon16.path = $${PREFIX}/share/icons/hicolor/16x16/apps
     icon20.files = ../res/hicolor/20x20/apps/cyan.png
@@ -79,10 +78,22 @@ unix:!mac {
     icon72.path = $${PREFIX}/share/icons/hicolor/72x72/apps
     icon96.files = ../res/hicolor/96x96/apps/cyan.png
     icon96.path = $${PREFIX}/share/icons/hicolor/96x96/apps
+    icon128.files = ../res/hicolor/128x128/apps/cyan.png
+    icon128.path = $${PREFIX}/share/icons/hicolor/128x128/apps
+    icon160.files = ../res/hicolor/160x160/apps/cyan.png
+    icon160.path = $${PREFIX}/share/icons/hicolor/160x160/apps
+    icon192.files = ../res/hicolor/192x192/apps/cyan.png
+    icon192.path = $${PREFIX}/share/icons/hicolor/192x192/apps
+    icon256.files = ../res/hicolor/256x256/apps/cyan.png
+    icon256.path = $${PREFIX}/share/icons/hicolor/256x256/apps
+    icon512.files = ../res/hicolor/512x512/apps/cyan.png
+    icon512.path = $${PREFIX}/share/icons/hicolor/512x512/apps
 
-    INSTALLS += icon128 icon16 icon20 icon22 \
-                icon24 icon32 icon48 icon64 \
-                icon72 icon96
+    INSTALLS += icon16 icon20 icon22 \
+                icon24 icon32 icon48 \
+                icon64 icon72 icon96 \
+                icon128 icon160 icon192 \
+                icon256 icon512
 }
 mac {
     ICON = ../res/Cyan.icns
