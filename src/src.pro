@@ -35,14 +35,12 @@ HEADERS  += \
 RESOURCES += \
     ../res/cyan.qrc
 
-#INCLUDEPATH += lib
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
 RCC_DIR = $${DESTDIR}/.qrc
 
 QT += core gui widgets
-CONFIG += c++11
 TEMPLATE = app
 
 include(../cyan.pri)
@@ -54,12 +52,6 @@ QMAKE_TARGET_DESCRIPTION = "Prepress Editor"
 QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016-2018 Ole-Andre Rodlie"
 
 unix:!mac {
-    isEmpty(PREFIX) {
-        PREFIX = /usr/local
-    }
-    isEmpty(DOCDIR) {
-        DOCDIR = $$PREFIX/share/doc
-    }
     target.path = $${PREFIX}/bin
     target_icon.path = $${PREFIX}/share/pixmaps
     target_icon.files = ../res/cyan.png
@@ -72,9 +64,10 @@ unix:!mac {
 mac {
     ICON = ../res/Cyan.icns
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -fopenmp
 }
 win32 {
     RC_ICONS += ../res/cyan.ico
     LIBS += -lpthread
-    #-lws2_32 -lole32
 }

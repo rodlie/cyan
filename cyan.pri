@@ -15,13 +15,16 @@
 # along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
 #
 
+CONFIG += c++11
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG += lcms2
 MAGICK_CONFIG = ImageMagick++
-#!CONFIG(magick): MAGICK_CONFIG = $${magick}
 !isEmpty(MAGICK): MAGICK_CONFIG=$${MAGICK}
 
 PKGCONFIG += $${MAGICK_CONFIG}
 LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
 
+isEmpty(PREFIX): PREFIX = /usr/local
+isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
+isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
