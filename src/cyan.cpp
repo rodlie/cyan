@@ -1218,7 +1218,6 @@ void Cyan::loadedImage(FXX::Image image)
 {
     enableUI();
     if (image.imageBuffer.size()>0 && image.error.empty()) {
-        //clearImageBuffer();
         imageClear();
         if (image.previewBuffer.size()>0) {
             resetImageZoom();
@@ -1231,6 +1230,7 @@ void Cyan::loadedImage(FXX::Image image)
         exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
         if (!imageData.info.empty()) { parseImageInfo(); }
         getConvertProfiles();
+        if (!monitorProfile->currentData().toString().isEmpty()) { updateImage(); }
     } else if (!image.error.empty()) {
         QMessageBox::warning(this, tr("Image error"), QString::fromStdString(image.error));
     }
