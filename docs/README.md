@@ -19,12 +19,21 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 # Requirements
 
- * Microsoft Windows XP (or higher)
- * Apple Mac OS X Lion (or higher)
- * Linux/FreeBSD
- * A color calibrated monitor (with available color profile) recommended
- * Additional ICC/ICM color profiles recommended
-
+ * Microsoft Windows XP
+ * Apple Mac OS X Lion
+ * Linux/FreeBSD (source-only)
+ 
+ ### Recommended
+ 
+ * A bitmap editor for more advanced usage
+   * [GIMP](https://www.gimp.org)
+   * [Krita](https://krita.org)
+ * A color calibrated monitor (with available profile)
+   * [DisplayCAL](https://displaycal.net/)
+ * Additional ICC color profiles
+   * [colormanagement.org](http://www.colormanagement.org)
+   * [Adobe ICC](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html)
+  
 # News
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-02.png)
 
@@ -45,6 +54,12 @@ News and updates related to Cyan.
 # Open Source
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-05.png)
 
-...
+Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
+
+**Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.**  *See the GNU General Public License for more details.*
+
+Cyan is copyright (c)2016-2018 Ole-André Rodlie. All rights reserved.
+
+The source repository is hosted on [Github](https://github.com/rodlie/cyan) and the binaries (and third-party sources needed to create the binaries) are hosted on [Sourceforge](https://sourceforge.net/projects/prepress/files/).
 
 [![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) ![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
