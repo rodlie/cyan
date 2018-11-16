@@ -23,14 +23,14 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  * Apple Mac OS X Lion 10.7 (+)
  * Linux/FreeBSD (source-only)
  
- ## Recommended
+ Recommended requirements and additional files:
  
  * A bitmap editor for more advanced usage
    * [GIMP](https://www.gimp.org)
    * [Krita](https://krita.org)
  * A color calibrated monitor (with available profile)
    * [DisplayCAL](https://displaycal.net/)
- * Additional ICC color profiles
+ * ICC color profiles
    * [colormanagement.org](http://www.colormanagement.org)
    * [Adobe ICC](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html)
   
@@ -66,6 +66,8 @@ The source repository is hosted on [Github](https://github.com/rodlie/cyan) and 
 
 Cyan requires the following third-party software installed before build:
 
+ * [Qt(base)](https://www.qt.io/) 5.x
+ * [LCMS](http://www.littlecms.com/) 2.x
  * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.8-10
    * [LCMS](http://www.littlecms.com/) 2.x
    * [TIFF](http://www.simplesystems.org/libtiff/) 4.0.x
@@ -74,8 +76,6 @@ Cyan requires the following third-party software installed before build:
    * With quantum depth 16+
    * With HDRI
    * With OpenMP
- * [LCMS](http://www.littlecms.com/) 2.x
- * [Qt(base)](https://www.qt.io/) 5.x
  
  Doing a regular user build:
  ```
