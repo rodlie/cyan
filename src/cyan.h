@@ -83,6 +83,7 @@ private:
     QDockWidget *imageInfoDock;
     QTreeWidget *imageInfoTree;
     QAction *helpAction;
+    bool ignoreAction;
 
 private slots:
     void readConfig();

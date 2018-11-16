@@ -34,6 +34,8 @@ public:
 private:
     FXX fx;
     QThread t;
+    bool loading;
+    bool converting;
 
 signals:
     void loadedImage(FXX::Image result);
@@ -42,6 +44,8 @@ signals:
 public slots:
     void requestImage(const QString &file, const FXX::Image &failsafe);
     void requestConvert(const FXX::Image &image);
+    bool isLoading();
+    bool isConverting();
 
 private slots:
     void readImage(const QString &file, const FXX::Image &failsafe);

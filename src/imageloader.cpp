@@ -16,8 +16,11 @@
 */
 
 #include "imageloader.h"
+#include <QDebug>
 
 ImageLoader::ImageLoader(QObject *parent) : QObject(parent)
+  , loading(false)
+  , converting(false)
 {
     moveToThread(&t);
     t.start();
@@ -41,17 +44,36 @@ void ImageLoader::requestConvert(const FXX::Image &image)
     QMetaObject::invokeMethod(this, "convertImage", Q_ARG(FXX::Image, image));
 }
 
+bool ImageLoader::isLoading()
+{
+    return loading;
+}
+
+bool ImageLoader::isConverting()
+{
+    return converting;
+}
+
 void ImageLoader::readImage(const QString &file, const FXX::Image &failsafe)
 {
     FXX::Image imageData;
-    if (!file.isEmpty()) {
-        //std::vector<unsigned char> profile(failsafe.begin(), failsafe.end());
+    if (!file.isEmpty() /*&& !loading && !converting*/) {
+        qDebug() << "Loading image" << file << QString::fromStdString(failsafe.filename);
+        loading = true;
         imageData = fx.readImage(file.toStdString(), failsafe);
+        loading = false;
     }
     emit loadedImage(imageData);
 }
 
 void ImageLoader::convertImage(const FXX::Image &image)
 {
-    emit convertedImage(fx.convertImage(image));
+    FXX::Image result;
+    if (image.imageBuffer.size()>0 /*&& !loading && !converting*/) {
+        qDebug() << "Converting image" << QString::fromStdString(image.filename);
+        converting = true;
+        result= fx.convertImage(image);
+        converting = false;
+    }
+    emit convertedImage(result);
 }

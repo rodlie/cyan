@@ -75,6 +75,7 @@ Cyan::Cyan(QWidget *parent)
     , imageInfoDock(Q_NULLPTR)
     , imageInfoTree(Q_NULLPTR)
     , helpAction(Q_NULLPTR)
+    , ignoreAction(false)
 {
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
@@ -806,10 +807,13 @@ void Cyan::updateMonitorDefaultProfile(int index)
 
 void Cyan::imageClear()
 {
+    ignoreAction = true;
     scene->clear();
     resetImageZoom();
     clearImageBuffer();
+    bitDepth->setCurrentIndex(0);
     exportEmbeddedProfileAction->setDisabled(true);
+    ignoreAction = false;
 }
 
 void Cyan::resetImageZoom()
@@ -831,6 +835,12 @@ void Cyan::setImage(QByteArray image)
 
 void Cyan::updateImage()
 {
+    if (ignoreAction || loader.isConverting() || loader.isLoading()) {
+        qDebug() << "ignore action?" << ignoreAction;
+        qDebug() << "is loading?" << loader.isLoading();
+        qDebug() << "is converting?" << loader.isConverting();
+        return;
+    }
     FXX::Image image;
     image.imageBuffer = imageData.imageBuffer;
     QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
@@ -939,6 +949,8 @@ void Cyan::getConvertProfiles()
     if (imageData.iccInputBuffer.size()==0) { return; }
     FXX::ColorSpace inputColorSpace = fx.getProfileColorspace(imageData.iccInputBuffer);
     if (inputColorSpace == FXX::UnknownColorSpace) { return; }
+
+    ignoreAction = true;
     QMap<QString,QString> inputProfiles, outputProfiles;
 
     switch(inputColorSpace) {
@@ -981,6 +993,7 @@ void Cyan::getConvertProfiles()
         outputMap.next();
         outputProfile->addItem(itemIcon, outputMap.key(), outputMap.value());
     }
+    ignoreAction = false;
 }
 
 void Cyan::inputProfileChanged(int)
