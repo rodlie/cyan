@@ -25,15 +25,18 @@ SOURCES += \
     FXX.cxx \
     imageloader.cpp \
     imageview.cpp \
-    profiledialog.cpp
+    profiledialog.cpp \
+    helpdialog.cpp
 HEADERS  += \
     cyan.h \
     FXX.h \
     imageloader.h \
     imageview.h \
-    profiledialog.h
+    profiledialog.h \
+    helpdialog.h
 RESOURCES += \
-    ../res/cyan.qrc
+    ../res/cyan.qrc \
+    ../docs/docs.qrc
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj

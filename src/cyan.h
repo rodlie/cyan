@@ -82,6 +82,7 @@ private:
     FXX::Image imageData;
     QDockWidget *imageInfoDock;
     QTreeWidget *imageInfoTree;
+    QAction *helpAction;
 
 private slots:
     void readConfig();
@@ -151,6 +152,8 @@ private slots:
 
     QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
+
+    void openHelp();
 };
 
 #endif // CYAN_H

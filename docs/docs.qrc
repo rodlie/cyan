@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/docs">
+        <file>images/cyan-promo-01.png</file>
+        <file>images/cyan-promo-04.png</file>
+        <file>images/cyan-promo-05.png</file>
+        <file>images/cyan-promo-06.png</file>
+        <file>cyan.html</file>
+    </qresource>
+</RCC>

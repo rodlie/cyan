@@ -39,6 +39,8 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 
+#include "helpdialog.h"
+
 #ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
 #else
@@ -72,6 +74,7 @@ Cyan::Cyan(QWidget *parent)
     , bitDepth(Q_NULLPTR)
     , imageInfoDock(Q_NULLPTR)
     , imageInfoTree(Q_NULLPTR)
+    , helpAction(Q_NULLPTR)
 {
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
@@ -294,6 +297,10 @@ Cyan::Cyan(QWidget *parent)
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
 
+    QAction *helpAction = new QAction(tr("Documentation"), this);
+    helpAction->setIcon(QIcon(":/cyan.png"));
+    helpMenu->addAction(helpAction);
+
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
     aboutAction->setIcon(QIcon(":/cyan.png"));
@@ -333,6 +340,8 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(loadedImage(FXX::Image)));
     connect(&loader, SIGNAL(convertedImage(FXX::Image)),
             this, SLOT(convertedImage(FXX::Image)));
+    connect(helpAction, SIGNAL(triggered()),
+            this, SLOT(openHelp()));
     connect(aboutAction, SIGNAL(triggered()),
             this, SLOT(aboutCyan()));
     connect(aboutQtAction, SIGNAL(triggered()),
@@ -1364,4 +1373,15 @@ QByteArray Cyan::getDefaultProfile(FXX::ColorSpace colorspace)
         }
     }
     return bytes;
+}
+
+void Cyan::openHelp()
+{
+    QFile htmlFile(":/docs/cyan.html");
+    if (htmlFile.open(QIODevice::ReadOnly)) {
+        QByteArray data = htmlFile.readAll();
+        htmlFile.close();
+        HelpDialog *dialog = new HelpDialog(this, data);
+        dialog->exec();
+    }
 }
