@@ -62,4 +62,37 @@ Cyan is copyright (c)2016-2018 Ole-André Rodlie. All rights reserved.
 
 The source repository is hosted on [Github](https://github.com/rodlie/cyan) and the binaries (and third-party sources needed to create the binaries) are hosted on [Sourceforge](https://sourceforge.net/projects/prepress/files/).
 
+## Build
+
+Cyan requires the following third-party software installed before build:
+
+ * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.8-10
+   * [LCMS](http://www.littlecms.com/) 2.x
+   * [TIFF](http://www.simplesystems.org/libtiff/) 4.0.x
+   * [JPEG](https://www.ijg.org/) 9
+   * [PNG](http://www.libpng.org/pub/png/libpng.html) 1.6.x
+   * With quantum depth 16+
+   * With HDRI
+   * With OpenMP
+ * [LCMS](http://www.littlecms.com/) 2.x
+ * [Qt5(base)](https://www.qt.io/) 5.x
+ 
+ Regular user build:
+ ```
+ mkdir build && cd build
+ qmake CONFIG+=release ..
+ make
+ ```
+ 
+ Cyan is now available in ``src/build/Cyan``.
+ 
+ Packaging example:
+ ```
+ qmake CONFIG+=release PREFIX=/usr ..
+ make
+ make INSTALL_ROOT=/path/to/pkg/tmp install
+ ```
+ 
+ ***If the unit tests fails do not use Cyan. A failed unit test means that the image output from Cyan will not be as expected. The primary reason for a failed unit test is a unsupported (broken) version of ImageMagick.***
+ 
 [![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) ![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
