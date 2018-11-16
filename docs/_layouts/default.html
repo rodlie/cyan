@@ -18,12 +18,8 @@
           <img src="{{site.logo | relative_url}}" alt="Logo" />
         {% endif %}
 
-        <a href="https://sourceforge.net/projects/prepress/files/latest/download"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a>
-        
-        {% if site.github.is_project_page %}
-        <p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ site.github.repository_nwo }}</small></a></p>
-        {% endif %}
-        
+        <a target="_blank" href="https://sourceforge.net/projects/prepress/files/latest/download"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a>
+                
         {% if site.show_downloads %}
         <ul class="downloads">
           <li><a href="{{ site.github.zip_url }}">Download <strong>ZIP File</strong></a></li>
@@ -38,7 +34,7 @@
 
       </section>
       <footer>
-        <p><small>Hosted on GitHub and Sourceforge &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a>. Cyan is &copy;2016-2018 Ole-André Rodlie. All rights reserved.</small></p>
+        <p><small>Hosted on <a target="_blank" href="https://github.com/rodlie/cyan">GitHub</a> and <a target="_blank" href="https://sourceforge.net/p/prepress">Sourceforge</a> &mdash; Theme by <a target="_blank" href="https://github.com/orderedlist">orderedlist</a>. Cyan is &copy; 2016-2018 <a target="_blank" href="https://github.com/rodlie">Ole-André Rodlie</a>. All rights reserved.</small></p>
       </footer>
     </div>
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
