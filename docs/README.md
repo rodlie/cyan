@@ -1,7 +1,7 @@
 # Cyan
 
 Open Source cross-platform prepress image viewer and converter.
-![Promo](images/cyan-promo-01.png)
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-01.png)
 
 # Features
 
