@@ -1,3 +1,5 @@
+![Promo](images/cyan-promo-01.png)
+
 [![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/latest/download)
 
 # Features
