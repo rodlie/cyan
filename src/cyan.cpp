@@ -92,11 +92,8 @@ Cyan::Cyan(QWidget *parent)
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
-    setStyleSheet(QString("QLabel {margin-left:5px;margin-right:5px;}"
-                          "QComboBox {padding:3px;}"
-                          "QLabel, QComboBox, QDoubleSpinBox, QMenuBar "
-                          "{font-size: %1pt;}")
-                  .arg(QString::number(CYAN_FONT_SIZE)));
+    setStyleSheet(QString("*{font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
+    QString padding = "margin-right:5px;";
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
 
@@ -224,6 +221,16 @@ Cyan::Cyan(QWidget *parent)
     cmykLabel->setText(tr("CMYK"));
     grayLabel->setText(tr("GRAY"));
     bitDepthLabel->setText(tr("Depth"));
+
+    inputLabel->setStyleSheet(padding);
+    outputLabel->setStyleSheet(padding);
+    monitorLabel->setStyleSheet(padding);
+    renderLabel->setStyleSheet(padding);
+    blackLabel->setStyleSheet(padding);
+    rgbLabel->setStyleSheet(padding);
+    cmykLabel->setStyleSheet(padding);
+    grayLabel->setStyleSheet(padding);
+    bitDepthLabel->setStyleSheet(padding);
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -536,7 +543,7 @@ void Cyan::saveImageDialog()
     if (imageData.imageBuffer.size()==0) { return; }
 
     if (!lockedSaveFileName.isEmpty()) {
-        saveImage(lockedSaveFileName);
+        saveImage(lockedSaveFileName, false /* dont notify */, true /* quit when done */);
     } else {
         QSettings settings;
         settings.beginGroup("default");
@@ -597,12 +604,8 @@ void Cyan::openImage(QString file)
     loader.requestImage(file, profiles);
 }
 
-void Cyan::saveImage(QString file)
+void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
 {
-    qDebug() << "SAVE TODO" << file;
-    qDebug() << "IMAGE BUFFER" << imageData.imageBuffer.size();
-    qDebug() << "WORK BUFFER" << imageData.workBuffer.size();
-
     if (file.isEmpty()) { return; }
     bool hasWork = imageData.workBuffer.size()>0;
     bool hasMaster = imageData.imageBuffer.size()>0;
@@ -621,8 +624,11 @@ void Cyan::saveImage(QString file)
 
     disableUI();
     if (fx.saveImage(output)) {
-        QMessageBox::information(this, tr("Image save"), tr("Image saved to %1.")
-                                                         .arg(file));
+        if (notify) {
+            QMessageBox::information(this, tr("Image save"), tr("Image saved to %1.")
+                                                             .arg(file));
+        }
+        if (closeOnSave) { QTimer::singleShot(0, qApp, SLOT(quit())); }
     } else {
         QMessageBox::warning(this, tr("Failed to save image"),
                              tr("Failed to save image, please file permissions or similar."));
@@ -816,8 +822,6 @@ void Cyan::setImage(QByteArray image)
 
 void Cyan::updateImage()
 {
-    qDebug() << "UPDATE IMAGE";
-
     FXX::Image image;
     image.imageBuffer = imageData.imageBuffer;
     QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
@@ -1190,7 +1194,6 @@ int Cyan::supportedDepth()
 
 void Cyan::loadedImage(FXX::Image image)
 {
-    qDebug() << "handle loaded image" << QString::fromStdString(image.filename);
     enableUI();
     if (image.imageBuffer.size()>0 && image.error.empty()) {
         //clearImageBuffer();
@@ -1216,7 +1219,6 @@ void Cyan::loadedImage(FXX::Image image)
 
 void Cyan::convertedImage(FXX::Image image)
 {
-    qDebug() << "handle converted image" << QString::fromStdString(image.filename);
     enableUI();
     if (image.previewBuffer.size()>0 && image.error.empty()) {
         setImage(QByteArray((char*)image.previewBuffer.data(),
