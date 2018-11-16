@@ -1,6 +1,7 @@
-![Promo](images/cyan-promo-01.png)
+# Cyan
 
-[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/latest/download)
+Open Source cross-platform prepress image viewer and converter.
+![Promo](images/cyan-promo-01.png)
 
 # Features
 
