@@ -19,5 +19,4 @@ sdk
 *.txz
 *.zip
 CHANGES
-ChangeLog
 .DS_Store
