@@ -84,6 +84,7 @@ private:
     QTreeWidget *imageInfoTree;
     QAction *helpAction;
     bool ignoreAction;
+    QProgressBar *progBar;
 
 private slots:
     void readConfig();

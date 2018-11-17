@@ -76,6 +76,7 @@ Cyan::Cyan(QWidget *parent)
     , imageInfoTree(Q_NULLPTR)
     , helpAction(Q_NULLPTR)
     , ignoreAction(false)
+    , progBar(Q_NULLPTR)
 {
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
@@ -249,6 +250,12 @@ Cyan::Cyan(QWidget *parent)
                              "used when image don't have an embedded profile"));
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
 
+    progBar = new QProgressBar(this);
+    progBar->setTextVisible(false);
+    progBar->setRange(0,1);
+    progBar->setValue(1);
+    progBar->setMaximumWidth(70);
+
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
     convertBar->addSeparator();
@@ -256,6 +263,7 @@ Cyan::Cyan(QWidget *parent)
     convertBar->addWidget(outputProfile);
     convertBar->addWidget(bitDepthLabel);
     convertBar->addWidget(bitDepth);
+    convertBar->addWidget(progBar);
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
@@ -1012,6 +1020,9 @@ void Cyan::outputProfileChanged(int)
 
 void Cyan::enableUI()
 {
+    progBar->setRange(0,1);
+    progBar->setValue(1);
+
     menuBar->setEnabled(true);
     mainBar->setEnabled(true);
     convertBar->setEnabled(true);
@@ -1020,6 +1031,9 @@ void Cyan::enableUI()
 
 void Cyan::disableUI()
 {
+    progBar->setRange(0,0);
+    progBar->setValue(0);
+
     menuBar->setDisabled(true);
     mainBar->setDisabled(true);
     convertBar->setDisabled(true);
