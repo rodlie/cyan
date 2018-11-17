@@ -75,10 +75,12 @@ bool Cyan::compareImages(std::vector<unsigned char> image1,
     try {
         if (!src.compare(dst)) {
             double distortion = 0.0;
-            Magick::Image errorCMYK = src.compare(dst,
+            Magick::Image errorImage = src.compare(dst,
                                                   MagickCore::AbsoluteErrorMetric,
                                                   &distortion);
-            errorCMYK.write("error.jpg");
+            errorImage.write("compare.jpg");
+            src.write("src.tif");
+            dst.write("dst.tif");
         } else { // images are identical
             return true;
         }

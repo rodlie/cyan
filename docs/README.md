@@ -68,7 +68,7 @@ Cyan requires the following third-party software installed before build:
 
  * [Qt(base)](https://www.qt.io/) 5.x
  * [LCMS](http://www.littlecms.com/) 2.x
- * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.8-10
+ * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.9-24+
    * [LCMS](http://www.littlecms.com/) 2.x
    * [TIFF](http://www.simplesystems.org/libtiff/) 4.0.x
    * [JPEG](https://www.ijg.org/) 9
