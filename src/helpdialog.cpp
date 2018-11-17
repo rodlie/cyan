@@ -29,6 +29,9 @@ HelpDialog::HelpDialog(QWidget *parent, QString html)
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+
     browser = new QTextBrowser(this);
     browser->setOpenExternalLinks(true);
     browser->setHtml(html);
