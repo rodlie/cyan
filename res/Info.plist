@@ -5,11 +5,11 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>CFBundleIconFile</key>
-	<string>Cyan</string>
+	<string>Cyan.icns</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Cyan</string>
+	<string>1.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
@@ -17,6 +17,6 @@
 	<key>CFBundleIdentifier</key>
 	<string>net.fxarena.Cyan</string>
 	<key>NOTE</key>
-	<string>Cyan</string>
+	<string>https://cyan.fxarena.net</string>
 </dict>
 </plist>

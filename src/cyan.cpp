@@ -397,6 +397,7 @@ Cyan::~Cyan()
 void Cyan::readConfig()
 {
     QSettings settings;
+    bool firstrun = false;
 
     settings.beginGroup("color");
     blackPoint->setChecked(settings.value("black").toBool());
@@ -409,7 +410,8 @@ void Cyan::readConfig()
     settings.beginGroup("ui");
     if (settings.value("state").isValid()) {
         restoreState(settings.value("state").toByteArray());
-    }
+    } else { firstrun = true; }
+
     if (settings.value("size").isValid()) {
         resize(settings.value("size", QSize(320, 256)).toSize());
     }
@@ -424,6 +426,8 @@ void Cyan::readConfig()
                                               .toByteArray());
     }
     settings.endGroup();
+
+    if (firstrun) { openHelp(); }
 
     loadDefaultProfiles();
     gimpPlugin();
@@ -1393,6 +1397,7 @@ void Cyan::openHelp()
     QFile htmlFile(":/docs/cyan.html");
     if (htmlFile.open(QIODevice::ReadOnly)) {
         QByteArray data = htmlFile.readAll();
+        data.replace("_VERSION_", CYAN_VERSION);
         htmlFile.close();
         HelpDialog *dialog = new HelpDialog(this, data);
         dialog->exec();

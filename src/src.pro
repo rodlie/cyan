@@ -100,6 +100,7 @@ unix:!mac {
 }
 mac {
     ICON = ../res/Cyan.icns
+    QMAKE_INFO_PLIST = ../res/Info.plist
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -fopenmp
