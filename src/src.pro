@@ -17,7 +17,7 @@
 
 TARGET = Cyan
 VERSION = 1.2.0
-VERSION_TYPE = "alpha3"
+VERSION_TYPE = "beta1"
 
 SOURCES += \
     main.cpp \
