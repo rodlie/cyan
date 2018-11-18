@@ -29,7 +29,7 @@ ImageLoader::ImageLoader(QObject *parent) : QObject(parent)
 ImageLoader::~ImageLoader()
 {
     t.quit();
-    t.wait();
+    t.wait(10000);
 }
 
 void ImageLoader::requestImage(const QString &file, const FXX::Image &failsafe)

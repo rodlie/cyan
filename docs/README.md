@@ -19,7 +19,8 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 # Requirements
 
- * Microsoft Windows XP (+)
+ * 4GB RAM (+)
+ * Microsoft Windows 7 x64 (+)
  * Apple Mac OS X Lion 10.7 (+)
  * Linux/FreeBSD (source-only)
  
