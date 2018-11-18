@@ -1303,7 +1303,9 @@ void Cyan::parseImageInfo()
                     item.startsWith("  Elapsed time:") ||
                     item.startsWith("  Version: Image") ||
                     item.startsWith("  Format: ") ||
-                    item.startsWith("  Class: "))
+                    item.startsWith("  Class: ") ||
+                    item.startsWith("  Base filename:") ||
+                    item.startsWith("  Mime type:"))
                 {
                     continue;
                 }

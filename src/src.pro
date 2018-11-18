@@ -59,7 +59,7 @@ unix:!mac {
     target_desktop.path = $${PREFIX}/share/applications
     target_desktop.files = ../res/cyan.desktop
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-    target_docs.files = ../COPYING
+    target_docs.files = ../COPYING ../ChangeLog ../docs/README.md
     INSTALLS += target target_desktop target_docs
 
 

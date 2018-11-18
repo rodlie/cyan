@@ -1,6 +1,6 @@
 ## 1.2.0 - 201811XX
 
- * re-write everything except GUI
+ * Major "behind-the-scene" changes
  * Improved performance
  * Improved macOS support
  * Save to JPEG
