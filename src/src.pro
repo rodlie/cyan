@@ -49,19 +49,19 @@ TEMPLATE = app
 include(../cyan.pri)
 
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
-QMAKE_TARGET_DESCRIPTION = "Prepress Editor"
-QMAKE_TARGET_COPYRIGHT = "Copyright (c)2016-2018 Ole-Andre Rodlie"
+QMAKE_TARGET_DESCRIPTION = "Cyan"
+QMAKE_TARGET_COPYRIGHT = "(c)2016-2018 Ole-Andre Rodlie"
 
 unix:!mac {
     target.path = $${PREFIX}/bin
     target_desktop.path = $${PREFIX}/share/applications
     target_desktop.files = ../res/cyan.desktop
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-    target_docs.files = ../COPYING ../ChangeLog ../docs/README.md
+    target_docs.files = ../COPYING ../docs/ChangeLog ../docs/README.md
     INSTALLS += target target_desktop target_docs
-
 
     icon16.files = ../res/hicolor/16x16/apps/cyan.png
     icon16.path = $${PREFIX}/share/icons/hicolor/16x16/apps

@@ -489,6 +489,10 @@ void Cyan::writeConfig()
 
 void Cyan::aboutCyan()
 {
+    QString version = CYAN_VERSION;
+#ifdef CYAN_GIT
+    version.append(QString(" %1").arg(CYAN_GIT));
+#endif
     QMessageBox aboutCyan;
     aboutCyan.setTextFormat(Qt::RichText);
     aboutCyan.setWindowTitle(tr("About %1").arg(qApp->applicationName()));
@@ -496,7 +500,7 @@ void Cyan::aboutCyan()
     aboutCyan.setText(QString("<h1 style=\"font-weight:normal;\">%1 %2</h1>"
                       "<h3 style=\"font-weight:normal;\">%3.</h3>")
                       .arg(qApp->applicationName())
-                      .arg(qApp->applicationVersion())
+                      .arg(version)
                       .arg(tr("Prepress image viewer and converter")));
 
     QString infoText = "<p>Copyright &copy;2016-2018 Ole-Andr&eacute; Rodlie. All rights reserved.</p>"
@@ -1410,12 +1414,29 @@ QByteArray Cyan::getDefaultProfile(FXX::ColorSpace colorspace)
 
 void Cyan::openHelp()
 {
+    QString help, changelog;
+    QFile changelogFile(":/docs/ChangeLog");
+    if (changelogFile.open(QIODevice::ReadOnly)) {
+        QByteArray data = changelogFile.readAll();
+        changelog.append(data);
+        changelogFile.close();
+    }
     QFile htmlFile(":/docs/cyan.html");
     if (htmlFile.open(QIODevice::ReadOnly)) {
         QByteArray data = htmlFile.readAll();
-        data.replace("_VERSION_", CYAN_VERSION);
+        QString version = CYAN_VERSION;
+#ifdef CYAN_GIT
+        version.append(QString(" %1").arg(CYAN_GIT));
+#endif
+        data.replace("_VERSION_", version.toUtf8());
+        if (!changelog.isEmpty()) {
+            data.replace("_CHANGELOG_", changelog.toUtf8());
+        }
+        help.append(data);
         htmlFile.close();
-        HelpDialog *dialog = new HelpDialog(this, data);
+    }
+    if (!help.isEmpty()) {
+        HelpDialog *dialog = new HelpDialog(this, help);
         dialog->exec();
     }
 }

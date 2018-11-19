@@ -34,5 +34,14 @@ isEmpty(CYAN_PLUGINS) {
 
 CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
+QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
-PKGCONFIG += Magick++
+PKGCONFIG += lcms2
+MAGICK_CONFIG = ImageMagick++
+!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
+PKG_CONFIG_BIN = pkg-config
+!isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
+
+PKGCONFIG += $${MAGICK_CONFIG}
+LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+
