@@ -102,6 +102,7 @@ Cyan::Cyan(QWidget *parent)
     QString padding = "margin-right:5px;";
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
+    setAttribute(Qt::WA_QuitOnClose);
 
     // add widgets
     scene = new QGraphicsScene(this);
@@ -605,7 +606,7 @@ void Cyan::saveImageDialog()
 
 void Cyan::openImage(QString file)
 {
-    if (file.isEmpty() || readWatcher.isRunning()) { return; }
+    if (file.isEmpty() || readWatcher.isRunning() || convertWatcher.isRunning()) { return; }
     if (rgbProfile->itemData(rgbProfile->currentIndex()).isNull() ||
         cmykProfile->itemData(cmykProfile->currentIndex()).isNull() ||
         grayProfile->itemData(grayProfile->currentIndex()).isNull()) {
@@ -1219,10 +1220,9 @@ void Cyan::gimpPlugin()
 
 void Cyan::openProfile(QString file)
 {
-    if (!file.isEmpty()) {
-        ProfileDialog *dialog = new ProfileDialog(this, file);
-        dialog->exec();
-    }
+    if (file.isEmpty() || readWatcher.isRunning() || convertWatcher.isRunning()) { return; }
+    ProfileDialog *dialog = new ProfileDialog(this, file);
+    dialog->exec();
 }
 
 void Cyan::renderingIntentUpdated(int)
