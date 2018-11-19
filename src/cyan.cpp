@@ -38,6 +38,7 @@
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <qtconcurrentrun.h>
 
 #include "helpdialog.h"
 
@@ -345,10 +346,10 @@ Cyan::Cyan(QWidget *parent)
 
     qRegisterMetaType<FXX::Image>("FXX::Image");
 
-    connect(&loader, SIGNAL(loadedImage(FXX::Image)),
-            this, SLOT(loadedImage(FXX::Image)));
-    connect(&loader, SIGNAL(convertedImage(FXX::Image)),
-            this, SLOT(convertedImage(FXX::Image)));
+    connect(&readWatcher, SIGNAL(finished()),
+            this, SLOT(handleReadWatcher()));
+    connect(&convertWatcher, SIGNAL(finished()),
+            this, SLOT(handleConvertWatcher()));
     connect(helpAction, SIGNAL(triggered()),
             this, SLOT(openHelp()));
     connect(aboutAction, SIGNAL(triggered()),
@@ -604,7 +605,7 @@ void Cyan::saveImageDialog()
 
 void Cyan::openImage(QString file)
 {
-    if (file.isEmpty()) { return; }
+    if (file.isEmpty() || readWatcher.isRunning()) { return; }
     if (rgbProfile->itemData(rgbProfile->currentIndex()).isNull() ||
         cmykProfile->itemData(cmykProfile->currentIndex()).isNull() ||
         grayProfile->itemData(grayProfile->currentIndex()).isNull()) {
@@ -612,7 +613,6 @@ void Cyan::openImage(QString file)
                              tr("Please set the default color profiles before loading images."));
         return;
     }
-    disableUI();
 
     // add default input profiles
     FXX::Image profiles;
@@ -627,7 +627,10 @@ void Cyan::openImage(QString file)
                                                   grayProfile.end());
 
     // load image
-    loader.requestImage(file, profiles);
+    disableUI();
+    qDebug() << "load image";
+    QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage, file.toStdString(), profiles, true);
+    readWatcher.setFuture(future);
 }
 
 void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
@@ -851,12 +854,13 @@ void Cyan::setImage(QByteArray image)
 
 void Cyan::updateImage()
 {
-    if (ignoreAction || loader.isConverting() || loader.isLoading()) {
+    if (ignoreAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
         qDebug() << "ignore action?" << ignoreAction;
-        qDebug() << "is loading?" << loader.isLoading();
-        qDebug() << "is converting?" << loader.isConverting();
+        qDebug() << "convert is running?" << convertWatcher.isRunning();
+        qDebug() << "reading image?" << readWatcher.isRunning();
         return;
     }
+
     FXX::Image image;
     image.imageBuffer = imageData.imageBuffer;
     QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
@@ -907,7 +911,9 @@ void Cyan::updateImage()
 
     // proc
     disableUI();
-    loader.requestConvert(image);
+    qDebug() << "update image";
+    QFuture<FXX::Image> future = QtConcurrent::run(FXX::convertImage, image, true);
+    convertWatcher.setFuture(future);
 }
 
 QByteArray Cyan::getMonitorProfile()
@@ -1236,48 +1242,6 @@ int Cyan::supportedDepth()
     return quantum.toInt();
 }
 
-void Cyan::loadedImage(FXX::Image image)
-{
-    enableUI();
-    if (image.imageBuffer.size()>0 && image.error.empty()) {
-        imageClear();
-        if (image.previewBuffer.size()>0) {
-            resetImageZoom();
-            setImage(QByteArray((char*)image.previewBuffer.data(),
-                                (int)image.previewBuffer.size()));
-        } else {
-            qDebug() << "image preview missing!!!";
-        }
-        imageData = image;
-        exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
-        if (!imageData.info.empty()) { parseImageInfo(); }
-        getConvertProfiles();
-        if (!monitorProfile->currentData().toString().isEmpty()) { updateImage(); }
-    } else if (!image.error.empty()) {
-        QMessageBox::warning(this, tr("Image error"), QString::fromStdString(image.error));
-    }
-    if (!image.warning.empty()) {
-        QMessageBox::warning(this, tr("Image warning"), QString::fromStdString(image.warning));
-    }
-}
-
-void Cyan::convertedImage(FXX::Image image)
-{
-    enableUI();
-    if (image.previewBuffer.size()>0 && image.error.empty()) {
-        setImage(QByteArray((char*)image.previewBuffer.data(),
-                            (int)image.previewBuffer.size()));
-        imageData.info = image.info;
-        imageData.workBuffer = image.imageBuffer;
-        parseImageInfo();
-    } else if (!image.error.empty()) {
-        QMessageBox::warning(this, tr("Image error"), QString::fromStdString(image.error));
-    }
-    if (!image.warning.empty()) {
-        QMessageBox::warning(this, tr("Image warning"), QString::fromStdString(image.warning));
-    }
-}
-
 void Cyan::clearImageBuffer()
 {
     fx.clearImage(imageData);
@@ -1438,5 +1402,57 @@ void Cyan::openHelp()
     if (!help.isEmpty()) {
         HelpDialog *dialog = new HelpDialog(this, help);
         dialog->exec();
+    }
+}
+
+void Cyan::handleConvertWatcher()
+{
+    enableUI();
+    qDebug() << "handle convert watcher";
+    FXX::Image image = convertWatcher.future();
+    if (image.previewBuffer.size()>0 &&
+        image.imageBuffer.size()>0 &&
+        image.error.empty())
+    {
+        setImage(QByteArray((char*)image.previewBuffer.data(),
+                            (int)image.previewBuffer.size()));
+        imageData.info = image.info;
+        imageData.workBuffer = image.imageBuffer;
+        parseImageInfo();
+    } else {
+        QMessageBox::warning(this, tr("Image error"),
+                             QString::fromStdString(image.error));
+    }
+    if (!image.warning.empty()) {
+        QMessageBox::warning(this, tr("Image warning"),
+                             QString::fromStdString(image.warning));
+    }
+}
+
+void Cyan::handleReadWatcher()
+{
+    enableUI();
+    qDebug() << "handle read watcher";
+    FXX::Image image = readWatcher.future();
+    if (image.imageBuffer.size()>0 &&
+        image.previewBuffer.size()>0 &&
+        image.error.empty())
+    {
+        imageClear();
+        resetImageZoom();
+        setImage(QByteArray((char*)image.previewBuffer.data(),
+                            (int)image.previewBuffer.size()));
+        imageData = image;
+        exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
+        if (!imageData.info.empty()) { parseImageInfo(); }
+        getConvertProfiles();
+        if (!monitorProfile->currentData().toString().isEmpty()) { updateImage(); }
+    } else {
+        QMessageBox::warning(this, tr("Image error"),
+                             QString::fromStdString(image.error));
+    }
+    if (!image.warning.empty()) {
+        QMessageBox::warning(this, tr("Image warning"),
+                             QString::fromStdString(image.warning));
     }
 }

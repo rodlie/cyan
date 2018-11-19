@@ -17,20 +17,18 @@
 
 TARGET = Cyan
 VERSION = 1.2.0
-VERSION_TYPE = "beta1"
+VERSION_TYPE = "beta2"
 
 SOURCES += \
     main.cpp \
     cyan.cpp \
     FXX.cxx \
-    imageloader.cpp \
     imageview.cpp \
     profiledialog.cpp \
     helpdialog.cpp
 HEADERS  += \
     cyan.h \
     FXX.h \
-    imageloader.h \
     imageview.h \
     profiledialog.h \
     helpdialog.h
@@ -43,7 +41,7 @@ OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
 RCC_DIR = $${DESTDIR}/.qrc
 
-QT += core gui widgets
+QT += core gui widgets concurrent
 TEMPLATE = app
 
 include(../cyan.pri)

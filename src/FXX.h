@@ -79,11 +79,11 @@ public:
 
     FXX();
 
-    FXX::Image readImage(const std::string &file,
-                         FXX::Image failsafe,
-                         bool getInfo = true);
-    FXX::Image convertImage(FXX::Image input,
-                            bool getInfo = true);
+    static FXX::Image readImage(const std::string &file,
+                                FXX::Image failsafe,
+                                bool getInfo = true);
+    static FXX::Image convertImage(FXX::Image input,
+                                   bool getInfo = true);
 
     bool editProfile(std::string file,
                      std::string description,
@@ -100,8 +100,8 @@ public:
     FXX::ColorSpace getProfileColorspace(std::string file);
     FXX::ColorSpace getProfileColorspace(cmsHPROFILE profile);
 
-    std::string identify(std::vector<unsigned char> buffer);
-    std::string identify(std::string file);
+    static std::string identify(std::vector<unsigned char> buffer);
+    static std::string identify(std::string file);
 
     std::string supportedQuantumDepth();
     std::string backendInfo();

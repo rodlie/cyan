@@ -37,8 +37,9 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QMap>
+#include <QThread>
+#include <QFutureWatcher>
 
-#include "imageloader.h"
 #include "imageview.h"
 #include "profiledialog.h"
 
@@ -53,7 +54,8 @@ public:
     ~Cyan();
 
 private:
-    ImageLoader loader;
+    QFutureWatcher<FXX::Image> convertWatcher;
+    QFutureWatcher<FXX::Image> readWatcher;
     FXX fx;
     QGraphicsScene *scene;
     ImageView *view;
@@ -147,8 +149,6 @@ private slots:
     void blackPointUpdated(int);
 
     int supportedDepth();
-    void loadedImage(FXX::Image image);
-    void convertedImage(FXX::Image image);
     void clearImageBuffer();
     void parseImageInfo();
 
@@ -156,6 +156,9 @@ private slots:
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
 
     void openHelp();
+
+    void handleConvertWatcher();
+    void handleReadWatcher();
 };
 
 #endif // CYAN_H
