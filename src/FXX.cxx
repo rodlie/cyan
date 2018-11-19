@@ -75,7 +75,7 @@ FXX::Image FXX::readImage(const std::string &file,
 
             // has embedded color profile?
             if (image.iccColorProfile().length()>0) {
-                unsigned char *iccBuffer = (unsigned char*)image.iccColorProfile().data();
+                unsigned char *iccBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(image.iccColorProfile().data()));
                 std::vector<unsigned char> iccData(iccBuffer, iccBuffer + image.iccColorProfile().length());
                 result.iccInputBuffer = iccData;
             } else { // apply failsafe profile if missing input profile
@@ -135,7 +135,7 @@ FXX::Image FXX::readImage(const std::string &file,
 
             // write original
             image.write(&output);
-            unsigned char *imgBuffer = (unsigned char*)output.data();
+            unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
             std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
             result.imageBuffer = imgData;
 
@@ -143,7 +143,7 @@ FXX::Image FXX::readImage(const std::string &file,
             if (image.depth()>8) { image.depth(8); }
             image.magick("BMP");
             image.write(&preview);
-            unsigned char *preBuffer = (unsigned char*)preview.data();
+            unsigned char *preBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(preview.data()));
             std::vector<unsigned char> preData(preBuffer, preBuffer + preview.length());
             result.previewBuffer = preData;
 
@@ -231,7 +231,7 @@ FXX::Image FXX::convertImage(FXX::Image input, bool getInfo)
             result.filename = input.filename;
             Magick::Blob output;
             image.write(&output);
-            unsigned char *imgBuffer = (unsigned char*)output.data();
+            unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
             std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
             result.imageBuffer = imgData;
 
@@ -246,7 +246,7 @@ FXX::Image FXX::convertImage(FXX::Image input, bool getInfo)
             if (image.depth()>8) { image.depth(8); }
             image.magick("BMP");
             image.write(&preview);
-            unsigned char *preBuffer = (unsigned char*)preview.data();
+            unsigned char *preBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(preview.data()));
             std::vector<unsigned char> preData(preBuffer, preBuffer + preview.length());
             result.previewBuffer = preData;
 
@@ -340,11 +340,11 @@ std::string FXX::getProfileTag(cmsHPROFILE profile,
         size = cmsGetProfileInfoASCII(profile, cmsSelectedType,
                                       "en", "US", nullptr, 0);
         if (size > 0) {
-            char buffer[size+1];
-            size = cmsGetProfileInfoASCII(profile, cmsSelectedType,
-                                          "en", "US", buffer, size);
-            if (size > 0) {
-                result = buffer;
+            std::vector<char> buffer(size);
+            cmsUInt32Number newsize = cmsGetProfileInfoASCII(profile, cmsSelectedType,
+                                          "en", "US", &buffer[0], size);
+            if (size == newsize) {
+                result = buffer.data();
             }
         }
     }
@@ -366,7 +366,7 @@ std::string FXX::getProfileTag(std::vector<unsigned char> buffer,
 {
     if (buffer.size()>0) {
         return getProfileTag(cmsOpenProfileFromMem(buffer.data(),
-                                                   (cmsUInt32Number)buffer.size()),tag);
+                                                   static_cast<cmsUInt32Number>(buffer.size())),tag);
     }
     return "";
 }
@@ -375,7 +375,7 @@ FXX::ColorSpace FXX::getProfileColorspace(std::vector<unsigned char> buffer)
 {
     if (buffer.size()>0) {
         return getProfileColorspace(cmsOpenProfileFromMem(buffer.data(),
-                                                          (cmsUInt32Number)buffer.size()));
+                                                          static_cast<cmsUInt32Number>(buffer.size())));
     }
     return FXX::UnknownColorSpace;
 }

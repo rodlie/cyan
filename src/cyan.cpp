@@ -571,7 +571,9 @@ void Cyan::saveImageDialog()
     if (imageData.imageBuffer.size()==0) { return; }
 
     if (!lockedSaveFileName.isEmpty()) {
-        saveImage(lockedSaveFileName, false /* dont notify */, true /* quit when done */);
+        saveImage(lockedSaveFileName,
+                  false /* dont notify */,
+                  true /* quit when done */);
     } else {
         QSettings settings;
         settings.beginGroup("default");
@@ -629,8 +631,10 @@ void Cyan::openImage(QString file)
 
     // load image
     disableUI();
-    qDebug() << "load image";
-    QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage, file.toStdString(), profiles, true);
+    QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage,
+                                                   file.toStdString(),
+                                                   profiles,
+                                                   true);
     readWatcher.setFuture(future);
 }
 
@@ -856,9 +860,6 @@ void Cyan::setImage(QByteArray image)
 void Cyan::updateImage()
 {
     if (ignoreAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
-        qDebug() << "ignore action?" << ignoreAction;
-        qDebug() << "convert is running?" << convertWatcher.isRunning();
-        qDebug() << "reading image?" << readWatcher.isRunning();
         return;
     }
 
@@ -872,9 +873,10 @@ void Cyan::updateImage()
                                      .toString();
     int currentDepth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
 
-    image.intent = (FXX::RenderingIntent)renderingIntent->itemData(renderingIntent->currentIndex()).toInt();
+    image.intent = static_cast<FXX::RenderingIntent>(renderingIntent->itemData(renderingIntent->currentIndex())
+                                                     .toInt());
     image.blackpoint = blackPoint->isChecked();
-    image.depth = (size_t)currentDepth;
+    image.depth = static_cast<size_t>(currentDepth);
 
     // add input profile
     if (!selectedInputProfile.isEmpty()) {
@@ -912,8 +914,9 @@ void Cyan::updateImage()
 
     // proc
     disableUI();
-    qDebug() << "update image";
-    QFuture<FXX::Image> future = QtConcurrent::run(FXX::convertImage, image, true);
+    QFuture<FXX::Image> future = QtConcurrent::run(FXX::convertImage,
+                                                   image,
+                                                   true);
     convertWatcher.setFuture(future);
 }
 
@@ -1088,8 +1091,8 @@ void Cyan::exportEmbeddedProfile(QString file)
     if (!file.isEmpty() && imageData.iccInputBuffer.size() > 0) {
         QFile proFile(file);
         if (proFile.open(QIODevice::WriteOnly)) {
-            if (proFile.write((const char*)imageData.iccInputBuffer.data(),
-                              (qint64)imageData.iccInputBuffer.size()) == -1)
+            if (proFile.write(reinterpret_cast<const char*>(imageData.iccInputBuffer.data()),
+                              static_cast<qint64>(imageData.iccInputBuffer.size())) == -1)
             {
                 QMessageBox::warning(this, tr("Unable to save profile"),
                                      tr("Unable to save profile, please check write permissions."));
@@ -1209,7 +1212,13 @@ void Cyan::gimpPlugin()
                         }
                         o << line << "\n";
                     }
-                    file.setPermissions(QFileDevice::ExeUser|QFileDevice::ExeGroup|QFileDevice::ExeOther|QFileDevice::ReadOwner|QFileDevice::ReadGroup|QFileDevice::ReadOther|QFileDevice::WriteUser);
+                    file.setPermissions(QFileDevice::ExeUser|
+                                        QFileDevice::ExeGroup|
+                                        QFileDevice::ExeOther|
+                                        QFileDevice::ReadOwner|
+                                        QFileDevice::ReadGroup|
+                                        QFileDevice::ReadOther|
+                                        QFileDevice::WriteUser);
                     file.close();
                 }
                 sourcePy.close();
@@ -1414,8 +1423,8 @@ void Cyan::handleConvertWatcher()
         image.imageBuffer.size()>0 &&
         image.error.empty())
     {
-        setImage(QByteArray((char*)image.previewBuffer.data(),
-                            (int)image.previewBuffer.size()));
+        setImage(QByteArray(reinterpret_cast<char*>(image.previewBuffer.data()),
+                            static_cast<int>(image.previewBuffer.size())));
         imageData.info = image.info;
         imageData.workBuffer = image.imageBuffer;
         parseImageInfo();
@@ -1440,8 +1449,8 @@ void Cyan::handleReadWatcher()
     {
         imageClear();
         resetImageZoom();
-        setImage(QByteArray((char*)image.previewBuffer.data(),
-                            (int)image.previewBuffer.size()));
+        setImage(QByteArray(reinterpret_cast<char*>(image.previewBuffer.data()),
+                            static_cast<int>(image.previewBuffer.size())));
         imageData = image;
         exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
         if (!imageData.info.empty()) { parseImageInfo(); }

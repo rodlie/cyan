@@ -19,7 +19,6 @@
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <QDebug>
 
 ImageView::ImageView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
@@ -78,7 +77,6 @@ void ImageView::dropEvent(QDropEvent *event)
     QUrl url = mimeData->urls().at(0);
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(url.toLocalFile());
-    qDebug() << "Dropped mime type" << type.name();
     if (type.name().startsWith("image")) { emit openImage(url.toLocalFile()); }
     else if (type.name().contains("iccprofile")) { emit openProfile(url.toLocalFile()); }
 }
@@ -86,7 +84,11 @@ void ImageView::dropEvent(QDropEvent *event)
 void ImageView::resizeEvent(QResizeEvent */*event*/)
 {
     if (fit) {
-        fitInView(0, 0, scene()->width(), scene()->height(), Qt::KeepAspectRatio);
+        fitInView(0,
+                  0,
+                  scene()->width(),
+                  scene()->height(),
+                  Qt::KeepAspectRatio);
     }
 }
 
@@ -98,5 +100,9 @@ void ImageView::doZoom(double scaleX, double scaleY)
 void ImageView::setFit(bool value)
 {
     fit = value;
-    fitInView(0, 0, scene()->width(), scene()->height(), Qt::KeepAspectRatio);
+    fitInView(0,
+              0,
+              scene()->width(),
+              scene()->height(),
+              Qt::KeepAspectRatio);
 }

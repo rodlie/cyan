@@ -42,7 +42,6 @@
 
 #include "imageview.h"
 #include "profiledialog.h"
-
 #include "FXX.h"
 
 class Cyan : public QMainWindow
@@ -98,7 +97,9 @@ private slots:
     void saveImageDialog();
 
     void openImage(QString file);
-    void saveImage(QString file, bool notify = true, bool closeOnSave = false);
+    void saveImage(QString file,
+                   bool notify = true,
+                   bool closeOnSave = false);
 
     void getColorProfiles(FXX::ColorSpace colorspace,
                           QComboBox *box,
