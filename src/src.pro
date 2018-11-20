@@ -17,7 +17,7 @@
 
 TARGET = Cyan
 VERSION = 1.2.0
-VERSION_TYPE = "BETA"
+VERSION_TYPE = "BETA1"
 
 SOURCES += \
     main.cpp \
@@ -58,7 +58,7 @@ unix:!mac {
     target_desktop.path = $${PREFIX}/share/applications
     target_desktop.files = ../res/cyan.desktop
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-    target_docs.files = ../COPYING ../docs/ChangeLog ../docs/README.md
+    target_docs.files = ../COPYING
     INSTALLS += target target_desktop target_docs
 
     icon16.files = ../res/hicolor/16x16/apps/cyan.png

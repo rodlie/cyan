@@ -417,6 +417,10 @@ void Cyan::readConfig()
     }
     settings.endGroup();
 
+    settings.beginGroup("cyan");
+    if (settings.value("version").toString() != CYAN_VERSION) { firstrun = true; }
+    settings.endGroup();
+
     settings.beginGroup("ui");
     if (settings.value("state").isValid()) {
         restoreState(settings.value("state").toByteArray());
@@ -470,6 +474,12 @@ void Cyan::writeConfig()
 
     settings.setValue("render", renderingIntent->itemData(renderingIntent->currentIndex())
                                                           .toInt());
+    settings.endGroup();
+
+    settings.beginGroup("cyan");
+    if (settings.value("version").toString() != CYAN_VERSION) {
+        settings.setValue("version", CYAN_VERSION);
+    }
     settings.endGroup();
 
     settings.beginGroup("ui");
