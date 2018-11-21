@@ -27,8 +27,11 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  Recommended requirements and additional files:
  
  * A bitmap editor for more advanced usage
+   * [AzPainter](https://github.com/symbian9/azpainter)
    * [GIMP](https://www.gimp.org)
    * [Krita](https://krita.org)
+ * A vector editor oriented for prepress industry
+   * [sK1 2.0](https://sk1project.net/)
  * A color calibrated monitor (with available profile)
    * [DisplayCAL](https://displaycal.net/)
  * ICC color profiles
