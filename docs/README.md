@@ -26,12 +26,15 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  
  Recommended requirements and additional files:
  
- * A bitmap editor for more advanced usage
-   * [AzPainter](https://github.com/symbian9/azpainter)
+ * A bitmap editor
    * [GIMP](https://www.gimp.org)
    * [Krita](https://krita.org)
- * A vector editor oriented for prepress industry
-   * [sK1 2.0](https://sk1project.net/)
+   * [AzPainter](https://github.com/symbian9/azpainter)
+ * A vector editor
+   * [sK1](https://sk1project.net/)
+   * [Inkscape](https://inkscape.org/)
+ * A DTP editor
+   * [Scribus](https://www.scribus.net/)
  * A color calibrated monitor (with available profile)
    * [DisplayCAL](https://displaycal.net/)
  * ICC color profiles
@@ -43,6 +46,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 News and updates related to Cyan.
 
+ * [The (long) road to Cyan 2](https://github.com/rodlie/cyan/issues/12)
  * [Status report 2018](https://sourceforge.net/p/prepress/blog/2018/11/cyan-2018-status-report/)
  
 # Usage
@@ -53,7 +57,23 @@ News and updates related to Cyan.
 # Integration
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-06.png)
 
-...
+Cyan offers tight integration with [GIMP](https://www.gimp.org) and works as an import/export plug-in in [GIMP](https://www.gimp.org) 2.4+. Just select ``Cyan/Import Image`` or ``Cyan/Export Image``.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-07.png)
+
+## Import CMYK from GIMP
+
+Open GIMP and select ``Cyan/Import Image``, in Cyan open the desired image and convert to RGB, then hit ``save`` and your image is automatically imported into GIMP.
+
+## Export to CMYK from GIMP
+
+When you are finished editing in GIMP select ``Cyan/Export Image``, in Cyan convert to CMYK then hit ``save``, you can save to TIFF, JPEG and PSD.
+
+## GIMP notes
+
+When Cyan starts it will scan your home folder for GIMP 2.x plug-in folders, if found it will install a Cyan Python plug-in in the folder that does not have it. 
+
+If you upgrade GIMP and ``Cyan/*`` is gone just launch Cyan manually once to update the plug-in against your new version of GIMP, this will only happen on GIMP feature releases (2.8=>2.10 etc).
 
 # Open Source
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-05.png)
