@@ -9,6 +9,7 @@ before_install:
 install:
   - sudo apt remove --purge imagemagick imagemagick-common
   - sudo apt-get install cmake tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
+  - sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils wine
   
 script:
   - export CWD=`pwd`
@@ -18,6 +19,11 @@ script:
   - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
   - make -j2
   - sudo make install
+  - cd $CWD
+  - git clone https://github.com/rodlie/mxe
+  - cd mxe
+  - git checkout ac4bf39f20bf53fa91a3e1543dbc161785aa91ad
+  - make MXE_TARGETS='x86_64-w64-mingw32.static' imagemagick qtbase
   - mkdir -p $CWD/ci
   - cd $CWD/ci
   - cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_LIB=ON -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
