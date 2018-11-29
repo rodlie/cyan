@@ -13,11 +13,14 @@ set(RESOURCE_FILES ../res/tests.qrc)
 
 find_package(Qt5Test REQUIRED)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../fxx/cmake/modules/")
+include_directories(../fxx)
+include(CommonSetup)
+
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCES_FILES})
 target_link_libraries(${PROJECT_NAME} Qt5::Test)
 
+include(CommonLink)
+
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../fxx/cmake/modules/")
-include_directories(../fxx)
-include(Common)

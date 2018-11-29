@@ -23,9 +23,9 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  * Microsoft Windows 7 x64 (+)
  * Apple Mac OS X Lion 10.7 (+)
  * Linux/FreeBSD (source-only)
- 
+
  Recommended requirements and additional files:
- 
+
  * A bitmap editor
    * [GIMP](https://www.gimp.org)
    * [Krita](https://krita.org)
@@ -40,7 +40,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  * ICC color profiles
    * [colormanagement.org](http://www.colormanagement.org)
    * [Adobe ICC](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html)
-  
+
 # News
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-02.png)
 
@@ -48,7 +48,7 @@ News and updates related to Cyan.
 
  * [The (long) road to Cyan 2](https://github.com/rodlie/cyan/issues/12)
  * [Status report 2018](https://sourceforge.net/p/prepress/blog/2018/11/cyan-2018-status-report/)
- 
+
 # Usage
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-04.png)
 
@@ -90,7 +90,8 @@ The source repository is hosted on [Github](https://github.com/rodlie/cyan) and 
 
 Cyan requires the following third-party software installed before build:
 
- * [Qt(base)](https://www.qt.io/) 5.x
+ * [CMake](https://cmake.org/) 3.1+
+ * [Qt(Widgets/Concurrent)](https://www.qt.io/) 5.x
  * [LCMS](http://www.littlecms.com/) 2.x
  * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.9-24+
    * [LCMS](http://www.littlecms.com/) 2.x
@@ -100,21 +101,23 @@ Cyan requires the following third-party software installed before build:
    * With quantum depth 16+
    * With HDRI
    * With OpenMP
- 
- Doing a regular user build:
- ```
- mkdir build && cd build
- qmake CONFIG+=release ..
- make
- ```
- 
- Packaging example:
- ```
- qmake CONFIG+=release PREFIX=/usr ..
- make
- make INSTALL_ROOT=/path/to/pkg/tmp install
- ```
- 
+
+Doing a regular user build:
+```
+mkdir build && cd build
+cmake ..
+make
+make test
+```
+
+Packaging example:
+```
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+make
+make test
+make DESTDIR=/path/to/pkg/tmp install
+```
+
  ***Do not use Cyan if any of the unit tests fails. A failed unit test means that the image output from Cyan will not be as expected. The primary reason for a failed unit test is a unsupported version of ImageMagick.***
- 
+
 [![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) ![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)

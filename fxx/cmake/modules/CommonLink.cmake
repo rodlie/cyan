@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.1)
+
+if(MINGW OR APPLE)
+    target_link_libraries(${PROJECT_NAME} Threads::Threads)
+endif()
+
+if(USE_PKGCONFIG)
+    target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${MAGICK_LDFLAGS})
+    #target_link_libraries(${PROJECT_NAME} ${MAGICK_STATIC_LIBRARIES} ${MAGICK_STATIC_LDFLAGS})
+    target_link_libraries(${PROJECT_NAME} ${LCMS2_LIBRARIES})
+else()
+    target_link_libraries(${PROJECT_NAME} ${LCMS2_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${ImageMagick_MagickCore_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${ImageMagick_MagickWand_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${ImageMagick_Magick++_LIBRARIES})
+endif()
