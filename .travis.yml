@@ -23,7 +23,9 @@ script:
   - git clone https://github.com/rodlie/mxe
   - cd mxe
   - git checkout ac4bf39f20bf53fa91a3e1543dbc161785aa91ad
-  - make MXE_TARGETS='x86_64-w64-mingw32.static' imagemagick qtbase
+  - travis_wait 45 make MXE_TARGETS='x86_64-w64-mingw32.static' imagemagick qtbase
+  - tar cvvJf cyan-mxe.tar.xz usr
+  - curl --upload-file ./cyan-mxe.tar.xz https://transfer.sh/cyan-mxe.tar.xz
   - mkdir -p $CWD/ci
   - cd $CWD/ci
   - cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_LIB=ON -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
