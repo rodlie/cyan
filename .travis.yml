@@ -4,32 +4,51 @@ dist: xenial
 sudo: required
 
 before_install:
+  - sudo apt remove --purge imagemagick imagemagick-common
   - sudo apt-get update
 
 install:
-  - sudo apt remove --purge imagemagick imagemagick-common
   - sudo apt-get install cmake tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
-  - sudo apt-get install scons autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils wine
+  - sudo apt-get install scons autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool
+  - sudo apt-get install libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl make
+  - sudo apt-get install openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils wine
   
 script:
   - export CWD=`pwd`
+#
+  - export MXE=/opt/mxe
+  - sudo mkdir -p $MXE
+  - sudo chmod 777 $MXE
+  - wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-win64.tar.xz/download
+  - tar xf cyan-1.2-sdk-win64.tar.xz -C $MXE/
+#
   - git clone https://github.com/ImageMagick/ImageMagick6
   - cd ImageMagick6
   - git checkout 6.9.9-51
   - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
   - make -j2
   - sudo make install
-  - cd $CWD
-  - git clone https://github.com/rodlie/mxe
-  - cd mxe
-  - git checkout ac4bf39f20bf53fa91a3e1543dbc161785aa91ad
-  - travis_wait 45 make MXE_TARGETS='x86_64-w64-mingw32.static' imagemagick qtbase
-  - tar cvvJf cyan-mxe.tar.xz usr
-  - curl --upload-file ./cyan-mxe.tar.xz https://transfer.sh/cyan-mxe.tar.xz
-  - mkdir -p $CWD/ci
-  - cd $CWD/ci
+#
+  - mkdir -p $CWD/linux64
+  - cd $CWD/linux64
   - cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_LIB=ON -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
   - make
   - make test
   - make DESTDIR=`pwd`/pkg install
   - tree pkg
+#
+  - mkdir -p $CWD/win64
+  - cd $CWD/win64
+  - export TARGET=x86_64-w64-mingw32.static
+  - export MINGW=${MXE}/usr/$TARGET
+  - export CMAKE=$TARGET-cmake
+  - export STRIP="$MXE/usr/bin/$TARGET-strip"
+  - export PATH=${MXE}/usr/bin:$PATH
+  - export PKG_CONFIG_PATH=${MINGW}/lib/pkgconfig
+  - $CMAKE -DBUILD_LIB=ON -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
+  - make
+  - wine64 tests/tests.exe
+  - $STRIP -s converter/Cyan.exe
+  - ls -lah converter/Cyan.exe
+  - file converter/Cyan.exe
+#
