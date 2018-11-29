@@ -23,7 +23,7 @@
 ImageView::ImageView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
-    setBackgroundBrush(Qt::darkGray);
+    setBackgroundBrush(QColor(30,30,30));
     setDragMode(QGraphicsView::ScrollHandDrag);
 }
 

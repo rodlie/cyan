@@ -708,7 +708,7 @@ void Cyan::getColorProfiles(FXX::ColorSpace colorspace,
             noProfileText = tr("None");
         }
         box->addItem(itemIcon, noProfileText);
-        box->addItem("----------");
+        box->insertSeparator(1);
 
         int it = 0;
         QMapIterator<QString, QString> profile(profiles);
@@ -1009,15 +1009,12 @@ void Cyan::getConvertProfiles()
     QIcon itemIcon(":/cyan-wheel.png");
     QString embeddedProfile = QString::fromStdString(fx.getProfileTag(imageData
                                                                       .iccInputBuffer));
-    //embeddedProfile.append(tr(" (embedded)"));
 
     inputProfile->clear();
     outputProfile->clear();
 
     inputProfile->addItem(itemIcon, embeddedProfile);
-    inputProfile->addItem("----------");
     outputProfile->addItem(itemIcon, tr("None"));
-    outputProfile->addItem("----------");
 
     QMapIterator<QString, QString> inputMap(inputProfiles);
     while (inputMap.hasNext()) {
@@ -1029,6 +1026,9 @@ void Cyan::getConvertProfiles()
         outputMap.next();
         outputProfile->addItem(itemIcon, outputMap.key(), outputMap.value());
     }
+
+    inputProfile->insertSeparator(1);
+    outputProfile->insertSeparator(1);
     ignoreAction = false;
 }
 

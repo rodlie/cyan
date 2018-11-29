@@ -102,7 +102,7 @@ Cyan requires the following third-party software installed before build:
    * With HDRI
    * With OpenMP
 
-Doing a regular user build:
+Doing a regular build:
 ```
 mkdir build && cd build
 cmake ..
