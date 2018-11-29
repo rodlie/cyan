@@ -52,7 +52,45 @@ News and updates related to Cyan.
 # Usage
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-04.png)
 
-...
+Cyan should be relatively easy to use and understand. The first thing you should know is that Cyan converts images using color profiles. Converting an image to another colorspace requires two profiles, one with the same colorspace as the image and a second profile with the desired output colorspace.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-screenshot-01.png)
+
+## Setup
+
+Cyan requires some minimal setup before usage. You will need to select default color profiles for RGB, CMYK and GRAY. These are used when you load an image without an embedded color profile.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-02.png)
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-03.png)
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-04.png)
+
+You can set a color profile for your monitor if wanted, this will enable a RGB preview/proof of the final image. Note that this will add a performance penalty and you will need a color calibrated monitor with the color profile (available in Cyan).
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-05.png)
+
+For final adjustments you have rendering intent and black point compensation.
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-06.png)
+
+## Convert
+
+Load image and verify the input profile (the embedded is recommended).
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-07.png)
+
+Now selected the desired output profile (in this example we want a CMYK image for print).
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-08.png)
+
+When you are satisfied with the result just hit save. you can output as JPEG, TIFF and PSD.
+
+## Mouse/Keyboard
+
+* **Ctrl+O** - Open image
+* **Ctrl+S** - Save image
+* **Ctrl+E** - Save embedded profile (from loaded image)
+* **Ctrl+Q** - Quit
+* **Right mouse button** - Fit-to-view
+* **Left mouse button** - Drag
+* **Middle mouse button** - View 100%
+* **Mouse wheel** - Zoom in/out
 
 # Integration
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-06.png)
