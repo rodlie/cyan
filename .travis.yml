@@ -19,8 +19,8 @@ script:
   - export MXE=/opt/mxe
   - sudo mkdir -p $MXE
   - sudo chmod 777 $MXE
-  - wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-win64.tar.xz/download
-  - tar xf cyan-1.2-sdk-win64.tar.xz -C $MXE/
+  - wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-win64.tar.xz/download && mv download download.tar.xz
+  - tar xf download.tar.xz -C $MXE/
 #
   - git clone https://github.com/ImageMagick/ImageMagick6
   - cd ImageMagick6
