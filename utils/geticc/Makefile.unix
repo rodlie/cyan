@@ -1,0 +1,11 @@
+CXXFLAGS = -Wall
+RM=rm -f
+
+all: geticc
+
+geticc: geticc.cxx
+	$(CXX) -DNOGUI geticc.cxx -o geticc
+	./test.sh 
+clean:
+	$(RM) geticc
+
