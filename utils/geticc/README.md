@@ -6,4 +6,4 @@ If you have the GUI version just launch the application, select input and output
 
 # Build
 
-The commandline version has no dependencies and is easy to build, see ``Makefile.unix``, or just ``make -f Makefile.unix``. The GUI (primarily made for use in Windows) version can be built using CMake, note that FLTK is required (you can also build using FLTK directly ``fltk-config --compile geticc.cxx``).
+Requires cmake and optional FLTK.

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-if(MINGW OR APPLE)
+if(MINGW)
     target_link_libraries(${PROJECT_NAME} Threads::Threads)
 endif()
 
