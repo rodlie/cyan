@@ -22,19 +22,21 @@ VERSION_TYPE = "BETA1"
 SOURCES += \
     main.cpp \
     cyan.cpp \
-    FXX.cxx \
+    ../fxx/FXX.cxx \
     imageview.cpp \
     profiledialog.cpp \
     helpdialog.cpp
 HEADERS  += \
     cyan.h \
-    FXX.h \
+    ../fxx/FXX.h \
     imageview.h \
     profiledialog.h \
     helpdialog.h
 RESOURCES += \
     ../res/cyan.qrc \
     ../docs/docs.qrc
+
+INCLUDEPATH += ../fxx
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj

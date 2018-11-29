@@ -3,11 +3,14 @@ QT -= gui
 CONFIG += qt console warn_on depend_includepath testcase no_testcase_installs
 CONFIG -= app_bundle
 TEMPLATE = app
-SOURCES +=  tst_cyan.cpp ../src/FXX.cxx
-HEADERS += ../src/FXX.h
+SOURCES +=  tst_cyan.cpp ../fxx/FXX.cxx
+HEADERS += ../fxx/FXX.h
 RESOURCES += ../res/tests.qrc
-INCLUDEPATH += ../src
+INCLUDEPATH += ../fxx
 DESTDIR = build
+OBJECTS_DIR = $${DESTDIR}/.obj
+MOC_DIR = $${DESTDIR}/.moc
+RCC_DIR = $${DESTDIR}/.qrc
 
 include(../cyan.pri)
 
