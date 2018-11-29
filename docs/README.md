@@ -106,9 +106,10 @@ Doing a regular user build:
 ```
 mkdir build && cd build
 cmake ..
-make
-make test
+make && make test
 ```
+
+cmake uses pkg-config as default, this can be disabled with ``-DUSE_PKGCONFIG=OFF``. Additional utillities can be enabled with ``-DBUILD_UTILS=ON``.
 
 Packaging example:
 ```
@@ -118,6 +119,6 @@ make test
 make DESTDIR=/path/to/pkg/tmp install
 ```
 
- ***Do not use Cyan if any of the unit tests fails. A failed unit test means that the image output from Cyan will not be as expected. The primary reason for a failed unit test is a unsupported version of ImageMagick.***
+ ***Do not use or distribute Cyan if any of the unit tests fails. A failed unit test means that the image output from Cyan will not be as expected. The primary reason for a failed unit test is a unsupported version of ImageMagick.***
 
 [![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) ![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)

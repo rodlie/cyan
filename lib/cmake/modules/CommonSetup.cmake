@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
-option(USE_PKGCONFIG "USE_PKGCONFIG" OFF)
+option(USE_PKGCONFIG "USE_PKGCONFIG" ON)
 option(USE_Q32 "USE Q32" OFF)
 
 if(MINGW OR APPLE)
@@ -15,7 +15,7 @@ endif()
 
 if(USE_PKGCONFIG)
     find_package(PkgConfig)
-    pkg_search_module(MAGICK REQUIRED Magick++)
+    pkg_search_module(MAGICK REQUIRED ImageMagick++)
     pkg_search_module(LCMS2 REQUIRED lcms2)
     add_compile_options(${MAGICK_CFLAGS})
     #add_compile_options(${MAGICK_STATIC_CFLAGS})
