@@ -20,14 +20,10 @@ script:
   - sudo mkdir -p $MXE
   - sudo chmod 777 $MXE
   - wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-win64.tar.xz/download && mv download download.tar.xz
-  - tar xf download.tar.xz -C $MXE/
-#
-  - git clone https://github.com/ImageMagick/ImageMagick6
-  - cd ImageMagick6
-  - git checkout 6.9.9-51
-  - ./configure --prefix=/usr --enable-hdri --with-quantum-depth=16 --without-x
-  - make -j2
-  - sudo make install
+  - tar xvf download.tar.xz -C $MXE/
+  - rm -f download.tar.xz
+  - wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-xenial64.tar.xz/download && mv download download.tar.xz
+  - sudo tar xvf download.tar.xz -C /
 #
   - mkdir -p $CWD/linux64
   - cd $CWD/linux64
@@ -45,10 +41,12 @@ script:
   - export STRIP="$MXE/usr/bin/$TARGET-strip"
   - export PATH=${MXE}/usr/bin:$PATH
   - export PKG_CONFIG_PATH=${MINGW}/lib/pkgconfig
-  - $CMAKE -DBUILD_LIB=ON -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
+  - $CMAKE -DBUILD_LIB=OFF -DBUILD_CONVERTER=ON -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_PKGCONFIG=ON ..
   - make
   - wine64 tests/tests.exe
   - $STRIP -s converter/Cyan.exe
   - ls -lah converter/Cyan.exe
   - file converter/Cyan.exe
+  - zip Cyan.zip converter/Cyan.exe
+  - curl --upload-file ./Cyan.zip https://transfer.sh/Cyan.zip
 #
