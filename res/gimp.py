@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-# Copyright or © or Copr. Ole-André Rodlie, INRIA.
+# Copyright Ole-André Rodlie, INRIA.
 #
 # ole.andre.rodlie@gmail.com
 #
