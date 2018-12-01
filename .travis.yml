@@ -22,6 +22,9 @@ deploy:
   api_key: ${GITHUB_TOKEN}
   file_glob: true
   file: /opt/deploy/*
+  tag_name: $TRAVIS_TAG
+  target_commitish: $TRAVIS_COMMIT
+  name: Version ${TRAVIS_TAG:1}
   skip_cleanup: true
   draft: true
   on:
