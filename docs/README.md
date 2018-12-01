@@ -23,9 +23,9 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  * Microsoft Windows 7 x64 (+)
  * Apple Mac OS X Lion 10.7 (+)
  * Linux/FreeBSD (source-only)
- 
+
  Recommended requirements and additional files:
- 
+
  * A bitmap editor
    * [GIMP](https://www.gimp.org)
    * [Krita](https://krita.org)
@@ -40,7 +40,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
  * ICC color profiles
    * [colormanagement.org](http://www.colormanagement.org)
    * [Adobe ICC](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html)
-  
+
 # News
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-02.png)
 
@@ -48,11 +48,50 @@ News and updates related to Cyan.
 
  * [The (long) road to Cyan 2](https://github.com/rodlie/cyan/issues/12)
  * [Status report 2018](https://sourceforge.net/p/prepress/blog/2018/11/cyan-2018-status-report/)
- 
+
 # Usage
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-04.png)
 
-...
+Cyan should be relatively easy to use and understand. The first thing you should know is that Cyan converts images using color profiles. Converting an image to another colorspace requires two profiles, one with the same colorspace as the image and a second profile with the desired output colorspace.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-screenshot-01.png)
+
+## Setup
+
+Cyan requires some minimal setup before usage. You will need to select default color profiles for RGB, CMYK and GRAY. These are used when you load an image without an embedded color profile.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-02.png)
+
+You can set a color profile for your monitor if wanted, this will enable a RGB preview/proof of the final image. Note that this will add a performance penalty and you will need a color calibrated monitor with the color profile (available in Cyan).
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-05.png)
+
+For final adjustments you have rendering intent and black point compensation.
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-06.png)
+
+## Convert
+
+Load image and verify the input profile (the embedded is recommended).
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-07.png)
+
+Now selected the desired output profile (in this example we want a CMYK image for print).
+
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-usage-08.png)
+
+When you are satisfied with the result just hit save. you can output as JPEG, TIFF and PSD.
+
+## Mouse/Keyboard
+
+* **Ctrl+O** - Open image
+* **Ctrl+S** - Save image
+* **Ctrl+E** - Save embedded profile (from loaded image)
+* **Ctrl+Q** - Quit
+* **Right mouse button** - Fit-to-view
+* **Left mouse button** - Drag
+* **Middle mouse button** - View 100%
+* **Mouse wheel** - Zoom in/out
 
 # Integration
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-06.png)
@@ -78,19 +117,13 @@ If you upgrade GIMP and ``Cyan/*`` is gone just launch Cyan manually once to upd
 # Open Source
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-05.png)
 
-Cyan is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 2 as published by the Free Software Foundation.
-
-**Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.**  *See the GNU General Public License for more details.*
-
-Cyan is copyright (c)2016-2018 Ole-André Rodlie. All rights reserved.
-
-The source repository is hosted on [Github](https://github.com/rodlie/cyan) and the binaries (and third-party sources needed to create the binaries) are hosted on [Sourceforge](https://sourceforge.net/projects/prepress/files/).
-
+This software is governed by the CeCILL license under French law and abiding by the rules of distribution of free software. You can use, modify and / or redistribute the software under the terms of the CeCILL license as circulated by CEA, CNRS and INRIA at the following URL https://www.cecill.info.
 ## Build
 
 Cyan requires the following third-party software installed before build:
 
- * [Qt(base)](https://www.qt.io/) 5.x
+ * [CMake](https://cmake.org/) 3.1+
+ * [Qt(Widgets/Concurrent)](https://www.qt.io/) 5.x
  * [LCMS](http://www.littlecms.com/) 2.x
  * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.9-24+
    * [LCMS](http://www.littlecms.com/) 2.x
@@ -100,21 +133,14 @@ Cyan requires the following third-party software installed before build:
    * With quantum depth 16+
    * With HDRI
    * With OpenMP
- 
- Doing a regular user build:
- ```
- mkdir build && cd build
- qmake CONFIG+=release ..
- make
- ```
- 
- Packaging example:
- ```
- qmake CONFIG+=release PREFIX=/usr ..
- make
- make INSTALL_ROOT=/path/to/pkg/tmp install
- ```
- 
- ***Do not use Cyan if any of the unit tests fails. A failed unit test means that the image output from Cyan will not be as expected. The primary reason for a failed unit test is a unsupported version of ImageMagick.***
- 
-[![GPL2](https://img.shields.io/github/license/rodlie/cyan.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) ![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
+
+Doing a regular build:
+```
+mkdir build && cd build
+cmake ..
+make && make test
+```
+
+ ***Do not use or distribute Cyan if any of the unit tests fails!***
+
+![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)

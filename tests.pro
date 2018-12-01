@@ -1,4 +1,3 @@
-/*
 # Copyright Ole-André Rodlie, INRIA.
 #
 # ole.andre.rodlie@gmail.com
@@ -28,46 +27,34 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
-*/
 
-#ifndef IMAGEVIEW_H
-#define IMAGEVIEW_H
 
-#include <QGraphicsView>
-#include <QString>
-#include <QWheelEvent>
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDragLeaveEvent>
-#include <QResizeEvent>
+QT += testlib
+QT -= gui
+CONFIG += qt console warn_on depend_includepath testcase no_testcase_installs
+CONFIG -= app_bundle
+TEMPLATE = app
+SOURCES +=  src/tst_cyan.cpp src/FXX.cpp
+HEADERS += src/FXX.h
+RESOURCES += res/tests.qrc
+DESTDIR = build
+OBJECTS_DIR = $${DESTDIR}/.obj
+MOC_DIR = $${DESTDIR}/.moc
+RCC_DIR = $${DESTDIR}/.qrc
 
-class ImageView : public QGraphicsView
-{
-    Q_OBJECT
+unix:QMAKE_POST_LINK = ./build/$${TARGET}
+win32-g++:QMAKE_POST_LINK = "wine64 build/$${TARGET}.exe"
 
-public:
-    explicit ImageView(QWidget* parent = Q_NULLPTR);
-    bool fit;
+CONFIG += c++11
+QT_CONFIG -= no-pkg-config
+CONFIG += link_pkgconfig
+PKGCONFIG += lcms2 ImageMagick++
+LIBS += `pkg-config --libs --static ImageMagick++`
 
-signals:
-    void resetZoom();
-    void myZoom(double scaleX, double scaleY);
-    void proof();
-    void myFit(bool value);
-    void openImage(QString file);
-    void openProfile(QString file);
+mac {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -fopenmp
+}
 
-public slots:
-    void doZoom(double scaleX, double scaleY);
-    void setFit(bool value);
-
-protected:
-    void wheelEvent(QWheelEvent* event);
-    void mousePressEvent(QMouseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dragLeaveEvent(QDragLeaveEvent *event);
-    void dropEvent(QDropEvent *event);
-    void resizeEvent(QResizeEvent *event);
-};
-#endif // IMAGEVIEW_H
+win32-g++: LIBS += -lpthread
