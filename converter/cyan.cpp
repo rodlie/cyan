@@ -1,18 +1,33 @@
 /*
-# Cyan <http://prepress.sf.net> <https://cyan.fxarena.net>,
-# Copyright (C) 2016, 2017, 2018 Ole-André Rodlie<ole.andre.rodlie@gmail.com>
+# Copyright or © or Copr. Ole-André Rodlie, INRIA.
 #
-# Cyan is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2 as published
-# by the Free Software Foundation.
+# ole.andre.rodlie@gmail.com
 #
-# Cyan is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This software is governed by the CeCILL license under French law and
+# abiding by the rules of distribution of free software. You can use,
+# modify and / or redistribute the software under the terms of the CeCILL
+# license as circulated by CEA, CNRS and INRIA at the following URL
+# "https://www.cecill.info".
 #
-# You should have received a copy of the GNU General Public License
-# along with Cyan.  If not, see <http://www.gnu.org/licenses/gpl-2.0.html>
+# As a counterpart to the access to the source code and rights to
+# modify and redistribute granted by the license, users are provided only
+# with a limited warranty and the software's author, the holder of the
+# economic rights and the subsequent licensors have only limited
+# liability.
+#
+# In this respect, the user's attention is drawn to the associated risks
+# with loading, using, modifying and / or developing or reproducing the
+# software by the user in light of its specific status of free software,
+# that can mean that it is complicated to manipulate, and that also
+# so that it is for developers and experienced
+# professionals having in-depth computer knowledge. Users are therefore
+# encouraged to test and test the software's suitability
+# Requirements in the conditions of their systems
+# data to be ensured and, more generally, to use and operate
+# same conditions as regards security.
+#
+# The fact that you are presently reading this means that you have had
+# knowledge of the CeCILL license and that you accept its terms.
 */
 
 #include "cyan.h"
@@ -75,7 +90,6 @@ Cyan::Cyan(QWidget *parent)
     , bitDepth(Q_NULLPTR)
     , imageInfoDock(Q_NULLPTR)
     , imageInfoTree(Q_NULLPTR)
-    , helpAction(Q_NULLPTR)
     , ignoreAction(false)
     , progBar(Q_NULLPTR)
 {
@@ -308,10 +322,6 @@ Cyan::Cyan(QWidget *parent)
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
 
-    QAction *helpAction = new QAction(tr("Documentation"), this);
-    helpAction->setIcon(QIcon(":/cyan.png"));
-    helpMenu->addAction(helpAction);
-
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
     aboutAction->setIcon(QIcon(":/cyan.png"));
@@ -351,8 +361,6 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(handleReadWatcher()));
     connect(&convertWatcher, SIGNAL(finished()),
             this, SLOT(handleConvertWatcher()));
-    connect(helpAction, SIGNAL(triggered()),
-            this, SLOT(openHelp()));
     connect(aboutAction, SIGNAL(triggered()),
             this, SLOT(aboutCyan()));
     connect(aboutQtAction, SIGNAL(triggered()),
@@ -441,7 +449,7 @@ void Cyan::readConfig()
     }
     settings.endGroup();
 
-    if (firstrun) { openHelp(); }
+    if (firstrun) { aboutCyan(); }
 
     loadDefaultProfiles();
     gimpPlugin();
@@ -501,45 +509,45 @@ void Cyan::writeConfig()
 
 void Cyan::aboutCyan()
 {
-    QString version = CYAN_VERSION;
+    QString html, changelog, style, license;
+    QFile changelogFile(":/docs/ChangeLog");
+    if (changelogFile.open(QIODevice::ReadOnly)) {
+        QByteArray data = changelogFile.readAll();
+        changelog.append(data);
+        changelogFile.close();
+    }
+    QFile htmlFile(":/docs/cyan.html");
+    if (htmlFile.open(QIODevice::ReadOnly)) {
+        QByteArray data = htmlFile.readAll();
+        QString version = CYAN_VERSION;
 #ifdef CYAN_GIT
-    version.append(QString(" %1").arg(CYAN_GIT));
+        QString devel = CYAN_GIT;
+        if (!devel.isEmpty()) {
+        version = QString("%1</h1><h1 id=\"devel\">"
+                          "Development Release:"
+                          "<br><a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>")
+                          .arg(version).arg(devel);
+        }
 #endif
-    QMessageBox aboutCyan;
-    aboutCyan.setTextFormat(Qt::RichText);
-    aboutCyan.setWindowTitle(tr("About %1").arg(qApp->applicationName()));
-    aboutCyan.setIconPixmap(QPixmap::fromImage(QImage(":/cyan.png")));
-    aboutCyan.setText(QString("<h1 style=\"font-weight:normal;\">%1 %2</h1>"
-                      "<h3 style=\"font-weight:normal;\">%3.</h3>")
-                      .arg(qApp->applicationName())
-                      .arg(version)
-                      .arg(tr("Prepress image viewer and converter")));
-
-    QString infoText = "<p>Copyright &copy;2016-2018 Ole-Andr&eacute; Rodlie. All rights reserved.</p>"
-                       "<p>Cyan is free software: you can redistribute it and/or modify it "
-                       "under the terms of the "
-                       "<a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\">"
-                       "GNU General Public License version 2</a> as published by the "
-                       "Free Software Foundation."
-                       "<br><br>"
-                       "Cyan is distributed in the hope that it will be useful, "
-                       "but WITHOUT ANY WARRANTY; without even the implied warranty "
-                       "of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
-                       "See the GNU General Public License for more details.</p>";
-    infoText.append("<p>Includes ICC color profiles from "
-                    "<a href=\"http://www.basiccolor.de/\">basICColor GmbH</a>, "
-                    "licensed under a <a href=\"http://creativecommons.org/licenses/by-nd/3.0/\">"
-                    "Creative Commons Attribution-No Derivative Works 3.0</a> License. "
-                    "Includes icons from the "
-                    "<a href=\"http://tango.freedesktop.org/Tango_Icon_Library\">"
-                    "Tango Icon Library</a>.</p>");
-    infoText.append(QString::fromStdString(fx.backendInfo()));
-    infoText.append("<p>Visit <a href=\"http://prepress.sf.net\">prepress.sf.net</a> "
-                    "or <a href=\"https://cyan.fxarena.net\">cyan.fxarena.net</a> for news and updates.");
-    infoText.append("<p><img src=\":/cyan-icc2.png\">&nbsp;<img src=\":/cyan-icc4.png\"></p>");
-    aboutCyan.setInformativeText(infoText);
-
-    aboutCyan.exec();
+        data.replace("_VERSION_", version.toUtf8());
+        data.replace("_3RDPARTY_", QString::fromStdString(fx.backendInfo()).toUtf8());
+        if (!changelog.isEmpty()) {
+            data.replace("_CHANGELOG_", changelog.toUtf8());
+        }
+        html.append(data);
+        htmlFile.close();
+    }
+    style = "body {"
+            "margin: 1em;"
+            "font-family: sans-serif; }"
+            "h1, h2, h3, h4 { font-weight: normal; }"
+            "p, pre, li { font-size: 10pt; }"
+            "h1#devel { font-size: small; }"
+            ".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }";
+    if (!html.isEmpty()) {
+        HelpDialog *dialog = new HelpDialog(this, tr("About Cyan"), html, style);
+        dialog->exec();
+    }
 }
 
 void Cyan::openImageDialog()
@@ -1393,35 +1401,6 @@ QByteArray Cyan::getDefaultProfile(FXX::ColorSpace colorspace)
         }
     }
     return bytes;
-}
-
-void Cyan::openHelp()
-{
-    QString help, changelog;
-    QFile changelogFile(":/docs/ChangeLog");
-    if (changelogFile.open(QIODevice::ReadOnly)) {
-        QByteArray data = changelogFile.readAll();
-        changelog.append(data);
-        changelogFile.close();
-    }
-    QFile htmlFile(":/docs/cyan.html");
-    if (htmlFile.open(QIODevice::ReadOnly)) {
-        QByteArray data = htmlFile.readAll();
-        QString version = CYAN_VERSION;
-#ifdef CYAN_GIT
-        version.append(QString(" %1").arg(CYAN_GIT));
-#endif
-        data.replace("_VERSION_", version.toUtf8());
-        if (!changelog.isEmpty()) {
-            data.replace("_CHANGELOG_", changelog.toUtf8());
-        }
-        help.append(data);
-        htmlFile.close();
-    }
-    if (!help.isEmpty()) {
-        HelpDialog *dialog = new HelpDialog(this, help);
-        dialog->exec();
-    }
 }
 
 void Cyan::handleConvertWatcher()
