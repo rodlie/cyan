@@ -1,11 +1,3 @@
-/*
-# GetICC <https://github.com/rodlie/geticc>
-# Copyright (c) 2018 Ole-André Rodlie. All rights reserved.
-#
-# Available under the 3-clause BSD license
-# See the LICENSE file for full details
-*/
-
 #include <iostream>
 #include <fstream>
 
@@ -146,12 +138,6 @@ inline bool extractICC(const std::string& filename, std::string newfilename)
 
 int main(int argc, const char* argv[])
 {
-    std::cout << "GetICC (c)2018 Ole-André Rodlie <http://prepress.sf.net>" << std::endl;
-#ifndef NOGUI
-    std::cout << "Uses FLTK for widgets <http://www.fltk.org>" << std::endl;
-#endif
-    std::cout << "" << std::endl;
-
     std::string filename,icc;
     if (argc>=2) { filename = argv[1]; }
     if (argc>=3) { icc = argv[2]; }
