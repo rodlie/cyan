@@ -12,6 +12,17 @@ install:
   - sudo apt-get install scons autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool
   - sudo apt-get install libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl make
   - sudo apt-get install openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils wine
+  - sudo apt-get install libfreetype6-dev libfontconfig1-dev
   
 script:
   - sh res/travis.sh
+
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file_glob: true
+  file: /opt/deploy/*
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
