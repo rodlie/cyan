@@ -1,7 +1,11 @@
 #!/bin/sh
 set -e
 
-sudo chmod 777 /opt
+SETUP=${SETUP:-1}
+
+if [ "${SETUP}" = 1 ]; then
+  sudo chmod 777 /opt
+fi
 
 CWD=`pwd`
 MXE=/opt/mxe
@@ -12,6 +16,8 @@ COMMIT="${TRAVIS_COMMIT}"
 if [ "${TRAVIS_TAG}" != "" ]; then
   COMMIT=""
 fi
+
+if [ "${SETUP}" = 1 ]; then
 
 echo "Extracting win64 sdk ..."
 mkdir -p $MXE
@@ -43,7 +49,9 @@ make test
 make DESTDIR=`pwd`/pkg install
 tree pkg
 
-# I can't get cmake+qt+linux+static to work, so fallback to qmake ...
+fi
+
+# I can't get cmake+qt+static to work, so fallback to qmake ...
 cd ${CWD}
 export PATH="${SDK}/bin:/usr/bin:/bin"
 export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
@@ -57,20 +65,24 @@ mkdir -p ${CWD}/linux64-test && cd ${CWD}/linux64-test
 qmake ../tests.pro
 make
 
-# cmake+qt+static works on mingw, thanks MXE!
 echo "===> Building win64 ..."
 mkdir -p ${CWD}/win64
 cd ${CWD}/win64
 TARGET=x86_64-w64-mingw32.static
 MINGW="${MXE}/usr/${TARGET}"
 CMAKE="${TARGET}-cmake"
+QT=${MINGW}/qt5
+QMAKE=${QT}/bin/qmake
 STRIP="${MXE}/usr/bin/${TARGET}-strip"
 PATH="${MXE}/usr/bin:/usr/bin:/bin"
 PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-GIT=${COMMIT} ${CMAKE} ..
+${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
 make
-wine64 tests.exe
-${STRIP} -s Cyan.exe
+${STRIP} -s build/Cyan.exe
+mv build/Cyan.exe .
+mkdir -p ${CWD}/win64-test && cd ${CWD}/win64-test
+${QMAKE} ../tests.pro
+make
 
 echo "===> Creating archives ..."
 mkdir -p ${CWD}/deploy $DEPLOY && cd ${CWD}/deploy
