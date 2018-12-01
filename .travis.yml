@@ -24,6 +24,7 @@ deploy:
   file: /opt/deploy/*
   skip_cleanup: true
   draft: true
+  name: $TRAVIS_TAG
   on:
     repo: rodlie/cyan
     tags: true
