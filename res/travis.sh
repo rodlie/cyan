@@ -46,10 +46,10 @@ if [ "${SETUP}" = 1 ]; then
     tar xf download.tar.xz -C /opt
     rm -f download.tar.xz
   elif [ "$OS" = "Darwin" ]; then
-    curl --no-check-certificate -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
+    curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
     tar xf download.tar.xz -C /opt
     rm -f download.tar.xz
-    curl --no-check-certificate -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11.tar.xz/download --output download.tar.xz
+    curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11.tar.xz/download --output download.tar.xz
     tar xf download.tar.xz -C /opt
     rm -f download.tar.xz
   fi
@@ -172,7 +172,7 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]
       echo "===> Mac snapshot ${UPLOAD_MAC}"
       if [ "${UPLOAD_MAC}" != ""]; then
         COMMENT="**CI for this pull request:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
-        curl --no-check-certificate -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+        curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       fi
     fi
 fi
