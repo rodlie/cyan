@@ -170,7 +170,7 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]
     elif [ "$OS" = "Darwin" ]; then
       UPLOAD_MAC=`curl --upload-file ./Cyan-${TAG}-Mac.dmg https://transfer.sh/Cyan-${TAG}-Mac.dmg`
       echo "===> Mac snapshot ${UPLOAD_MAC}"
-      if [ "${UPLOAD_MAC}" != ""]; then
+      if [ "${UPLOAD_MAC}" != "" ]; then
         COMMENT="**CI for this pull request:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
         curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       fi
