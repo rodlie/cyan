@@ -524,8 +524,8 @@ void Cyan::aboutCyan()
         QString devel = CYAN_GIT;
         if (!devel.isEmpty()) {
         version = QString("%1</h1><h1 id=\"devel\">"
-                          "Development Release:"
-                          "<br><a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>")
+                          "Development Release: "
+                          "<a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>")
                           .arg(version).arg(devel);
         }
 #endif

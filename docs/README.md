@@ -17,14 +17,13 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 * Change image bit depth
 * GIMP integration (import/export)
 
-# Requirements
+# System requirements
 
- * 4GB RAM (+)
- * Microsoft Windows 7 x64 (+)
- * Apple Mac OS X Lion 10.7 (+)
- * Linux/FreeBSD (source-only)
+ * Microsoft Windows 7/8/10 x64
+ * Apple Mac OS X 10.10-10.14
+ * GNU/Linux (glibc 2.23+/libgcc 5.4+)
 
- Recommended requirements and additional files:
+## Recommended
 
  * A bitmap editor
    * [GIMP](https://www.gimp.org)
