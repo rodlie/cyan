@@ -19,16 +19,19 @@ if [ "${TRAVIS_TAG}" != "" ]; then
 fi
 
 if [ "${SETUP}" = 1 ]; then
+  echo "Extracting sdk legal ..."
+  wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-legal.tar.xz/download && mv download download.tar.xz
+  tar xf download.tar.xz -C /opt
+  rm -f download.tar.xz
   if [ "$OS" = "Linux" ]; then
     echo "Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
     sudo apt-get install cmake tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
     sudo apt-get install scons autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool
-    sudo apt-get install libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl make
+    sudo apt-get install libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
     sudo apt-get install openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils wine
     sudo apt-get install libfreetype6-dev libfontconfig1-dev
-
     echo "Extracting win64 sdk ..."
     mkdir -p $MXE
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-win64.tar.xz/download && mv download download.tar.xz
@@ -40,10 +43,6 @@ if [ "${SETUP}" = 1 ]; then
     rm -f download.tar.xz
     echo "Extracting linux64 sdk ..."
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-linux64.tar.xz/download && mv download download.tar.xz
-    tar xf download.tar.xz -C /opt
-    rm -f download.tar.xz
-    echo "Extracting sdk legal ..."
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-legal.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C /opt
     rm -f download.tar.xz
   elif [ "$OS" = "Darwin" ]; then

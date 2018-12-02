@@ -1,8 +1,6 @@
 sudo: required
 language: cpp
-compiler:
-  - g++
-  - clang
+compiler: g++
 matrix:
   include:
     - os: linux
