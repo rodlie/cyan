@@ -57,6 +57,10 @@ set(COMPANY "Cyan")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie, INRIA. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 
+if(CMAKE_BUILD_TYPE MATCHES RELEASE)
+    add_definitions(-DQT_NO_DEBUG_OUTPUT)
+endif()
+
 if(APPLE)
     set(ICON_FILE ${RESOURCE_FOLDER}/${PROJECT_NAME}.icns)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")

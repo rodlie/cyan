@@ -19,12 +19,11 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 # Requirements
 
- * 4GB RAM (+)
- * Microsoft Windows 7 x64 (+)
- * Apple Mac OS X Lion 10.7 (+)
- * Linux/FreeBSD (source-only)
+ * [![Download for Windows](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_windows.png)](https://github.com/rodlie/cyan/releases/latest) Microsoft Windows 7/8/10 x64
+ * [![Download for Mac](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_mac.png)](https://github.com/rodlie/cyan/releases/latest) Apple Mac OS X 10.10-10.14
+ * [![Download for Linux](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_linux.png)](https://github.com/rodlie/cyan/releases/latest) GNU/Linux x86_64 (glibc 2.23+/libgcc 5.4+)
 
- Recommended requirements and additional files:
+## Recommended
 
  * A bitmap editor
    * [GIMP](https://www.gimp.org)

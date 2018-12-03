@@ -98,7 +98,7 @@ private:
     FXX::Image imageData;
     QDockWidget *imageInfoDock;
     QTreeWidget *imageInfoTree;
-    bool ignoreAction;
+    bool ignoreConvertAction;
     QProgressBar *progBar;
 
 private slots:
@@ -137,6 +137,7 @@ private slots:
     QByteArray getMonitorProfile();
     QByteArray getOutputProfile();
     QByteArray getInputProfile();
+    QByteArray getProfile(QComboBox *box);
     QByteArray readColorProfile(QString file);
 
     void getConvertProfiles();
@@ -151,9 +152,9 @@ private slots:
     void exportEmbeddedProfile(QString file);
 
     bool hasProfiles();
-    bool hasRGB();
-    bool hasCMYK();
-    bool hasGRAY();
+    bool hasRGBProfiles();
+    bool hasCMYKProfiles();
+    bool hasGRAYProfiles();
 
     void bitDepthChanged(int index);
     void gimpPlugin();
