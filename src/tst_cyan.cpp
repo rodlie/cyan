@@ -121,7 +121,7 @@ void Cyan::test_case1()
                                                    result.end());
 
     qDebug() << "Extract embedded color profile from sample image ...";
-    Magick::Blob magickBlob(result.data(), (size_t)result.length());
+    Magick::Blob magickBlob(result.data(), static_cast<size_t>(result.length()));
     QVERIFY(magickBlob.length()>0);
     Magick::Image magickImage;
     try {
@@ -135,7 +135,7 @@ void Cyan::test_case1()
         qDebug() << warn_.what();
     }
     QVERIFY(magickImage.iccColorProfile().length()>0);
-    unsigned char *iccBuffer = (unsigned char*)magickImage.iccColorProfile().data();
+    unsigned char *iccBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(magickImage.iccColorProfile().data()));
     std::vector<unsigned char> iccData(iccBuffer,
                                        iccBuffer + magickImage.iccColorProfile().length());
     image.iccInputBuffer = iccData;

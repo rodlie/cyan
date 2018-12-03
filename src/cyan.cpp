@@ -90,7 +90,7 @@ Cyan::Cyan(QWidget *parent)
     , bitDepth(Q_NULLPTR)
     , imageInfoDock(Q_NULLPTR)
     , imageInfoTree(Q_NULLPTR)
-    , ignoreAction(false)
+    , ignoreConvertAction(false)
     , progBar(Q_NULLPTR)
 {
     // style app
@@ -112,7 +112,7 @@ Cyan::Cyan(QWidget *parent)
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
-    setStyleSheet(QString("*{font-size: %1pt;}").arg(QString::number(CYAN_FONT_SIZE)));
+    setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
     QString padding = "margin-right:5px;";
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
@@ -524,7 +524,7 @@ void Cyan::aboutCyan()
         QString devel = CYAN_GIT;
         if (!devel.isEmpty()) {
         version = QString("%1</h1><h1 id=\"devel\">"
-                          "Development Release: "
+                          "DEVELOPMENT RELEASE: "
                           "<a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>")
                           .arg(version).arg(devel);
         }
@@ -849,13 +849,13 @@ void Cyan::updateMonitorDefaultProfile(int index)
 
 void Cyan::imageClear()
 {
-    ignoreAction = true;
+    ignoreConvertAction = true;
     scene->clear();
     resetImageZoom();
     clearImageBuffer();
     bitDepth->setCurrentIndex(0);
     exportEmbeddedProfileAction->setDisabled(true);
-    ignoreAction = false;
+    ignoreConvertAction = false;
 }
 
 void Cyan::resetImageZoom()
@@ -877,7 +877,7 @@ void Cyan::setImage(QByteArray image)
 
 void Cyan::updateImage()
 {
-    if (ignoreAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
+    if (ignoreConvertAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
         return;
     }
 
@@ -940,35 +940,24 @@ void Cyan::updateImage()
 
 QByteArray Cyan::getMonitorProfile()
 {
-    QByteArray result;
-    if (!monitorProfile->itemData(monitorProfile->currentIndex()).toString().isEmpty()) {
-        QFile outProfileName(monitorProfile->itemData(monitorProfile->currentIndex()).toString());
-        if (outProfileName.open(QIODevice::ReadOnly)) {
-            result = outProfileName.readAll();
-            outProfileName.close();
-        }
-    }
-    return result;
+    return getProfile(monitorProfile);
 }
 
 QByteArray Cyan::getOutputProfile()
 {
-    QByteArray result;
-    if (!outputProfile->itemData(outputProfile->currentIndex()).toString().isEmpty()) {
-        QFile outProfileName(outputProfile->itemData(outputProfile->currentIndex()).toString());
-        if (outProfileName.open(QIODevice::ReadOnly)) {
-            result = outProfileName.readAll();
-            outProfileName.close();
-        }
-    }
-    return result;
+    return getProfile(outputProfile);
 }
 
 QByteArray Cyan::getInputProfile()
 {
+    return getProfile(inputProfile);
+}
+
+QByteArray Cyan::getProfile(QComboBox *box)
+{
     QByteArray result;
-    if (!inputProfile->itemData(inputProfile->currentIndex()).toString().isEmpty()) {
-        QFile outProfileName(inputProfile->itemData(inputProfile->currentIndex()).toString());
+    if (!box->itemData(box->currentIndex()).toString().isEmpty()) {
+        QFile outProfileName(box->itemData(box->currentIndex()).toString());
         if (outProfileName.open(QIODevice::ReadOnly)) {
             result = outProfileName.readAll();
             outProfileName.close();
@@ -994,7 +983,7 @@ void Cyan::getConvertProfiles()
     FXX::ColorSpace inputColorSpace = fx.getProfileColorspace(imageData.iccInputBuffer);
     if (inputColorSpace == FXX::UnknownColorSpace) { return; }
 
-    ignoreAction = true;
+    ignoreConvertAction = true;
     QMap<QString,QString> inputProfiles, outputProfiles;
 
     switch(inputColorSpace) {
@@ -1037,7 +1026,7 @@ void Cyan::getConvertProfiles()
 
     inputProfile->insertSeparator(1);
     outputProfile->insertSeparator(1);
-    ignoreAction = false;
+    ignoreConvertAction = false;
 }
 
 void Cyan::inputProfileChanged(int)
@@ -1135,12 +1124,12 @@ bool Cyan::hasProfiles()
     return false;
 }
 
-bool Cyan::hasRGB()
+bool Cyan::hasRGBProfiles()
 {
     return hasProfiles();
 }
 
-bool Cyan::hasCMYK()
+bool Cyan::hasCMYKProfiles()
 {
     if (genProfiles(FXX::CMYKColorSpace).size()>0) {
         return true;
@@ -1148,7 +1137,7 @@ bool Cyan::hasCMYK()
     return false;
 }
 
-bool Cyan::hasGRAY()
+bool Cyan::hasGRAYProfiles()
 {
     if (genProfiles(FXX::GRAYColorSpace).size()>0) {
         return true;
