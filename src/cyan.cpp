@@ -1197,9 +1197,11 @@ void Cyan::gimpPlugin()
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
 #ifndef Q_OS_MAC
-        gimpPath.append(".gimp-"+version);
-        if (gimpDir.exists(gimpPath)) {
-            hasDir = true;
+        gimpPath.append(QString(".gimp-%1").arg(version));
+        if (gimpDir.exists(gimpPath)) { hasDir = true; }
+        if (!hasDir) {
+            gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
+            if (gimpDir.exists(gimpPath)) { hasDir = true; }
         }
 #else
         gimpPath.append("Library/Application Support/GIMP/"+version);
