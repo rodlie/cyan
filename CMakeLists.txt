@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 3.1)
 enable_testing()
 
-project(Cyan VERSION 1.3.0)
+project(Cyan VERSION 1.2.1)
 
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
