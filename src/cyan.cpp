@@ -1220,6 +1220,7 @@ void Cyan::gimpPlugin()
         }
     }
 
+    bool reloadPlug = false;
     QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
     foreach (QString filepath, folders) {
         QFile file(filepath);
@@ -1230,9 +1231,12 @@ void Cyan::gimpPlugin()
                 while (!s.atEnd()) {
                     QString line = s.readLine();
                     if (line.contains("cyanbin =")) {
-                        if (line != appPath) {
+                        if (line != appPath) { rmFile = true; }
+                    }
+                    if (line.contains("cyanversion =")) {
+                        if (line != QString("cyanversion = \"%1\"").arg(CYAN_VERSION)) {
+                            qDebug() << "gimp plug-in version differ!";
                             rmFile = true;
-                            break;
                         }
                     }
                 }
@@ -1240,6 +1244,7 @@ void Cyan::gimpPlugin()
             }
             if (rmFile) {
                 file.remove(filepath);
+                reloadPlug = true;
             }
         } else {
             QFile sourcePy(":/gimp.py");
@@ -1267,6 +1272,7 @@ void Cyan::gimpPlugin()
             }
         }
     }
+    if (reloadPlug) { gimpPlugin(); }
 }
 
 void Cyan::openProfile(QString file)
