@@ -10,7 +10,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 * Supports ICC/ICM v2/v4 color profiles
 * Supports PNG, JPEG, TIFF, XCF and PSD image input
 * Supports TIFF, JPEG and PSD image output
-* Supports TIFF, XCF and PSD image layers (v1.3+)
+* Supports TIFF, XCF and PSD image layers
 * Extract embedded ICC color profiles from images
 * Add ICC color profile to image
 * Edit ICC color profile tags
