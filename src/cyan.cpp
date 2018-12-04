@@ -56,6 +56,7 @@
 #include <qtconcurrentrun.h>
 
 #include "helpdialog.h"
+#include "openlayerdialog.h"
 
 #ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
@@ -356,6 +357,7 @@ Cyan::Cyan(QWidget *parent)
     fileMenu->addAction(quitAction);
 
     qRegisterMetaType<FXX::Image>("FXX::Image");
+    qRegisterMetaType<Magick::Image>("Magick::Image");
 
     connect(&readWatcher, SIGNAL(finished()),
             this, SLOT(handleReadWatcher()));
@@ -568,7 +570,7 @@ void Cyan::openImageDialog()
                                         tr("Open image"),
                                         dir,
                                         QString("%1"
-                                           " (*.png *.jpg *.jpeg *.tif *.tiff *.psd *.icc *.icm)")
+                                           " (*.png *.jpg *.jpeg *.tif *.tiff *.psd *.xcf *.icc *.icm)")
                                         .arg(tr("Image files")));
     if (!file.isEmpty()) {
         QMimeDatabase db;
@@ -651,6 +653,39 @@ void Cyan::openImage(QString file)
     disableUI();
     QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage,
                                                    file.toStdString(),
+                                                   profiles,
+                                                   true,
+                                                   true);
+    readWatcher.setFuture(future);
+}
+
+void Cyan::openImage(Magick::Image image)
+{
+    if (!image.isValid() || readWatcher.isRunning() || convertWatcher.isRunning()) { return; }
+    if (rgbProfile->itemData(rgbProfile->currentIndex()).isNull() ||
+        cmykProfile->itemData(cmykProfile->currentIndex()).isNull() ||
+        grayProfile->itemData(grayProfile->currentIndex()).isNull()) {
+        QMessageBox::warning(this, tr("Default Color Profiles"),
+                             tr("Please set the default color profiles before loading images."));
+        return;
+    }
+
+    // add default input profiles
+    FXX::Image profiles;
+    QByteArray rgbProfile = getDefaultProfile(FXX::RGBColorSpace);
+    QByteArray cmykProfile = getDefaultProfile(FXX::CMYKColorSpace);
+    QByteArray grayProfile = getDefaultProfile(FXX::GRAYColorSpace);
+    profiles.iccRGB = std::vector<unsigned char>(rgbProfile.begin(),
+                                                 rgbProfile.end());
+    profiles.iccCMYK = std::vector<unsigned char>(cmykProfile.begin(),
+                                                  cmykProfile.end());
+    profiles.iccGRAY = std::vector<unsigned char>(grayProfile.begin(),
+                                                  grayProfile.end());
+
+    // load image
+    disableUI();
+    QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage,
+                                                   image,
                                                    profiles,
                                                    true);
     readWatcher.setFuture(future);
@@ -1162,9 +1197,11 @@ void Cyan::gimpPlugin()
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
 #ifndef Q_OS_MAC
-        gimpPath.append(".gimp-"+version);
-        if (gimpDir.exists(gimpPath)) {
-            hasDir = true;
+        gimpPath.append(QString(".gimp-%1").arg(version));
+        if (gimpDir.exists(gimpPath)) { hasDir = true; }
+        if (!hasDir) {
+            gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
+            if (gimpDir.exists(gimpPath)) { hasDir = true; }
         }
 #else
         gimpPath.append("Library/Application Support/GIMP/"+version);
@@ -1185,6 +1222,7 @@ void Cyan::gimpPlugin()
         }
     }
 
+    bool reloadPlug = false;
     QString appPath = QString("cyanbin = \"%1\"").arg(qApp->applicationFilePath());
     foreach (QString filepath, folders) {
         QFile file(filepath);
@@ -1195,9 +1233,12 @@ void Cyan::gimpPlugin()
                 while (!s.atEnd()) {
                     QString line = s.readLine();
                     if (line.contains("cyanbin =")) {
-                        if (line != appPath) {
+                        if (line != appPath) { rmFile = true; }
+                    }
+                    if (line.contains("cyanversion =")) {
+                        if (line != QString("cyanversion = \"%1\"").arg(CYAN_VERSION)) {
+                            qDebug() << "gimp plug-in version differ!";
                             rmFile = true;
-                            break;
                         }
                     }
                 }
@@ -1205,6 +1246,7 @@ void Cyan::gimpPlugin()
             }
             if (rmFile) {
                 file.remove(filepath);
+                reloadPlug = true;
             }
         } else {
             QFile sourcePy(":/gimp.py");
@@ -1232,6 +1274,7 @@ void Cyan::gimpPlugin()
             }
         }
     }
+    if (reloadPlug) { gimpPlugin(); }
 }
 
 void Cyan::openProfile(QString file)
@@ -1442,4 +1485,24 @@ void Cyan::handleReadWatcher()
         QMessageBox::warning(this, tr("Image warning"),
                              QString::fromStdString(image.warning));
     }
+    if (image.layers.size()>0) {
+        handleImageHasLayers(image.layers);
+        imageData.layers.clear();
+    }
+}
+
+void Cyan::handleImageHasLayers(std::vector<Magick::Image> layers)
+{
+    qDebug()  << "image has layers!" << layers.size();
+    OpenLayerDialog *dialog = new OpenLayerDialog(this, layers);
+    connect(dialog, SIGNAL(loadLayer(Magick::Image)),
+            this, SLOT(handleLoadImageLayer(Magick::Image)));
+    dialog->exec();
+}
+
+void Cyan::handleLoadImageLayer(Magick::Image image)
+{
+    if (!image.isValid()) { return; }
+    qDebug() << "handle load image layer";
+    openImage(image);
 }

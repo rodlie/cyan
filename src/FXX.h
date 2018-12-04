@@ -35,6 +35,7 @@
 
 #include <iostream>
 #include <vector>
+#include <Magick++.h>
 #include <lcms2.h>
 
 class FXX
@@ -77,6 +78,7 @@ public:
         size_t height = 0;
         size_t depth = 0;
         int channels = 0;
+        std::vector<Magick::Image> layers;
         FXX::ColorSpace colorspace = FXX::UnknownColorSpace;
         FXX::RenderingIntent intent = FXX::UndefinedRenderingIntent;
         std::string comment;
@@ -96,9 +98,23 @@ public:
 
     static FXX::Image readImage(const std::string &file,
                                 FXX::Image failsafe,
+                                bool getInfo = true,
+                                bool readLayers = false);
+    static FXX::Image readImage(Magick::Image image,
+                                FXX::Image failsafe,
                                 bool getInfo = true);
+
+    static std::vector<unsigned char> generateThumb(Magick::Image image,
+                                                    int width = 75,
+                                                    int height = 75);
+
     static FXX::Image convertImage(FXX::Image input,
                                    bool getInfo = true);
+
+    static FXX::ColorSpace readImageColorspaceType(Magick::Image image);
+    static int readImageChannelCount(Magick::Image image);
+    static std::vector<unsigned char> readImageColorProfile(Magick::Image image,
+                                              FXX::Image failsafe);
 
     bool editProfile(std::string file,
                      std::string description,
@@ -116,6 +132,7 @@ public:
     FXX::ColorSpace getProfileColorspace(cmsHPROFILE profile);
 
     static std::string identify(std::vector<unsigned char> buffer);
+    static std::string identify(Magick::Image image);
     static std::string identify(std::string file);
 
     std::string supportedQuantumDepth();

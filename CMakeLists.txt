@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 3.1)
 enable_testing()
 
-project(Cyan VERSION 1.2.0)
+project(Cyan VERSION 1.2.1)
 
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
@@ -44,8 +44,8 @@ set(CMAKE_AUTORCC ON)
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 
-set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.cpp res/cyan.qrc docs/docs.qrc)
-set(HEADERS src/cyan.h src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.h)
+set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/openlayerdialog.cpp src/FXX.cpp res/cyan.qrc docs/docs.qrc)
+set(HEADERS src/cyan.h src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/openlayerdialog.h src/FXX.h)
 set(RESOURCE_FILES res/cyan.qrc docs/docs.qrc)
 set(RESOURCE_FOLDER res)
 
