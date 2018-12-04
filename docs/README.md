@@ -96,7 +96,7 @@ When you are satisfied with the result just hit save. you can output as JPEG, TI
 # Integration
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-06.png)
 
-Cyan offers tight integration with [GIMP](https://www.gimp.org) and works as an import/export plug-in in [GIMP](https://www.gimp.org) 2.4+. Just select ``Cyan/Import Image`` or ``Cyan/Export Image``.
+Cyan offers tight integration with [GIMP](https://www.gimp.org) and works as an import/export plug-in in [GIMP](https://www.gimp.org) 2.8+. Just select ``Cyan/Import Image`` or ``Cyan/Export Image``.
 
 ![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-07.png)
 
