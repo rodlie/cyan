@@ -9,7 +9,7 @@ import shutil
 import os.path
 import tempfile
 
-cyanversion = "1.2.0"
+cyanversion = "1.2.1"
 cyanbin = "cyan"
 
 def plugin_maketempfile( image, src ):
