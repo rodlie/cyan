@@ -1,15 +1,15 @@
-## 1.2.1 - 20181004
+## 1.2.1 - 20181204
 
 * Fixed broken GIMP plug-in
 * Support XCF (GIMP image format)
-* Support reading layers from XCF, TIFF, PSD.
+* Support reading layers from XCF, TIFF, PSD
 
 ## 1.2.0 - 20181203
 
  * Major "behind-the-scene" changes
  * Improved performance
  * Save to JPEG
- * Enchanced image information
+ * Enhanced image information
  * Third-party software updates
  * Fixed issues converting HDR images
 
