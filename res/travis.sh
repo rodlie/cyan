@@ -85,6 +85,8 @@ if [ "${SETUP}" = 1 ]; then
   fi
 fi
 
+cp ${CWD}/res/*.pro ${CWD}/
+
 if [ "${OS}" = "Linux" ]; then
   echo "Building CI ..."
   mkdir -p $CWD/ci
@@ -100,12 +102,12 @@ if [ "${OS}" = "Linux" ]; then
   export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
   echo "===> Building for Linux64 ..."
   mkdir -p ${CWD}/linux64 && cd ${CWD}/linux64
-  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ../cyan.pro
+  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ../deploy.pro
   make
   strip -s build/Cyan
   mv build/Cyan .
   mkdir -p ${CWD}/linux64-test && cd ${CWD}/linux64-test
-  qmake ../tests.pro
+  qmake ../deploy-test.pro
   make
 
   echo "===> Building win64 ..."
@@ -119,12 +121,12 @@ if [ "${OS}" = "Linux" ]; then
   STRIP="${MXE}/usr/bin/${TARGET}-strip"
   PATH="${MXE}/usr/bin:/usr/bin:/bin"
   PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-  ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
+  ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../deploy.pro
   make
   ${STRIP} -s build/Cyan.exe
   mv build/Cyan.exe .
   mkdir -p ${CWD}/win64-test && cd ${CWD}/win64-test
-  ${QMAKE} ../tests.pro
+  ${QMAKE} ../deploy-test.pro
   make
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
@@ -132,7 +134,7 @@ elif [ "${OS}" = "Darwin" ]; then
   PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
   PATH=${SDK}/bin:/usr/bin:/bin
   mkdir -p ${CWD}/mac64 && cd ${CWD}/mac64
-  qmake GIT=${COMMIT} CONFIG+=release ../cyan.pro
+  qmake GIT=${COMMIT} CONFIG+=release ../deploy.pro
   make
   MP=/opt/local/lib/libomp/libomp.dylib
   cp ${MP} build/Cyan.app/Contents/MacOS/
@@ -141,7 +143,7 @@ elif [ "${OS}" = "Darwin" ]; then
   strip -u -r build/Cyan.app/Contents/MacOS/*
   mv build/Cyan.app .
   mkdir -p ${CWD}/mac64-test && cd ${CWD}/mac64-test
-  qmake ../tests.pro
+  qmake ../deploy-test.pro
   make
 fi
 
