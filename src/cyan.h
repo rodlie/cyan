@@ -111,6 +111,7 @@ private slots:
     void saveImageDialog();
 
     void openImage(QString file);
+    void openImage(Magick::Image image);
     void saveImage(QString file,
                    bool notify = true,
                    bool closeOnSave = false);
@@ -173,6 +174,9 @@ private slots:
 
     void handleConvertWatcher();
     void handleReadWatcher();
+
+    void handleImageHasLayers(std::vector<Magick::Image> layers);
+    void handleLoadImageLayer(Magick::Image image);
 };
 
 #endif // CYAN_H
