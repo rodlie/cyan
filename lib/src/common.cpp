@@ -609,6 +609,32 @@ bool Common::isValidCanvas(const QString &filename)
     return false;
 }
 
+bool Common::isValidImage(const QString &filename)
+{
+    try {
+        Magick::Image image;
+        image.quiet(false);
+        image.ping(filename.toStdString());
+        return image.isValid();
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    return false;
+}
+
+int Common::hasLayers(const QString &filename)
+{
+    try {
+        std::list<Magick::Image> layers;
+        Magick::pingImages(&layers,
+                           filename.toStdString());
+        return static_cast<int>(layers.size());
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    return 0;
+}
+
 Common::Canvas Common::readImage(const QString &filename)
 {
     Common::Canvas canvas;
@@ -762,7 +788,7 @@ bool Common::supportsFreeType()
 bool Common::supportsJP2()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("jp2", Qt::CaseSensitive);
+            .contains("openjp2", Qt::CaseSensitive);
 }
 
 bool Common::supportsLzma()

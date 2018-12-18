@@ -135,6 +135,9 @@ public:
                             QMap<QString, QString> arti = QMap<QString, QString>());
 
     static bool isValidCanvas(const QString &filename);
+    static bool isValidImage(const QString &filename);
+
+    static int hasLayers(const QString &filename);
 
     static Common::Canvas readImage(const QString &filename);
 
