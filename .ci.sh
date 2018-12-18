@@ -175,7 +175,7 @@ if [ "${OS}" = "Linux" ]; then
   echo "===> Linux checksum ${LIN_CHECKSUM}"
 elif [ "${OS}" = "Darwin" ]; then
   mkdir -p Cyan-${TAG}-Mac/third-party
-  cp ${CWD}/LICENSE.CeCILLv21 Cyan-${TAG}-Mac/
+  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Mac/
   cp -a /opt/legal/Mac/* Cyan-${TAG}-Mac/third-party/
   cp -a ${CWD}/mac64/Cyan.app Cyan-${TAG}-Mac/
   hdiutil create -volname "Cyan ${TAG}" -srcfolder Cyan-${TAG}-Mac -ov -format UDBZ Cyan-${TAG}-Mac.dmg
