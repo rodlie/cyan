@@ -631,6 +631,67 @@ Common::Canvas Common::readImage(const QString &filename)
     return canvas;
 }
 
+const QString Common::supportedReadFormats()
+{
+    QString result;
+    result.append(QString("*.miff "));
+    result.append(QString("*.xcf "));
+    result.append(QString("*.psd "));
+    result.append(QString("*.bmp "));
+    result.append(QString("*.gif "));
+    result.append(QString("*.hdr "));
+    result.append(QString("*.ico "));
+    result.append(QString("*.k25 "));
+    result.append(QString("*.kdc "));
+    result.append(QString("*.orf "));
+    result.append(QString("*.pcd "));
+    result.append(QString("*.pcds "));
+    result.append(QString("*.pct "));
+    result.append(QString("*.pict "));
+    result.append(QString("*.pix "));
+    result.append(QString("*.pnm "));
+    result.append(QString("*.ppm "));
+    result.append(QString("*.rmf "));
+    result.append(QString("*.rw2 "));
+    result.append(QString("*.sgi "));
+    result.append(QString("*.sr2 "));
+    result.append(QString("*.srf "));
+    result.append(QString("*.sun "));
+    result.append(QString("*.xpm "));
+    result.append(QString("*.cr2 "));
+    result.append(QString("*.crw "));
+    result.append(QString("*.dcr "));
+    result.append(QString("*.dpx "));
+
+    if (supportsOpenExr()) { result.append(QString("*.exr ")); }
+    if (supportsJng()) { result.append(QString("*.jng ")); }
+    if (supportsJP2()) {
+        result.append(QString("*.j2c "));
+        result.append(QString("*.j2k "));
+        result.append(QString("*.jp2 "));
+        result.append(QString("*.jpc "));
+        result.append(QString("*.jpe "));
+        result.append(QString("*.jpeg "));
+        result.append(QString("*.jpg "));
+        result.append(QString("*.jpm "));
+        result.append(QString("*.jps "));
+        result.append(QString("*.pgx "));
+    }
+    if (supportsPng()) {
+        result.append(QString("*.png "));
+        result.append(QString("*.mng "));
+    }
+    if (supportsTiff()) {
+        result.append(QString("*.tiff "));
+        result.append(QString("*.tif "));
+    }
+    if (supportsLcms()) {
+        result.append(QString("*.icc "));
+        result.append(QString("*.icm"));
+    }
+    return  result;
+}
+
 int Common::supportedQuantumDepth()
 {
     return QString(MagickQuantumDepth)
@@ -750,4 +811,10 @@ bool Common::supportsZlib()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("zlib", Qt::CaseSensitive);
+}
+
+bool Common::supportsJng()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("jng", Qt::CaseSensitive);
 }

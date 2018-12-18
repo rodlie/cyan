@@ -138,6 +138,7 @@ public:
 
     static Common::Canvas readImage(const QString &filename);
 
+    static const QString supportedReadFormats();
     static int supportedQuantumDepth();
     static bool supportsJpeg();
     static bool supportsPng();
@@ -158,6 +159,7 @@ public:
     static bool supportsWebp();
     static bool supportsXml();
     static bool supportsZlib();
+    static bool supportsJng();
 };
 
 #endif // COMMON_H
