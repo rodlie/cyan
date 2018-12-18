@@ -29,17 +29,18 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 DESTDIR = build
+MOC_DIR = $${DESTDIR}/.moc
 SOURCES += main.cpp
 
 !exists(engine/configure): error("Missing ImageMagick!")
 exists(engine/configure) {
     PKGCONFIG -= $${MAGICK_CONFIG}
     CWD = engine
-    MAGICK_PC_PATH = $${CWD}/install/lib/pkgconfig
+    MAGICK_PC_PATH = $${OUT_PWD}/lib/pkgconfig
     MAGICK_PC = $${MAGICK_PC_PATH}/ImageMagick++-6.Q16HDRI.pc
     MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
     !exists($${MAGICK_PC}) {
-        message("Configure Magick++ in $${OUT_PWD} ...")
+        message("Configure Magick++ ...")
         MAGICK_CONFIGURE = $$system("cd $${CWD}; ./configure CXXFLAGS=-fPIC CFLAGS=-fPIC CPPFLAGS=-fPIC --prefix=$${OUT_PWD}" \
                                     " --disable-openmp --disable-opencl" \
                                     " --enable-largefile --disable-shared --enable-static" \
@@ -65,9 +66,6 @@ exists(engine/configure) {
         #message($${MAGICK_MAKE})
         MAGICK_INSTALL = $$system("cd $${CWD}; make install")
         #message($${MAGICK_INSTALL})
+        message("Finished building Magick++")
     }
-    #QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-    #                           " --cflags  --static $${MAGICK_PC_CONFIG}")
-    #LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-    #                 " --libs --static $${MAGICK_PC_CONFIG}")
 }

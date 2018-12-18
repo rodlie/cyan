@@ -57,7 +57,7 @@ QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG += lcms2
 
-MAGICK_PC_PATH = magick/lib/pkgconfig
+MAGICK_PC_PATH = $${OUT_PWD}/../magick/lib/pkgconfig
 MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
 QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
                            " --cflags  --static $${MAGICK_PC_CONFIG}")
