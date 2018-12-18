@@ -9,7 +9,7 @@ matrix:
       osx_image: xcode8
 
 script:
-  - sh res/travis.sh
+  - sh .ci.sh
 
 deploy:
   provider: releases
