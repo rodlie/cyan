@@ -57,43 +57,9 @@ QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG += lcms2
 
-!exists(3rdparty/ImageMagick6/configure): warning("Using unsupported Magick++, this may not work")
-exists(3rdparty/ImageMagick6/configure) {
-    PKGCONFIG -= $${MAGICK_CONFIG}
-    CWD = 3rdparty/ImageMagick6
-    MAGICK_PC_PATH = $${CWD}/install/lib/pkgconfig
-    MAGICK_PC = $${MAGICK_PC_PATH}/ImageMagick++-6.Q16HDRI.pc
-    MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
-    !exists($${MAGICK_PC}) {
-        message("Configure Magick++ ...")
-        MAGICK_CONFIGURE = $$system("cd $${CWD}; ./configure CXXFLAGS=-fPIC CFLAGS=-fPIC CPPFLAGS=-fPIC --prefix=`pwd`/install" \
-                                    " --disable-openmp --disable-opencl" \
-                                    " --enable-largefile --disable-shared --enable-static" \
-                                    " --enable-cipher --enable-zero-configuration" \
-                                    " --enable-hdri --disable-pipes --disable-docs" \
-                                    " --without-modules --with-magick-plus-plus" \
-                                    " --with-package-release-name=Cyan" \
-                                    " --with-bzlib --with-lzma --with-zlib" \
-                                    " --with-jpeg --with-png --with-tiff" \
-                                    " --with-lcms --with-quantum-depth=16" \
-                                    " --with-x=no" \
-                                    " --without-zstd --without-autotrace --without-dps" \
-                                    " --without-fftw --without-flif --without-fpx" \
-                                    " --without-djvu --without-fontconfig --without-freetype" \
-                                    " --without-raqm --without-gslib --without-gvc" \
-                                    " --without-heic --without-jbig --with-openjp2" \
-                                    " --without-lqr --without-openexr --without-pango" \
-                                    " --without-raw --without-rsvg --without-webp" \
-                                    " --without-wmf --without-xml")
-        #message($${MAGICK_CONFIGURE})
-        message("Building Magick++ ...")
-        MAGICK_MAKE = $$system("cd $${CWD}; make -j2")
-        #message($${MAGICK_MAKE})
-        MAGICK_INSTALL = $$system("cd $${CWD}; make install")
-        #message($${MAGICK_INSTALL})
-    }
-    QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                               " --cflags  --static $${MAGICK_PC_CONFIG}")
-    LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                     " --libs --static $${MAGICK_PC_CONFIG}")
-}
+MAGICK_PC_PATH = magick/lib/pkgconfig
+MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
+QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+                           " --cflags  --static $${MAGICK_PC_CONFIG}")
+LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+                 " --libs --static $${MAGICK_PC_CONFIG}")

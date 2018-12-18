@@ -30,6 +30,8 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += lib editor
+SUBDIRS += magick lib editor
 OTHER_FILES += READMEv2.md docs/README.md docs/cyan.html
-editor.depends += lib
+lib.depends += magick
+editor.depends += magick lib
+
