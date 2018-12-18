@@ -155,8 +155,8 @@ fi
 
 if [ "${OS}" = "Linux" ]; then
   mkdir -p Cyan-${TAG}-Windows/third-party Cyan-${TAG}-Linux/third-party
-  cp ${CWD}/LICENSE Cyan-${TAG}-Windows/
-  cp ${CWD}/LICENSE Cyan-${TAG}-Linux/
+  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Windows/
+  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Linux/
   cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
   cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
   cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
@@ -175,7 +175,7 @@ if [ "${OS}" = "Linux" ]; then
   echo "===> Linux checksum ${LIN_CHECKSUM}"
 elif [ "${OS}" = "Darwin" ]; then
   mkdir -p Cyan-${TAG}-Mac/third-party
-  cp ${CWD}/LICENSE Cyan-${TAG}-Mac/
+  cp ${CWD}/LICENSE.CeCILLv21 Cyan-${TAG}-Mac/
   cp -a /opt/legal/Mac/* Cyan-${TAG}-Mac/third-party/
   cp -a ${CWD}/mac64/Cyan.app Cyan-${TAG}-Mac/
   hdiutil create -volname "Cyan ${TAG}" -srcfolder Cyan-${TAG}-Mac -ov -format UDBZ Cyan-${TAG}-Mac.dmg
