@@ -34,6 +34,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <magick/MagickCore.h>
 
 #define RESOURCE_BYTE 1050000000
 
@@ -628,4 +629,125 @@ Common::Canvas Common::readImage(const QString &filename)
         canvas.warning = QString::fromStdString(warn_.what());
     }
     return canvas;
+}
+
+int Common::supportedQuantumDepth()
+{
+    return QString(MagickQuantumDepth)
+           .replace(QString("Q"), QString(""))
+            .toInt();
+}
+
+bool Common::supportsJpeg()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("jpeg", Qt::CaseSensitive);
+}
+
+bool Common::supportsPng()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("png", Qt::CaseSensitive);
+}
+
+bool Common::supportsTiff()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("tiff", Qt::CaseSensitive);
+}
+
+bool Common::supportsLcms()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("lcms", Qt::CaseSensitive);
+}
+
+bool Common::supportsHdri()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
+            .contains("HDRI", Qt::CaseSensitive);
+}
+
+bool Common::supportsOpenMP()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
+            .contains("OpenMP", Qt::CaseSensitive);
+}
+
+bool Common::supportsBzlib()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("bzlib", Qt::CaseSensitive);
+}
+
+bool Common::supportsCairo()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("cairo", Qt::CaseSensitive);
+}
+
+bool Common::supportsFontConfig()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("fontconfig", Qt::CaseSensitive);
+}
+
+bool Common::supportsFreeType()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("freetype", Qt::CaseSensitive);
+}
+
+bool Common::supportsJP2()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("jp2", Qt::CaseSensitive);
+}
+
+bool Common::supportsLzma()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("lzma", Qt::CaseSensitive);
+}
+
+bool Common::supportsOpenExr()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("openexr", Qt::CaseSensitive);
+}
+
+bool Common::supportsPangoCairo()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("pangocairo", Qt::CaseSensitive);
+}
+
+bool Common::supportsRaw()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("raw", Qt::CaseSensitive);
+}
+
+bool Common::supportsRsvg()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("rsvg", Qt::CaseSensitive);
+}
+
+bool Common::supportsWebp()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("webp", Qt::CaseSensitive);
+}
+
+bool Common::supportsXml()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("xml", Qt::CaseSensitive);
+}
+
+bool Common::supportsZlib()
+{
+    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
+            .contains("zlib", Qt::CaseSensitive);
 }

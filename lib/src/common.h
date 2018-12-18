@@ -137,6 +137,27 @@ public:
     static bool isValidCanvas(const QString &filename);
 
     static Common::Canvas readImage(const QString &filename);
+
+    static int supportedQuantumDepth();
+    static bool supportsJpeg();
+    static bool supportsPng();
+    static bool supportsTiff();
+    static bool supportsLcms();
+    static bool supportsHdri();
+    static bool supportsOpenMP();
+    static bool supportsBzlib();
+    static bool supportsCairo();
+    static bool supportsFontConfig();
+    static bool supportsFreeType();
+    static bool supportsJP2();
+    static bool supportsLzma();
+    static bool supportsOpenExr();
+    static bool supportsPangoCairo();
+    static bool supportsRaw();
+    static bool supportsRsvg();
+    static bool supportsWebp();
+    static bool supportsXml();
+    static bool supportsZlib();
 };
 
 #endif // COMMON_H
