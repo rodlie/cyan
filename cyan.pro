@@ -31,4 +31,5 @@
 TEMPLATE = subdirs
 CONFIG -= ordered
 SUBDIRS += lib editor
+OTHER_FILES += READMEv2.md docs/README.md docs/cyan.html
 editor.depends += lib

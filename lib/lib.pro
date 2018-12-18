@@ -29,7 +29,6 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.0.0
 
 QT += widgets
 TEMPLATE = lib
@@ -65,11 +64,11 @@ include(../cyan.pri)
 target.path = $${LIBDIR}
 docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
 docs.files = \
-    docs/LGPL_EXCEPTION.txt \
-    docs/LICENSE.CeCILLv21 \
-    docs/LICENSE.LGPLv21 \
-    docs/LICENSE-ImageMagick.txt \
-    docs/LICENSE.txt \
-    ../README.md
+    ../docs/LGPL_EXCEPTION.txt \
+    ../docs/LICENSE.CeCILLv21 \
+    ../docs/LICENSE.LGPLv21 \
+    ../docs/LICENSE-ImageMagick.txt \
+    ../docs/LICENSE.txt \
+    ../docs/README.md
 
 INSTALLS += docs
