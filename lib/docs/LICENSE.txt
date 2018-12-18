@@ -1,3 +1,4 @@
-libCyan is licensed under CeCILL version 2.1, but also includes
-qtcolorpicker/qtcolortriangle from QtSolutions licensed under LGPL version 2.1.
+ * libCyan is licensed under CeCILL version 2.1
+ * qtcolorpicker/qtcolortriangle from QtSolutions is licensed under LGPL version 2.1
+ * ImageMagick is licensed under Apahce license
 

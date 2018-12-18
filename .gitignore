@@ -13,7 +13,6 @@ tmp
 sdk
 *.dmg
 *.app
-3rdparty
 *.tar*
 *.deb
 *.tgz

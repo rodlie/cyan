@@ -62,27 +62,26 @@ INCLUDEPATH += src
 
 include(../cyan.pri)
 
-CONFIG += create_pc create_prl no_install_prl
-
 target.path = $${LIBDIR}
-
-headers.path = $${PREFIX}/include/$${TARGET}
-headers.files = $${HEADERS}
-
-docs.path = $${DOCDIR}/lib$${TARGET}-$${VERSION}
+docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
 docs.files = \
     docs/LGPL_EXCEPTION.txt \
     docs/LICENSE.CeCILLv21 \
     docs/LICENSE.LGPLv21 \
+    docs/LICENSE-ImageMagick.txt \
     docs/LICENSE.txt
 
-QMAKE_PKGCONFIG_NAME = $${TARGET}
-QMAKE_PKGCONFIG_DESCRIPTION = Library used by Cyan
+# Only used in Cyan so no point:
+#headers.path = $${PREFIX}/include/$${TARGET}
+#headers.files = $${HEADERS}
+#CONFIG += create_pc create_prl no_install_prl
+#QMAKE_PKGCONFIG_NAME = $${TARGET}
+#QMAKE_PKGCONFIG_DESCRIPTION = Library used by Cyan
+#QMAKE_PKGCONFIG_LIBDIR = $$target.path
+#QMAKE_PKGCONFIG_INCDIR = $$headers.path
+#QMAKE_PKGCONFIG_DESTDIR = pkgconfig
+#QMAKE_PKGCONFIG_PREFIX = $${PREFIX}
+#QMAKE_PKGCONFIG_VERSION = $$VERSION
+#QMAKE_PKGCONFIG_REQUIRES += lcms2
 
-QMAKE_PKGCONFIG_LIBDIR = $$target.path
-QMAKE_PKGCONFIG_INCDIR = $$headers.path
-QMAKE_PKGCONFIG_DESTDIR = pkgconfig
-QMAKE_PKGCONFIG_PREFIX = $${PREFIX}
-QMAKE_PKGCONFIG_VERSION = $$VERSION
-
-INSTALLS += headers target docs
+INSTALLS += target docs

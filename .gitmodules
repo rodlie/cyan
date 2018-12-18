@@ -1,0 +1,3 @@
+[submodule "3rdparty/ImageMagick6"]
+	path = 3rdparty/ImageMagick6
+	url = https://github.com/rodlie/ImageMagick6
