@@ -30,5 +30,5 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += lib
-#editor.depends += lib
+SUBDIRS += lib editor
+editor.depends += lib
