@@ -85,10 +85,8 @@ if [ "${SETUP}" = 1 ]; then
   fi
 fi
 
-cp ${CWD}/res/*.pro ${CWD}/
-
 if [ "${OS}" = "Linux" ]; then
-  echo "Building CI ..."
+  echo "==> Building regular CI ..."
   mkdir -p $CWD/ci
   cd $CWD/ci
   cmake -DCMAKE_INSTALL_PREFIX=/usr ../converter
