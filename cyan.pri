@@ -28,8 +28,6 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-CONFIG += staticlib
-
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
@@ -38,7 +36,10 @@ RCC_DIR = $${DESTDIR}/.qrc
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+CONFIG(release, debug|release) {
+    DEFINES += QT_NO_DEBUG_OUTPUT
+    CONFIG += staticlib
+}
 
 isEmpty(PREFIX): PREFIX = /usr/local
 isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc

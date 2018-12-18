@@ -69,6 +69,7 @@ docs.files = \
     docs/LICENSE.CeCILLv21 \
     docs/LICENSE.LGPLv21 \
     docs/LICENSE-ImageMagick.txt \
-    docs/LICENSE.txt
+    docs/LICENSE.txt \
+    ../README.md
 
 INSTALLS += docs
