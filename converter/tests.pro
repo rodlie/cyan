@@ -42,8 +42,8 @@ OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
 RCC_DIR = $${DESTDIR}/.qrc
 
-unix:QMAKE_POST_LINK = ./build/$${TARGET}
-win32-g++:QMAKE_POST_LINK = "wine64 build/$${TARGET}.exe"
+unix:QMAKE_POST_LINK = ./$${TARGET}
+win32-g++:QMAKE_POST_LINK = "wine64 $${TARGET}.exe"
 
 CONFIG += c++11
 QT_CONFIG -= no-pkg-config
