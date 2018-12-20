@@ -32,18 +32,21 @@ DESTDIR = build
 MOC_DIR = $${DESTDIR}/.moc
 SOURCES += main.cpp
 
-!exists(engine/configure): error("Missing ImageMagick!")
+CONFIG(release, debug|release) {
+    CONFIG += staticlib
+}
 exists(engine/configure) {
-    PKGCONFIG -= $${MAGICK_CONFIG}
     CWD = engine
     MAGICK_PC_PATH = $${OUT_PWD}/lib/pkgconfig
     MAGICK_PC = $${MAGICK_PC_PATH}/ImageMagick++-6.Q16HDRI.pc
     MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
     !exists($${MAGICK_PC}) {
         message("Configure Magick++ ...")
-        MAGICK_CONFIGURE = $$system("cd $${CWD}; ./configure CXXFLAGS=-fPIC CFLAGS=-fPIC CPPFLAGS=-fPIC --prefix=$${OUT_PWD}" \
+        SHARED_STATIC="--enable-shared --disable-static"
+        CONFIG(staticlib): SHARED_STATIC="--disable-shared --enable-static"
+        MAGICK_CONFIGURE = $$system("cd $${CWD}; CC=$${QMAKE_CC} CXX=$${QMAKE_CXX} ./configure CXXFLAGS=-fPIC CFLAGS=-fPIC CPPFLAGS=-fPIC --prefix=$${OUT_PWD}" \
                                     " --disable-openmp --disable-opencl" \
-                                    " --enable-largefile --disable-shared --enable-static" \
+                                    " --enable-largefile $${SHARED_STATIC}" \
                                     " --enable-cipher --enable-zero-configuration" \
                                     " --enable-hdri --disable-pipes --disable-docs" \
                                     " --without-modules --with-magick-plus-plus" \
@@ -56,7 +59,7 @@ exists(engine/configure) {
                                     " --without-fftw --without-flif --without-fpx" \
                                     " --without-djvu --without-fontconfig --without-freetype" \
                                     " --without-raqm --without-gslib --without-gvc" \
-                                    " --without-heic --without-jbig --with-openjp2" \
+                                    " --without-heic --without-jbig --without-openjp2" \
                                     " --without-lqr --without-openexr --without-pango" \
                                     " --without-raw --without-rsvg --without-webp" \
                                     " --without-wmf --without-xml")

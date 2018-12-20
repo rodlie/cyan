@@ -34,4 +34,3 @@ SUBDIRS += magick lib editor
 OTHER_FILES += docs/README.md docs/cyan.html .ci.sh .travis.yml
 lib.depends += magick
 editor.depends += magick lib
-

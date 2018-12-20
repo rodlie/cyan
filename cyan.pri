@@ -53,13 +53,27 @@ QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
+# pkg-config
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
+
+# lcms
 PKGCONFIG += lcms2
 
+# Magick++
 MAGICK_PC_PATH = $${OUT_PWD}/../magick/lib/pkgconfig
-MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
-QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                           " --cflags  --static $${MAGICK_PC_CONFIG}")
-LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                 " --libs --static $${MAGICK_PC_CONFIG}")
+exists($${MAGICK_PC_PATH}) {
+    MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
+    QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+                               " --cflags  --static $${MAGICK_PC_CONFIG}")
+    LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+                     " --libs --static $${MAGICK_PC_CONFIG}")
+}
+!exists($${MAGICK_PC_PATH}) {
+    MAGICK_CONFIG = ImageMagick++
+    !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
+    PKG_CONFIG_BIN = pkg-config
+    !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
+    PKGCONFIG += $${MAGICK_CONFIG}
+    CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+}
