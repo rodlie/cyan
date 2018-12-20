@@ -43,7 +43,8 @@ SOURCES += \
     src/qtcolortriangle.cpp \
     src/colorrgb.cpp \
     src/colorcmyk.cpp \
-    src/colorhsv.cpp
+    src/colorhsv.cpp \
+    src/newmediadialog.cpp
 
 HEADERS += \
     src/view.h \
@@ -55,7 +56,8 @@ HEADERS += \
     src/qtcolortriangle.h \
     src/colorrgb.h \
     src/colorcmyk.h \
-    src/colorhsv.h
+    src/colorhsv.h \
+    src/newmediadialog.h
 
 INCLUDEPATH += src
 

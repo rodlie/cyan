@@ -61,7 +61,14 @@ class Common: public QObject
 
 public:
 
-    enum RenderingIntent {
+    enum newDialogType
+    {
+        newImageDialogType,
+        newLayerDialogType
+    };
+
+    enum RenderingIntent
+    {
         UndefinedRenderingIntent,
         SaturationRenderingIntent,
         PerceptualRenderingIntent,
@@ -163,6 +170,8 @@ public:
     static bool supportsXml();
     static bool supportsZlib();
     static bool supportsJng();
+
+    static const QString humanFileSize(float num, bool mp = false, bool are = false);
 };
 
 #endif // COMMON_H

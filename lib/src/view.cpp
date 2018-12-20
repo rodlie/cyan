@@ -302,6 +302,9 @@ void View::addLayer(Magick::Image image,
 {
     int id = _canvas.layers.size();
     _canvas.layers[id].image = image;
+    if (!image.label().empty()) {
+        _canvas.layers[id].label = QString::fromStdString(image.label());
+    }
 
     LayerItem *layer = new LayerItem();
     layer->setRect(0,
@@ -582,7 +585,7 @@ const QString View::getCanvasID()
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
     qDebug() << "set canvas specs from image";
-    //_image.label(image.label());
+    _image.label(image.label());
     _image.size(Magick::Geometry(image.columns(), image.rows()));
     _image.depth(image.depth());
     _image.colorSpace(image.colorSpace());

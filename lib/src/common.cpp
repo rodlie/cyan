@@ -667,6 +667,7 @@ const QString Common::supportedReadFormats()
     result.append(QString("*.gif "));
     result.append(QString("*.hdr "));
     result.append(QString("*.ico "));
+
     result.append(QString("*.k25 "));
     result.append(QString("*.kdc "));
     result.append(QString("*.orf "));
@@ -684,6 +685,7 @@ const QString Common::supportedReadFormats()
     result.append(QString("*.srf "));
     result.append(QString("*.sun "));
     result.append(QString("*.xpm "));
+
     result.append(QString("*.cr2 "));
     result.append(QString("*.crw "));
     result.append(QString("*.dcr "));
@@ -691,14 +693,16 @@ const QString Common::supportedReadFormats()
 
     if (supportsOpenExr()) { result.append(QString("*.exr ")); }
     if (supportsJng()) { result.append(QString("*.jng ")); }
+    if (supportsJpeg()) {
+        result.append(QString("*.jpeg "));
+        result.append(QString("*.jpg "));
+    }
     if (supportsJP2()) {
         result.append(QString("*.j2c "));
         result.append(QString("*.j2k "));
         result.append(QString("*.jp2 "));
         result.append(QString("*.jpc "));
         result.append(QString("*.jpe "));
-        result.append(QString("*.jpeg "));
-        result.append(QString("*.jpg "));
         result.append(QString("*.jpm "));
         result.append(QString("*.jps "));
         result.append(QString("*.pgx "));
@@ -843,4 +847,28 @@ bool Common::supportsJng()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("jng", Qt::CaseSensitive);
+}
+
+const QString Common::humanFileSize(float num, bool mp, bool are)
+{
+    float byte = 1024.0;
+    QStringList list;
+    list << "KB";
+
+    if (are) {
+        byte = 1000.0;
+        list << "MP" << "GP";
+    } else if (mp) {
+        byte = 1000.0;
+        list << "MP";
+    } else { list << "MB" << "GB" << "TB"; }
+
+    QStringListIterator i(list);
+    QString unit("bytes");
+
+    while(num >= byte && i.hasNext()) {
+        unit = i.next();
+        num /= byte;
+    }
+    return QString().setNum(num,'f',2)+" "+unit;
 }
