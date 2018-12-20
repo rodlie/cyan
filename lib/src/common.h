@@ -38,6 +38,7 @@
 #include <QDateTime>
 
 #include <list>
+#include <lcms2.h>
 #include <Magick++.h>
 
 #include "tileitem.h"
@@ -60,6 +61,21 @@ class Common: public QObject
     Q_OBJECT
 
 public:
+
+    enum ICCTag {
+        ICCDescription,
+        ICCManufacturer,
+        ICCModel,
+        ICCCopyright
+    };
+
+    enum Colorspace
+    {
+        NoColorspace,
+        RGBColorspace,
+        CMYKColorspace,
+        GRAYColorspace
+    };
 
     enum newDialogType
     {
@@ -147,6 +163,23 @@ public:
     static int hasLayers(const QString &filename);
 
     static Common::Canvas readImage(const QString &filename);
+
+    static Magick::Image convertColorspace(Magick::Image image,
+                                           Magick::Blob input,
+                                           Magick::Blob output,
+                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
+                                           bool blackpoint = true);
+
+    static QStringList getColorProfilesPath();
+    static QMap<QString, QString> getColorProfiles(Magick::ColorspaceType colorspace);
+
+    static Magick::ColorspaceType getProfileColorspace(const QString &filename);
+    static Magick::ColorspaceType getProfileColorspace(cmsHPROFILE profile);
+
+    static const QString getProfileTag(const QString filename,
+                                       Common::ICCTag tag = Common::ICCDescription);
+    static const QString getProfileTag(cmsHPROFILE profile,
+                                       Common::ICCTag tag = Common::ICCDescription);
 
     static const QString supportedReadFormats();
     static int supportedQuantumDepth();

@@ -392,6 +392,12 @@ Magick::Image View::getCanvas()
     return _canvas.image;
 }
 
+QSize View::getCanvasSize()
+{
+    return QSize(static_cast<int>(_canvas.image.columns()),
+                 static_cast<int>(_canvas.image.rows()));
+}
+
 Common::Canvas View::getCanvasProject()
 {
     return _canvas;

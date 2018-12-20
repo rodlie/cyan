@@ -34,6 +34,9 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QDir>
+#include <QDirIterator>
+
 #include <magick/MagickCore.h>
 
 #define RESOURCE_BYTE 1050000000
@@ -655,6 +658,137 @@ Common::Canvas Common::readImage(const QString &filename)
         canvas.warning = QString::fromStdString(warn_.what());
     }
     return canvas;
+}
+
+Magick::Image Common::convertColorspace(Magick::Image image,
+                                        Magick::Blob input,
+                                        Magick::Blob output,
+                                        Magick::RenderingIntent intent,
+                                        bool blackpoint)
+{
+    if (output.length()>0) {
+        try {
+            image.quiet(true);
+            image.renderingIntent(intent);
+            image.blackPointCompensation(blackpoint);
+            if (input.length()>0) { image.profile("ICC", input); }
+            image.profile("ICC", output);
+        }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    }
+    return image;
+}
+
+QStringList Common::getColorProfilesPath()
+{
+    QStringList folders;
+    folders << QDir::rootPath() + "/WINDOWS/System32/spool/drivers/color";
+    folders << "/Library/ColorSync/Profiles";
+    folders << QDir::homePath() + "/Library/ColorSync/Profiles";
+    folders << "/usr/share/color/icc";
+    folders << "/usr/local/share/color/icc";
+    folders << QDir::homePath() + "/.color/icc";
+    QString cyanICCPath = QDir::homePath() + "/.config/FxArena/Cyan/icc";
+    QDir cyanICCDir(cyanICCPath);
+    if (cyanICCDir.exists(cyanICCPath)) {
+        folders << cyanICCPath;
+    }
+    return folders;
+}
+
+QMap<QString, QString> Common::getColorProfiles(Magick::ColorspaceType colorspace)
+{
+    QMap<QString, QString> output;
+    QStringList folders = getColorProfilesPath();
+    for (int i = 0; i < folders.size(); ++i) {
+        QStringList filter;
+        filter << "*.icc" << "*.icm";
+        QDirIterator it(folders.at(i), filter, QDir::Files, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            QString iccFile = it.next();
+            QString profile = getProfileTag(iccFile);
+            if (iccFile.isEmpty() || profile.isEmpty()) { continue; }
+            if (getProfileColorspace(iccFile)!= colorspace) { continue; }
+            output[profile] = iccFile;
+        }
+    }
+    return output;
+}
+
+Magick::ColorspaceType Common::getProfileColorspace(const QString &filename)
+{
+    if (!filename.isEmpty()) {
+        return getProfileColorspace(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"));
+    }
+    return Magick::UndefinedColorspace;
+}
+
+Magick::ColorspaceType Common::getProfileColorspace(cmsHPROFILE profile)
+{
+    Magick::ColorspaceType result = Magick::UndefinedColorspace;
+    if (profile) {
+        if (cmsGetColorSpace(profile) == cmsSigRgbData) {
+            result = Magick::RGBColorspace;
+        } else if (cmsGetColorSpace(profile) == cmsSigCmykData) {
+            result = Magick::CMYKColorspace;
+        } else if (cmsGetColorSpace(profile) == cmsSigGrayData) {
+            result = Magick::GRAYColorspace;
+        }
+    }
+    cmsCloseProfile(profile);
+    return result;
+}
+
+const QString Common::getProfileTag(const QString filename,
+                                    Common::ICCTag tag)
+{
+    if (!filename.isEmpty()) {
+        return getProfileTag(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"), tag);
+    }
+    return QString();
+}
+
+const QString Common::getProfileTag(cmsHPROFILE profile,
+                                    Common::ICCTag tag)
+{
+    std::string result;
+    if (profile) {
+        cmsUInt32Number size = 0;
+        cmsInfoType cmsSelectedType;
+        switch(tag) {
+        case Common::ICCManufacturer:
+            cmsSelectedType = cmsInfoManufacturer;
+            break;
+        case Common::ICCModel:
+            cmsSelectedType = cmsInfoModel;
+            break;
+        case Common::ICCCopyright:
+            cmsSelectedType = cmsInfoCopyright;
+            break;
+        default:
+            cmsSelectedType = cmsInfoDescription;
+        }
+        size = cmsGetProfileInfoASCII(profile,
+                                      cmsSelectedType,
+                                      "en",
+                                      "US",
+                                      nullptr,
+                                      0);
+        if (size > 0) {
+            std::vector<char> buffer(size);
+            cmsUInt32Number newsize = cmsGetProfileInfoASCII(profile,
+                                                             cmsSelectedType,
+                                                             "en",
+                                                             "US",
+                                                             &buffer[0], size);
+            if (size == newsize) {
+                result = buffer.data();
+            }
+        }
+    }
+    cmsCloseProfile(profile);
+    return QString::fromStdString(result);
 }
 
 const QString Common::supportedReadFormats()

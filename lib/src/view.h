@@ -141,6 +141,7 @@ public slots:
 
     void clearLayers();
     Magick::Image getCanvas();
+    QSize getCanvasSize();
     Common::Canvas getCanvasProject();
 
     void setLayerVisibility(int layer,
