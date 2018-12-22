@@ -198,6 +198,10 @@ public slots:
 
     void refreshTiles();
 
+    void setSelectedLayer(int id);
+
+    void moveLayerEvent(QKeyEvent *e);
+
 private slots:
 
     void handleLayerMoving(QPointF pos,

@@ -626,6 +626,17 @@ void View::refreshTiles()
     }
 }
 
+void View::setSelectedLayer(int id)
+{
+    _selectedLayer = id;
+    //emit selectedLayer(id);
+}
+
+void View::moveLayerEvent(QKeyEvent *e)
+{
+    View::keyPressEvent(e);
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {

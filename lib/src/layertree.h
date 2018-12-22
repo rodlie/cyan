@@ -36,6 +36,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QMdiSubWindow>
+#include <QKeyEvent>
 
 #include "view.h"
 
@@ -76,6 +77,11 @@ public:
     explicit LayerTree(QWidget *parent = nullptr);
     ~LayerTree();
 
+signals:
+
+    void selectedLayer(int id);
+    void moveLayerEvent(QKeyEvent *e);
+
 private:
 
     QString _canvasID;
@@ -89,6 +95,11 @@ public slots:
 private slots:
 
     void populateTree(View *image);
+    void handleItemActivated(QTreeWidgetItem *item, int col);
+
+protected:
+
+    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // LAYERTREE_H

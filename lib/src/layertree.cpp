@@ -98,6 +98,15 @@ LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
     //setSortingEnabled(true);
     //setColumnHidden(0, true);
     setColumnWidth(0, 50);
+
+    connect(this,
+            SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            this,
+            SLOT(handleItemActivated(QTreeWidgetItem*, int)));
+    connect(this,
+            SIGNAL(itemPressed(QTreeWidgetItem*,int)),
+            this,
+            SLOT(handleItemActivated(QTreeWidgetItem*, int)));
 }
 
 LayerTree::~LayerTree()
@@ -142,4 +151,17 @@ void LayerTree::populateTree(View *image)
         if (i==0) { setCurrentItem(item); }
     }
     sortByColumn(0);
+}
+
+void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)
+{
+    Q_UNUSED(col)
+    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
+    if (!item) { return; }
+    emit selectedLayer(layer->getLayerID());
+}
+
+void LayerTree::keyPressEvent(QKeyEvent *e)
+{
+    emit moveLayerEvent(e);
 }
