@@ -62,6 +62,13 @@ class Common: public QObject
 
 public:
 
+    enum MoveLayer {
+        MoveLayerUp,
+        MoveLayerDown,
+        MoveLayerLeft,
+        MoveLayerRight
+    };
+
     enum ICCTag {
         ICCDescription,
         ICCManufacturer,
@@ -122,6 +129,7 @@ public:
         Magick::LineCap brushLineCap = Magick::RoundCap;
         Magick::LineJoin brushLineJoin = Magick::MiterJoin;
         QString timestamp;
+        Magick::Blob profile;
     };
 
     Common(QObject *parent = nullptr);
@@ -166,6 +174,21 @@ public:
 
     static Magick::Image convertColorspace(Magick::Image image,
                                            Magick::Blob input,
+                                           Magick::Blob output,
+                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
+                                           bool blackpoint = true);
+    static Magick::Image convertColorspace(Magick::Image image,
+                                           const QString &input,
+                                           const QString &output,
+                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
+                                           bool blackpoint = true);
+    static Magick::Image convertColorspace(Magick::Image image,
+                                           Magick::Blob input,
+                                           const QString &output,
+                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
+                                           bool blackpoint = true);
+    static Magick::Image convertColorspace(Magick::Image image,
+                                           const QString &input,
                                            Magick::Blob output,
                                            Magick::RenderingIntent intent = Magick::PerceptualIntent,
                                            bool blackpoint = true);

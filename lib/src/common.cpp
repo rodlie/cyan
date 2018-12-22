@@ -338,6 +338,7 @@ void Common::setMemoryResource(int gib)
 
 void Common::setThreadResources(int thread)
 {
+    if (thread == 0) { return; }
     Magick::ResourceLimits::thread(static_cast<qulonglong>(thread));
 }
 
@@ -680,6 +681,80 @@ Magick::Image Common::convertColorspace(Magick::Image image,
     return image;
 }
 
+Magick::Image Common::convertColorspace(Magick::Image image,
+                                        const QString &input,
+                                        const QString &output,
+                                        Magick::RenderingIntent intent,
+                                        bool blackpoint)
+{
+    Magick::Blob blob1,blob2;
+    Magick::Image readBlob1,readBlob2;
+    try {
+        readBlob1.read(input.toStdString());
+        readBlob1.write(&blob1);
+        readBlob2.read(output.toStdString());
+        readBlob2.write(&blob2);
+        if (blob1.length()>0 && blob2.length()>0) {
+            return convertColorspace(image,
+                                     blob1,
+                                     blob2,
+                                     intent,
+                                     blackpoint);
+        }
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    return Magick::Image();
+}
+
+Magick::Image Common::convertColorspace(Magick::Image image,
+                                        Magick::Blob input,
+                                        const QString &output,
+                                        Magick::RenderingIntent intent,
+                                        bool blackpoint)
+{
+    Magick::Blob blob;
+    Magick::Image readBlob;
+    try {
+        readBlob.read(output.toStdString());
+        readBlob.write(&blob);
+        if (blob.length()>0) {
+            return convertColorspace(image,
+                                     input,
+                                     blob,
+                                     intent,
+                                     blackpoint);
+        }
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    return Magick::Image();
+}
+
+Magick::Image Common::convertColorspace(Magick::Image image,
+                                        const QString &input,
+                                        Magick::Blob output,
+                                        Magick::RenderingIntent intent,
+                                        bool blackpoint)
+{
+    Magick::Blob blob;
+    Magick::Image readBlob;
+    try {
+        readBlob.read(input.toStdString());
+        readBlob.write(&blob);
+        if (blob.length()>0) {
+            return convertColorspace(image,
+                                     blob,
+                                     output,
+                                     intent,
+                                     blackpoint);
+        }
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    return Magick::Image();
+}
+
 QStringList Common::getColorProfilesPath()
 {
     QStringList folders;
@@ -689,11 +764,8 @@ QStringList Common::getColorProfilesPath()
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
-    QString cyanICCPath = QDir::homePath() + "/.config/FxArena/Cyan/icc";
-    QDir cyanICCDir(cyanICCPath);
-    if (cyanICCDir.exists(cyanICCPath)) {
-        folders << cyanICCPath;
-    }
+    folders << QDir::homePath() + "/.config/Cyan/icc";
+    folders << QDir::homePath() + "/.config/FxArena/Cyan/icc";
     return folders;
 }
 
@@ -729,7 +801,7 @@ Magick::ColorspaceType Common::getProfileColorspace(cmsHPROFILE profile)
     Magick::ColorspaceType result = Magick::UndefinedColorspace;
     if (profile) {
         if (cmsGetColorSpace(profile) == cmsSigRgbData) {
-            result = Magick::RGBColorspace;
+            result = Magick::sRGBColorspace;
         } else if (cmsGetColorSpace(profile) == cmsSigCmykData) {
             result = Magick::CMYKColorspace;
         } else if (cmsGetColorSpace(profile) == cmsSigGrayData) {

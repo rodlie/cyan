@@ -32,9 +32,9 @@ DESTDIR = build
 MOC_DIR = $${DESTDIR}/.moc
 SOURCES += main.cpp
 
-CONFIG(release, debug|release) {
+#CONFIG(release, debug|release) {
     CONFIG += staticlib
-}
+#}
 exists(engine/configure) {
     CWD = engine
     MAGICK_PC_PATH = $${OUT_PWD}/lib/pkgconfig
@@ -45,7 +45,7 @@ exists(engine/configure) {
         SHARED_STATIC="--enable-shared --disable-static"
         CONFIG(staticlib): SHARED_STATIC="--disable-shared --enable-static"
         MAGICK_CONFIGURE = $$system("cd $${CWD}; CC=$${QMAKE_CC} CXX=$${QMAKE_CXX} ./configure CXXFLAGS=-fPIC CFLAGS=-fPIC CPPFLAGS=-fPIC --prefix=$${OUT_PWD}" \
-                                    " --disable-openmp --disable-opencl" \
+                                    " --enable-openmp --disable-opencl" \
                                     " --enable-largefile $${SHARED_STATIC}" \
                                     " --enable-cipher --enable-zero-configuration" \
                                     " --enable-hdri --disable-pipes --disable-docs" \

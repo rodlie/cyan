@@ -47,6 +47,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsPixmapItem>
 #include <QFuture>
+#include <QKeyEvent>
 
 #include "common.h"
 #include "layeritem.h"
@@ -158,6 +159,8 @@ public slots:
                             int layer);
     void setLayersFromCanvas(Common::Canvas canvas);
 
+    void updateCanvas(Common::Canvas canvas);
+
     QSize getLayerOffset(int layer);
     void setLayerOffset(int layer,
                         QSize offset);
@@ -193,6 +196,8 @@ public slots:
 
     const QString getCanvasID();
 
+    void refreshTiles();
+
 private slots:
 
     void handleLayerMoving(QPointF pos,
@@ -219,13 +224,14 @@ private slots:
     void handleBrushOverTile(QPointF pos,
                              bool draw = true);
 
-
     void renderTile(int tile,
                            Magick::Image canvas,
                            QMap<int, Common::Layer> layers,
                            Magick::Geometry crop = Magick::Geometry());
 
     void paintCanvasBackground();
+
+    void moveSelectedLayer(Common::MoveLayer gravity, int skip = 1);
 
 protected:
 
@@ -238,6 +244,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     void resizeEvent(QResizeEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // VIEW_H

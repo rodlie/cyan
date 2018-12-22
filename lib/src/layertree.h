@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,54 +28,67 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TARGET = Cyan
+#ifndef LAYERTREE_H
+#define LAYERTREE_H
 
-QT += widgets
-TEMPLATE = lib
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QMdiSubWindow>
 
-SOURCES += \
-    src/view.cpp \
-    src/layeritem.cpp \
-    src/tileitem.cpp \
-    src/common.cpp \
-    src/mdi.cpp \
-    src/qtcolorpicker.cpp \
-    src/qtcolortriangle.cpp \
-    src/colorrgb.cpp \
-    src/colorcmyk.cpp \
-    src/colorhsv.cpp \
-    src/newmediadialog.cpp \
-    src/convertdialog.cpp \
-    src/layertree.cpp
+#include "view.h"
 
-HEADERS += \
-    src/view.h \
-    src/layeritem.h \
-    src/tileitem.h \
-    src/common.h \
-    src/mdi.h \
-    src/qtcolorpicker.h \
-    src/qtcolortriangle.h \
-    src/colorrgb.h \
-    src/colorcmyk.h \
-    src/colorhsv.h \
-    src/newmediadialog.h \
-    src/convertdialog.h \
-    src/layertree.h
+class LayerTreeItem : public QTreeWidget, public QTreeWidgetItem
+{
+    Q_OBJECT
 
-INCLUDEPATH += src
+public:
 
-include(../cyan.pri)
+    explicit LayerTreeItem(QTreeWidget *parent = nullptr);
+    ~LayerTreeItem();
 
-target.path = $${LIBDIR}
-docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
-docs.files = \
-    ../docs/LGPL_EXCEPTION.txt \
-    ../docs/LICENSE.CeCILLv21 \
-    ../docs/LICENSE.LGPLv21 \
-    ../docs/LICENSE-ImageMagick.txt \
-    ../docs/LICENSE.txt \
-    ../docs/README.md
+private:
 
-INSTALLS += docs
+    Magick::CompositeOperator _composite;
+    int _id;
+    QString _name;
+    double _opacity;
+
+public slots:
+
+    Magick::CompositeOperator getComposite();
+    void setComposite(Magick::CompositeOperator composite);
+    int getLayerID();
+    void setLayerID(int id);
+    QString getLayerName();
+    void setLayerName(QString name);
+    double getOpacity();
+    void setOpacity(double value);
+};
+
+class LayerTree : public QTreeWidget
+{
+    Q_OBJECT
+
+public:
+
+    explicit LayerTree(QWidget *parent = nullptr);
+    ~LayerTree();
+
+private:
+
+    QString _canvasID;
+
+public slots:
+
+    void setCanvasID(const QString &id);
+    const QString getCanvasID();
+    void handleTabActivated(QMdiSubWindow *tab);
+
+private slots:
+
+    void populateTree(View *image);
+};
+
+#endif // LAYERTREE_H

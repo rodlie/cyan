@@ -60,6 +60,7 @@ View::View(QWidget* parent, bool setup) :
     setBackgroundBrush(QColor(30,30,30));
     setMouseTracking(true);
 
+
     // TODO
     _parentLayer = 0;
     _parentCanvas = QString();
@@ -263,6 +264,28 @@ void View::resizeEvent(QResizeEvent *e)
                   scene()->height(),
                   Qt::KeepAspectRatio);
     }
+}
+
+void View::keyPressEvent(QKeyEvent *e)
+{
+    int skip = 1;
+    if(e->modifiers() & Qt::ShiftModifier) { skip = 10; }
+    switch (e->key()) {
+    case Qt::Key_Left:
+        moveSelectedLayer(Common::MoveLayerLeft, skip);
+        return;
+    case Qt::Key_Right:
+        moveSelectedLayer(Common::MoveLayerRight, skip);
+        return;
+    case Qt::Key_Up:
+        moveSelectedLayer(Common::MoveLayerUp, skip);
+        return;
+    case Qt::Key_Down:
+        moveSelectedLayer(Common::MoveLayerDown, skip);
+        return;
+    default:;
+    }
+    QGraphicsView::keyPressEvent(e);
 }
 
 void View::doZoom(double scaleX,
@@ -469,6 +492,13 @@ void View::setLayersFromCanvas(Common::Canvas canvas)
     emit updatedLayers();
 }
 
+void View::updateCanvas(Common::Canvas canvas)
+{
+    _image = canvas.image;
+    _canvas = canvas;
+    refreshTiles();
+}
+
 QSize View::getLayerOffset(int layer)
 {
     return _canvas.layers[layer].pos;
@@ -587,6 +617,15 @@ const QString View::getCanvasID()
     return _canvas.timestamp;
 }
 
+void View::refreshTiles()
+{
+    for (int i=0;i<_scene->items().size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+        if (!item) { continue; }
+        handleLayerOverTiles(item);
+    }
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
@@ -604,6 +643,12 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _scene->setSceneRect(0, 0, image.columns(), image.rows());
     _rect->setRect(0, 0, image.columns(), image.rows());
     _canvas.image = _image;
+
+    // save color profile
+    _canvas.profile = image.iccColorProfile();
+    if (_canvas.profile.length()==0) {
+        emit errorMessage(tr("Missing color profile!"));
+    }
 
     // setup canvas tiles
     initTiles();
@@ -695,6 +740,7 @@ void View::handleLayerMoved(QPointF pos,
 
 void View::handleLayerSelected(int id)
 {
+    _selectedLayer = id;
     emit selectedLayer(id);
 }
 
@@ -994,6 +1040,35 @@ void View::paintCanvasBackground()
     }
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+
+void View::moveSelectedLayer(Common::MoveLayer gravity, int skip)
+{
+    qDebug() << "move selected layer" << _selectedLayer << gravity;
+    for (int i=0;i<_scene->items().size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+        if (!item) { continue; }
+        if (item->getID() != _selectedLayer) { continue; }
+        QPointF pos = item->pos();
+        switch (gravity) {
+        case Common::MoveLayerUp:
+            pos.setY(pos.y()-skip);
+            break;
+        case Common::MoveLayerDown:
+            pos.setY(pos.y()+skip);
+            break;
+        case Common::MoveLayerLeft:
+            pos.setX(pos.x()-skip);
+            break;
+        case Common::MoveLayerRight:
+            pos.setX(pos.x()+skip);
+            break;
+        }
+        item->setPos(pos);
+        handleLayerMoved(pos, _selectedLayer);
+        handleLayerOverTiles(item);
+    }
+
 }
 
 void View::setLockLayers(bool lock)
