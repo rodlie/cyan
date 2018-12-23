@@ -38,6 +38,7 @@ exists(editor) {
     editor.depends += lib
 }
 exists(magick/engine/configure) {
+    SUBDIRS += magick
     lib.depends += magick
     exists(editor): editor.depends += magick
 }
