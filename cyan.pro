@@ -30,7 +30,14 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += magick lib editor
 OTHER_FILES += docs/README.md docs/cyan.html .ci.sh .travis.yml
-lib.depends += magick
-editor.depends += magick lib
+SUBDIRS += lib
+
+exists(editor) {
+    SUBDIRS += editor
+    editor.depends += lib
+}
+exists(magick/engine/configure) {
+    lib.depends += magick
+    exists(editor): editor.depends += magick
+}

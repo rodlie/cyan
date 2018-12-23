@@ -70,6 +70,7 @@ exists($${MAGICK_PC_PATH}) {
                      " --libs --static $${MAGICK_PC_CONFIG}")
 }
 !exists($${MAGICK_PC_PATH}) {
+    warning("Cyan currently uses a fork of ImageMagick6 (magick/engine submodule), building against vanilla ImageMagick will not work. This will be fixed before final release of Cyan v2.0, but until then use the magick/engine submodule supplied with Cyan.")
     MAGICK_CONFIG = ImageMagick++
     !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
     PKG_CONFIG_BIN = pkg-config
