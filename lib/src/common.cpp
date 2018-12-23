@@ -36,6 +36,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDirIterator>
+#include <QAction>
 
 #include <magick/MagickCore.h>
 
@@ -1077,4 +1078,58 @@ const QString Common::humanFileSize(float num, bool mp, bool are)
         num /= byte;
     }
     return QString().setNum(num,'f',2)+" "+unit;
+}
+
+void Common::populateColorProfileMenu(QMenu *menu,
+                                      Magick::ColorspaceType colorspace)
+{
+    menu->clear();
+    QMapIterator<QString, QString> i(Common::getColorProfiles(colorspace));
+    while (i.hasNext()) {
+        i.next();
+        QAction *action = new QAction(menu);
+        action->setIcon(QIcon(":/icons/colors.png"));
+        action->setText(i.key());
+        action->setData(i.value());
+        action->setCheckable(true);
+        menu->addAction(action);
+        connect(action,
+                SIGNAL(triggered()),
+                this,
+                SLOT(selectDefaultColorProfile()));
+    }
+}
+
+void Common::setDefaultColorProfileFromFilename(QMenu *menu,
+                                                const QString &filename)
+{
+    for (int i=0;i<menu->actions().size();++i) {
+        QAction *action = menu->actions().at(i);
+        if (!action) { continue; }
+        if (action->data().toString() == filename) {
+            action->setChecked(true);
+        } else { action->setChecked(false); }
+    }
+}
+
+void Common::setDefaultColorProfileFromTitle(QMenu *menu,
+                                             const QString &title)
+{
+    for (int i=0;i<menu->actions().size();++i) {
+        QAction *action = menu->actions().at(i);
+        if (!action) { continue; }
+        if (action->text() == title) {
+            action->setChecked(true);
+        } else { action->setChecked(false); }
+    }
+}
+
+const QString Common::selectedDefaultColorProfile(QMenu *menu)
+{
+    for (int i=0;i<menu->actions().size();++i) {
+        QAction *action = menu->actions().at(i);
+        if (!action) { continue; }
+        if (action->isChecked()) { return action->data().toString(); }
+    }
+    return QString();
 }

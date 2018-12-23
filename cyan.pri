@@ -30,6 +30,8 @@
 
 VERSION = 1.9.0
 
+VERSION_TYPE=Alpha
+
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
@@ -78,3 +80,7 @@ exists($${MAGICK_PC_PATH}) {
     PKGCONFIG += $${MAGICK_CONFIG}
     CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 }
+
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
+DEFINES += CYAN_DEVEL

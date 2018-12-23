@@ -36,6 +36,7 @@
 #include <QObject>
 #include <QMap>
 #include <QDateTime>
+#include <QMenu>
 
 #include <list>
 #include <lcms2.h>
@@ -228,6 +229,16 @@ public:
     static bool supportsJng();
 
     static const QString humanFileSize(float num, bool mp = false, bool are = false);
+
+
+    void populateColorProfileMenu(QMenu *menu,
+                                  Magick::ColorspaceType colorspace);
+    void setDefaultColorProfileFromFilename(QMenu *menu,
+                                            const QString &filename);
+    void setDefaultColorProfileFromTitle(QMenu *menu,
+                                         const QString &title);
+
+    const QString selectedDefaultColorProfile(QMenu *menu);
 };
 
 #endif // COMMON_H
