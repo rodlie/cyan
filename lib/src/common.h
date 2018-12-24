@@ -231,14 +231,19 @@ public:
     static const QString humanFileSize(float num, bool mp = false, bool are = false);
 
 
-    void populateColorProfileMenu(QMenu *menu,
+    /*void populateColorProfileMenu(QMenu *menu,
                                   Magick::ColorspaceType colorspace);
     void setDefaultColorProfileFromFilename(QMenu *menu,
                                             const QString &filename);
     void setDefaultColorProfileFromTitle(QMenu *menu,
                                          const QString &title);
+    Magick::Blob selectedDefaultColorProfileData(QMenu *menu);
 
     const QString selectedDefaultColorProfile(QMenu *menu);
+
+signals:
+    void errorMessage(const QString &message);
+    void warningMessage(const QString &message);*/
 };
 
 #endif // COMMON_H

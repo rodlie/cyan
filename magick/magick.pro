@@ -49,7 +49,7 @@ exists(engine/configure) {
                                     " --enable-largefile $${SHARED_STATIC}" \
                                     " --enable-cipher --enable-zero-configuration" \
                                     " --enable-hdri --disable-pipes --disable-docs" \
-                                    " --without-modules --with-magick-plus-plus" \
+                                    " --with-modules=no --with-magick-plus-plus" \
                                     " --with-package-release-name=Cyan" \
                                     " --with-bzlib --with-lzma --with-zlib" \
                                     " --with-jpeg --with-png --with-tiff" \
@@ -62,7 +62,7 @@ exists(engine/configure) {
                                     " --without-heic --without-jbig --without-openjp2" \
                                     " --without-lqr --without-openexr --without-pango" \
                                     " --without-raw --without-rsvg --without-webp" \
-                                    " --without-wmf --without-xml")
+                                    " --without-wmf --without-xml --with-ltdl=no")
         #message($${MAGICK_CONFIGURE})
         message("Building Magick++ ...")
         MAGICK_MAKE = $$system("cd $${CWD}; make -j2")

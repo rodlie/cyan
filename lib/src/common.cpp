@@ -1080,7 +1080,7 @@ const QString Common::humanFileSize(float num, bool mp, bool are)
     return QString().setNum(num,'f',2)+" "+unit;
 }
 
-void Common::populateColorProfileMenu(QMenu *menu,
+/*void Common::populateColorProfileMenu(QMenu *menu,
                                       Magick::ColorspaceType colorspace)
 {
     menu->clear();
@@ -1124,6 +1124,28 @@ void Common::setDefaultColorProfileFromTitle(QMenu *menu,
     }
 }
 
+Magick::Blob Common::selectedDefaultColorProfileData(QMenu *menu)
+{
+    QString filename;
+    for (int i=0;i<menu->actions().size();++i) {
+        QAction *action = menu->actions().at(i);
+        if (!action) { continue; }
+        if (action->isChecked()) { filename =  action->data().toString(); }
+    }
+    if (!filename.isEmpty()) {
+        try {
+            Magick::Image image;
+            image.read(filename.toStdString());
+            Magick::Blob profile;
+            image.write(&profile);
+            return profile;
+        }
+        catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+        catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+    }
+    return Magick::Blob();
+}
+
 const QString Common::selectedDefaultColorProfile(QMenu *menu)
 {
     for (int i=0;i<menu->actions().size();++i) {
@@ -1133,3 +1155,4 @@ const QString Common::selectedDefaultColorProfile(QMenu *menu)
     }
     return QString();
 }
+*/

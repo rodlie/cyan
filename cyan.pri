@@ -28,9 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-VERSION = 1.9.0
-
-VERSION_TYPE=Alpha
+VERSION = 2.0.0
+VERSION_TYPE=alpha1
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -39,6 +38,9 @@ RCC_DIR = $${DESTDIR}/.qrc
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
+DEFINES += CYAN_DEVEL
 
 CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
@@ -54,6 +56,8 @@ QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
+
+CONFIG += c++11
 
 # pkg-config
 QT_CONFIG -= no-pkg-config
@@ -81,6 +85,10 @@ exists($${MAGICK_PC_PATH}) {
     CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 }
 
-DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
-DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
-DEFINES += CYAN_DEVEL
+mac {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -fopenmp
+}
+
+win32-g++: LIBS += -lpthread

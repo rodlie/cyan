@@ -29,52 +29,18 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-
-QT += widgets
-TEMPLATE = lib
-
-SOURCES += \
-    src/view.cpp \
-    src/layeritem.cpp \
-    src/tileitem.cpp \
-    src/common.cpp \
-    src/mdi.cpp \
-    src/qtcolorpicker.cpp \
-    src/qtcolortriangle.cpp \
-    src/colorrgb.cpp \
-    src/colorcmyk.cpp \
-    src/colorhsv.cpp \
-    src/newmediadialog.cpp \
-    src/convertdialog.cpp \
-    src/layertree.cpp
-
-HEADERS += \
-    src/view.h \
-    src/layeritem.h \
-    src/tileitem.h \
-    src/common.h \
-    src/mdi.h \
-    src/qtcolorpicker.h \
-    src/qtcolortriangle.h \
-    src/colorrgb.h \
-    src/colorcmyk.h \
-    src/colorhsv.h \
-    src/newmediadialog.h \
-    src/convertdialog.h \
-    src/layertree.h
-
-INCLUDEPATH += src
-
+TEMPLATE = app
+QT += widgets concurrent
+SOURCES += main.cpp editor.cpp
+HEADERS += editor.h
+RESOURCES += ../share/share.qrc
+LIBS += -L../lib/build -lCyan
+INCLUDEPATH += ../lib/src
 include(../cyan.pri)
 
-target.path = $${LIBDIR}
-docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-docs.files = \
-    ../docs/LGPL_EXCEPTION.txt \
-    ../docs/LICENSE.CeCILLv21 \
-    ../docs/LICENSE.LGPLv21 \
-    ../docs/LICENSE-ImageMagick.txt \
-    ../docs/LICENSE.txt \
-    ../docs/LICENSE-FATCOW.txt
+mac {
+    ICON = ../share/icons/Cyan.icns
+    QMAKE_INFO_PLIST = ../share/Info.plist
+}
 
-INSTALLS += docs
+win32: RC_ICONS += ../share/icons/cyan.ico
