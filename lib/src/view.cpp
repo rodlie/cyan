@@ -228,29 +228,8 @@ void View::dropEvent(QDropEvent *event)
 {
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
-        if (!_supportsLayers) {
-            emit openImages(mimeData->urls());
-        }
-        else {
-            for (int i=0;i<mimeData->urls().size();++i) {
-                // FIX!
-                QString filename = mimeData->urls().at(i).toLocalFile();
-                QString err,warn;
-                try {
-                    Magick::Image image;
-                    image.quiet(false);
-                    image.read(filename.toStdString().c_str());
-                    image.magick("MIFF");
-                    image.fileName(filename.toStdString());
-                    if (image.columns()>0 && image.rows()>0) {
-                        addLayer(image);
-                    }
-                }
-                catch(Magick::Error &error_ ) { err = error_.what(); }
-                catch(Magick::Warning &warn_ ) { warn = warn_.what(); }
-                // FIX!
-            }
-        }
+        if (!_supportsLayers) { emit openImages(mimeData->urls()); }
+        else { emit openLayers(mimeData->urls()); }
     }
 }
 

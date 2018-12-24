@@ -243,6 +243,7 @@ private slots:
 
     void handleLayerTreeSelectedLayer(int id);
 
+    void handleOpenLayers(QList<QUrl> urls);
 };
 
 #endif // EDITOR_H

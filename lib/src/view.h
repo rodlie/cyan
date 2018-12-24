@@ -123,6 +123,7 @@ signals:
                           const QPixmap &pix);
 
     void openImages(QList<QUrl> urls);
+    void openLayers(QList<QUrl> urls);
 
 public slots:
 

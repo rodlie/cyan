@@ -1390,6 +1390,7 @@ void Editor::connectView(View *view)
     connect(view, SIGNAL(switchMoveTool()), this, SLOT(handleSwitchMoveTool()));
     connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
     connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
+    connect(view, SIGNAL(openLayers(QList<QUrl>)), this, SLOT(handleOpenLayers(QList<QUrl>)));
     connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));
 }
 
@@ -1837,4 +1838,51 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     qDebug() << "set selected layer" << id;
     if (!getCurrentView()) { return; }
     getCurrentView()->setSelectedLayer(id);
+}
+
+void Editor::handleOpenLayers(QList<QUrl> urls)
+{
+    View *view = dynamic_cast<View*>(sender());
+    if (!view) { return; }
+
+    qDebug() << "open layers" << urls;
+    for (int i=0;i<urls.size();++i) {
+        qDebug() << "try to open" << urls.at(i);
+        Magick::Image image;
+        try {
+            image.read(urls.at(i).toString().toStdString());
+            image.magick("MIFF");
+            image.fileName(urls.at(i).toString().toStdString());
+            if (image.label().empty()) {
+                QFileInfo fileInfo(urls.at(i).toString());
+                image.label(fileInfo.baseName().toStdString());
+            }
+            qDebug() << "image?" << image.columns() << image.rows() << image.colorSpace();
+            if (image.iccColorProfile().length()==0) {
+                qDebug() << "layer is missing color profile, add default";
+                QString defPro;
+                switch(image.colorSpace()) {
+                case Magick::CMYKColorspace:
+                    defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
+                    break;
+                case Magick::GRAYColorspace:
+                    defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
+                    break;
+                default:
+                    defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
+                }
+                qDebug() << "has default profile?" << defPro;
+                image = Common::convertColorspace(image,
+                                                  Magick::Blob(),
+                                                  defPro);
+            }
+            qDebug() << "convert layer to canvas color profile";
+            image = Common::convertColorspace(image,
+                                              image.iccColorProfile(),
+                                              view->getCanvasProject().profile);
+            view->addLayer(image);
+        }
+        catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+        catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+    }
 }
