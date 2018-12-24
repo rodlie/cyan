@@ -36,6 +36,9 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMapIterator>
+#include <QDebug>
+#include <QSettings>
 
 NewMediaDialog::NewMediaDialog(QWidget *parent,
                                QString title,
@@ -51,6 +54,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _colorspace(colorspace)
   , _label(nullptr)
   , _select(nullptr)
+  , _profile(nullptr)
   , _depth8(nullptr)
   , _depth16(nullptr)
 {
@@ -65,6 +69,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _ok = new QPushButton(this);
     _cancel = new QPushButton(this);
     _select = new QComboBox(this);
+    _profile = new QComboBox(this);
     _depth8 = new QRadioButton(this);
     _depth16 = new QRadioButton(this);
 
@@ -113,13 +118,16 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     mainLayout->addWidget(_label);
     mainLayout->addWidget(sizeWidget);
     mainLayout->addWidget(_select);
+    mainLayout->addWidget(_profile);
     mainLayout->addWidget(depthWidget);
     mainLayout->addWidget(buttonWidget);
     mainLayout->addStretch();
 
     if (_type == Common::newLayerDialogType) {
         _select->hide();
+        _profile->hide();
     }
+    handleColorspaceChanged();
 
     connect(_ok,
             SIGNAL(released()),
@@ -129,6 +137,10 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
             SIGNAL(released()),
             this,
             SLOT(handleCancel()));
+    connect(_select,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(handleColorspaceChanged(int)));
 }
 
 NewMediaDialog::~NewMediaDialog()
@@ -175,13 +187,84 @@ void NewMediaDialog::createImage(QSize geo,
 {
     QString label = _label->text();
     if (label.isEmpty()) { label = windowTitle(); }
-    _image.size(Magick::Geometry(static_cast<size_t>(geo.width()),
-                                 static_cast<size_t>(geo.height())));
-    _image.colorSpace(colorspace);
-    _image.depth(depth);
-    _image.label(label.toStdString());
-    _image.matte(true);
-    _image.quantumOperator(Magick::AlphaChannel,
-                           Magick::MultiplyEvaluateOperator,
-                           0.0);
+    try {
+        _image.size(Magick::Geometry(static_cast<size_t>(geo.width()),
+                                     static_cast<size_t>(geo.height())));
+        _image.colorSpace(colorspace);
+        _image.depth(depth);
+        _image.label(label.toStdString());
+        _image.matte(true);
+        _image.quantumOperator(Magick::AlphaChannel,
+                               Magick::MultiplyEvaluateOperator,
+                               0.0);
+        _image.profile("ICC", selectedProfile());
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+}
+
+void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)
+{
+    _profile->clear();
+
+    QSettings settings;
+    settings.beginGroup(QString("color"));
+    QString filename;
+
+    switch(colorspace) {
+    case Magick::CMYKColorspace:
+        filename = settings.value(QString("cmyk_profile")).toString();
+        break;
+    case Magick::GRAYColorspace:
+        filename = settings.value(QString("gray_profile")).toString();
+        break;
+    default:
+        filename = settings.value(QString("rgb_profile")).toString();
+    }
+    settings.endGroup();
+
+    QMapIterator<QString, QString> i(Common::getColorProfiles(colorspace));
+    while (i.hasNext()) {
+        i.next();
+        _profile->addItem(i.key(),
+                          i.value());
+    }
+    int index = _profile->findData(filename);
+    if (index>=0) { _profile->setCurrentIndex(index); }
+}
+
+void NewMediaDialog::handleColorspaceChanged(int index)
+{
+    Q_UNUSED(index)
+    Magick::ColorspaceType type = _colorspace;
+    switch (_select->currentData().toInt()) {
+    case 0:
+        type = Magick::sRGBColorspace;
+        break;
+    case 1:
+        type = Magick::CMYKColorspace;
+        break;
+    case 2:
+        type = Magick::GRAYColorspace;
+        break;
+    }
+    populateProfiles(type);
+}
+
+Magick::Blob NewMediaDialog::selectedProfile()
+{
+    QString filename = _profile->currentData().toString();
+    qDebug() << "selected profile" << filename;
+    if (!filename.isEmpty()) {
+        try {
+            Magick::Image image;
+            image.read(filename.toStdString());
+            Magick::Blob profile;
+            image.write(&profile);
+            return profile;
+        }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    }
+    return Magick::Blob();
 }

@@ -73,6 +73,7 @@ private:
     Magick::ColorspaceType _colorspace;
     QLineEdit *_label;
     QComboBox *_select;
+    QComboBox *_profile;
     QRadioButton *_depth8;
     QRadioButton *_depth16;
 
@@ -83,6 +84,9 @@ private slots:
     void createImage(QSize geo = QSize(1024, 1024),
                      Magick::ColorspaceType colorspace = Magick::sRGBColorspace,
                      size_t depth = 8);
+    void populateProfiles(Magick::ColorspaceType colorspace);
+    void handleColorspaceChanged(int index = -1);
+    Magick::Blob selectedProfile();
 };
 
 #endif // NEWMEDIADIALOG_H
