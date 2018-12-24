@@ -44,6 +44,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
                                QString title,
                                Common::newDialogType dialogType,
                                Magick::ColorspaceType colorspace,
+                               Magick::Blob profile,
                                QSize size) :
     QDialog (parent)
   , _type(dialogType)
@@ -57,6 +58,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _profile(nullptr)
   , _depth8(nullptr)
   , _depth16(nullptr)
+  , _forcedProfile(profile)
 {
     setWindowTitle(title);
     setWindowIcon(_type==Common::newImageDialogType?QIcon(":/icons/image.png"):QIcon(":/icons/layer.png"));
@@ -197,7 +199,8 @@ void NewMediaDialog::createImage(QSize geo,
         _image.quantumOperator(Magick::AlphaChannel,
                                Magick::MultiplyEvaluateOperator,
                                0.0);
-        _image.profile("ICC", selectedProfile());
+        _image.profile("ICC",
+                       selectedProfile());
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
@@ -254,6 +257,10 @@ void NewMediaDialog::handleColorspaceChanged(int index)
 Magick::Blob NewMediaDialog::selectedProfile()
 {
     QString filename = _profile->currentData().toString();
+    if (_forcedProfile.length()>0) {
+        qDebug() << "using same profile as canvas";
+        return _forcedProfile;
+    }
     qDebug() << "selected profile" << filename;
     if (!filename.isEmpty()) {
         try {

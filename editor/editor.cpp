@@ -1243,6 +1243,7 @@ void Editor::newLayerDialog()
                                                 tr("New Layer"),
                                                 Common::newLayerDialogType,
                                                 getCurrentView()->getCanvas().colorSpace(),
+                                                getCurrentView()->getCanvasProject().profile,
                                                 getCurrentView()->getCanvasSize());
     int res =  dialog->exec();
     if (res == QDialog::Accepted) {

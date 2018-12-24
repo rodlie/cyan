@@ -55,6 +55,7 @@ public:
                    QString title = QObject::tr("New Image"),
                    Common::newDialogType dialogType = Common::newImageDialogType,
                    Magick::ColorspaceType colorspace = Magick::UndefinedColorspace,
+                   Magick::Blob profile = Magick::Blob(),
                    QSize size = QSize(0,0));
     ~NewMediaDialog();
 
@@ -76,6 +77,7 @@ private:
     QComboBox *_profile;
     QRadioButton *_depth8;
     QRadioButton *_depth16;
+    Magick::Blob _forcedProfile;
 
 private slots:
 
