@@ -30,30 +30,44 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "editor.h"
-#include <QApplication>
+#ifndef VIDEODIALOG_H
+#define VIDEODIALOG_H
 
-int main(int argc, char *argv[])
+#include <QObject>
+#include <QDialog>
+#include <QLabel>
+#include <QSlider>
+#include <QPushButton>
+#include <QSpinBox>
+
+#include "common.h"
+
+class videoDialog : public QDialog
 {
-    QApplication a(argc, argv);
-    QApplication::setApplicationName(QString("Cyan"));
-    QApplication::setOrganizationName(QString("FxArena"));
-    QApplication::setOrganizationDomain(QString("net.fxarena.cyan"));
-    QApplication::setApplicationVersion(QString(CYAN_VERSION));
+    Q_OBJECT
 
-    Magick::InitializeMagick(nullptr);
-#ifndef NO_FFMPEG
-    av_register_all();
-    avdevice_register_all();
-    avcodec_register_all();
-    avformat_network_init();
-#ifdef QT_NO_DEBUG
-    av_log_set_level(AV_LOG_QUIET);
-#endif
-#endif
+public:
 
-    Editor w;
-    w.show();
+    videoDialog(QWidget *parent = nullptr,
+                int max = 0,
+                const QString &filename = QString());
+    int getFrame();
 
-    return a.exec();
-}
+private:
+    int _max;
+    QString _filename;
+    QLabel *_label;
+    QSlider *_slider;
+    QSpinBox *_spin;
+    QPushButton *_ok;
+    QPushButton *_cancel;
+
+private slots:
+
+    void handleSlider(int pos);
+    void handleSpin(int pos);
+    void handleOk();
+    void handleCancel();
+};
+
+#endif // VIDEODIALOG_H

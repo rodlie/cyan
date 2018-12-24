@@ -59,6 +59,13 @@ QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 CONFIG += c++11
 
+mac {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -fopenmp
+}
+win32-g++: LIBS += -lpthread
+
 # pkg-config
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
@@ -85,10 +92,10 @@ exists($${MAGICK_PC_PATH}) {
     CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 }
 
-mac {
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -fopenmp
-}
-
-win32-g++: LIBS += -lpthread
+# ffmpeg
+CONFIG(no_ffmpeg): DEFINES += NO_FFMPEG
+!CONFIG(no_ffmpeg): PKGCONFIG += libavdevice \
+                                 libswscale \
+                                 libavformat \
+                                 libavcodec \
+                                 libavutil
