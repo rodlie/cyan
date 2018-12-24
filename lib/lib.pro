@@ -46,7 +46,8 @@ SOURCES += \
     src/colorhsv.cpp \
     src/newmediadialog.cpp \
     src/convertdialog.cpp \
-    src/layertree.cpp
+    src/layertree.cpp \
+    src/videodialog.cpp
 
 HEADERS += \
     src/view.h \
@@ -61,7 +62,8 @@ HEADERS += \
     src/colorhsv.h \
     src/newmediadialog.h \
     src/convertdialog.h \
-    src/layertree.h
+    src/layertree.h \
+    src/videodialog.h
 
 INCLUDEPATH += src
 

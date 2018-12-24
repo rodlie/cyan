@@ -185,7 +185,14 @@ private slots:
 
     void saveImage(QString filename);
     void loadImage(QString filename);
+    void readImage(Magick::Blob blob, const QString &filename = QString());
     void readImage(QString filename);
+
+#ifndef NO_FFMPEG
+    void readAudio(QString filename);
+    void readVideo(QString filename);
+    void readVideo(QString filename, int frame);
+#endif
 
     void saveProjectDialog();
     void saveImageDialog();

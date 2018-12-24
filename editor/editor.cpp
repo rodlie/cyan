@@ -49,12 +49,18 @@
 #include <QHeaderView>
 #include <QKeySequence>
 #include <QDebug>
+#include <QMimeDatabase>
+#include <QMimeType>
 
 #include "colorrgb.h"
 #include "colorcmyk.h"
 #include "colorhsv.h"
 #include "newmediadialog.h"
 #include "convertdialog.h"
+
+#ifndef NO_FFMPEG
+#include "videodialog.h"
+#endif
 
 #ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
@@ -166,7 +172,7 @@ View *Editor::getCurrentView()
 {
     QMdiSubWindow *tab = mdi->currentSubWindow();
     if (!tab) { return nullptr; }
-    View *view = dynamic_cast<View*>(tab->widget());
+    View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return nullptr; }
     return view;
 }
@@ -680,10 +686,10 @@ void Editor::populateColorProfileMenu(QMenu *menu,
 
 void Editor::selectDefaultColorProfile()
 {
-    QAction *action = dynamic_cast<QAction*>(sender());
+    QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
 
-    QMenu *menu = dynamic_cast<QMenu*>(action->parent());
+    QMenu *menu = qobject_cast<QMenu*>(action->parent());
     if (!menu) { return; }
 
     for (int i=0;i<menu->actions().size();++i) {
@@ -872,7 +878,7 @@ void Editor::populateColorIntentMenu()
 
 void Editor::setDefaultColorIntent()
 {
-    QAction *action = dynamic_cast<QAction*>(sender());
+    QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
 
     for (int i=0;i<colorIntentMenu->actions().size();++i) {
@@ -1132,13 +1138,19 @@ void Editor::loadImage(QString filename)
     }
 }
 
-void Editor::readImage(QString filename)
+void Editor::readImage(Magick::Blob blob,
+                       const QString &filename)
 {
-    if (filename.isEmpty()) { return; }
     Magick::Image image;
     image.quiet(false);
 
-    try { image.read(filename.toStdString()); }
+    try {
+        if (blob.length()>0) {
+            image.read(blob);
+        } else if (!filename.isEmpty()) {
+            image.read(filename.toStdString());
+        }
+    }
     catch(Magick::Error &error_ ) {
         emit errorMessage(error_.what());
         return;
@@ -1202,6 +1214,62 @@ void Editor::readImage(QString filename)
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
+void Editor::readImage(QString filename)
+{
+    if (filename.isEmpty()) { return; }
+    readImage(Magick::Blob(), filename);
+}
+
+#ifndef NO_FFMPEG
+void Editor::readAudio(QString filename)
+{
+    if (filename.isEmpty()) { return; }
+    QByteArray coverart = common.getEmbeddedCoverArt(filename);
+    if (coverart.size()==0) { return; }
+    qDebug() << "found image in audio!";
+    try {
+        Magick::Image image;
+        readImage(Magick::Blob(coverart.data(),
+                               static_cast<size_t>(coverart.size())),
+                  filename);
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+
+void Editor::readVideo(QString filename)
+{
+    if (filename.isEmpty()) { return; }
+    int maxFrame = common.getVideoMaxFrames(filename);
+    if (maxFrame==0) { return; }
+
+    videoDialog *dialog = new videoDialog(this,
+                                          maxFrame,
+                                          filename);
+    int ret = dialog->exec();
+    if (ret == QDialog::Accepted) {
+        readVideo(filename,
+                  dialog->getFrame());
+    }
+    QTimer::singleShot(100,
+                       dialog,
+                       SLOT(deleteLater()));
+}
+
+void Editor::readVideo(QString filename, int frame)
+{
+    if (filename.isEmpty() || frame<0) { return; }
+    try {
+        Magick::Image image = Common::getVideoFrame(filename, frame);
+        Magick::Blob blob;
+        image.write(&blob);
+        if (blob.length()>0) { readImage(blob, filename); }
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+#endif
+
 void Editor::saveProjectDialog()
 {
     if (!getCurrentView()) { return; }
@@ -1226,7 +1294,21 @@ void Editor::loadImageDialog()
                                                     QDir::homePath(),
                                                     tr("Media Files (%1)")
                                                     .arg(Common::supportedReadFormats()));
-    if (!filename.isEmpty()) { loadImage(filename); }
+    if (filename.isEmpty()) { return; }
+
+#ifndef NO_FFMPEG
+    QMimeDatabase db;
+    QMimeType type = db.mimeTypeForFile(filename);
+    if (type.name().startsWith(QString("audio"))) {
+        readAudio(filename);
+    } else if(type.name().startsWith(QString("video"))) {
+        readVideo(filename);
+    } else {
+        loadImage(filename);
+    }
+#else
+    loadImage(filename);
+#endif
 }
 
 void Editor::newImageDialog()
@@ -1653,7 +1735,7 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
 {
     qDebug() << "handle tab activated";
     if (!tab) { return; }
-    View *view = dynamic_cast<View*>(tab->widget());
+    View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
 
     if (viewDragAct->isChecked()) {
@@ -1740,9 +1822,9 @@ void Editor::handleBrushSize()
     qDebug() << "handle update brush size";
     QList<QMdiSubWindow*> list = mdi->subWindowList();
     for (int i=0;i<list.size();++i) {
-        QMdiSubWindow *window = dynamic_cast<QMdiSubWindow*>(list.at(i));
+        QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
         if (!window) { return; }
-        View *view = dynamic_cast<View*>(window->widget());
+        View *view = qobject_cast<View*>(window->widget());
         if (!view) { return; }
         view->setBrushStroke(brushSize->value());
     }
@@ -1828,9 +1910,9 @@ void Editor::handleColorChanged(const QColor &color)
     qDebug() << "brush color changed" << color;
     QList<QMdiSubWindow*> list = mdi->subWindowList();
     for (int i=0;i<list.size();++i) {
-        QMdiSubWindow *window = dynamic_cast<QMdiSubWindow*>(list.at(i));
+        QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
         if (!window) { return; }
-        View *view = dynamic_cast<View*>(window->widget());
+        View *view = qobject_cast<View*>(window->widget());
         if (!view) { return; }
         view->setBrushColor(color);
     }
@@ -1845,7 +1927,7 @@ void Editor::handleLayerTreeSelectedLayer(int id)
 
 void Editor::handleOpenLayers(QList<QUrl> urls)
 {
-    View *view = dynamic_cast<View*>(sender());
+    View *view = qobject_cast<View*>(sender());
     if (!view) { return; }
 
     qDebug() << "open layers" << urls;

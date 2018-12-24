@@ -42,6 +42,13 @@
 #include <lcms2.h>
 #include <Magick++.h>
 
+extern "C" {
+#include <libavutil/avutil.h>
+#include <libavutil/imgutils.h>
+#include <libavdevice/avdevice.h>
+#include <libswscale/swscale.h>
+}
+
 #include "tileitem.h"
 
 #define CYAN_PROJECT_VERSION 1.0
@@ -228,7 +235,9 @@ public:
     static bool supportsZlib();
     static bool supportsJng();
 
-    static const QString humanFileSize(float num, bool mp = false, bool are = false);
+    static const QString humanFileSize(float num,
+                                       bool mp = false,
+                                       bool are = false);
 
 
     /*void populateColorProfileMenu(QMenu *menu,
@@ -244,6 +253,14 @@ public:
 signals:
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);*/
+
+
+#ifndef NO_FFMPEG
+    static QByteArray getEmbeddedCoverArt(const QString &filename);
+    static int getVideoMaxFrames(const QString &filename);
+    static Magick::Image getVideoFrame(const QString &filename,
+                                       int frame = 0);
+#endif
 };
 
 #endif // COMMON_H
