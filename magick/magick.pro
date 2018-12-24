@@ -62,7 +62,7 @@ exists(engine/configure) {
                                     " --without-heic --without-jbig --without-openjp2" \
                                     " --without-lqr --without-openexr --without-pango" \
                                     " --without-raw --without-rsvg --without-webp" \
-                                    " --without-wmf --without-xml --with-ltdl=no")
+                                    " --without-wmf --without-xml")
         #message($${MAGICK_CONFIGURE})
         message("Building Magick++ ...")
         MAGICK_MAKE = $$system("cd $${CWD}; make -j2")
