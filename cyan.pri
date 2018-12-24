@@ -57,6 +57,8 @@ QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
+CONFIG += c++11
+
 # pkg-config
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
@@ -82,3 +84,11 @@ exists($${MAGICK_PC_PATH}) {
     PKGCONFIG += $${MAGICK_CONFIG}
     CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 }
+
+mac {
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -fopenmp
+}
+
+win32-g++: LIBS += -lpthread

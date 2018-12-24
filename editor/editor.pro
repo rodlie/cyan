@@ -37,3 +37,10 @@ RESOURCES += ../share/share.qrc
 LIBS += -L../lib/build -lCyan
 INCLUDEPATH += ../lib/src
 include(../cyan.pri)
+
+mac {
+    ICON = ../share/icons/Cyan.icns
+    QMAKE_INFO_PLIST = ../share/Info.plist
+}
+
+win32: RC_ICONS += ../share/icons/cyan.ico
