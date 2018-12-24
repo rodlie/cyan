@@ -28,9 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-VERSION = 1.9.0
-
-VERSION_TYPE=Alpha
+VERSION = 2.0.0
+VERSION_TYPE=alpha1
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -39,6 +38,9 @@ RCC_DIR = $${DESTDIR}/.qrc
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
+DEFINES += CYAN_DEVEL
 
 CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
@@ -80,7 +82,3 @@ exists($${MAGICK_PC_PATH}) {
     PKGCONFIG += $${MAGICK_CONFIG}
     CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 }
-
-DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
-DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
-DEFINES += CYAN_DEVEL

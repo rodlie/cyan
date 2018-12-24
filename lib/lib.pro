@@ -68,13 +68,13 @@ INCLUDEPATH += src
 include(../cyan.pri)
 
 target.path = $${LIBDIR}
-docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
+docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
 docs.files = \
     ../docs/LGPL_EXCEPTION.txt \
     ../docs/LICENSE.CeCILLv21 \
     ../docs/LICENSE.LGPLv21 \
     ../docs/LICENSE-ImageMagick.txt \
     ../docs/LICENSE.txt \
-    ../docs/README.md
+    ../docs/LICENSE-FATCOW.txt
 
 INSTALLS += docs

@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/hand.png</file>
+        <file>icons/image.png</file>
+        <file>icons/folder.png</file>
+        <file>icons/layer.png</file>
+        <file>icons/move.png</file>
+        <file>icons/paintbrush.png</file>
+        <file>icons/brushsize.png</file>
+        <file>icons/save.png</file>
+        <file>icons/page_save.png</file>
+        <file>icons/quit.png</file>
+        <file>icons/layer_save.png</file>
+        <file>icons/page.png</file>
+        <file>icons/colors.png</file>
+        <file>icons/lcms_logo.png</file>
+    </qresource>
+</RCC>
