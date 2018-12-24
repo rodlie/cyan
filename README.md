@@ -17,6 +17,7 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
  * libtiff
  * libjpeg
  * libpng
+ * ffmpeg
  * latest ImageMagick6 with [patch](https://github.com/rodlie/ImageMagick6/commit/dffafb716da8d31f41a2e28e1b43a74d0edeaef3) (available as submodule)
 
 ## Build

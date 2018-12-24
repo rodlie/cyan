@@ -1085,6 +1085,7 @@ const QString Common::humanFileSize(float num, bool mp, bool are)
     return QString().setNum(num,'f',2)+" "+unit;
 }
 
+#ifndef NO_FFMPEG
 QByteArray Common::getEmbeddedCoverArt(const QString &filename)
 {
     QByteArray result;
@@ -1143,7 +1144,6 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
     return result;
 }
 
-#ifndef NO_FFMPEG
 int Common::getVideoMaxFrames(const QString &filename)
 {
     int result = -1;
