@@ -394,18 +394,21 @@ void Editor::setupActions()
 
     saveImageAct = new QAction(this);
     saveImageAct->setText(tr("Save Image"));
+    saveImageAct->setDisabled(true);
 
     saveProjectAct = new QAction(this);
     saveProjectAct->setText(tr("Save Project"));
 
     saveProjectAsAct = new QAction(this);
     saveProjectAsAct->setText(tr("Save Project as ..."));
+    saveProjectAsAct->setDisabled(true);
 
     newLayerAct = new QAction(this);
     newLayerAct->setText(tr("New Layer"));
 
     saveLayerAct = new QAction(this);
     saveLayerAct->setText(tr("Save Layer"));
+    saveLayerAct->setDisabled(true);
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -1848,6 +1851,10 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     qDebug() << "open layers" << urls;
     for (int i=0;i<urls.size();++i) {
         qDebug() << "try to open" << urls.at(i);
+        if (Common::isValidCanvas(urls.at(i).toString())) {
+            // skip projects (for now)
+            continue;
+        }
         Magick::Image image;
         try {
             image.read(urls.at(i).toString().toStdString());

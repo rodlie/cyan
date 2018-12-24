@@ -227,6 +227,7 @@ void View::dragLeaveEvent(QDragLeaveEvent *event)
 void View::dropEvent(QDropEvent *event)
 {
     const QMimeData *mimeData = event->mimeData();
+    qDebug() << mimeData->formats();
     if (mimeData->hasUrls()) {
         if (!_supportsLayers) { emit openImages(mimeData->urls()); }
         else { emit openLayers(mimeData->urls()); }
