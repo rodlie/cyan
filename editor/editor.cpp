@@ -1315,9 +1315,9 @@ void Editor::loadImageDialog()
                                                     .arg(Common::supportedReadFormats()));
     if (filename.isEmpty()) { return; }
 
-#ifndef NO_FFMPEG
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(filename);
+#ifndef NO_FFMPEG
     if (type.name().startsWith(QString("audio"))) {
         readAudio(filename);
     } else if(type.name().startsWith(QString("video"))) {
@@ -1326,6 +1326,8 @@ void Editor::loadImageDialog()
         loadImage(filename);
     }
 #else
+    if (type.name().startsWith(QString("audio")) ||
+        type.name().startsWith(QString("video")) { return; }
     loadImage(filename);
 #endif
 }
@@ -1861,18 +1863,20 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
     if (urls.size()==0) { return; }
 
     for (int i=0;i<urls.size();++i) {
+        QMimeDatabase db;
+        QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
 #ifndef NO_FFMPEG
-            QMimeDatabase db;
-            QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
-            if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-                readAudio(urls.at(i).toString());
-            } else if (type.name().startsWith(QString("video"))) { // get frame from video
-                readVideo(urls.at(i).toString());
-            } else { // "regular" image
-                readImage(urls.at(i).toLocalFile());
-            }
-#else
+        if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
+            readAudio(urls.at(i).toString());
+        } else if (type.name().startsWith(QString("video"))) { // get frame from video
+            readVideo(urls.at(i).toString());
+        } else { // "regular" image
             readImage(urls.at(i).toLocalFile());
+        }
+#else
+        if (type.name().startsWith(QString("audio")) ||
+            type.name().startsWith(QString("video")) { continue; }
+        readImage(urls.at(i).toLocalFile());
 #endif
     }
     if (urls.size()>1) {
@@ -1968,11 +1972,11 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
             // skip projects (for now)
             continue;
         }
+        QMimeDatabase db;
+        QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
         Magick::Image image;
         try {
 #ifndef NO_FFMPEG
-            QMimeDatabase db;
-            QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
             if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
                 QByteArray coverart = common.getEmbeddedCoverArt(urls.at(i).toString());
                 if (coverart.size()==0) { continue; } // no coverart, skip
@@ -1984,6 +1988,8 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
                 image.read(urls.at(i).toString().toStdString());
             }
 #else
+            if (type.name().startsWith(QString("audio")) ||
+                type.name().startsWith(QString("video")) { continue; }
             image.read(urls.at(i).toString().toStdString());
 #endif
             if (image.columns()<=0 && image.rows()<=0) { continue; } // not an (readable) image, skip
