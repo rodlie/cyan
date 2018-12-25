@@ -1268,6 +1268,25 @@ void Editor::readVideo(QString filename, int frame)
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
+
+Magick::Image Editor::getVideoFrameAsImage(QString filename)
+{
+    Magick::Image result;
+    if (filename.isEmpty()) { return result; }
+    int maxFrame = common.getVideoMaxFrames(filename);
+    if (maxFrame==0) { return result; }
+    videoDialog *dialog = new videoDialog(this,
+                                          maxFrame,
+                                          filename);
+    int ret = dialog->exec();
+    if (ret == QDialog::Accepted) {
+        result = Common::getVideoFrame(filename, dialog->getFrame());
+    }
+    QTimer::singleShot(100,
+                       dialog,
+                       SLOT(deleteLater()));
+    return result;
+}
 #endif
 
 void Editor::saveProjectDialog()
@@ -1842,7 +1861,19 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
     if (urls.size()==0) { return; }
 
     for (int i=0;i<urls.size();++i) {
-        readImage(urls.at(i).toLocalFile());
+#ifndef NO_FFMPEG
+            QMimeDatabase db;
+            QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
+            if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
+                readAudio(urls.at(i).toString());
+            } else if (type.name().startsWith(QString("video"))) { // get frame from video
+                readVideo(urls.at(i).toString());
+            } else { // "regular" image
+                readImage(urls.at(i).toLocalFile());
+            }
+#else
+            readImage(urls.at(i).toLocalFile());
+#endif
     }
     if (urls.size()>1) {
         mdi->tileSubWindows();
@@ -1939,14 +1970,29 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
         }
         Magick::Image image;
         try {
+#ifndef NO_FFMPEG
+            QMimeDatabase db;
+            QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
+            if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
+                QByteArray coverart = common.getEmbeddedCoverArt(urls.at(i).toString());
+                if (coverart.size()==0) { continue; } // no coverart, skip
+                image.read(Magick::Blob(coverart.data(),
+                                        static_cast<size_t>(coverart.size())));
+            } else if (type.name().startsWith(QString("video"))) { // get frame from video
+                image = getVideoFrameAsImage(urls.at(i).toString());
+            } else { // "regular" image
+                image.read(urls.at(i).toString().toStdString());
+            }
+#else
             image.read(urls.at(i).toString().toStdString());
+#endif
+            if (image.columns()<=0 && image.rows()<=0) { continue; } // not an (readable) image, skip
             image.magick("MIFF");
             image.fileName(urls.at(i).toString().toStdString());
             if (image.label().empty()) {
                 QFileInfo fileInfo(urls.at(i).toString());
                 image.label(fileInfo.baseName().toStdString());
             }
-            qDebug() << "image?" << image.columns() << image.rows() << image.colorSpace();
             if (image.iccColorProfile().length()==0) {
                 qDebug() << "layer is missing color profile, add default";
                 QString defPro;
@@ -1974,4 +2020,7 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
         catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
         catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
     }
+    // workaround issues with dialogs
+    update();
+    view->scene()->update(/*view->sceneRect()*/);
 }

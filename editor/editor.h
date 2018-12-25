@@ -192,6 +192,7 @@ private slots:
     void readAudio(QString filename);
     void readVideo(QString filename);
     void readVideo(QString filename, int frame);
+    Magick::Image getVideoFrameAsImage(QString filename);
 #endif
 
     void saveProjectDialog();
