@@ -252,6 +252,8 @@ private slots:
     void handleLayerTreeSelectedLayer(int id);
 
     void handleOpenLayers(QList<QUrl> urls);
+
+    void hasColorProfiles();
 };
 
 #endif // EDITOR_H

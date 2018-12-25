@@ -120,6 +120,10 @@ Editor::Editor(QWidget *parent)
     setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
 
+    // quit if no color profiles are available
+    hasColorProfiles();
+
+    // register Magick types used
     qRegisterMetaType<Magick::Image>("Magick::Image");
     qRegisterMetaType<Magick::Drawable>("Magick::Drawable");
     qRegisterMetaType<Magick::Geometry>("Magick::Geometry");
@@ -1379,14 +1383,14 @@ void Editor::handleWarning(const QString &message)
 {
     qWarning() << "warning" << message;
     mainStatusBar->showMessage(message);
-    QMessageBox::warning(this,
+    /*QMessageBox::warning(this,
                          tr("Cyan Warning"),
-                         message);
+                         message);*/
 }
 
 void Editor::handleStatus(const QString &message)
 {
-    qWarning() << "status" << message;
+    qDebug() << "status" << message;
     mainStatusBar->showMessage(message,
                                6000);
 }
@@ -1967,7 +1971,6 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
 
     qDebug() << "open layers" << urls;
     for (int i=0;i<urls.size();++i) {
-        qDebug() << "try to open" << urls.at(i);
         if (Common::isValidCanvas(urls.at(i).toString())) {
             // skip projects (for now)
             continue;
@@ -2028,5 +2031,19 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     }
     // workaround issues with dialogs
     update();
-    view->scene()->update(/*view->sceneRect()*/);
+    view->scene()->update();
+}
+
+void Editor::hasColorProfiles()
+{
+    int rgbs = Common::getColorProfiles(Magick::sRGBColorspace).size();
+    int cmyks = Common::getColorProfiles(Magick::CMYKColorspace).size();
+    int grays = Common::getColorProfiles(Magick::GRAYColorspace).size();
+    qDebug() << "found color profiles" << rgbs << cmyks << grays;
+    if (rgbs<1 || cmyks<1 || grays<1) {
+        QMessageBox::warning(this, tr("Missing color profiles"), tr("Missing color profiles. Cyan needs at a minimum 1 color profile for each supported color space (RGB/CMYK/GRAY)."));
+        QTimer::singleShot(100,
+                           qApp,
+                           SLOT(quit()));
+    }
 }
