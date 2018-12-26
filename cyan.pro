@@ -36,5 +36,7 @@ editor.depends += lib
 OTHER_FILES += \
     docs/README.md \
     docs/cyan.html \
-    .ci.sh \
-    .travis.yml
+    sdk/ci2.sh \
+    sdk/sdk2.sh \
+    .travis.yml \
+    README.md

@@ -9,7 +9,7 @@ matrix:
       osx_image: xcode8
 
 script:
-  - sh .ci.sh
+  - sh sdk/ci2.sh
 
 deploy:
   provider: releases

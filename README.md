@@ -2,8 +2,6 @@
 
 ***v2.0 is currently under heavy development, please use v1.2 https://github.com/rodlie/cyan/tree/1.2***
 
-## About
-
 Cyan is an open source cross-platform image editor. Originally designed for prepress color convertion, but now aims to be a general-purpose image editor. v2 started from scratch so it might take a while to get to the level of features you might expect from an image editor. ETA for v2 is January 2019, but that may at any time change.
 
 ## Features
@@ -35,7 +33,7 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
  * QtWidgets 5
  * QtConcurrent 5
  * lcms 2
- * ffmpeg 3 (disable with ``CONFIG+=no_ffmpeg``)
+ * ffmpeg 3 (optional)
  * ImageMagick 7.0.8-20+
 
 ## Build
@@ -46,7 +44,7 @@ Supported build options:
  * ``DOCDIR=<PREFIX/share/doc>`` - documentation folder
  * ``MANDIR=<PREFIX/share/man>`` - manual folder *(currently not used)*
  * ``LIBDIR=<PREFIX/lib>`` - library folder *(currently not used)*
- 
+
 Normal build:
 ```
 git clone https://github.com/rodlie/cyan

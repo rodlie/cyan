@@ -10,7 +10,6 @@ Makefile*
 *.rpm
 *.stash
 tmp
-sdk
 *.dmg
 *.app
 *.tar*
