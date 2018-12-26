@@ -35,11 +35,19 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
  * QtWidgets 5
  * QtConcurrent 5
  * lcms 2
- * ffmpeg 3
- * ImageMagick 7.0.8-18+
+ * ffmpeg 3 (disable with ``CONFIG+=no_ffmpeg``)
+ * ImageMagick 7.0.8-20+
 
 ## Build
 
+Supported build options:
+ * ``CONFIG+=no_ffmpeg`` - disable ffmpeg support
+ * ``PREFIX=</usr/local>`` - installation folder
+ * ``DOCDIR=<PREFIX/share/doc>`` - documentation folder
+ * ``MANDIR=<PREFIX/share/man>`` - manual folder *(currently not used)*
+ * ``LIBDIR=<PREFIX/lib>`` - library folder *(currently not used)*
+ 
+Normal build:
 ```
 git clone https://github.com/rodlie/cyan
 cd cyan
@@ -48,4 +56,11 @@ cd build
 qmake ..
 make
 ./editor/build/Cyan
+```
+
+Package build:
+```
+qmake PREFIX=/usr ..
+make
+make INSTALL_ROOT=<pkg_path> install
 ```
