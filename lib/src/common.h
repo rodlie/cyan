@@ -214,6 +214,7 @@ public:
     static const QString getProfileTag(cmsHPROFILE profile,
                                        Common::ICCTag tag = Common::ICCDescription);
 
+    static const QString supportedWriteFormats();
     static const QString supportedReadFormats();
     static int supportedQuantumDepth();
     static bool supportsJpeg();

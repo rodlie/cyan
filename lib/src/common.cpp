@@ -864,6 +864,25 @@ const QString Common::getProfileTag(cmsHPROFILE profile,
     return QString::fromStdString(result);
 }
 
+const QString Common::supportedWriteFormats()
+{
+    // TODO
+    QString result;
+    if (supportsJpeg()) {
+        result.append(QString("*.jpeg "));
+        result.append(QString("*.jpg "));
+    }
+    if (supportsPng()) {
+        result.append(QString("*.png "));
+    }
+    if (supportsTiff()) {
+        result.append(QString("*.tiff "));
+        result.append(QString("*.tif "));
+    }
+    result.append(QString("*.bmp "));
+    return result;
+}
+
 const QString Common::supportedReadFormats()
 {
     QString result;

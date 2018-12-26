@@ -401,7 +401,6 @@ void Editor::setupActions()
 
     saveImageAct = new QAction(this);
     saveImageAct->setText(tr("Save Image"));
-    saveImageAct->setDisabled(true);
 
     saveProjectAct = new QAction(this);
     saveProjectAct->setText(tr("Save Project"));
@@ -415,7 +414,6 @@ void Editor::setupActions()
 
     saveLayerAct = new QAction(this);
     saveLayerAct->setText(tr("Save Layer"));
-    saveLayerAct->setDisabled(true);
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -602,6 +600,8 @@ void Editor::setupConnections()
     connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
+    connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
+    connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
 
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
 
@@ -1223,6 +1223,32 @@ void Editor::readImage(const QString &filename)
     readImage(Magick::Blob(), filename);
 }
 
+void Editor::writeImage(const QString &filename)
+{
+    if (filename.isEmpty() || !getCurrentView()) { return; }
+
+    Magick::Image image = common.renderCanvasToImage(getCurrentView()->getCanvasProject());
+    // TODO: add options for file format
+    try {
+        image.write(filename.toStdString());
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+
+void Editor::writeLayer(const QString &filename, int id)
+{
+    if (filename.isEmpty() || !getCurrentView() || id<0) { return; }
+
+    Magick::Image image = getCurrentView()->getCanvasProject().layers[id].image;
+    // TODO: add options for file format
+    try {
+        image.write(filename.toStdString());
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+
 #ifndef NO_FFMPEG
 void Editor::readAudio(const QString &filename)
 {
@@ -1306,7 +1332,55 @@ void Editor::saveProjectDialog()
 
 void Editor::saveImageDialog()
 {
-    qDebug() << "save image dialog";
+    if (!getCurrentView()) { return; }
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Image"),
+                                                    QString("%1/%2")
+                                                    .arg(QDir::homePath())
+                                                    .arg(getCurrentView()->getCanvasProject().label),
+                                                    tr("Image files (%1)")
+                                                    .arg(common.supportedWriteFormats()));
+    if (filename.isEmpty()) { return; }
+    QFileInfo fileInfo(filename);
+    if (fileInfo.suffix().isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("No image suffix"),
+                             tr("Missing image suffix, try again."));
+        return;
+    }
+    writeImage(filename);
+}
+
+void Editor::saveLayerDialog()
+{
+    if (!getCurrentView()) { return; }
+    LayerTreeItem *layerItem = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    if (!layerItem) {
+        QMessageBox::warning(this,
+                             tr("No layer selected"),
+                             tr("No layer selected"));
+        return;
+    }
+    QString label = getCurrentView()->getCanvasProject().label;
+    if (!getCurrentView()->getCanvasProject().layers[layerItem->getLayerID()].label.isEmpty()) {
+        label = getCurrentView()->getCanvasProject().layers[layerItem->getLayerID()].label;
+    }
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    tr("Save Image"),
+                                                    QString("%1/%2")
+                                                    .arg(QDir::homePath())
+                                                    .arg(label),
+                                                    tr("Image files (%1)")
+                                                    .arg(common.supportedWriteFormats()));
+    if (filename.isEmpty()) { return; }
+    QFileInfo fileInfo(filename);
+    if (fileInfo.suffix().isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("No image suffix"),
+                             tr("Missing image suffix, try again."));
+        return;
+    }
+    writeLayer(filename, layerItem->getLayerID());
 }
 
 void Editor::loadImageDialog()
@@ -1315,7 +1389,7 @@ void Editor::loadImageDialog()
                                                     tr("Open Media"),
                                                     QDir::homePath(),
                                                     tr("Media Files (%1)")
-                                                    .arg(Common::supportedReadFormats()));
+                                                    .arg(common.supportedReadFormats()));
     if (filename.isEmpty()) { return; }
 
     QMimeDatabase db;

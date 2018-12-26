@@ -186,6 +186,8 @@ private slots:
     void loadImage(const QString &filename);
     void readImage(Magick::Blob blob, const QString &filename = QString());
     void readImage(const QString &filename);
+    void writeImage(const QString &filename);
+    void writeLayer(const QString &filename, int id);
 
 #ifndef NO_FFMPEG
     void readAudio(const QString &filename);
@@ -196,6 +198,7 @@ private slots:
 
     void saveProjectDialog();
     void saveImageDialog();
+    void saveLayerDialog();
     void loadImageDialog();
     void newImageDialog();
     void newLayerDialog();
