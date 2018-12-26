@@ -1109,7 +1109,6 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
         AVFormatContext *pFormatCtx = avformat_alloc_context();
         AVCodec * pCodec;
 
-        qDebug() << "open media file";
         if (avformat_open_input(&pFormatCtx,filename.toUtf8().data(),
                                 Q_NULLPTR,
                                 Q_NULLPTR) != 0) { return result; }
@@ -1119,7 +1118,6 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
         av_dump_format(pFormatCtx, 0, filename.toUtf8().data(), 0);
         int videoStream = -1;
 
-        qDebug() << "get video stream";
         for (int i=0; i < static_cast<int>(pFormatCtx->nb_streams); i++) {
             if(pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
                 videoStream = i;
@@ -1128,7 +1126,6 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
         }
         if (videoStream == -1) { return result; }
 
-        qDebug() << "find decoder";
         pCodec =avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
         pCodecCtx = avcodec_alloc_context3(Q_NULLPTR);
         if (pCodec == Q_NULLPTR || pCodecCtx == Q_NULLPTR) { return result; }
@@ -1139,14 +1136,12 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
                          pCodec,
                          Q_NULLPTR) < 0) { return result; }
 
-        qDebug() << "check for embedded";
         if (pFormatCtx->streams[videoStream]->disposition == AV_DISPOSITION_ATTACHED_PIC) {
             AVPacket pkt = pFormatCtx->streams[videoStream]->attached_pic;
             if (pkt.size>0) {
                 QByteArray attachedPix = QByteArray(reinterpret_cast<const char*>(pkt.data),
                                                     pkt.size);
                 if (attachedPix.length()>0) {
-                    qDebug() << "got embedded image!";
                     avcodec_close(pCodecCtx);
                     avformat_close_input(&pFormatCtx);
                     return attachedPix;
@@ -1168,7 +1163,6 @@ int Common::getVideoMaxFrames(const QString &filename)
     AVFormatContext *pFormatCtx = avformat_alloc_context();
     AVCodec * pCodec;
 
-    qDebug() << "open media file";
     if (avformat_open_input(&pFormatCtx,filename.toUtf8().data(),
                             Q_NULLPTR,
                             Q_NULLPTR) != 0) { return result; }
@@ -1178,7 +1172,6 @@ int Common::getVideoMaxFrames(const QString &filename)
     av_dump_format(pFormatCtx, 0, filename.toUtf8().data(), 0);
     int videoStream = -1;
 
-    qDebug() << "get video stream";
     for (int i=0; i < static_cast<int>(pFormatCtx->nb_streams); i++) {
         if(pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             videoStream = i;
@@ -1187,7 +1180,6 @@ int Common::getVideoMaxFrames(const QString &filename)
     }
     if (videoStream == -1) { return result; }
 
-    qDebug() << "find decoder";
     pCodec =avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
     pCodecCtx = avcodec_alloc_context3(Q_NULLPTR);
     if (pCodec == Q_NULLPTR || pCodecCtx == Q_NULLPTR) { return result; }
@@ -1201,7 +1193,6 @@ int Common::getVideoMaxFrames(const QString &filename)
     double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
     double dur = static_cast<double>(pFormatCtx->duration)/AV_TIME_BASE;
     result = qRound((dur*fps)/2);
-    qDebug() << "max frame" << result;
 
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
@@ -1213,8 +1204,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
 {
     Magick::Image result;
 
-    qDebug() << "getVideoFrame" << filename << frame;
-
     if (filename.isEmpty()) { return result; }
 
     AVCodecContext  *pCodecCtx;
@@ -1222,7 +1211,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
     AVCodec * pCodec;
     AVFrame *pFrame, *pFrameRGB;
 
-    qDebug() << "open media file";
     if (avformat_open_input(&pFormatCtx,filename.toUtf8().data(),
                             Q_NULLPTR,
                             Q_NULLPTR) != 0) { return result; }
@@ -1232,9 +1220,7 @@ Magick::Image Common::getVideoFrame(const QString &filename,
     av_dump_format(pFormatCtx, 0, filename.toUtf8().data(), 0);
     int videoStream = -1;
 
-    qDebug() << "get video stream";
-    for (int i=0; i < (int)pFormatCtx->nb_streams; i++) {
-        //if (abortProc) { return result; }
+    for (int i=0; i < static_cast<int>(pFormatCtx->nb_streams); i++) {
         if(pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
             videoStream = i;
             break;
@@ -1242,7 +1228,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
     }
     if (videoStream == -1) { return result; }
 
-    qDebug() << "find decoder";
     pCodec =avcodec_find_decoder(pFormatCtx->streams[videoStream]->codecpar->codec_id);
     pCodecCtx = avcodec_alloc_context3(Q_NULLPTR);
     if (pCodec == Q_NULLPTR || pCodecCtx == Q_NULLPTR) { return result; }
@@ -1253,7 +1238,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
                      pCodec,
                      Q_NULLPTR) < 0) { return result; }
 
-    qDebug() << "setup frame";
     pFrame    = av_frame_alloc();
     pFrameRGB = av_frame_alloc();
 
@@ -1265,7 +1249,7 @@ Magick::Image Common::getVideoFrame(const QString &filename,
                                         pCodecCtx->width,
                                         pCodecCtx->height,
                                         16);
-    buffer = (uint8_t *) av_malloc(numBytes*sizeof(uint8_t));
+    buffer = static_cast<uint8_t*>(av_malloc(static_cast<unsigned long>(numBytes)*sizeof(uint8_t)));
     av_image_fill_arrays(pFrameRGB->data,
                          pFrameRGB->linesize,
                          buffer,
@@ -1274,7 +1258,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
                          pCodecCtx->height,
                          1);
 
-    qDebug() << "calculate frame to get";
     int res;
     int frameFinished;
     AVPacket packet;
@@ -1283,10 +1266,8 @@ Magick::Image Common::getVideoFrame(const QString &filename,
     double fps = av_q2d(pFormatCtx->streams[videoStream]->r_frame_rate);
     double dur = static_cast<double>(pFormatCtx->duration)/AV_TIME_BASE;
     int maxFrame = qRound((dur*fps)/2);
-    qDebug() << "MAX" << maxFrame;
     if (frame>maxFrame) { frame = maxFrame; }
 
-    qDebug() << "we need to get frame" << frame;
     int64_t seekT = (int64_t(frame) *
                      pFormatCtx->streams[videoStream]->r_frame_rate.den *
                      pFormatCtx->streams[videoStream]->time_base.den) /
@@ -1297,7 +1278,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
               currentFrame = frame;
     }
     while((res = av_read_frame(pFormatCtx,&packet)>=0)) {
-        //qDebug() << "at current frame" << currentFrame;
         if (currentFrame>=frame) { fetchFrame = true; }
         if (packet.stream_index == videoStream){
             if (!fetchFrame) {
@@ -1305,7 +1285,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
                 continue;
             }
 
-            //qDebug() << "get frame" << currentFrame;
             int ret = avcodec_send_packet(pCodecCtx, &packet);
             if (ret<0) { continue; }
             ret = avcodec_receive_frame(pCodecCtx, pFrame);
@@ -1313,7 +1292,6 @@ Magick::Image Common::getVideoFrame(const QString &filename,
             else { continue; }
 
             if (frameFinished) {
-                qDebug() << "extract image from frame" << currentFrame;
                 struct SwsContext * img_convert_ctx;
                 img_convert_ctx = sws_getCachedContext(Q_NULLPTR,
                                                        pCodecCtx->width,
@@ -1327,17 +1305,15 @@ Magick::Image Common::getVideoFrame(const QString &filename,
                                                        Q_NULLPTR,
                                                        Q_NULLPTR);
                 sws_scale(img_convert_ctx,
-                          ((AVFrame*)pFrame)->data,
-                          ((AVFrame*)pFrame)->linesize,
+                          (dynamic_cast<AVFrame*>(pFrame)->data),
+                          (dynamic_cast<AVFrame*>(pFrame)->linesize),
                           0,
                           pCodecCtx->height,
-                          ((AVFrame*)pFrameRGB)->data,
-                          ((AVFrame*)pFrameRGB)->linesize);
-
-                qDebug() << "prepare image frame for" << filename;
+                          (dynamic_cast<AVFrame*>(pFrameRGB)->data),
+                          (dynamic_cast<AVFrame*>(pFrameRGB)->linesize));
                 try {
-                    Magick::Image image((size_t)pFrame->width,
-                                        (size_t)pFrame->height,
+                    Magick::Image image(static_cast<size_t>(pFrame->width),
+                                        static_cast<size_t>(pFrame->height),
                                         "BGR",
                                         Magick::CharPixel,
                                         pFrameRGB->data[0]);
