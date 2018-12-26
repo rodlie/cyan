@@ -1938,22 +1938,22 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
 {
     qDebug() << "open images" << urls;
     if (urls.size()==0) { return; }
-
     for (int i=0;i<urls.size();++i) {
+        QString filename = urls.at(i).toLocalFile();
         QMimeDatabase db;
-        QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
+        QMimeType type = db.mimeTypeForFile(filename);
 #ifndef NO_FFMPEG
         if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-            readAudio(urls.at(i).toString());
+            readAudio(filename);
         } else if (type.name().startsWith(QString("video"))) { // get frame from video
-            readVideo(urls.at(i).toString());
+            readVideo(filename);
         } else { // "regular" image
-            readImage(urls.at(i).toLocalFile());
+            readImage(filename);
         }
 #else
         if (type.name().startsWith(QString("audio")) ||
             type.name().startsWith(QString("video"))) { continue; }
-        readImage(urls.at(i).toLocalFile());
+        readImage(filename);
 #endif
     }
     if (urls.size()>1) {
@@ -2043,38 +2043,47 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     if (!view) { return; }
 
     qDebug() << "open layers" << urls;
+
     for (int i=0;i<urls.size();++i) {
-        if (Common::isValidCanvas(urls.at(i).toString())) {
-            // skip projects (for now)
+        QString filename = urls.at(i).toLocalFile();
+
+        if (Common::isValidCanvas(filename)) {
+            // skip projects
             continue;
         }
+
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
         Magick::Image image;
+
         try {
 #ifndef NO_FFMPEG
             if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-                QByteArray coverart = common.getEmbeddedCoverArt(urls.at(i).toString());
+                QByteArray coverart = common.getEmbeddedCoverArt(filename);
                 if (coverart.size()==0) { continue; } // no coverart, skip
                 image.read(Magick::Blob(coverart.data(),
                                         static_cast<size_t>(coverart.size())));
             } else if (type.name().startsWith(QString("video"))) { // get frame from video
-                image = getVideoFrameAsImage(urls.at(i).toString());
+                image = getVideoFrameAsImage(filename);
             } else { // "regular" image
-                image.read(urls.at(i).toString().toStdString());
+                image.read(filename.toStdString());
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
                 type.name().startsWith(QString("video"))) { continue; }
-            image.read(urls.at(i).toString().toStdString());
+            image.read(filename.toStdString());
 #endif
+
             if (image.columns()<=0 && image.rows()<=0) { continue; } // not an (readable) image, skip
+
             image.magick("MIFF");
-            image.fileName(urls.at(i).toString().toStdString());
+            image.fileName(filename.toStdString());
+
             if (image.label().empty()) {
-                QFileInfo fileInfo(urls.at(i).toString());
+                QFileInfo fileInfo(filename);
                 image.label(fileInfo.baseName().toStdString());
             }
+
             if (image.iccColorProfile().length()==0) {
                 qDebug() << "layer is missing color profile, add default";
                 QString defPro;
