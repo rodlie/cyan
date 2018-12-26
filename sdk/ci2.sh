@@ -68,7 +68,7 @@ if [ "${SETUP}" = 1 ]; then
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
     echo "Update win64 sdk ..."
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226_2-win64.tar.xz/download && mv download download.tar.xz
+    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226_3-win64-static.tar.xz/download && mv download download.tar.xz
     rm -rf ${MXE}/usr/x86_64-w64-mingw32.static
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
