@@ -42,12 +42,14 @@
 #include <lcms2.h>
 #include <Magick++.h>
 
+#ifndef NO_FFMPEG
 extern "C" {
 #include <libavutil/avutil.h>
 #include <libavutil/imgutils.h>
 #include <libavdevice/avdevice.h>
 #include <libswscale/swscale.h>
 }
+#endif
 
 #include "tileitem.h"
 

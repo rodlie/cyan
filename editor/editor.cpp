@@ -120,9 +120,6 @@ Editor::Editor(QWidget *parent)
     setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
 
-    // quit if no color profiles are available
-    hasColorProfiles();
-
     // register Magick types used
     qRegisterMetaType<Magick::Image>("Magick::Image");
     qRegisterMetaType<Magick::Drawable>("Magick::Drawable");
@@ -798,7 +795,6 @@ const QString Editor::selectedDefaultColorProfile(QMenu *menu)
     for (int i=0;i<menu->actions().size();++i) {
         QAction *action = menu->actions().at(i);
         if (!action) { continue; }
-        //qDebug() << "ACT" << action->data().toString() << action->isChecked();
         if (action->isChecked()) { return action->data().toString(); }
     }
     return QString();
@@ -1091,6 +1087,9 @@ void Editor::loadSettings()
                                              true)
                               .toBool());
     settings.endGroup();
+
+    // quit if no color profiles are available
+    hasColorProfiles();
 }
 
 void Editor::loadProject(const QString &filename)
@@ -1122,12 +1121,12 @@ void Editor::saveProject(const QString &filename)
     }
 }
 
-void Editor::saveImage(QString filename)
+void Editor::saveImage(const QString &filename)
 {
     qDebug() << "save image" << filename;
 }
 
-void Editor::loadImage(QString filename)
+void Editor::loadImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     if (Common::isValidCanvas(filename)) {
@@ -1218,14 +1217,14 @@ void Editor::readImage(Magick::Blob blob,
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-void Editor::readImage(QString filename)
+void Editor::readImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     readImage(Magick::Blob(), filename);
 }
 
 #ifndef NO_FFMPEG
-void Editor::readAudio(QString filename)
+void Editor::readAudio(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     QByteArray coverart = common.getEmbeddedCoverArt(filename);
@@ -1241,7 +1240,7 @@ void Editor::readAudio(QString filename)
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-void Editor::readVideo(QString filename)
+void Editor::readVideo(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     int maxFrame = common.getVideoMaxFrames(filename);
@@ -1260,7 +1259,7 @@ void Editor::readVideo(QString filename)
                        SLOT(deleteLater()));
 }
 
-void Editor::readVideo(QString filename, int frame)
+void Editor::readVideo(const QString &filename, int frame)
 {
     if (filename.isEmpty() || frame<0) { return; }
     try {
@@ -1273,7 +1272,7 @@ void Editor::readVideo(QString filename, int frame)
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-Magick::Image Editor::getVideoFrameAsImage(QString filename)
+Magick::Image Editor::getVideoFrameAsImage(const QString &filename)
 {
     Magick::Image result;
     if (filename.isEmpty()) { return result; }

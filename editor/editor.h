@@ -68,7 +68,7 @@ public:
 
 signals:
 
-    void openImage(QString filename);
+    void openImage(const QString &filename);
     void statusMessage(const QString &message);
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);
@@ -127,7 +127,6 @@ private:
     QDockWidget *layersDock;
     QComboBox *layersComp;
     QSlider *layersOpacity;
-    //QTreeWidget *imageInfoTree;
     QSlider *brushSize;
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
@@ -183,16 +182,16 @@ private slots:
     void loadProject(const QString &filename);
     void saveProject(const QString &filename);
 
-    void saveImage(QString filename);
-    void loadImage(QString filename);
+    void saveImage(const QString &filename);
+    void loadImage(const QString &filename);
     void readImage(Magick::Blob blob, const QString &filename = QString());
-    void readImage(QString filename);
+    void readImage(const QString &filename);
 
 #ifndef NO_FFMPEG
-    void readAudio(QString filename);
-    void readVideo(QString filename);
-    void readVideo(QString filename, int frame);
-    Magick::Image getVideoFrameAsImage(QString filename);
+    void readAudio(const QString &filename);
+    void readVideo(const QString &filename);
+    void readVideo(const QString &filename, int frame);
+    Magick::Image getVideoFrameAsImage(const QString &filename);
 #endif
 
     void saveProjectDialog();
@@ -208,7 +207,7 @@ private slots:
 
     void newTab(Common::Canvas canvas);
     void newTab(Magick::Image image = Magick::Image(),
-                QSize geo = QSize(0,0));
+                QSize geo = QSize(0, 0));
     void connectView(View *view);
     void setViewTool(View *view);
 
