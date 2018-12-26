@@ -38,7 +38,7 @@
 #include <QDirIterator>
 #include <QAction>
 
-#include <magick/MagickCore.h>
+//#include <magick/Magick.h>
 
 #define RESOURCE_BYTE 1050000000
 
@@ -56,48 +56,50 @@ QMap<Magick::CompositeOperator, QString> Common::compositeModes()
 {
     QMap<Magick::CompositeOperator, QString> result;
 
-    result[MagickCore::OverCompositeOp] = QString("Normal");
-    result[MagickCore::OverlayCompositeOp] = QString("Overlay");
-    result[MagickCore::ScreenCompositeOp] = QString("Screen");
-    result[MagickCore::DissolveCompositeOp] = QString("Dissolve");
-    result[MagickCore::MultiplyCompositeOp] = QString("Multiply");
-    result[MagickCore::PlusCompositeOp] = QString("Addition");
-    result[MagickCore::MinusCompositeOp] = QString("Minus");
-    result[MagickCore::DivideCompositeOp] = QString("Divide");
-    result[MagickCore::SubtractCompositeOp] = QString("Subtract");
-    result[MagickCore::DifferenceCompositeOp] = QString("Difference");
-    result[MagickCore::XorCompositeOp] = QString("XOR");
-    result[MagickCore::ColorBurnCompositeOp] = QString("Burn");
-    result[MagickCore::ColorDodgeCompositeOp] = QString("Dodge");
-    result[MagickCore::HardLightCompositeOp] = QString("Hard light");
-    result[MagickCore::LightenCompositeOp] = QString("Lighten only");
-    result[MagickCore::LightenIntensityCompositeOp] = QString("Lighten intensity");
-    result[MagickCore::DarkenCompositeOp] = QString("Darken only");
-    result[MagickCore::DarkenIntensityCompositeOp] = QString("Darken intensity");
-    result[MagickCore::VividLightCompositeOp] = QString("Vivid light");
-    result[MagickCore::PinLightCompositeOp] = QString("Pin light");
-    result[MagickCore::SoftLightCompositeOp] = QString("Soft light");
-    result[MagickCore::PegtopLightCompositeOp] = QString("Pegtop light");
-    result[MagickCore::CopyBlackCompositeOp] = QString("Copy Black");
-    result[MagickCore::CopyBlueCompositeOp] = QString("Copy Blue");
-    result[MagickCore::CopyCyanCompositeOp] = QString("Copy Cyan");
-    result[MagickCore::CopyGreenCompositeOp] = QString("Copy Green");
-    result[MagickCore::CopyMagentaCompositeOp] = QString("Copy Magenta");
-    result[MagickCore::CopyRedCompositeOp] = QString("Copy Red");
-    result[MagickCore::CopyYellowCompositeOp] = QString("Copy Yellow");
-    result[MagickCore::HueCompositeOp] = QString("Hue");
-    result[MagickCore::SaturateCompositeOp] = QString("Saturation");
-    result[MagickCore::MinusSrcCompositeOp] = QString("Substract");
-    result[MagickCore::DivideSrcCompositeOp] = QString("Divide");
-    result[MagickCore::LinearBurnCompositeOp] = QString("Burn (linear)");
-    result[MagickCore::LinearDodgeCompositeOp] = QString("Dodge (linear)");
-    result[MagickCore::ThresholdCompositeOp] =QString("Threshold");
-    result[MagickCore::ReplaceCompositeOp] = QString("Replace");
-    result[MagickCore::ModulateCompositeOp] = QString("Modulate");
-    result[MagickCore::LuminizeCompositeOp] = QString("Luminize");
-    result[MagickCore::LinearLightCompositeOp] = QString("Linear light");
-    result[MagickCore::HardMixCompositeOp] = QString("Hard mix");
-    result[MagickCore::ExclusionCompositeOp] = QString("Exclusion");
+    result[Magick::OverCompositeOp] = QString("Normal");
+    result[Magick::OverlayCompositeOp] = QString("Overlay");
+    result[Magick::ScreenCompositeOp] = QString("Screen");
+    result[Magick::DissolveCompositeOp] = QString("Dissolve");
+    result[Magick::MultiplyCompositeOp] = QString("Multiply");
+    result[Magick::PlusCompositeOp] = QString("Addition");
+    result[Magick::MinusSrcCompositeOp] = QString("Minus (src)");
+    result[Magick::MinusDstCompositeOp] = QString("Minus (dst)");
+    result[Magick::DivideSrcCompositeOp] = QString("Divide (src)");
+    result[Magick::DivideDstCompositeOp] = QString("Divide (dst)");
+    //result[Magick::SubtractCompositeOp] = QString("Subtract"); NOT IN IM7
+    result[Magick::DifferenceCompositeOp] = QString("Difference");
+    result[Magick::XorCompositeOp] = QString("XOR");
+    result[Magick::ColorBurnCompositeOp] = QString("Burn");
+    result[Magick::ColorDodgeCompositeOp] = QString("Dodge");
+    result[Magick::HardLightCompositeOp] = QString("Hard light");
+    result[Magick::LightenCompositeOp] = QString("Lighten only");
+    result[Magick::LightenIntensityCompositeOp] = QString("Lighten intensity");
+    result[Magick::DarkenCompositeOp] = QString("Darken only");
+    result[Magick::DarkenIntensityCompositeOp] = QString("Darken intensity");
+    result[Magick::VividLightCompositeOp] = QString("Vivid light");
+    result[Magick::PinLightCompositeOp] = QString("Pin light");
+    result[Magick::SoftLightCompositeOp] = QString("Soft light");
+    result[Magick::PegtopLightCompositeOp] = QString("Pegtop light");
+    result[Magick::CopyBlackCompositeOp] = QString("Copy Black");
+    result[Magick::CopyBlueCompositeOp] = QString("Copy Blue");
+    result[Magick::CopyCyanCompositeOp] = QString("Copy Cyan");
+    result[Magick::CopyGreenCompositeOp] = QString("Copy Green");
+    result[Magick::CopyMagentaCompositeOp] = QString("Copy Magenta");
+    result[Magick::CopyRedCompositeOp] = QString("Copy Red");
+    result[Magick::CopyYellowCompositeOp] = QString("Copy Yellow");
+    result[Magick::HueCompositeOp] = QString("Hue");
+    result[Magick::SaturateCompositeOp] = QString("Saturation");
+    result[Magick::MinusSrcCompositeOp] = QString("Substract");
+    result[Magick::DivideSrcCompositeOp] = QString("Divide");
+    result[Magick::LinearBurnCompositeOp] = QString("Burn (linear)");
+    result[Magick::LinearDodgeCompositeOp] = QString("Dodge (linear)");
+    result[Magick::ThresholdCompositeOp] =QString("Threshold");
+    result[Magick::ReplaceCompositeOp] = QString("Replace");
+    result[Magick::ModulateCompositeOp] = QString("Modulate");
+    result[Magick::LuminizeCompositeOp] = QString("Luminize");
+    result[Magick::LinearLightCompositeOp] = QString("Linear light");
+    result[Magick::HardMixCompositeOp] = QString("Hard mix");
+    result[Magick::ExclusionCompositeOp] = QString("Exclusion");
 
     return result;
 }
@@ -181,10 +183,10 @@ Magick::Image Common::compLayers(Magick::Image canvas,
         // set layer opacity
         if (i.value().opacity<1) {
             try {
-                layer.matte(true);
-                layer.quantumOperator(Magick::AlphaChannel,
-                                      Magick::MultiplyEvaluateOperator,
-                                      i.value().opacity);
+                layer.alpha(true);
+                layer.evaluate(Magick::AlphaChannel,
+                               Magick::MultiplyEvaluateOperator,
+                               i.value().opacity);
             }
             catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
             catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
@@ -259,7 +261,7 @@ const QString Common::canvasWindowTitle(Magick::Image image)
     case Magick::GRAYColorspace:
         colorspace = "GRAY";
         break;
-    case MagickCore::LinearGRAYColorspace:
+    case Magick::LinearGRAYColorspace:
         colorspace = "LinearGRAY";
         break;
     case Magick::LabColorspace:
@@ -270,12 +272,6 @@ const QString Common::canvasWindowTitle(Magick::Image image)
         break;
     case Magick::HSLColorspace:
         colorspace = "HSL";
-        break;
-    case Magick::Rec601LumaColorspace:
-        colorspace = "Rec601Luma";
-        break;
-    case Magick::Rec709LumaColorspace:
-        colorspace = "Rec709Luma";
         break;
     case Magick::Rec601YCbCrColorspace:
         colorspace = "Rec601YCbCr";
@@ -291,8 +287,8 @@ const QString Common::canvasWindowTitle(Magick::Image image)
         int width = static_cast<int>(image.columns());
         int height = static_cast<int>(image.rows());
         int depth = static_cast<int>(image.depth());
-        int dpiX = static_cast<int>(image.density().width());
-        int dpiY = static_cast<int>(image.density().height());
+        int dpiX = static_cast<int>(image.density().x());
+        int dpiY = static_cast<int>(image.density().y());
         result = QString("%1 @ %2 %3x%4 %5x%6 %7-bit")
                         .arg(label)
                         .arg(colorspace)

@@ -33,14 +33,10 @@ CONFIG -= ordered
 SUBDIRS += lib editor
 editor.depends += lib
 
-exists(magick/engine/configure) {
-    SUBDIRS += magick
-    lib.depends += magick
-    editor.depends += magick
-}
-
 OTHER_FILES += \
     docs/README.md \
     docs/cyan.html \
-    .ci.sh \
-    .travis.yml
+    sdk/ci2.sh \
+    sdk/sdk2.sh \
+    .travis.yml \
+    README.md

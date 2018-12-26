@@ -1,3 +1,0 @@
-[submodule "magick/engine"]
-	path = magick/engine
-	url = https://github.com/rodlie/ImageMagick6
