@@ -42,28 +42,38 @@ DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 DEFINES += CYAN_DEVEL
 
+# force static lib on release and avoid spamming the terminal with debug
 CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
     CONFIG += staticlib
 }
 
+# unix path for installation
 isEmpty(PREFIX): PREFIX = /usr/local
 isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
 isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
 isEmpty(LIBDIR): LIBDIR = $$PREFIX/lib
 
+# win32 stuff
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
+# If you have an older compiler than gcc 4.8 maybe about time to upgrade!?
 CONFIG += c++11
 
 mac {
+    # we have standarized on Qt 5.9 on all platforms, and 10.10 is the lowest supported.
+    # If you build against Qt 5.6 then you will be able to target 10.7 at the lowest.
+    # fopenmp is only needed when you build against a static IM, but
+    # Cyan on Mac is only supported through the official binaries, so that's what we hardcode:
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -fopenmp
 }
+
+# Needed by the official binary
 win32-g++: LIBS += -lpthread
 
 # pkg-config
@@ -73,7 +83,9 @@ CONFIG += link_pkgconfig
 # lcms
 PKGCONFIG += lcms2
 
-# Magick++
+# ImageMagick
+# IM is the most important part of Cyan and also is the component that breaks the most.
+# We only support the IM version included in the official binaries (and available in magick/engine), everything else is NOT SUPPORTED.
 MAGICK_PC_PATH = $${OUT_PWD}/../magick/lib/pkgconfig
 exists($${MAGICK_PC_PATH}) {
     MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
@@ -82,8 +94,9 @@ exists($${MAGICK_PC_PATH}) {
     LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
                      " --libs --static $${MAGICK_PC_CONFIG}")
 }
+# Not using our ImageMagick, you are on your own ...
 !exists($${MAGICK_PC_PATH}) {
-    warning("Cyan currently uses a fork of ImageMagick6 (magick/engine submodule), building against vanilla ImageMagick will not work. This will be fixed before final release of Cyan v2.0, but until then use the magick/engine submodule supplied with Cyan.")
+    warning("UNSUPPORTED IMAGEMAGICK VERSION! THE BUILD/TESTS WILL PROBABLY BREAK")
     MAGICK_CONFIG = ImageMagick++
     !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
     PKG_CONFIG_BIN = pkg-config
@@ -93,6 +106,7 @@ exists($${MAGICK_PC_PATH}) {
 }
 
 # ffmpeg
+# v3 is the only tested version, may work on v4
 CONFIG(no_ffmpeg): DEFINES += NO_FFMPEG
 !CONFIG(no_ffmpeg): PKGCONFIG += libavdevice \
                                  libswscale \
