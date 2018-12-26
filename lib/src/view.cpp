@@ -546,10 +546,10 @@ void View::setupCanvas(int width,
     _image.colorSpace(colorspace);
 
     // set transparent image
-    _image.matte(true); // TODO magick7
-    _image.quantumOperator(Magick::AlphaChannel,
-                           Magick::MultiplyEvaluateOperator,
-                           0.0);
+    _image.alpha(true);
+    _image.evaluate(Magick::AlphaChannel,
+                    Magick::MultiplyEvaluateOperator,
+                    0.0);
 
     // set scene size
     _scene->setSceneRect(0,
@@ -626,10 +626,10 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _image.depth(image.depth());
     _image.colorSpace(image.colorSpace());
 
-    _image.matte(true); // TODO magick7
-    _image.quantumOperator(Magick::AlphaChannel,
-                           Magick::MultiplyEvaluateOperator,
-                           0.0);
+    _image.alpha(true);
+    _image.evaluate(Magick::AlphaChannel,
+                    Magick::MultiplyEvaluateOperator,
+                    0.0);
 
     _scene->setSceneRect(0, 0, image.columns(), image.rows());
     _rect->setRect(0, 0, image.columns(), image.rows());
@@ -1015,7 +1015,7 @@ void View::paintCanvasBackground()
     try {
         Magick::Image cb(_canvas.image);
         cb.quiet(true);
-        cb.matte(true);
+        cb.alpha(true);
         cb.crop(Magick::Geometry(512, 512));
         cb.extent(Magick::Geometry(512, 512));
         cb.read("pattern:checkerboard");

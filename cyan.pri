@@ -86,18 +86,18 @@ PKGCONFIG += lcms2
 # ImageMagick
 # IM is the most important part of Cyan and also is the component that breaks the most.
 # We only support the IM version included in the official binaries (and available in magick/engine), everything else is NOT SUPPORTED.
-MAGICK_PC_PATH = $${OUT_PWD}/../magick/lib/pkgconfig
-exists($${MAGICK_PC_PATH}) {
-    MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
-    QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                               " --cflags  --static $${MAGICK_PC_CONFIG}")
-    LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
-                     " --libs --static $${MAGICK_PC_CONFIG}")
-}
+#MAGICK_PC_PATH = $${OUT_PWD}/../magick/lib/pkgconfig
+#exists($${MAGICK_PC_PATH}) {
+#    MAGICK_PC_CONFIG=ImageMagick++-6.Q16HDRI
+#    QMAKE_CXXFLAGS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+#                               " --cflags  --static $${MAGICK_PC_CONFIG}")
+#    LIBS += $$system("PKG_CONFIG_PATH=$${MAGICK_PC_PATH} pkg-config" \
+#                     " --libs --static $${MAGICK_PC_CONFIG}")
+#}
 # Not using our ImageMagick, you are on your own ...
 !exists($${MAGICK_PC_PATH}) {
-    warning("UNSUPPORTED IMAGEMAGICK VERSION! THE BUILD/TESTS WILL PROBABLY BREAK")
-    MAGICK_CONFIG = ImageMagick++
+#    warning("UNSUPPORTED IMAGEMAGICK VERSION! THE BUILD/TESTS WILL PROBABLY BREAK")
+    MAGICK_CONFIG = Magick++-7.Q16HDRI
     !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
     PKG_CONFIG_BIN = pkg-config
     !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}

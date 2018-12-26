@@ -36,12 +36,12 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
  * QtConcurrent 5
  * lcms 2
  * ffmpeg 3
- * ImageMagick 6 with [patch](https://github.com/rodlie/ImageMagick6/commit/dffafb716da8d31f41a2e28e1b43a74d0edeaef3) (available as submodule ``magick/engine``)
+ * ImageMagick 7.0.8-18+
 
 ## Build
 
 ```
-git clone --recurse-submodules https://github.com/rodlie/cyan
+git clone https://github.com/rodlie/cyan
 cd cyan
 mkdir build
 cd build

@@ -195,10 +195,10 @@ void NewMediaDialog::createImage(QSize geo,
         _image.colorSpace(colorspace);
         _image.depth(depth);
         _image.label(label.toStdString());
-        _image.matte(true);
-        _image.quantumOperator(Magick::AlphaChannel,
-                               Magick::MultiplyEvaluateOperator,
-                               0.0);
+        _image.alpha(true);
+        _image.evaluate(Magick::AlphaChannel,
+                        Magick::MultiplyEvaluateOperator,
+                        0.0);
         _image.profile("ICC",
                        selectedProfile());
     }

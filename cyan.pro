@@ -33,11 +33,11 @@ CONFIG -= ordered
 SUBDIRS += lib editor
 editor.depends += lib
 
-exists(magick/engine/configure) {
-    SUBDIRS += magick
-    lib.depends += magick
-    editor.depends += magick
-}
+#exists(magick/engine/configure) {
+#    SUBDIRS += magick
+#    lib.depends += magick
+#    editor.depends += magick
+#}
 
 OTHER_FILES += \
     docs/README.md \
