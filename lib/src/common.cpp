@@ -183,10 +183,6 @@ Magick::Image Common::compLayers(Magick::Image canvas,
         // set layer opacity
         if (i.value().opacity<1) {
             try {
-                /*layer.matte(true);
-                layer.quantumOperator(Magick::AlphaChannel,
-                                      Magick::MultiplyEvaluateOperator,
-                                      i.value().opacity);*/
                 layer.alpha(true);
                 layer.evaluate(Magick::AlphaChannel,
                                Magick::MultiplyEvaluateOperator,
