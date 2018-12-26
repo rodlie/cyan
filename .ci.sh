@@ -98,7 +98,7 @@ if [ "${OS}" = "Linux" ]; then
   #make
   #make test
   #make DESTDIR=`pwd`/pkg install
-  qmake -qt=5 PREFIX=/usr ..
+  qmake -qt=5 PREFIX=/usr CONFIG+=no_ffmpeg ..
   make
   #make test
   make INSTALL_ROOT=`pwd`/pkg install
@@ -109,7 +109,7 @@ if [ "${OS}" = "Linux" ]; then
   export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
   echo "===> Building for Linux64 ..."
   mkdir -p ${CWD}/linux64 && cd ${CWD}/linux64
-  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ..
+  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr CONFIG+=no_ffmpeg ..
   make
   #make test
   strip -s editor/build/Cyan
@@ -130,7 +130,7 @@ if [ "${OS}" = "Linux" ]; then
   STRIP="${MXE}/usr/bin/${TARGET}-strip"
   PATH="${MXE}/usr/bin:/usr/bin:/bin"
   PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-  ${QMAKE} GIT=${COMMIT} CONFIG+=release  ..
+  ${QMAKE} GIT=${COMMIT} CONFIG+=release  CONFIG+=no_ffmpeg ..
   make
   #make test
   ${STRIP} -s editor/build/Cyan.exe
@@ -144,7 +144,7 @@ elif [ "${OS}" = "Darwin" ]; then
   PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
   PATH=${SDK}/bin:/usr/bin:/bin
   mkdir -p ${CWD}/mac64 && cd ${CWD}/mac64
-  qmake GIT=${COMMIT} CONFIG+=release ..
+  qmake GIT=${COMMIT} CONFIG+=release CONFIG+=no_ffmpeg ..
   make
   #make test
   MP=/opt/local/lib/libomp/libomp.dylib
