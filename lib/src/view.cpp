@@ -827,6 +827,11 @@ void View::handleLayerOverTiles(LayerItem *layerItem,
     }
     if (!layerItem) { return; }
 
+#ifdef Q_OS_WIN
+    qulonglong threads = Magick::ResourceLimits::thread();
+    Magick::ResourceLimits::thread(1);
+#endif
+
     QList<QGraphicsItem*> items = _scene->collidingItems(layerItem);
     for (int i=0;i<items.size();++i) {
         TileItem *item = dynamic_cast<TileItem*>(items.at(i));
@@ -861,6 +866,11 @@ void View::handleLayerOverTiles(LayerItem *layerItem,
                                    _canvas.layers,
                                    geo);
     }
+
+#ifdef Q_OS_WIN
+    Magick::ResourceLimits::thread(threads);
+#endif
+
     QTimer::singleShot(10, this, SLOT(handleTileStatus()));
 }
 
