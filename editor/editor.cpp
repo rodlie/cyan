@@ -1330,7 +1330,7 @@ void Editor::loadImageDialog()
     }
 #else
     if (type.name().startsWith(QString("audio")) ||
-        type.name().startsWith(QString("video")) { return; }
+        type.name().startsWith(QString("video"))) { return; }
     loadImage(filename);
 #endif
 }
@@ -1878,7 +1878,7 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
         }
 #else
         if (type.name().startsWith(QString("audio")) ||
-            type.name().startsWith(QString("video")) { continue; }
+            type.name().startsWith(QString("video"))) { continue; }
         readImage(urls.at(i).toLocalFile());
 #endif
     }
@@ -1991,7 +1991,7 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
-                type.name().startsWith(QString("video")) { continue; }
+                type.name().startsWith(QString("video"))) { continue; }
             image.read(urls.at(i).toString().toStdString());
 #endif
             if (image.columns()<=0 && image.rows()<=0) { continue; } // not an (readable) image, skip
