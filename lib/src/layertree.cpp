@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QLayout>
 #include <QHeaderView>
+#include <QIcon>
 
 LayerTreeItem::LayerTreeItem(QTreeWidget *parent) :
     QTreeWidgetItem(parent)
@@ -105,13 +106,14 @@ void LayerTreeItem::setVisibility(bool visible)
 
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 {
-    //setHeaderHidden(true);
     setHeaderLabels(QStringList() << QString("") << QString("") << QString(""));
-    //setSortingEnabled(true);
-    //setColumnHidden(0, true);
-    setColumnWidth(0, 50);
-
+    headerItem()->setIcon(0, QIcon::fromTheme("layer"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
+    headerItem()->setToolTip(1, tr("Layer visibility"));
+    setColumnWidth(0, 16);
+    setColumnWidth(1, 16);
+    setIconSize(QSize(32, 32));
+    //setStyleSheet("QTreeWidget::item { height: 64px; }");
 
     connect(this,
             SIGNAL(itemClicked(QTreeWidgetItem*,int)),
@@ -160,6 +162,34 @@ void LayerTree::populateTree(View *image)
     for (int i=0;i<image->getLayerCount();++i) {
         LayerTreeItem *item = new LayerTreeItem(this);
         blockSignals(true);
+
+
+        Magick::Image thumb(Magick::Geometry(32, 32), Magick::ColorRGB(0, 0, 0));
+        thumb.depth(8);
+        thumb.alpha(false);
+        Magick::Image layer = image->getLayer(i).image;
+        layer.depth(8);
+        layer.alpha(false);
+        layer.scale(Magick::Geometry(32, 32));
+        size_t offX = 0;
+        size_t offY = 0;
+        if (layer.columns()<thumb.columns()) {
+            offX = (thumb.columns()-layer.columns())/2;
+        }
+        if (layer.rows()<thumb.rows()) {
+            offY = (thumb.rows()-layer.rows())/2;
+        }
+        thumb.composite(layer, offX, offY, Magick::OverCompositeOp);
+        thumb.magick("BMP");
+        Magick::Blob pix;
+        thumb.write(&pix);
+        QPixmap pixmap = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
+                                                                                      static_cast<int>(pix.length())));
+        item->setIconSize(QSize(32, 32));
+        item->setIcon(2,QIcon(pixmap));
+
+
+
         item->setText(0,
                       QString::number(i));
         item->setText(2,

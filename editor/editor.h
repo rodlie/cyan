@@ -124,7 +124,7 @@ private:
 
     QToolButton *newButton;
     QToolButton *saveButton;
-    QToolButton *colorButton;
+    //QToolButton *colorButton;
     LayerTree *layersTree;
     QDockWidget *layersDock;
     QComboBox *layersComp;

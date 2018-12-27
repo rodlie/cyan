@@ -275,5 +275,7 @@
         <file>icons/Cyan/32x32/actions/monitor_window_flow.png</file>
         <file>icons/Cyan/16x16/actions/eye.png</file>
         <file>icons/Cyan/32x32/actions/eye.png</file>
+        <file>icons/Cyan/16x16/actions/layer.png</file>
+        <file>icons/Cyan/32x32/actions/layer.png</file>
     </qresource>
 </RCC>

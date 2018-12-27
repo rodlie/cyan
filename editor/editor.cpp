@@ -109,7 +109,7 @@ Editor::Editor(QWidget *parent)
     //, magickMenu(nullptr)
     , newButton(nullptr)
     , saveButton(nullptr)
-    , colorButton(nullptr)
+    //, colorButton(nullptr)
     , layersTree(nullptr)
     , layersDock(nullptr)
     , layersComp(nullptr)
@@ -243,7 +243,7 @@ void Editor::setupUI()
     mainToolBar->addWidget(newButton);
     mainToolBar->addAction(openImageAct);
     mainToolBar->addWidget(saveButton);
-    mainToolBar->addWidget(colorButton);
+    //mainToolBar->addWidget(colorButton);
 
     mainToolBar->addAction(viewMoveAct);
     mainToolBar->addAction(viewDrawAct);
@@ -318,7 +318,7 @@ void Editor::setupUI()
     brushDock->setWindowTitle(tr("Brush"));
     brushDock->setObjectName(QString("brushDock"));
     brushDock->setWidget(brushWidget);
-    addDockWidget(Qt::LeftDockWidgetArea, brushDock);
+    addDockWidget(Qt::RightDockWidgetArea, brushDock);
 
 
 
@@ -518,12 +518,12 @@ void Editor::setupButtons()
     saveButton->setToolTip(tr("Save"));
     //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    colorButton = new QToolButton(this);
+    /*colorButton = new QToolButton(this);
     //colorButton->setIconSize(QSize(32, 32));
     colorButton->setMenu(colorMenu);
     colorButton->setPopupMode(QToolButton::InstantPopup);
     colorButton->setText(tr("Color"));
-    colorButton->setToolTip(tr("Color"));
+    colorButton->setToolTip(tr("Color"));*/
     //colorButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 
@@ -705,7 +705,7 @@ void Editor::setupIcons()
     QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
     QIcon colorWheelIcon = QIcon::fromTheme("color_wheel");
 
-    colorButton->setIcon(colorsIcon);
+    //colorButton->setIcon(colorsIcon);
     convertRGBAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     convertCMYKAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     convertGRAYAct->setIcon(QIcon::fromTheme("convert_color_to_gray"));

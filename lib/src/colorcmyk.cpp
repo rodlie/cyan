@@ -153,7 +153,7 @@ ColorCMYK::ColorCMYK(QWidget *parent) :
     mainLayout->addWidget(yWidget);
     mainLayout->addWidget(kWidget);
 
-    mainLayout->addStretch();
+    //mainLayout->addStretch();
 
     connect(spinC, SIGNAL(valueChanged(int)),
             this, SLOT(handleColorCChanged(int)));

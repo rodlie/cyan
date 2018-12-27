@@ -128,7 +128,7 @@ ColorRGB::ColorRGB(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(gWidget);
     mainLayout->addWidget(bWidget);
 
-    mainLayout->addStretch();
+    //mainLayout->addStretch();
 
     connect(spinR, SIGNAL(valueChanged(int)),
             this, SLOT(handleColorRChanged(int)));
