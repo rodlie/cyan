@@ -79,8 +79,8 @@ public slots:
     void setMovable(LayerItem *layer,
                     bool movable);
     bool isMovable();
-    bool isDrag();
-    void setDrag(bool drag);
+    //bool isDrag();
+    //void setDrag(bool drag);
     int getID();
     bool isDrawing();
     void setDraw(bool draw);

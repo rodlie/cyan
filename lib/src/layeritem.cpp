@@ -149,15 +149,15 @@ bool LayerItem::isMovable()
     return _movable;
 }
 
-bool LayerItem::isDrag()
+/*bool LayerItem::isDrag()
 {
     return _drag;
-}
+}*/
 
-void LayerItem::setDrag(bool drag)
+/*void LayerItem::setDrag(bool drag)
 {
     _drag = drag;
-}
+}*/
 
 int LayerItem::getID()
 {

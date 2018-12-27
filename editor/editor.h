@@ -96,7 +96,7 @@ private:
     QAction *blackPointAct;
     QAction *quitAct;
 
-    QAction *viewDragAct;
+    //QAction *viewDragAct;
     QAction *viewMoveAct;
     QAction *viewDrawAct;
 
@@ -233,7 +233,7 @@ private slots:
     void handleViewClosed();
     void handleLayersUpdated();
 
-    void handleSetDragMode(bool triggered);
+    //void handleSetDragMode(bool triggered);
     void handleSetMoveMode(bool triggered);
 
     void handleTabActivated(QMdiSubWindow *tab);

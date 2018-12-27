@@ -130,9 +130,11 @@ void View::wheelEvent(QWheelEvent* event) {
 
 void View::mousePressEvent(QMouseEvent *event)
 {
+    if (!isInteractive()) { setInteractive(true); }
+    if (dragMode() != DragMode::NoDrag) { setDragMode(DragMode::NoDrag); }
     if (event->button() == Qt::MiddleButton) {
         //setDragMode(QGraphicsView::ScrollHandDrag);
-        emit isDrag(true);
+        //emit isDrag(true);
         emit switchMoveTool();
         QMouseEvent fake(event->type(),
                          event->pos(),
@@ -157,11 +159,23 @@ void View::mousePressEvent(QMouseEvent *event)
     }
     //else if ((event->buttons() & Qt::LeftButton) && (event->buttons() & Qt::RightButton)) { emit resetZoom(); }
     //else if (event->buttons() & Qt::RightButton) { qDebug() << "fofo"; }
-    else { QGraphicsView::mousePressEvent(event); }
+    else if (event->buttons() & Qt::RightButton) {
+        setDragMode(DragMode::ScrollHandDrag);
+        setInteractive(false);
+        QMouseEvent fake(event->type(),
+                         event->pos(),
+                         Qt::LeftButton,
+                         Qt::LeftButton,
+                         event->modifiers());
+        QGraphicsView::mousePressEvent(&fake);
+    }
+    QGraphicsView::mousePressEvent(event);
 }
 
 void View::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (!isInteractive()) { setInteractive(true); }
+    if (dragMode() != DragMode::NoDrag) { setDragMode(DragMode::NoDrag); }
     if (event->button() == Qt::MiddleButton /*&& dragMode() != QGraphicsView::ScrollHandDrag*/) {
         //setDragMode(QGraphicsView::NoDrag);
         QMouseEvent fake(event->type(),
@@ -186,11 +200,23 @@ void View::mouseReleaseEvent(QMouseEvent *event)
             handleBrushOverTile(pos, false);
         }
     }*/
+    /*else if (event->buttons() & Qt::RightButton) {
+        setDragMode(DragMode::ScrollHandDrag);
+        setInteractive(false);
+        QMouseEvent fake(event->type(),
+                         event->pos(),
+                         Qt::LeftButton,
+                         Qt::LeftButton,
+                         event->modifiers());
+        QGraphicsView::mousePressEvent(&fake);
+    }*/
     QGraphicsView::mouseReleaseEvent(event);
 }
 
 void View::mouseMoveEvent(QMouseEvent *event)
 {
+    //if (!isInteractive()) { setInteractive(true); }
+    //if (dragMode() != DragMode::NoDrag) { setDragMode(DragMode::NoDrag); }
     if (_drawing) {
         // get draw POS
         QPointF pos = mapToScene(event->pos());
@@ -206,7 +232,11 @@ void View::mouseMoveEvent(QMouseEvent *event)
             handleBrushOverTile(pos);
         }
     }
-    QGraphicsView::mouseMoveEvent(event);
+    /*else if (event->buttons() & Qt::RightButton) {
+        setDragMode(DragMode::ScrollHandDrag);
+        setInteractive(false);
+    }*/
+     QGraphicsView::mouseMoveEvent(event);
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event)
@@ -315,7 +345,8 @@ void View::addLayer(Magick::Image image,
                    0,
                    image.columns(),
                    image.rows());
-    layer->setData(1, id);
+    layer->setData(1,
+                   id);
 
     connect(layer, SIGNAL(movingItem(QPointF,int)),
             this, SLOT(handleLayerMoving(QPointF,int)));
@@ -329,8 +360,8 @@ void View::addLayer(Magick::Image image,
             layer, SLOT(setMovable(LayerItem*,bool)));
     connect(this, SIGNAL(lockLayers(bool)),
             layer, SLOT(setMovable(bool)));
-    connect(this, SIGNAL(isDrag(bool)),
-            layer, SLOT(setDrag(bool)));
+/*    connect(this, SIGNAL(isDrag(bool)),
+            layer, SLOT(setDrag(bool)));*/
     connect(this, SIGNAL(setDraw(bool)),
             layer, SLOT(setDraw(bool)));
 
@@ -354,7 +385,8 @@ void View::addLayer(int id,
                    0,
                    geo.width(),
                    geo.height());
-    layer->setData(1, id);
+    layer->setData(1,
+                   id);
 
     connect(layer, SIGNAL(movingItem(QPointF,int)),
             this, SLOT(handleLayerMoving(QPointF,int)));
@@ -694,12 +726,13 @@ void View::setInteractiveMode(View::InteractiveMode mode, bool enable)
         _moving = true;
         setCursor(Qt::CrossCursor);
         break;
-    case View::InteractiveMode::InteractiveDragMode:
+    /*case View::InteractiveMode::InteractiveDragMode:
         setDragMode(QGraphicsView::ScrollHandDrag);
-        setInteractive(false);
+        setInteractive(true);
         setDrawMode(false);
         _moving = false;
-        break;
+        //setCursor(Qt::OpenHandCursor);
+        break;*/
     case View::InteractiveMode::InteractiveDrawMode:
         setDragMode(QGraphicsView::NoDrag);
         setInteractive(true);
@@ -1058,6 +1091,9 @@ void View::moveSelectedLayer(Common::MoveLayer gravity, int skip)
     for (int i=0;i<_scene->items().size();++i) {
         LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
         if (!item) { continue; }
+        QPen newPen(Qt::transparent);
+        newPen.setWidth(0);
+        item->setPen(newPen);
         if (item->getID() != _selectedLayer) { continue; }
         QPointF pos = item->pos();
         switch (gravity) {

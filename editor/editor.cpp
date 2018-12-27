@@ -85,7 +85,7 @@ Editor::Editor(QWidget *parent)
     , newLayerAct(nullptr)
     , saveLayerAct(nullptr)
     , quitAct(nullptr)
-    , viewDragAct(nullptr)
+    //, viewDragAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
     , aboutImageMagickAct(nullptr)
@@ -240,9 +240,9 @@ void Editor::setupUI()
     mainToolBar->addWidget(saveButton);
     mainToolBar->addWidget(colorButton);
 
-    viewToolBar->addAction(viewMoveAct);
-    viewToolBar->addAction(viewDragAct);
-    viewToolBar->addAction(viewDrawAct);
+    mainToolBar->addAction(viewMoveAct);
+    //viewToolBar->addAction(viewDragAct);
+    mainToolBar->addAction(viewDrawAct);
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(newLayerAct);
@@ -281,6 +281,8 @@ void Editor::setupUI()
     colorMenu->addSeparator();
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
+
+    viewMoveAct->setChecked(true);
 
     populateColorProfileMenu(colorProfileRGBMenu,
                              Magick::sRGBColorspace);
@@ -416,7 +418,7 @@ void Editor::setupActions()
     newLayerAct->setText(tr("New layer"));
 
     saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Save layer"));
+    saveLayerAct->setText(tr("Save layer as ..."));
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -426,10 +428,10 @@ void Editor::setupActions()
     viewMoveAct->setCheckable(true);
     viewMoveAct->setChecked(false);
 
-    viewDragAct = new QAction(this);
+    /*viewDragAct = new QAction(this);
     viewDragAct->setText(tr("Drag"));
     viewDragAct->setCheckable(true);
-    viewDragAct->setChecked(true);
+    viewDragAct->setChecked(true);*/
 
     viewDrawAct = new QAction(this);
     viewDrawAct->setText("Draw");
@@ -624,7 +626,7 @@ void Editor::setupConnections()
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
 
     connect(viewMoveAct, SIGNAL(triggered(bool)), this, SLOT(handleSetMoveMode(bool)));
-    connect(viewDragAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDragMode(bool)));
+    //connect(viewDragAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDragMode(bool)));
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));
 
     connect(aboutImageMagickAct, SIGNAL(triggered()), this, SLOT(aboutImageMagick()));
@@ -662,7 +664,7 @@ void Editor::setupIcons()
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
-    viewDragAct->setIcon(QIcon::fromTheme("hand"));
+    //viewDragAct->setIcon(QIcon::fromTheme("hand"));
     viewMoveAct->setIcon(QIcon::fromTheme("transform_move"));
     viewDrawAct->setIcon(QIcon::fromTheme("paintbrush"));
 
@@ -1676,9 +1678,9 @@ void Editor::setViewTool(View *view)
     qDebug() << "set view tool";
     if (viewMoveAct->isChecked()) {
         view->setInteractiveMode(View::IteractiveMoveMode);
-    } else if (viewDragAct->isChecked()) {
+    } /*else if (viewDragAct->isChecked()) {
         view->setInteractiveMode(View::InteractiveDragMode);
-    } else if (viewDrawAct->isChecked()) {
+    }*/ else if (viewDrawAct->isChecked()) {
         view->setInteractiveMode(View::InteractiveDrawMode);
     }
 }
@@ -1902,7 +1904,7 @@ void Editor::handleLayersUpdated()
     layersTree->handleTabActivated(mdi->currentSubWindow());
 }
 
-void Editor::handleSetDragMode(bool triggered)
+/*void Editor::handleSetDragMode(bool triggered)
 {
     qDebug() << "set drag mode" << triggered;
     if (!triggered) {
@@ -1910,7 +1912,7 @@ void Editor::handleSetDragMode(bool triggered)
         return;
     }
     handleSwitchMoveTool(View::InteractiveDragMode);
-}
+}*/
 
 void Editor::handleSetMoveMode(bool triggered)
 {
@@ -1929,13 +1931,13 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
 
-    if (viewDragAct->isChecked()) {
+    /*if (viewDragAct->isChecked()) {
         view->setDragMode(QGraphicsView::ScrollHandDrag);
         view->setInteractive(false);
     } else {
         view->setDragMode(QGraphicsView::NoDrag);
         view->setInteractive(true);
-    }
+    }*/
     updateTabTitle();
     handleBrushSize();
 }
@@ -1955,40 +1957,40 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
     View::InteractiveMode mode = View::InteractiveNoMode;
     if (tool == View::InteractiveNoMode) {
         if (viewMoveAct->isChecked()) {
-            // drag
+            /*// drag
             viewMoveAct->setChecked(false);
             viewDragAct->setChecked(true);
             viewDrawAct->setChecked(false);
             mode = View::InteractiveDragMode;
-        } else if (viewDragAct->isChecked()) {
+        } else if (viewDragAct->isChecked()) {*/
             // draw
             viewMoveAct->setChecked(false);
-            viewDragAct->setChecked(false);
+            //viewDragAct->setChecked(false);
             viewDrawAct->setChecked(true);
             mode = View::InteractiveDrawMode;
         } else if (viewDrawAct->isChecked()) {
             // move
             viewMoveAct->setChecked(true);
-            viewDragAct->setChecked(false);
+            //viewDragAct->setChecked(false);
             viewDrawAct->setChecked(false);
             mode = View::IteractiveMoveMode;
         }
     } else {
         mode = tool;
         switch(mode) {
-        case View::InteractiveDragMode:
+        /*case View::InteractiveDragMode:
             viewMoveAct->setChecked(false);
             viewDragAct->setChecked(true);
             viewDrawAct->setChecked(false);
-            break;
+            break;*/
         case View::InteractiveDrawMode:
             viewMoveAct->setChecked(false);
-            viewDragAct->setChecked(false);
+            //viewDragAct->setChecked(false);
             viewDrawAct->setChecked(true);
             break;
         case View::IteractiveMoveMode:
             viewMoveAct->setChecked(true);
-            viewDragAct->setChecked(false);
+            //viewDragAct->setChecked(false);
             viewDrawAct->setChecked(false);
             break;
         default:;
