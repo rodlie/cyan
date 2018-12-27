@@ -439,14 +439,22 @@ Common::Canvas View::getCanvasProject()
     return _canvas;
 }
 
-void View::setLayerVisibility(int layer, bool layerIsVisible)
+void View::setLayerVisibility(int layer,
+                              bool layerIsVisible)
 {
     if (_canvas.layers[layer].visible != layerIsVisible) {
         _canvas.layers[layer].visible = layerIsVisible;
+        handleLayerOverTiles(layer);
     }
 }
 
-void View::setLayerComposite(int layer, Magick::CompositeOperator composite)
+bool View::getLayerVisibility(int layer)
+{
+    return _canvas.layers[layer].visible;
+}
+
+void View::setLayerComposite(int layer,
+                             Magick::CompositeOperator composite)
 {
     if (_canvas.layers[layer].composite != composite) {
         _canvas.layers[layer].composite = composite;
@@ -1091,9 +1099,11 @@ void View::moveSelectedLayer(Common::MoveLayer gravity, int skip)
     for (int i=0;i<_scene->items().size();++i) {
         LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
         if (!item) { continue; }
+
         QPen newPen(Qt::transparent);
         newPen.setWidth(0);
         item->setPen(newPen);
+
         if (item->getID() != _selectedLayer) { continue; }
         QPointF pos = item->pos();
         switch (gravity) {

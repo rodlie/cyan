@@ -148,6 +148,8 @@ public slots:
 
     void setLayerVisibility(int layer,
                             bool layerIsVisible);
+    bool getLayerVisibility(int layer);
+
     void setLayerComposite(int layer,
                            Magick::CompositeOperator composite);
 

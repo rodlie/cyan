@@ -55,6 +55,7 @@ private:
     int _id;
     QString _name;
     double _opacity;
+    bool _visible;
 
 public slots:
 
@@ -66,6 +67,8 @@ public slots:
     void setLayerName(QString name);
     double getOpacity();
     void setOpacity(double value);
+    bool getVisibility();
+    void setVisibility(bool visible);
 };
 
 class LayerTree : public QTreeWidget

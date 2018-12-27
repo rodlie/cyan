@@ -40,6 +40,7 @@ LayerTreeItem::LayerTreeItem(QTreeWidget *parent) :
   , _composite(MagickCore::OverCompositeOp)
   , _id(0)
   , _name(tr("New Layer"))
+  , _visible(true)
 {
 }
 
@@ -89,6 +90,16 @@ double LayerTreeItem::getOpacity()
 void LayerTreeItem::setOpacity(double value)
 {
     _opacity = value;
+}
+
+bool LayerTreeItem::getVisibility()
+{
+    return _visible;
+}
+
+void LayerTreeItem::setVisibility(bool visible)
+{
+    _visible = visible;
 }
 
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
@@ -147,6 +158,7 @@ void LayerTree::populateTree(View *image)
         item->setLayerName(image->getLayerName(i));
         item->setComposite(image->getLayerComposite(i));
         item->setOpacity(image->getLayerOpacity(i));
+        item->setVisibility(image->getLayerVisibility(i));
         addTopLevelItem(item);
         if (i==0) { setCurrentItem(item); }
     }
