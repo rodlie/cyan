@@ -1,0 +1,67 @@
+--- a/configure.ac.orig	2018-12-26 04:10:18.000000000 +0100
++++ b/configure.ac	2018-12-26 04:11:00.000000000 +0100
+@@ -2778,7 +2778,7 @@
+             AC_MSG_RESULT([no -- some components failed test])
+             have_tiff='no (failed tests)'
+         else
+-            TIFF_LIBS='-ltiff'
++            TIFF_LIBS='-ltiff -llzma'
+             LIBS="$TIFF_LIBS $LIBS"
+             AC_DEFINE(TIFF_DELEGATE,1,Define if you have TIFF library)
+             AC_MSG_RESULT([yes])
+--- a/configure.orig	2018-12-26 04:27:04.000000000 +0100
++++ b/configure	2018-12-26 04:27:07.000000000 +0100
+@@ -33098,7 +33098,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -33140,7 +33140,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -33182,7 +33182,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -33224,7 +33224,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -33266,7 +33266,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -33310,7 +33310,7 @@
+ $as_echo "no -- some components failed test" >&6; }
+             have_tiff='no (failed tests)'
+         else
+-            TIFF_LIBS='-ltiff'
++            TIFF_LIBS='-ltiff -llzma'
+             LIBS="$TIFF_LIBS $LIBS"
+ 
+ $as_echo "#define TIFF_DELEGATE 1" >>confdefs.h
