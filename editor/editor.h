@@ -79,9 +79,9 @@ private:
     Mdi *mdi;
 
     QToolBar *mainToolBar;
-    QToolBar *viewToolBar;
-    QToolBar *colorToolBar;
-    QToolBar *brushToolBar;
+    //QToolBar *viewToolBar;
+    //QToolBar *colorToolBar;
+    //QToolBar *brushToolBar;
 
     QMenuBar *mainMenu;
     QStatusBar *mainStatusBar;
@@ -111,6 +111,7 @@ private:
     QAction *convertExtractAct;
 
     QMenu *fileMenu;
+    QMenu *optMenu;
     QMenu *helpMenu;
     QMenu *newMenu;
     QMenu *saveMenu;
@@ -119,6 +120,7 @@ private:
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
     QMenu* colorIntentMenu;
+    //QMenu *magickMenu;
 
     QToolButton *newButton;
     QToolButton *saveButton;
@@ -128,6 +130,8 @@ private:
     QComboBox *layersComp;
     QSlider *layersOpacity;
     QSlider *brushSize;
+    QDockWidget *brushDock;
+
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
@@ -149,6 +153,7 @@ private slots:
     void setupConnections();
     void setupIcons();
     void setupShortcuts();
+    void setupOptions();
 
     void populateColorProfileMenu(QMenu *menu,
                                   Magick::ColorspaceType colorspace);
@@ -248,8 +253,7 @@ private slots:
 
     void handleOpenImages(const QList<QUrl> urls);
 
-    void aboutImageMagick();
-    void aboutLcms();
+
 
     void handleColorChanged(const QColor &color);
 
@@ -260,6 +264,17 @@ private slots:
                         View *view);
 
     void hasColorProfiles();
+
+    void handleLayerVisibility(int id, bool visible);
+
+
+
+
+
+
+    // about
+    void aboutImageMagick();
+    void aboutLcms();
 };
 
 #endif // EDITOR_H

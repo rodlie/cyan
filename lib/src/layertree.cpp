@@ -34,6 +34,7 @@
 
 #include <QDebug>
 #include <QLayout>
+#include <QHeaderView>
 
 LayerTreeItem::LayerTreeItem(QTreeWidget *parent) :
     QTreeWidgetItem(parent)
@@ -104,16 +105,22 @@ void LayerTreeItem::setVisibility(bool visible)
 
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 {
-    setHeaderHidden(true);
-    setHeaderLabels(QStringList() << tr("ID") << tr("Title"));
+    //setHeaderHidden(true);
+    setHeaderLabels(QStringList() << QString("") << QString("") << QString(""));
     //setSortingEnabled(true);
     //setColumnHidden(0, true);
     setColumnWidth(0, 50);
+
+    headerItem()->setIcon(1, QIcon::fromTheme("eye"));
 
     connect(this,
             SIGNAL(itemClicked(QTreeWidgetItem*,int)),
             this,
             SLOT(handleItemActivated(QTreeWidgetItem*, int)));
+    connect(this,
+            SIGNAL(itemChanged(QTreeWidgetItem*,int)),
+            this,
+            SLOT(handleItemChanged(QTreeWidgetItem*, int)));
     connect(this,
             SIGNAL(itemPressed(QTreeWidgetItem*,int)),
             this,
@@ -152,15 +159,21 @@ void LayerTree::populateTree(View *image)
     setCanvasID(image->getCanvasID());
     for (int i=0;i<image->getLayerCount();++i) {
         LayerTreeItem *item = new LayerTreeItem(this);
-        item->setText(0, QString::number(i));
-        item->setText(1,image->getLayerName(i));
+        blockSignals(true);
+        item->setText(0,
+                      QString::number(i));
+        item->setText(2,
+                      image->getLayerName(i));
         item->setLayerID(i);
         item->setLayerName(image->getLayerName(i));
         item->setComposite(image->getLayerComposite(i));
         item->setOpacity(image->getLayerOpacity(i));
         item->setVisibility(image->getLayerVisibility(i));
+        item->setCheckState(1,
+                            image->getLayerVisibility(i)?Qt::Checked:Qt::Unchecked);
         addTopLevelItem(item);
         if (i==0) { setCurrentItem(item); }
+        blockSignals(false);
     }
     sortByColumn(0);
 }
@@ -171,6 +184,19 @@ void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!item) { return; }
     emit selectedLayer(layer->getLayerID());
+}
+
+void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
+{
+    qDebug() << "layer item changed" << item->checkState(col);
+    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
+    if (!item) { return; }
+    bool visible = false;
+    if (item->checkState(col) == Qt::Checked) {
+        visible = true;
+    }
+    emit layerVisibilityChanged(layer->getLayerID(),
+                                visible);
 }
 
 void LayerTree::keyPressEvent(QKeyEvent *e)

@@ -31,7 +31,8 @@
 TARGET = Cyan
 TEMPLATE = app
 QT += widgets concurrent
-SOURCES += main.cpp editor.cpp
+SOURCES += main.cpp editor.cpp \
+    about.cpp
 HEADERS += editor.h
 RESOURCES += ../share/icons.qrc ../share/icc.qrc
 LIBS += -L../lib/build -lCyan

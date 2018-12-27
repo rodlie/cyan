@@ -123,7 +123,7 @@ void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         outOfBounds = false;
     }
     if (outOfBounds) {
-        QPen newPen(Qt::green);
+        QPen newPen(Qt::cyan);
         newPen.setWidth(0);
         setPen(newPen);
     } else {

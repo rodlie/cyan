@@ -273,5 +273,7 @@
         <file>icons/Cyan/32x32/actions/convert_gray_to_color.png</file>
         <file>icons/Cyan/16x16/actions/monitor_window_flow.png</file>
         <file>icons/Cyan/32x32/actions/monitor_window_flow.png</file>
+        <file>icons/Cyan/16x16/actions/eye.png</file>
+        <file>icons/Cyan/32x32/actions/eye.png</file>
     </qresource>
 </RCC>

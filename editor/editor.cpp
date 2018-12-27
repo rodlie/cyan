@@ -72,9 +72,9 @@ Editor::Editor(QWidget *parent)
     : QMainWindow(parent)
     , mdi(nullptr)
     , mainToolBar(nullptr)
-    , viewToolBar(nullptr)
-    , colorToolBar(nullptr)
-    , brushToolBar(nullptr)
+    //, viewToolBar(nullptr)
+//    , colorToolBar(nullptr)
+    //, brushToolBar(nullptr)
     , mainMenu(nullptr)
     , mainStatusBar(nullptr)
     , newImageAct(nullptr)
@@ -97,6 +97,7 @@ Editor::Editor(QWidget *parent)
     , convertAssignAct(nullptr)
     , convertExtractAct(nullptr)
     , fileMenu(nullptr)
+    , optMenu(nullptr)
     , helpMenu(nullptr)
     , newMenu(nullptr)
     , saveMenu(nullptr)
@@ -105,6 +106,7 @@ Editor::Editor(QWidget *parent)
     , colorProfileCMYKMenu(nullptr)
     , colorProfileGRAYMenu(nullptr)
     , colorIntentMenu(nullptr)
+    //, magickMenu(nullptr)
     , newButton(nullptr)
     , saveButton(nullptr)
     , colorButton(nullptr)
@@ -114,6 +116,7 @@ Editor::Editor(QWidget *parent)
     , layersOpacity(nullptr)
     //, imageInfoTree(nullptr)
     , brushSize(nullptr)
+    , brushDock(nullptr)
     , colorTriangle(nullptr)
     , colorPicker(nullptr)
 {
@@ -225,6 +228,7 @@ void Editor::setupUI()
     setupConnections();
     setupIcons();
     setupShortcuts();
+    setupOptions();
 
     setCentralWidget(mdi);
     setStatusBar(mainStatusBar);
@@ -233,6 +237,7 @@ void Editor::setupUI()
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(colorMenu);
+    mainMenu->addMenu(optMenu);
     mainMenu->addMenu(helpMenu);
 
     mainToolBar->addWidget(newButton);
@@ -241,7 +246,6 @@ void Editor::setupUI()
     mainToolBar->addWidget(colorButton);
 
     mainToolBar->addAction(viewMoveAct);
-    //viewToolBar->addAction(viewDragAct);
     mainToolBar->addAction(viewDrawAct);
 
     fileMenu->addAction(newImageAct);
@@ -255,6 +259,8 @@ void Editor::setupUI()
     fileMenu->addAction(saveLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
+
+    //optMenu->addMenu(magickMenu);
 
     helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
@@ -294,10 +300,31 @@ void Editor::setupUI()
 
     QLabel *brushSizeLabel = new QLabel(this);
     brushSizeLabel->setPixmap(QIcon(":/icons/brushsize.png")
-                              .pixmap(32, 32));
-    brushToolBar->addWidget(brushSizeLabel);
-    brushToolBar->addWidget(brushSize);
-    brushSize->setOrientation(brushToolBar->orientation());
+                              .pixmap(24, 24));
+
+
+    QWidget *brushWidget = new QWidget(this);
+    QVBoxLayout *brushLayout = new QVBoxLayout(brushWidget);
+
+    QWidget *brushSizeWidget = new QWidget(this);
+    QHBoxLayout *brushSizeLayout = new QHBoxLayout(brushSizeWidget);
+
+    brushSizeLayout->addWidget(brushSizeLabel);
+    brushSizeLayout->addWidget(brushSize);
+    brushLayout->addWidget(brushSizeWidget);
+    brushLayout->addStretch();
+
+    brushDock = new QDockWidget(this);
+    brushDock->setWindowTitle(tr("Brush"));
+    brushDock->setObjectName(QString("brushDock"));
+    brushDock->setWidget(brushWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, brushDock);
+
+
+
+    //brushToolBar->addWidget(brushSizeLabel);
+    //brushToolBar->addWidget(brushSize);
+    //brushSize->setOrientation(brushToolBar->orientation());
 
     /*imageInfoTree = new QTreeWidget(this);
     imageInfoTree->setHeaderLabels(QStringList()<<"Meta"<<"Value");
@@ -316,6 +343,9 @@ void Editor::setupMenus()
 
     fileMenu = new QMenu(this);
     fileMenu->setTitle(tr("File"));
+
+    optMenu = new QMenu(this);
+    optMenu->setTitle(tr("Options"));
 
     helpMenu = new QMenu(this);
     helpMenu->setTitle(tr("Help"));
@@ -343,6 +373,9 @@ void Editor::setupMenus()
 
     colorIntentMenu = new QMenu(this);
     colorIntentMenu->setTitle(tr("Rendering Intent"));
+
+//    magickMenu = new QMenu(this);
+  //  magickMenu->setTitle(tr("Engine"));
 }
 
 void Editor::setupToolbars()
@@ -353,29 +386,29 @@ void Editor::setupToolbars()
     //mainToolBar->setIconSize(QSize(24, 24));
     //mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    viewToolBar = new QToolBar(this);
+    /*viewToolBar = new QToolBar(this);
     viewToolBar->setObjectName(QString("viewToolBar"));
-    viewToolBar->setWindowTitle(tr("Canvas Tools"));
+    viewToolBar->setWindowTitle(tr("Canvas Tools"));*/
     //viewToolBar->setIconSize(QSize(32, 32));
 
-    colorToolBar = new QToolBar(this);
+    /*colorToolBar = new QToolBar(this);
     colorToolBar->setObjectName(QString("Color Tools"));
-    colorToolBar->setWindowTitle(tr("Color Tools"));
+    colorToolBar->setWindowTitle(tr("Color Tools"));*/
     //colorToolBar->setIconSize(QSize(32, 32));
 
-    brushToolBar = new QToolBar(this);
+    /*brushToolBar = new QToolBar(this);
     brushToolBar->setObjectName(QString("brushToolBar"));
-    brushToolBar->setWindowTitle(tr("Brush Options"));
+    brushToolBar->setWindowTitle(tr("Brush Options"));*/
     //brushToolBar->setIconSize(QSize(32, 32));
 
     addToolBar(Qt::LeftToolBarArea,
                mainToolBar);
-    addToolBar(Qt::LeftToolBarArea,
-               viewToolBar);
-    addToolBar(Qt::LeftToolBarArea,
-               colorToolBar);
-    addToolBar(Qt::LeftToolBarArea,
-               brushToolBar);
+    /*addToolBar(Qt::LeftToolBarArea,
+               viewToolBar);*/
+/*    addToolBar(Qt::LeftToolBarArea,
+               colorToolBar);*/
+    /*addToolBar(Qt::LeftToolBarArea,
+               brushToolBar);*/
 }
 
 void Editor::setupWidgets()
@@ -389,8 +422,8 @@ void Editor::setupWidgets()
     brushSize = new QSlider(this);
     brushSize->setRange(1,256);
     brushSize->setValue(20);
-    brushSize->setMaximumWidth(75);
-    brushSize->setMaximumHeight(75);
+    //brushSize->setMaximumWidth(75);
+    //brushSize->setMaximumHeight(75);
     brushSize->setOrientation(Qt::Horizontal);
 }
 
@@ -497,7 +530,7 @@ void Editor::setupButtons()
 void Editor::setupColorManagement()
 {
     colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(120,16));
+    colorPicker->setIconSize(QSize(120,22));
     colorPicker->setFlat(true);
     colorPicker->setContentsMargins(0,0,0,0);
     colorPicker->setFixedSize(colorPicker->iconSize());
@@ -644,8 +677,9 @@ void Editor::setupConnections()
     connect(mdi, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
 
     connect(layersTree, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerTreeSelectedLayer(int)));
+    connect(layersTree, SIGNAL(layerVisibilityChanged(int,bool)), this, SLOT(handleLayerVisibility(int,bool)));
 
-    connect(brushToolBar, SIGNAL(orientationChanged(Qt::Orientation)), brushSize, SLOT(setOrientation(Qt::Orientation)));
+    //connect(brushToolBar, SIGNAL(orientationChanged(Qt::Orientation)), brushSize, SLOT(setOrientation(Qt::Orientation)));
     connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 }
 
@@ -694,6 +728,11 @@ void Editor::setupShortcuts()
     newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
+}
+
+void Editor::setupOptions()
+{
+
 }
 
 void Editor::populateColorProfileMenu(QMenu *menu,
@@ -1104,7 +1143,7 @@ void Editor::loadSettings()
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
 
-    brushSize->setOrientation(brushToolBar->orientation());
+    //brushSize->setOrientation(brushToolBar->orientation());
 
     emit statusMessage(tr("Engine disk cache limit: %1 GB")
                        .arg(Common::getDiskResource()));
@@ -2043,12 +2082,14 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
         } else if (type.name().startsWith(QString("video"))) { // get frame from video
             readVideo(filename);
         } else { // "regular" image
-            readImage(filename);
+            if (common.isValidCanvas(filename)) { loadProject(filename); }
+            else { readImage(filename); }
         }
 #else
         if (type.name().startsWith(QString("audio")) ||
             type.name().startsWith(QString("video"))) { continue; }
-        readImage(filename);
+        if (common.isValidCanvas(filename)) { loadProject(filename); }
+        else { readImage(filename); }
 #endif
     }
     if (urls.size()>1) {
@@ -2056,61 +2097,7 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
     }
 }
 
-void Editor::aboutImageMagick()
-{
-    QMessageBox box(this);
-    box.setWindowTitle(tr("About ImageMagick"));
 
-    Magick::Image logo;
-    logo.read("logo:");
-    logo.scale(Magick::Geometry(256, 256));
-    logo.magick("BMP");
-    Magick::Blob pix;
-    logo.write(&pix);
-    box.setIconPixmap(QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
-                                                          static_cast<int>(pix.length()))));
-
-    QString about;
-    about.append(QString("<h3>%1 %2%3</h3>")
-                 .arg(MagickPackageName)
-                 .arg(MagickLibVersionText)
-                 .arg(MagickLibAddendum));
-    about.append(QString("<p><a href=\"https://imagemagick.org\">ImageMagick®</a> is used to read, create, save, edit, compose, and  convert bitmap images.</p><p>ImageMagick is distributed under the following <a href=\"https://www.imagemagick.org/script/license.php\">license</a>.</p>"));
-    about.append(QString("<p>%1</p>").arg(MagickCopyright));
-
-#ifdef QT_DEBUG
-    about.append(QString("<p><strong>Features</strong>:<br><br>%1 %2</p>").arg(MagickQuantumDepth).arg(MagickCore::GetMagickFeatures()));
-    about.append(QString("<p><strong>Delegates</strong>:<br><br>%1</p>").arg(MagickCore::GetMagickDelegates()));
-    about.append(QString("<p><strong>Disk Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::disk())));
-    about.append(QString("<strong>Area Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::area(),false, true)));
-    about.append(QString("<strong>Map Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::map())));
-    about.append(QString("<strong>Memory Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::memory())));
-    about.append(QString("<strong>Width Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::width(), true)));
-    about.append(QString("<strong>Height Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::height(), true)));
-    about.append(QString("<strong>Thread Limit</strong>: %1</p>").arg(Magick::ResourceLimits::thread()));
-#endif
-
-    box.setText(about);
-    box.exec();
-}
-
-void Editor::aboutLcms()
-{
-    QMessageBox box(this);
-    box.setWindowTitle(tr("About Little CMS"));
-    box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/lcms_logo.png")));
-
-    QString about;
-    about.append(QString("<h3>Little CMS %1</h3>")
-                 .arg(QString::number(LCMS_VERSION)
-                      .insert(1,".")
-                      .remove(2,1)
-                      .remove(3,1)));
-    about.append(QString("<p><a href=\"http://www.littlecms.com/\">Little CMS</a> is an small-footprint color management engine, with special focus on accuracy and performance.</p><p>Little CMS is distributed under the following <a href=\"https://opensource.org/licenses/mit-license.php\">license</a>.</p>"));
-    about.append(QString("<p>Copyright &copy; 2018 Marti Maria Saguer.<br>All rights reserved.</p>"));
-    box.setText(about);
-    box.exec();
-}
 
 void Editor::handleColorChanged(const QColor &color)
 {
@@ -2233,4 +2220,10 @@ void Editor::hasColorProfiles()
                            qApp,
                            SLOT(quit()));
     }
+}
+
+void Editor::handleLayerVisibility(int id, bool visible)
+{
+    if (!getCurrentView()) { return; }
+    getCurrentView()->setLayerVisibility(id, visible);
 }

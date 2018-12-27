@@ -334,8 +334,10 @@ void View::setLayer(Magick::Image image,
 void View::addLayer(Magick::Image image,
                     bool updateView)
 {
+    qDebug() << "ADD LAYER" << QString::fromStdString(image.label());
     int id = _canvas.layers.size();
     _canvas.layers[id].image = image;
+    //_canvas.layers[id].visible = true;
     if (!image.label().empty()) {
         _canvas.layers[id].label = QString::fromStdString(image.label());
     }
@@ -380,6 +382,8 @@ void View::addLayer(int id,
                     QSize pos,
                     bool updateView)
 {
+    qDebug() << "ADD LAYER" << id;
+   // _canvas.layers[id].visible = true;
     LayerItem *layer = new LayerItem();
     layer->setRect(0,
                    0,
