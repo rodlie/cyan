@@ -125,13 +125,13 @@ Editor::Editor(QWidget *parent)
     qRegisterMetaType<Magick::Drawable>("Magick::Drawable");
     qRegisterMetaType<Magick::Geometry>("Magick::Geometry");
 
-#ifdef CYAN_DEVEL
+/*#ifdef CYAN_DEVEL
     QMessageBox::warning(this,
                          tr("Cyan %1").arg(qApp->applicationVersion()),
                          tr("This is a development version of Cyan. "
                             "Functions are missing and some features are probably broken. "
                             "USE AT OWN RISK!"));
-#endif
+#endif*/
 
     setupUI();
     loadSettings();
@@ -184,8 +184,8 @@ void Editor::setupStyle()
     qApp->setStyle(QStyleFactory::create("fusion"));
 
     // TODO (own theme)
-    QIcon::setThemeName("Adwaita");
-    setWindowIcon(QIcon::fromTheme("applications-graphics"));
+    QIcon::setThemeName("Cyan");
+    setWindowIcon(QIcon::fromTheme("cyan"));
 
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(53,53,53));
@@ -238,6 +238,7 @@ void Editor::setupUI()
     mainToolBar->addWidget(newButton);
     mainToolBar->addAction(openImageAct);
     mainToolBar->addWidget(saveButton);
+    mainToolBar->addWidget(colorButton);
 
     viewToolBar->addAction(viewMoveAct);
     viewToolBar->addAction(viewDragAct);
@@ -277,6 +278,7 @@ void Editor::setupUI()
     colorMenu->addMenu(colorProfileRGBMenu);
     colorMenu->addMenu(colorProfileCMYKMenu);
     colorMenu->addMenu(colorProfileGRAYMenu);
+    colorMenu->addSeparator();
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
 
@@ -346,22 +348,23 @@ void Editor::setupToolbars()
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
     mainToolBar->setWindowTitle(tr("Main"));
-    mainToolBar->setIconSize(QSize(32, 32));
+    //mainToolBar->setIconSize(QSize(24, 24));
+    //mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     viewToolBar = new QToolBar(this);
     viewToolBar->setObjectName(QString("viewToolBar"));
     viewToolBar->setWindowTitle(tr("Canvas Tools"));
-    viewToolBar->setIconSize(QSize(32, 32));
+    //viewToolBar->setIconSize(QSize(32, 32));
 
     colorToolBar = new QToolBar(this);
     colorToolBar->setObjectName(QString("Color Tools"));
     colorToolBar->setWindowTitle(tr("Color Tools"));
-    colorToolBar->setIconSize(QSize(32, 32));
+    //colorToolBar->setIconSize(QSize(32, 32));
 
     brushToolBar = new QToolBar(this);
     brushToolBar->setObjectName(QString("brushToolBar"));
     brushToolBar->setWindowTitle(tr("Brush Options"));
-    brushToolBar->setIconSize(QSize(32, 32));
+    //brushToolBar->setIconSize(QSize(32, 32));
 
     addToolBar(Qt::LeftToolBarArea,
                mainToolBar);
@@ -394,26 +397,26 @@ void Editor::setupActions()
 {
 
     newImageAct = new QAction(this);
-    newImageAct->setText(tr("New Image"));
+    newImageAct->setText(tr("New image"));
 
     openImageAct = new QAction(this);
-    openImageAct->setText(tr("Open Image"));
+    openImageAct->setText(tr("Open"));
 
     saveImageAct = new QAction(this);
-    saveImageAct->setText(tr("Save Image"));
+    saveImageAct->setText(tr("Save image"));
 
     saveProjectAct = new QAction(this);
-    saveProjectAct->setText(tr("Save Project"));
+    saveProjectAct->setText(tr("Save project"));
 
     saveProjectAsAct = new QAction(this);
-    saveProjectAsAct->setText(tr("Save Project as ..."));
+    saveProjectAsAct->setText(tr("Save project as ..."));
     saveProjectAsAct->setDisabled(true);
 
     newLayerAct = new QAction(this);
-    newLayerAct->setText(tr("New Layer"));
+    newLayerAct->setText(tr("New layer"));
 
     saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Save Layer"));
+    saveLayerAct->setText(tr("Save layer"));
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -465,29 +468,42 @@ void Editor::setupActions()
 void Editor::setupButtons()
 {
     newButton = new QToolButton(this);
-    newButton->setIconSize(QSize(32, 32));
+   // newButton->setIconSize(QSize(32, 32));
     newButton->setMenu(newMenu);
     newButton->setPopupMode(QToolButton::InstantPopup);
+    newButton->setText(tr("New"));
+    newButton->setToolTip(tr("New"));
+    //newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     saveButton = new QToolButton(this);
-    saveButton->setIconSize(QSize(32, 32));
+    //saveButton->setIconSize(QSize(32, 32));
     saveButton->setMenu(saveMenu);
     saveButton->setPopupMode(QToolButton::InstantPopup);
+    saveButton->setText(tr("Save"));
+    saveButton->setToolTip(tr("Save"));
+    //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     colorButton = new QToolButton(this);
-    colorButton->setIconSize(QSize(32, 32));
+    //colorButton->setIconSize(QSize(32, 32));
     colorButton->setMenu(colorMenu);
     colorButton->setPopupMode(QToolButton::InstantPopup);
+    colorButton->setText(tr("Color"));
+    colorButton->setToolTip(tr("Color"));
+    //colorButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 
 void Editor::setupColorManagement()
 {
     colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(32, 32));
+    colorPicker->setIconSize(QSize(120,16));
+    colorPicker->setFlat(true);
+    colorPicker->setContentsMargins(0,0,0,0);
+    colorPicker->setFixedSize(colorPicker->iconSize());
+    colorPicker->setStyleSheet(QString("margin:0;padding:0;"));
     colorPicker->setStandardColors();
+    colorPicker->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    colorToolBar->addWidget(colorPicker);
-    colorToolBar->addWidget(colorButton);
+    mainStatusBar->addPermanentWidget(colorPicker);
 
     colorTriangle = new QtColorTriangle(this);
     colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -497,7 +513,7 @@ void Editor::setupColorManagement()
     colorDock->setObjectName(QString("colorTriangle"));
     colorDock->setWindowTitle(tr("Triangle"));
     colorDock->setWidget(colorTriangle);
-    colorDock->layout()->setContentsMargins(5, 5, 5, 5);
+    //colorDock->layout()->setContentsMargins(5, 5, 5, 5);
     colorDock->setMinimumHeight(150);
     colorDock->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -505,10 +521,12 @@ void Editor::setupColorManagement()
     connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
     connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
+    QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
+
     QDockWidget *colorRGBDock = new QDockWidget(this);
     colorRGBDock->setObjectName(QString("colorRGBDock"));
     colorRGBDock->setWindowTitle(tr("RGB"));
-    colorRGBDock->setWindowIcon(QIcon(":/icons/colors.png"));
+    colorRGBDock->setWindowIcon(colorsIcon);
     //colorRGBDock->setMaximumHeight(100);
 
     ColorRGB *colorRGB = new ColorRGB(this);
@@ -519,7 +537,7 @@ void Editor::setupColorManagement()
     QDockWidget *colorCMYKDock = new QDockWidget(this);
     colorCMYKDock->setObjectName(QString("colorCMYKDock"));
     colorCMYKDock->setWindowTitle(tr("CMYK"));
-    colorCMYKDock->setWindowIcon(QIcon(":/icons/colors.png"));
+    colorCMYKDock->setWindowIcon(colorsIcon);
     //colorCMYKDock->setMaximumHeight(100);
 
     ColorCMYK *colorCMYK = new ColorCMYK(this);
@@ -530,7 +548,7 @@ void Editor::setupColorManagement()
     QDockWidget *colorHSVDock = new QDockWidget(this);
     colorHSVDock->setObjectName(QString("colorHSVDock"));
     colorHSVDock->setWindowTitle(tr("HSV"));
-    colorHSVDock->setWindowIcon(QIcon(":/icons/colors.png"));
+    colorHSVDock->setWindowIcon(colorsIcon);
     //colorHSVDock->setMaximumHeight(100);
 
     ColorHSV *colorHSV = new ColorHSV(this);
@@ -631,30 +649,41 @@ void Editor::setupConnections()
 
 void Editor::setupIcons()
 {
-    newImageAct->setIcon(QIcon(":/icons/image.png"));
-    newLayerAct->setIcon(QIcon(":/icons/layer.png"));
-    newButton->setIcon(QIcon(":/icons/layer.png"));
-    saveButton->setIcon(QIcon(":/icons/save.png"));
-    colorButton->setIcon(QIcon(":/icons/colors.png"));
-    openImageAct->setIcon(QIcon(":/icons/folder.png"));
-    saveImageAct->setIcon(QIcon(":/icons/image.png"));
-    saveProjectAct->setIcon(QIcon(":/icons/page_save.png"));
-    saveProjectAsAct->setIcon(QIcon(":/icons/page_save.png"));
-    saveLayerAct->setIcon(QIcon(":/icons/layer_save.png"));
-    quitAct->setIcon(QIcon(":/icons/quit.png"));
-    viewMoveAct->setIcon(QIcon(":/icons/move.png"));
-    viewDragAct->setIcon(QIcon(":/icons/hand.png"));
-    viewDrawAct->setIcon(QIcon(":/icons/paintbrush.png"));
-    convertRGBAct->setIcon(QIcon(":/icons/colors.png"));
-    convertCMYKAct->setIcon(QIcon(":/icons/colors.png"));
-    convertGRAYAct->setIcon(QIcon(":/icons/colors.png"));
-    convertAssignAct->setIcon(QIcon(":/icons/colors.png"));
-    convertExtractAct->setIcon(QIcon(":/icons/colors.png"));
-    colorProfileRGBMenu->setIcon(QIcon(":/icons/colors.png"));
-    colorProfileCMYKMenu->setIcon(QIcon(":/icons/colors.png"));
-    colorProfileGRAYMenu->setIcon(QIcon(":/icons/colors.png"));
-    colorIntentMenu->setIcon(QIcon(":/icons/colors.png"));
-    blackPointAct->setIcon(QIcon(":/icons/colors.png"));
+    newImageAct->setIcon(QIcon::fromTheme("document-new"));
+    newLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newButton->setIcon(QIcon::fromTheme("document-new"));
+
+
+    openImageAct->setIcon(QIcon::fromTheme("document-open"));
+    saveButton->setIcon(QIcon::fromTheme("document-save"));
+    saveImageAct->setIcon(QIcon::fromTheme("document-save"));
+    saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
+    saveLayerAct->setIcon(QIcon::fromTheme("document-save"));
+    saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
+    quitAct->setIcon(QIcon::fromTheme("application-exit"));
+
+    viewDragAct->setIcon(QIcon::fromTheme("hand"));
+    viewMoveAct->setIcon(QIcon::fromTheme("transform_move"));
+    viewDrawAct->setIcon(QIcon::fromTheme("paintbrush"));
+
+    QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
+    QIcon colorWheelIcon = QIcon::fromTheme("color_wheel");
+
+    colorButton->setIcon(colorsIcon);
+    convertRGBAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
+    convertCMYKAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
+    convertGRAYAct->setIcon(QIcon::fromTheme("convert_color_to_gray"));
+    convertAssignAct->setIcon(colorsIcon);
+    convertExtractAct->setIcon(colorsIcon);
+    colorProfileRGBMenu->setIcon(colorWheelIcon);
+    colorProfileCMYKMenu->setIcon(colorWheelIcon);
+    colorProfileGRAYMenu->setIcon(colorWheelIcon);
+    colorIntentMenu->setIcon(QIcon::fromTheme("monitor_window_flow"));
+    blackPointAct->setIcon(colorWheelIcon);
+
+    aboutQtAct->setIcon(QIcon::fromTheme("help-about"));
+    aboutLcmsAct->setIcon(QIcon::fromTheme("help-about"));
+    aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
 }
 
 void Editor::setupShortcuts()
@@ -673,7 +702,7 @@ void Editor::populateColorProfileMenu(QMenu *menu,
     while (i.hasNext()) {
         i.next();
         QAction *action = new QAction(menu);
-        action->setIcon(QIcon(":/icons/colors.png"));
+        action->setIcon(QIcon::fromTheme("color_wheel"));
         action->setText(i.key());
         action->setData(i.value());
         action->setCheckable(true);
@@ -824,10 +853,12 @@ Magick::Blob Editor::selectedDefaultColorProfileData(QMenu *menu)
 
 void Editor::populateColorIntentMenu()
 {
+    QIcon intentIcon = QIcon::fromTheme("monitor_window_flow");
     QAction *action1 = new QAction(colorIntentMenu);
     action1->setText(tr("Undefined"));
     action1->setData(Common::UndefinedRenderingIntent);
     action1->setCheckable(true);
+    action1->setIcon(intentIcon);
     connect(action1,
             SIGNAL(triggered()),
             this,
@@ -837,6 +868,7 @@ void Editor::populateColorIntentMenu()
     action2->setText(tr("Saturation"));
     action2->setData(Common::SaturationRenderingIntent);
     action2->setCheckable(true);
+    action2->setIcon(intentIcon);
     connect(action2,
             SIGNAL(triggered()),
             this,
@@ -846,6 +878,7 @@ void Editor::populateColorIntentMenu()
     action3->setText(tr("Perceptual"));
     action3->setData(Common::PerceptualRenderingIntent);
     action3->setCheckable(true);
+    action3->setIcon(intentIcon);
     connect(action3,
             SIGNAL(triggered()),
             this,
@@ -855,6 +888,7 @@ void Editor::populateColorIntentMenu()
     action4->setText(tr("Absolute"));
     action4->setData(Common::AbsoluteRenderingIntent);
     action4->setCheckable(true);
+    action4->setIcon(intentIcon);
     connect(action4,
             SIGNAL(triggered()),
             this,
@@ -864,6 +898,7 @@ void Editor::populateColorIntentMenu()
     action5->setText(tr("Relative"));
     action5->setData(Common::RelativeRenderingIntent);
     action5->setCheckable(true);
+    action5->setIcon(intentIcon);
     connect(action5,
             SIGNAL(triggered()),
             this,
@@ -1008,8 +1043,6 @@ void Editor::saveSettings()
                       Common::getDiskResource());
     settings.setValue("memory_limit",
                       Common::getMemoryResource());
-    //settings.setValue("thread_limit",
-                      //Magick::ResourceLimits::thread());
     settings.endGroup();
 
     settings.beginGroup("gui");
@@ -1047,8 +1080,6 @@ void Editor::loadSettings()
                             .value("disk_limit", 0).toInt());
     Common::setMemoryResource(settings
                               .value("memory_limit", 8).toInt());
-    //Common::setThreadResources(settings
-                               //.value("thread_limit", 0).toInt());
     settings.endGroup();
 
     settings.beginGroup("gui");
@@ -1230,6 +1261,25 @@ void Editor::writeImage(const QString &filename)
     Magick::Image image = common.renderCanvasToImage(getCurrentView()->getCanvasProject());
     // TODO: add options for file format
     try {
+        QFileInfo info(filename);
+        if (info.suffix().toLower() == "tiff" ||
+            info.suffix().toLower() == "tif")
+        {
+            image.magick("TIFF");
+        }
+        else if (info.suffix().toLower() == "jpg" ||
+                   info.suffix().toLower() == "jpeg")
+        {
+            image.magick("JPG");
+        }
+        else if (info.suffix().toLower() == "png")
+        {
+            image.magick("PNG");
+        }
+        else if (info.suffix().toLower() == "bmp")
+        {
+            image.magick("BMP");
+        }
         image.write(filename.toStdString());
     }
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
@@ -1243,6 +1293,25 @@ void Editor::writeLayer(const QString &filename, int id)
     Magick::Image image = getCurrentView()->getCanvasProject().layers[id].image;
     // TODO: add options for file format
     try {
+        QFileInfo info(filename);
+        if (info.suffix().toLower() == "tiff" ||
+            info.suffix().toLower() == "tif")
+        {
+            image.magick("TIFF");
+        }
+        else if (info.suffix().toLower() == "jpg" ||
+                   info.suffix().toLower() == "jpeg")
+        {
+            image.magick("JPG");
+        }
+        else if (info.suffix().toLower() == "png")
+        {
+            image.magick("PNG");
+        }
+        else if (info.suffix().toLower() == "bmp")
+        {
+            image.magick("BMP");
+        }
         image.write(filename.toStdString());
     }
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
@@ -1277,8 +1346,15 @@ void Editor::readVideo(const QString &filename)
                                           filename);
     int ret = dialog->exec();
     if (ret == QDialog::Accepted) {
-        readVideo(filename,
-                  dialog->getFrame());
+        if (dialog->getFrames().isNull()) { // open one frame as image
+            readVideo(filename,
+                      dialog->getFrame());
+        } else { // open muliple frames as images
+            for (int i=dialog->getFrames().width();i<dialog->getFrames().height()+1;++i) {
+                readVideo(filename, i);
+            }
+            mdi->tileSubWindows(); // tile on multiple images
+        }
     }
     QTimer::singleShot(100,
                        dialog,
@@ -1309,11 +1385,26 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename)
                                           filename);
     int ret = dialog->exec();
     if (ret == QDialog::Accepted) {
-        result = Common::getVideoFrame(filename, dialog->getFrame());
+        result = Common::getVideoFrame(filename,
+                                       dialog->getFrame());
     }
     QTimer::singleShot(100,
                        dialog,
                        SLOT(deleteLater()));
+    return result;
+}
+
+Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
+                                           int frame)
+{
+    Magick::Image result;
+    if (filename.isEmpty()) { return result; }
+    int maxFrame = common.getVideoMaxFrames(filename);
+    if (maxFrame==0) { return result; }
+    if (frame>maxFrame) { frame = maxFrame; }
+    if (frame<0) { frame = 0; }
+    result = Common::getVideoFrame(filename,
+                                   frame);
     return result;
 }
 #endif
@@ -1495,6 +1586,7 @@ void Editor::newTab(Common::Canvas canvas)
 
     tab->setWidget(view);
     tab->showMaximized();
+    tab->setWindowIcon(QIcon::fromTheme("applications-graphics"));
 
     /*if (viewMoveAct->isChecked()) {
         view->setInteractiveMode(View::IteractiveMoveMode);
@@ -1546,6 +1638,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
 
     tab->setWidget(view);
     tab->showMaximized();
+    tab->setWindowIcon(QIcon::fromTheme("applications-graphics"));
 
     /*if (viewMoveAct->isChecked()) {
         view->setInteractiveMode(View::IteractiveMoveMode);
@@ -2047,11 +2140,6 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     for (int i=0;i<urls.size();++i) {
         QString filename = urls.at(i).toLocalFile();
 
-        if (Common::isValidCanvas(filename)) {
-            // skip projects
-            continue;
-        }
-
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
         Magick::Image image;
@@ -2060,53 +2148,35 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
 #ifndef NO_FFMPEG
             if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
                 QByteArray coverart = common.getEmbeddedCoverArt(filename);
-                if (coverart.size()==0) { continue; } // no coverart, skip
+                if (coverart.size()==0) { continue; }
                 image.read(Magick::Blob(coverart.data(),
                                         static_cast<size_t>(coverart.size())));
             } else if (type.name().startsWith(QString("video"))) { // get frame from video
                 image = getVideoFrameAsImage(filename);
             } else { // "regular" image
+                if (Common::isValidCanvas(filename)) { continue; }
                 image.read(filename.toStdString());
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
                 type.name().startsWith(QString("video"))) { continue; }
+            if (Common::isValidCanvas(filename)) {
+                // skip projects
+                continue;
+            }
             image.read(filename.toStdString());
 #endif
 
-            if (image.columns()<=0 && image.rows()<=0) { continue; } // not an (readable) image, skip
-
+            if (image.columns()<=0 ||
+                image.rows()<=0) { continue; } // not an (readable) image, skip
             image.magick("MIFF");
             image.fileName(filename.toStdString());
-
             if (image.label().empty()) {
                 QFileInfo fileInfo(filename);
                 image.label(fileInfo.baseName().toStdString());
             }
 
-            if (image.iccColorProfile().length()==0) {
-                qDebug() << "layer is missing color profile, add default";
-                QString defPro;
-                switch(image.colorSpace()) {
-                case Magick::CMYKColorspace:
-                    defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
-                    break;
-                case Magick::GRAYColorspace:
-                    defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
-                    break;
-                default:
-                    defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
-                }
-                qDebug() << "has default profile?" << defPro;
-                image = Common::convertColorspace(image,
-                                                  Magick::Blob(),
-                                                  defPro);
-            }
-            qDebug() << "convert layer to canvas color profile";
-            image = Common::convertColorspace(image,
-                                              image.iccColorProfile(),
-                                              view->getCanvasProject().profile);
-            view->addLayer(image);
+            addLayerToView(image, view);
         }
         catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
         catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
@@ -2114,6 +2184,39 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     // workaround issues with dialogs
     update();
     view->scene()->update();
+}
+
+void Editor::addLayerToView(Magick::Image image,
+                            View *view)
+{
+    if (!view || image.columns()==0 || image.rows()==0) { return; }
+    try {
+        if (image.iccColorProfile().length()==0) {
+            qDebug() << "layer is missing color profile, add default";
+            QString defPro;
+            switch(image.colorSpace()) {
+            case Magick::CMYKColorspace:
+                defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
+                break;
+            case Magick::GRAYColorspace:
+                defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
+                break;
+            default:
+                defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
+            }
+            qDebug() << "has default profile?" << defPro;
+            image = Common::convertColorspace(image,
+                                              Magick::Blob(),
+                                              defPro);
+        }
+        qDebug() << "convert layer to canvas color profile";
+        image = Common::convertColorspace(image,
+                                          image.iccColorProfile(),
+                                          view->getCanvasProject().profile);
+        view->addLayer(image);
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
 void Editor::hasColorProfiles()

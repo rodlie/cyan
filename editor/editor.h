@@ -194,6 +194,8 @@ private slots:
     void readVideo(const QString &filename);
     void readVideo(const QString &filename, int frame);
     Magick::Image getVideoFrameAsImage(const QString &filename);
+    Magick::Image getVideoFrameAsImage(const QString &filename,
+                                       int frame);
 #endif
 
     void saveProjectDialog();
@@ -254,6 +256,8 @@ private slots:
     void handleLayerTreeSelectedLayer(int id);
 
     void handleOpenLayers(QList<QUrl> urls);
+    void addLayerToView(Magick::Image image,
+                        View *view);
 
     void hasColorProfiles();
 };

@@ -33,7 +33,7 @@ TEMPLATE = app
 QT += widgets concurrent
 SOURCES += main.cpp editor.cpp
 HEADERS += editor.h
-RESOURCES += ../share/share.qrc
+RESOURCES += ../share/icons.qrc ../share/icc.qrc
 LIBS += -L../lib/build -lCyan
 INCLUDEPATH += ../lib/src
 include(../cyan.pri)
