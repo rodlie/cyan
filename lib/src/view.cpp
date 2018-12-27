@@ -835,7 +835,7 @@ void View::handleLayerOverTiles(LayerItem *layerItem,
         // get tile id
         int tile=item->data(0).toInt();
 
-#ifdef QT_DEBUG
+#ifdef SHOW_TILES
         QPen newPen(Qt::green);
         newPen.setWidth(0);
         _canvas.tiles[tile].rect->setPen(newPen);
@@ -902,7 +902,7 @@ void View::handleTileStatus()
             if (!colliding.contains(layer.key()) && layer.value()) {
                 _canvas.tiles[tile].rect->layers[layer.key()] = false;
 
-#ifdef QT_DEBUG
+#ifdef SHOW_TILES
                 QPen newPen(Qt::red);
                 newPen.setWidth(0);
                 _canvas.tiles[tile].rect->setPen(newPen);
