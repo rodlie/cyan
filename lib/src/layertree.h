@@ -84,8 +84,10 @@ signals:
 
     void selectedLayer(int id);
     void moveLayerEvent(QKeyEvent *e);
-    void layerVisibilityChanged(int id, bool visible);
-    void layerLabelChanged(int id, const QString &label);
+    void layerVisibilityChanged(int id,
+                                bool visible);
+    void layerLabelChanged(int id,
+                           const QString &label);
 
 private:
 
@@ -100,8 +102,10 @@ public slots:
 private slots:
 
     void populateTree(View *image);
-    void handleItemActivated(QTreeWidgetItem *item, int col);
-    void handleItemChanged(QTreeWidgetItem *item, int col);
+    void handleItemActivated(QTreeWidgetItem *item,
+                             int col);
+    void handleItemChanged(QTreeWidgetItem *item,
+                           int col);
 
 protected:
 

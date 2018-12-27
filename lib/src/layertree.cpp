@@ -189,7 +189,6 @@ void LayerTree::populateTree(View *image)
                       QString::number(i));
         item->setText(2,
                       image->getLayerName(i));
-        //item->setEditTriggers(QAbstractItemView::DoubleClicked);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setLayerID(i);
         item->setLayerName(image->getLayerName(i));
@@ -215,7 +214,6 @@ void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)
 
 void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
 {
-    qDebug() << "layer item changed" << item->checkState(col);
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!item) { return; }
     if (col == 2) {

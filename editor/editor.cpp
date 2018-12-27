@@ -72,9 +72,6 @@ Editor::Editor(QWidget *parent)
     : QMainWindow(parent)
     , mdi(nullptr)
     , mainToolBar(nullptr)
-    //, viewToolBar(nullptr)
-//    , colorToolBar(nullptr)
-    //, brushToolBar(nullptr)
     , mainMenu(nullptr)
     , mainStatusBar(nullptr)
     , newImageAct(nullptr)
@@ -85,7 +82,6 @@ Editor::Editor(QWidget *parent)
     , newLayerAct(nullptr)
     , saveLayerAct(nullptr)
     , quitAct(nullptr)
-    //, viewDragAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
     , aboutImageMagickAct(nullptr)
@@ -106,15 +102,12 @@ Editor::Editor(QWidget *parent)
     , colorProfileCMYKMenu(nullptr)
     , colorProfileGRAYMenu(nullptr)
     , colorIntentMenu(nullptr)
-    //, magickMenu(nullptr)
     , newButton(nullptr)
     , saveButton(nullptr)
-    //, colorButton(nullptr)
     , layersTree(nullptr)
     , layersDock(nullptr)
     , layersComp(nullptr)
     , layersOpacity(nullptr)
-    //, imageInfoTree(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
     , colorTriangle(nullptr)
@@ -127,14 +120,6 @@ Editor::Editor(QWidget *parent)
     qRegisterMetaType<Magick::Image>("Magick::Image");
     qRegisterMetaType<Magick::Drawable>("Magick::Drawable");
     qRegisterMetaType<Magick::Geometry>("Magick::Geometry");
-
-/*#ifdef CYAN_DEVEL
-    QMessageBox::warning(this,
-                         tr("Cyan %1").arg(qApp->applicationVersion()),
-                         tr("This is a development version of Cyan. "
-                            "Functions are missing and some features are probably broken. "
-                            "USE AT OWN RISK!"));
-#endif*/
 
     setupUI();
     loadSettings();
@@ -186,7 +171,6 @@ void Editor::setupStyle()
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
 
-    // TODO (own theme)
     QIcon::setThemeName("Cyan");
     setWindowIcon(QIcon::fromTheme("cyan"));
 
@@ -243,8 +227,6 @@ void Editor::setupUI()
     mainToolBar->addWidget(newButton);
     mainToolBar->addAction(openImageAct);
     mainToolBar->addWidget(saveButton);
-    //mainToolBar->addWidget(colorButton);
-
     mainToolBar->addAction(viewMoveAct);
     mainToolBar->addAction(viewDrawAct);
 
@@ -259,8 +241,6 @@ void Editor::setupUI()
     fileMenu->addAction(saveLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
-
-    //optMenu->addMenu(magickMenu);
 
     helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
@@ -318,22 +298,8 @@ void Editor::setupUI()
     brushDock->setWindowTitle(tr("Brush"));
     brushDock->setObjectName(QString("brushDock"));
     brushDock->setWidget(brushWidget);
-    addDockWidget(Qt::RightDockWidgetArea, brushDock);
-
-
-
-    //brushToolBar->addWidget(brushSizeLabel);
-    //brushToolBar->addWidget(brushSize);
-    //brushSize->setOrientation(brushToolBar->orientation());
-
-    /*imageInfoTree = new QTreeWidget(this);
-    imageInfoTree->setHeaderLabels(QStringList()<<"Meta"<<"Value");
-    QDockWidget *imageInfoDock = new QDockWidget(this);
-    imageInfoDock->setObjectName(QString("imageInfoDock"));
-    imageInfoDock->setWindowTitle(tr("Information"));
-    imageInfoDock->setWidget(imageInfoTree);
-    imageInfoDock->hide();
-    addDockWidget(Qt::TopDockWidgetArea, imageInfoDock);*/
+    addDockWidget(Qt::RightDockWidgetArea,
+                  brushDock);
 }
 
 void Editor::setupMenus()
@@ -373,9 +339,6 @@ void Editor::setupMenus()
 
     colorIntentMenu = new QMenu(this);
     colorIntentMenu->setTitle(tr("Rendering Intent"));
-
-//    magickMenu = new QMenu(this);
-  //  magickMenu->setTitle(tr("Engine"));
 }
 
 void Editor::setupToolbars()
@@ -383,32 +346,10 @@ void Editor::setupToolbars()
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
     mainToolBar->setWindowTitle(tr("Main"));
-    //mainToolBar->setIconSize(QSize(24, 24));
-    //mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    /*viewToolBar = new QToolBar(this);
-    viewToolBar->setObjectName(QString("viewToolBar"));
-    viewToolBar->setWindowTitle(tr("Canvas Tools"));*/
-    //viewToolBar->setIconSize(QSize(32, 32));
-
-    /*colorToolBar = new QToolBar(this);
-    colorToolBar->setObjectName(QString("Color Tools"));
-    colorToolBar->setWindowTitle(tr("Color Tools"));*/
-    //colorToolBar->setIconSize(QSize(32, 32));
-
-    /*brushToolBar = new QToolBar(this);
-    brushToolBar->setObjectName(QString("brushToolBar"));
-    brushToolBar->setWindowTitle(tr("Brush Options"));*/
-    //brushToolBar->setIconSize(QSize(32, 32));
 
     addToolBar(Qt::LeftToolBarArea,
                mainToolBar);
-    /*addToolBar(Qt::LeftToolBarArea,
-               viewToolBar);*/
-/*    addToolBar(Qt::LeftToolBarArea,
-               colorToolBar);*/
-    /*addToolBar(Qt::LeftToolBarArea,
-               brushToolBar);*/
 }
 
 void Editor::setupWidgets()
@@ -422,8 +363,6 @@ void Editor::setupWidgets()
     brushSize = new QSlider(this);
     brushSize->setRange(1,256);
     brushSize->setValue(20);
-    //brushSize->setMaximumWidth(75);
-    //brushSize->setMaximumHeight(75);
     brushSize->setOrientation(Qt::Horizontal);
 }
 
@@ -460,11 +399,6 @@ void Editor::setupActions()
     viewMoveAct->setText(tr("Move"));
     viewMoveAct->setCheckable(true);
     viewMoveAct->setChecked(false);
-
-    /*viewDragAct = new QAction(this);
-    viewDragAct->setText(tr("Drag"));
-    viewDragAct->setCheckable(true);
-    viewDragAct->setChecked(true);*/
 
     viewDrawAct = new QAction(this);
     viewDrawAct->setText("Draw");
@@ -517,14 +451,6 @@ void Editor::setupButtons()
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save"));
     //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-
-    /*colorButton = new QToolButton(this);
-    //colorButton->setIconSize(QSize(32, 32));
-    colorButton->setMenu(colorMenu);
-    colorButton->setPopupMode(QToolButton::InstantPopup);
-    colorButton->setText(tr("Color"));
-    colorButton->setToolTip(tr("Color"));*/
-    //colorButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 }
 
 void Editor::setupColorManagement()
@@ -659,7 +585,6 @@ void Editor::setupConnections()
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
 
     connect(viewMoveAct, SIGNAL(triggered(bool)), this, SLOT(handleSetMoveMode(bool)));
-    //connect(viewDragAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDragMode(bool)));
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));
 
     connect(aboutImageMagickAct, SIGNAL(triggered()), this, SLOT(aboutImageMagick()));
@@ -680,7 +605,6 @@ void Editor::setupConnections()
     connect(layersTree, SIGNAL(layerVisibilityChanged(int,bool)), this, SLOT(handleLayerVisibility(int,bool)));
     connect(layersTree, SIGNAL(layerLabelChanged(int,QString)), this, SLOT(handleLayerLabel(int,QString)));
 
-    //connect(brushToolBar, SIGNAL(orientationChanged(Qt::Orientation)), brushSize, SLOT(setOrientation(Qt::Orientation)));
     connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 }
 
@@ -690,7 +614,6 @@ void Editor::setupIcons()
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
     newButton->setIcon(QIcon::fromTheme("document-new"));
 
-
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
     saveImageAct->setIcon(QIcon::fromTheme("document-save"));
@@ -699,14 +622,12 @@ void Editor::setupIcons()
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
-    //viewDragAct->setIcon(QIcon::fromTheme("hand"));
     viewMoveAct->setIcon(QIcon::fromTheme("transform_move"));
     viewDrawAct->setIcon(QIcon::fromTheme("paintbrush"));
 
     QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
     QIcon colorWheelIcon = QIcon::fromTheme("color_wheel");
 
-    //colorButton->setIcon(colorsIcon);
     convertRGBAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     convertCMYKAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     convertGRAYAct->setIcon(QIcon::fromTheme("convert_color_to_gray"));
@@ -1143,8 +1064,6 @@ void Editor::loadSettings()
     }*/
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
-
-    //brushSize->setOrientation(brushToolBar->orientation());
 
     emit statusMessage(tr("Engine disk cache limit: %1 GB")
                        .arg(Common::getDiskResource()));
@@ -2231,7 +2150,6 @@ void Editor::handleLayerVisibility(int id, bool visible)
 
 void Editor::handleLayerLabel(int id, const QString &label)
 {
-    qDebug() << "LAYER LABEL CHANGED" << id << label;
     if (!getCurrentView()) { return; }
     if (getCurrentView()->getLayerName(id) != label) {
         getCurrentView()->setLayerName(id, label);

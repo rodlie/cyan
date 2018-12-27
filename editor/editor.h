@@ -79,9 +79,6 @@ private:
     Mdi *mdi;
 
     QToolBar *mainToolBar;
-    //QToolBar *viewToolBar;
-    //QToolBar *colorToolBar;
-    //QToolBar *brushToolBar;
 
     QMenuBar *mainMenu;
     QStatusBar *mainStatusBar;
@@ -96,7 +93,6 @@ private:
     QAction *blackPointAct;
     QAction *quitAct;
 
-    //QAction *viewDragAct;
     QAction *viewMoveAct;
     QAction *viewDrawAct;
 
@@ -120,11 +116,9 @@ private:
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
     QMenu* colorIntentMenu;
-    //QMenu *magickMenu;
 
     QToolButton *newButton;
     QToolButton *saveButton;
-    //QToolButton *colorButton;
     LayerTree *layersTree;
     QDockWidget *layersDock;
     QComboBox *layersComp;
@@ -238,7 +232,6 @@ private slots:
     void handleViewClosed();
     void handleLayersUpdated();
 
-    //void handleSetDragMode(bool triggered);
     void handleSetMoveMode(bool triggered);
 
     void handleTabActivated(QMdiSubWindow *tab);
@@ -253,8 +246,6 @@ private slots:
 
     void handleOpenImages(const QList<QUrl> urls);
 
-
-
     void handleColorChanged(const QColor &color);
 
     void handleLayerTreeSelectedLayer(int id);
@@ -267,10 +258,6 @@ private slots:
 
     void handleLayerVisibility(int id, bool visible);
     void handleLayerLabel(int id, const QString &label);
-
-
-
-
 
     // about
     void aboutImageMagick();
