@@ -106,14 +106,13 @@ void LayerTreeItem::setVisibility(bool visible)
 
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 {
-    setHeaderLabels(QStringList() << QString("") << QString("") << QString(""));
-    headerItem()->setIcon(0, QIcon::fromTheme("layer"));
+    setHeaderLabels(QStringList() << QString("#") << QString("") << QString(""));
+    headerItem()->setIcon(2, QIcon::fromTheme("layer"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
     headerItem()->setToolTip(1, tr("Layer visibility"));
     setColumnWidth(0, 16);
     setColumnWidth(1, 16);
     setIconSize(QSize(32, 32));
-    //setStyleSheet("QTreeWidget::item { height: 64px; }");
 
     connect(this,
             SIGNAL(itemClicked(QTreeWidgetItem*,int)),
@@ -162,8 +161,6 @@ void LayerTree::populateTree(View *image)
     for (int i=0;i<image->getLayerCount();++i) {
         LayerTreeItem *item = new LayerTreeItem(this);
         blockSignals(true);
-
-
         Magick::Image thumb(Magick::Geometry(32, 32), Magick::ColorRGB(0, 0, 0));
         thumb.depth(8);
         thumb.alpha(false);
@@ -188,12 +185,12 @@ void LayerTree::populateTree(View *image)
         item->setIconSize(QSize(32, 32));
         item->setIcon(2,QIcon(pixmap));
 
-
-
         item->setText(0,
                       QString::number(i));
         item->setText(2,
                       image->getLayerName(i));
+        //item->setEditTriggers(QAbstractItemView::DoubleClicked);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setLayerID(i);
         item->setLayerName(image->getLayerName(i));
         item->setComposite(image->getLayerComposite(i));
@@ -221,12 +218,18 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
     qDebug() << "layer item changed" << item->checkState(col);
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!item) { return; }
-    bool visible = false;
-    if (item->checkState(col) == Qt::Checked) {
-        visible = true;
+    if (col == 2) {
+        emit layerLabelChanged(layer->getLayerID(),
+                               item->text(col));
     }
-    emit layerVisibilityChanged(layer->getLayerID(),
-                                visible);
+    if (col == 1) {
+        bool visible = false;
+        if (item->checkState(col) == Qt::Checked) {
+            visible = true;
+        }
+        emit layerVisibilityChanged(layer->getLayerID(),
+                                    visible);
+    }
 }
 
 void LayerTree::keyPressEvent(QKeyEvent *e)

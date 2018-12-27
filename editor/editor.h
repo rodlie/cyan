@@ -266,7 +266,7 @@ private slots:
     void hasColorProfiles();
 
     void handleLayerVisibility(int id, bool visible);
-
+    void handleLayerLabel(int id, const QString &label);
 
 
 

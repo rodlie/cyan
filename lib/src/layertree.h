@@ -85,6 +85,7 @@ signals:
     void selectedLayer(int id);
     void moveLayerEvent(QKeyEvent *e);
     void layerVisibilityChanged(int id, bool visible);
+    void layerLabelChanged(int id, const QString &label);
 
 private:
 

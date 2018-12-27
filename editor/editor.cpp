@@ -678,6 +678,7 @@ void Editor::setupConnections()
 
     connect(layersTree, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerTreeSelectedLayer(int)));
     connect(layersTree, SIGNAL(layerVisibilityChanged(int,bool)), this, SLOT(handleLayerVisibility(int,bool)));
+    connect(layersTree, SIGNAL(layerLabelChanged(int,QString)), this, SLOT(handleLayerLabel(int,QString)));
 
     //connect(brushToolBar, SIGNAL(orientationChanged(Qt::Orientation)), brushSize, SLOT(setOrientation(Qt::Orientation)));
     connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
@@ -2226,4 +2227,13 @@ void Editor::handleLayerVisibility(int id, bool visible)
 {
     if (!getCurrentView()) { return; }
     getCurrentView()->setLayerVisibility(id, visible);
+}
+
+void Editor::handleLayerLabel(int id, const QString &label)
+{
+    qDebug() << "LAYER LABEL CHANGED" << id << label;
+    if (!getCurrentView()) { return; }
+    if (getCurrentView()->getLayerName(id) != label) {
+        getCurrentView()->setLayerName(id, label);
+    }
 }
