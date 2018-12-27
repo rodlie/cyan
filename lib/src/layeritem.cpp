@@ -31,6 +31,8 @@
 */
 
 #include "layeritem.h"
+#include <QPen>
+#include "tileitem.h"
 
 LayerItem::LayerItem(QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
@@ -39,6 +41,10 @@ LayerItem::LayerItem(QGraphicsItem *parent)
     , _drag(false)
     , _draw(false)
 {
+    setAcceptHoverEvents(true);
+    QPen newPen(Qt::transparent);
+    newPen.setWidth(0);
+    setPen(newPen);
 }
 
 void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -62,6 +68,19 @@ void LayerItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (_drag) { QGraphicsItem::mouseReleaseEvent(event); }
     mouseIsDown = false;
     if (_movable) { mouseMoveEvent(event); }
+
+    bool outOfBounds = true;
+    for (int i=0;i<collidingItems().size();++i) {
+        LayerItem *layer = dynamic_cast<LayerItem*>(collidingItems().at(i));
+        TileItem *tile = dynamic_cast<TileItem*>(collidingItems().at(i));
+        if (layer || tile) { continue; }
+        outOfBounds = false;
+    }
+    if (outOfBounds) {
+        QPen newPen(Qt::green);
+        newPen.setWidth(0);
+        setPen(newPen);
+    }
 }
 
 void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -84,6 +103,35 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     emit movingItem(this->pos(), data(1).toInt());
     if (!mouseIsDown) { emit movedItem(this->pos(), data(1).toInt()); }
+}
+
+void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    QPen newPen(Qt::green);
+    newPen.setWidth(0);
+    setPen(newPen);
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    bool outOfBounds = true;
+    for (int i=0;i<collidingItems().size();++i) {
+        LayerItem *layer = dynamic_cast<LayerItem*>(collidingItems().at(i));
+        TileItem *tile = dynamic_cast<TileItem*>(collidingItems().at(i));
+        if (layer || tile) { continue; }
+        outOfBounds = false;
+    }
+    if (outOfBounds) {
+        QPen newPen(Qt::green);
+        newPen.setWidth(0);
+        setPen(newPen);
+    } else {
+        QPen newPen(Qt::transparent);
+        newPen.setWidth(0);
+        setPen(newPen);
+    }
+    QGraphicsItem::hoverLeaveEvent(event);
 }
 
 void LayerItem::setMovable(bool movable)
