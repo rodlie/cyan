@@ -50,8 +50,10 @@ public:
 
     videoDialog(QWidget *parent = nullptr,
                 int max = 0,
-                const QString &filename = QString());
+                const QString &filename = QString(),
+                bool showToAndFrom = false);
     int getFrame();
+    QSize getFrames();
 
 private:
     int _max;
@@ -61,6 +63,10 @@ private:
     QSpinBox *_spin;
     QPushButton *_ok;
     QPushButton *_cancel;
+    QPushButton *_fromMark;
+    QPushButton *_toMark;
+    QSpinBox *_from;
+    QSpinBox *_to;
 
 private slots:
 
@@ -68,6 +74,8 @@ private slots:
     void handleSpin(int pos);
     void handleOk();
     void handleCancel();
+    void handleFromMark();
+    void handleToMark();
 };
 
 #endif // VIDEODIALOG_H

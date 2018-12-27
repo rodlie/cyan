@@ -37,7 +37,8 @@
 
 videoDialog::videoDialog(QWidget *parent,
                          int max,
-                         const QString &filename) :
+                         const QString &filename,
+                         bool showToAndFrom) :
     QDialog (parent)
   , _max(max)
   , _filename(filename)
@@ -46,8 +47,12 @@ videoDialog::videoDialog(QWidget *parent,
   , _spin(nullptr)
   , _ok(nullptr)
   , _cancel(nullptr)
+  , _fromMark(nullptr)
+  , _toMark(nullptr)
+  , _from(nullptr)
+  , _to(nullptr)
 {
-    setWindowTitle(tr("Import video frame"));
+    setWindowTitle(tr("Import video frame(s)"));
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -63,8 +68,24 @@ videoDialog::videoDialog(QWidget *parent,
     _spin = new QSpinBox(this);
     _spin->setRange(0, _max);
 
+    _fromMark = new QPushButton(this);
+    _fromMark->setText(tr("Mark"));
+
+    _toMark = new QPushButton(this);
+    _toMark->setText(tr("Mark"));
+
+    _from = new QSpinBox(this);
+    _from->setRange(0, _max);
+
+    _to = new QSpinBox(this);
+    _to->setRange(0, _max);
+
     QWidget *timeline = new QWidget(this);
     QHBoxLayout *timelineLayout = new QHBoxLayout(timeline);
+
+    QWidget *layersWidget = new QWidget(this);
+    QHBoxLayout *layerLayout = new QHBoxLayout(layersWidget);
+
 
     QWidget *buttonWidget = new QWidget(this);
     QHBoxLayout *buttonLayout = new QHBoxLayout(buttonWidget);
@@ -78,13 +99,28 @@ videoDialog::videoDialog(QWidget *parent,
     timelineLayout->addWidget(_slider);
     timelineLayout->addWidget(_spin);
 
+    layerLayout->addWidget(_fromMark);
+    layerLayout->addWidget(_from);
+    layerLayout->addWidget(_toMark);
+    layerLayout->addWidget(_to);
+
     buttonLayout->addStretch();
     buttonLayout->addWidget(_ok);
     buttonLayout->addWidget(_cancel);
 
     mainLayout->addWidget(_label);
     mainLayout->addWidget(timeline);
+    mainLayout->addWidget(layersWidget);
+    mainLayout->addStretch();
     mainLayout->addWidget(buttonWidget);
+
+    if (!showToAndFrom) {
+        layersWidget->hide();
+        _fromMark->setDisabled(true);
+        _toMark->setDisabled(true);
+        _from->setDisabled(true);
+        _to->setDisabled(true);
+    }
 
     connect(_slider,
             SIGNAL(valueChanged(int)),
@@ -102,6 +138,14 @@ videoDialog::videoDialog(QWidget *parent,
             SIGNAL(released()),
             this,
             SLOT(handleCancel()));
+    connect(_fromMark,
+            SIGNAL(released()),
+            this,
+            SLOT(handleFromMark()));
+    connect(_toMark,
+            SIGNAL(released()),
+            this,
+            SLOT(handleToMark()));
 
     _slider->setValue(_max/2);
 }
@@ -109,6 +153,12 @@ videoDialog::videoDialog(QWidget *parent,
 int videoDialog::getFrame()
 {
     return _slider->value();
+}
+
+QSize videoDialog::getFrames()
+{
+    return QSize(_from->value(),
+                 _to->value());
 }
 
 void videoDialog::handleSlider(int pos)
@@ -148,5 +198,15 @@ void videoDialog::handleOk()
 void videoDialog::handleCancel()
 {
     QDialog::reject();
+}
+
+void videoDialog::handleFromMark()
+{
+    _from->setValue(_spin->value());
+}
+
+void videoDialog::handleToMark()
+{
+    _to->setValue(_spin->value());
 }
 
