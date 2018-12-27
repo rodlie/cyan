@@ -206,10 +206,10 @@ void Editor::setupStyle()
     qApp->setPalette(palette);
 
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
-                          "QMainWindow, QMenu, QDockWidget, QMenuBar, QDialog,"
+                          /*"QMainWindow, QMenu, QDockWidget, QMenuBar, QDialog,"
                           "QPushButton, QSpinBox, QDoubleSpinBox, QLineEdit, QRadioButton"
-                          "{ font-size: %1pt; }"
-                          "QToolBar { border-color: none; }").arg(CYAN_FONT_SIZE));
+                          "{ font-size: %1pt; }"*/
+                          "QToolBar { border-color: none; }")/*.arg(CYAN_FONT_SIZE)*/);
 }
 
 void Editor::setupUI()

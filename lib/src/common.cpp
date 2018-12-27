@@ -354,7 +354,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
     try {
         image.label(canvas.label.toStdString());
     }
-    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Error &error_ ) {
+        qWarning() << error_.what();
+        return false;
+    }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
     // mark as cyan project
@@ -363,15 +366,32 @@ bool Common::writeCanvas(Common::Canvas canvas,
                         QString("%1").arg(CYAN_PROJECT_VERSION)
                         .toStdString());
     }
-    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Error &error_ ) {
+        qWarning() << error_.what();
+        return false;
+    }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
     // compress(?)
     try { image.compressType(compress); }
-    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Error &error_ ) {
+        qWarning() << error_.what();
+        return false;
+    }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    // add color profile
+    try { image.profile("ICC", canvas.profile); }
+    catch(Magick::Error &error_ ) {
+        qWarning() << error_.what();
+        return false;
+    }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
     // add canvas as first image
+    image.backgroundColor(Magick::ColorRGB(1, 1, 1)); // workaround issue in IM
+    image.alpha(false); // workaround issue in IM
+    image.alpha(true); // workaround issue in IM
     images.push_back(image);
 
     // add layers
@@ -385,7 +405,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
         try {
             layer.label(layers.value().label.toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // add position
@@ -397,7 +420,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
                             QString("%1").arg(layers.value().pos.height())
                             .toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // mark as cyan layer
@@ -406,7 +432,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
                             QString("%1").arg(CYAN_LAYER_VERSION)
                             .toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // add compose mode
@@ -415,7 +444,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
                             QString("%1").arg(Common::compositeModes()[layers.value().composite])
                             .toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // add visibility
@@ -424,7 +456,10 @@ bool Common::writeCanvas(Common::Canvas canvas,
                             QString("%1").arg(layers.value().visible)
                             .toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // add opacity
@@ -433,12 +468,18 @@ bool Common::writeCanvas(Common::Canvas canvas,
                             QString("%1").arg(layers.value().opacity)
                             .toStdString());
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // compress(?)
         try { layer.compressType(compress); }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         // add to project
@@ -490,6 +531,9 @@ Common::Canvas Common::readCanvas(const QString &filename)
 
             // set label
             canvas.label = QString::fromStdString(it->label());
+
+            //set profile
+            canvas.profile = canvas.image.iccColorProfile();
             continue;
         }
         double layer = QString::fromStdString(it->attribute(QString(CYAN_LAYER)
@@ -523,12 +567,29 @@ Common::Canvas Common::readCanvas(const QString &filename)
             layer.opacity = opacity;
             layer.composite = compose;
 
+            /*if (canvas.profile.length()==0 &&
+                layer.image.iccColorProfile().length()>0)
+            {
+                qWarning() << "CANVAS PROFILE IS EMPTY! ADD FALLBACK FROM LAYER!";
+                canvas.profile = layer.image.iccColorProfile();
+                try {
+                    canvas.image.profile("ICC", canvas.profile);
+                }
+                catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+                catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+            }*/
+
             // decompress
             try { layer.image.compressType(Magick::NoCompression); }
             catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
             catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
-            canvas.layers.insert(canvas.layers.size(), layer);
+            // strip
+            layer.image.strip();
+
+            // add
+            canvas.layers.insert(canvas.layers.size(),
+                                 layer);
         }
     }
     return canvas;

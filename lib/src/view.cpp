@@ -298,6 +298,7 @@ void View::setLayer(Magick::Image image,
                     int id)
 {
     _canvas.layers[id].image = image;
+    refreshTiles();
 }
 
 void View::addLayer(Magick::Image image,
@@ -340,7 +341,7 @@ void View::addLayer(Magick::Image image,
     emit addedLayer(id);
     emit updatedLayers();
 
-    if (updateView) { handleLayerOverTiles(layer); }
+    if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
 }
 
 void View::addLayer(int id,
@@ -381,7 +382,7 @@ void View::addLayer(int id,
     emit addedLayer(id);
     emit updatedLayers();
 
-    if (updateView) { handleLayerOverTiles(layer); }
+    if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
 }
 
 void View::clearLayers()
@@ -470,6 +471,7 @@ void View::setLayersFromCanvas(Common::Canvas canvas)
         handleLayerOverTiles(layers.key());
     }
     emit updatedLayers();
+    refreshTiles();
 }
 
 void View::updateCanvas(Common::Canvas canvas)
@@ -599,10 +601,27 @@ const QString View::getCanvasID()
 
 void View::refreshTiles()
 {
-    for (int i=0;i<_scene->items().size();++i) {
-        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
-        if (!item) { continue; }
-        handleLayerOverTiles(item);
+    qDebug() << "REFRESH TILES";
+    QMapIterator<int, Common::Tile> tiles(_canvas.tiles);
+    while (tiles.hasNext()) {
+        tiles.next();
+        int tile = tiles.key();
+        // get crop info
+        Magick::Geometry geo(static_cast<size_t>(_canvas.tileSize.width()),
+                             static_cast<size_t>(_canvas.tileSize.height()),
+                             static_cast<ssize_t>(_canvas.tiles[tile]
+                                                  .rect->boundingRect()
+                                                  .topLeft().x()),
+                             static_cast<ssize_t>(_canvas.tiles[tile]
+                                                  .rect->boundingRect()
+                                                  .topLeft().y()));
+        // render tile
+        /*future =*/ QtConcurrent::run(this,
+                                   &View::renderTile,
+                                   tile,
+                                   _image,
+                                   _canvas.layers,
+                                   geo);
     }
 }
 
