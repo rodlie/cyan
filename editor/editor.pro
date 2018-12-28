@@ -31,17 +31,25 @@
 TARGET = Cyan
 TEMPLATE = app
 QT += widgets concurrent
-SOURCES += main.cpp editor.cpp \
-    about.cpp
+
+SOURCES += \
+    main.cpp \
+    editor.cpp \
+    about.cpp \
+    setup.cpp \
+    color.cpp
 HEADERS += editor.h
-RESOURCES += ../share/icons.qrc ../share/icc.qrc
+RESOURCES += \
+    ../share/icons.qrc \
+    ../share/icc.qrc
+
 LIBS += -L../lib/build -lCyan
 INCLUDEPATH += ../lib/src
+
 include(../cyan.pri)
 
 mac {
     ICON = ../share/icons/Cyan.icns
     QMAKE_INFO_PLIST = ../share/Info.plist
 }
-
 win32: RC_ICONS += ../share/icons/cyan.ico

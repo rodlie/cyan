@@ -66,13 +66,6 @@ public:
     Editor(QWidget *parent = nullptr);
     ~Editor();
 
-signals:
-
-    void openImage(const QString &filename);
-    void statusMessage(const QString &message);
-    void errorMessage(const QString &message);
-    void warningMessage(const QString &message);
-
 private:
 
     Common common;
@@ -129,12 +122,20 @@ private:
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
+signals:
+
+    void openImage(const QString &filename);
+    void statusMessage(const QString &message);
+    void errorMessage(const QString &message);
+    void warningMessage(const QString &message);
+
 public slots:
 
     View* getCurrentView();
 
 private slots:
 
+    // setup
     void setupStyle();
     void setupUI();
     void setupMenus();
@@ -149,6 +150,7 @@ private slots:
     void setupShortcuts();
     void setupOptions();
 
+    // color
     void populateColorProfileMenu(QMenu *menu,
                                   Magick::ColorspaceType colorspace);
     void selectDefaultColorProfile();
@@ -175,9 +177,13 @@ private slots:
                             Magick::ColorspaceType colorspace = Magick::UndefinedColorspace,
                             const QString &title = tr("Convert"));
 
+    void hasColorProfiles();
+
+    // settings
     void saveSettings();
     void loadSettings();
 
+    // load/save
     void loadProject(const QString &filename);
     void saveProject(const QString &filename);
 
@@ -254,7 +260,7 @@ private slots:
     void addLayerToView(Magick::Image image,
                         View *view);
 
-    void hasColorProfiles();
+
 
     void handleLayerVisibility(int id, bool visible);
     void handleLayerLabel(int id, const QString &label);
