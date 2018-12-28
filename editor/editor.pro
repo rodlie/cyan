@@ -33,22 +33,22 @@ TEMPLATE = app
 QT += widgets concurrent
 
 SOURCES += \
-    main.cpp \
-    editor.cpp \
-    about.cpp \
-    setup.cpp \
-    color.cpp \
-    viewtool.cpp \
-    messages.cpp \
-    layers.cpp \
-    tabs.cpp
-HEADERS += editor.h
+    src/main.cpp \
+    src/editor.cpp \
+    src/about.cpp \
+    src/setup.cpp \
+    src/color.cpp \
+    src/viewtool.cpp \
+    src/messages.cpp \
+    src/layers.cpp \
+    src/tabs.cpp
+HEADERS += src/editor.h
 RESOURCES += \
     ../share/icons.qrc \
     ../share/icc.qrc
 
 LIBS += -L../lib/build -lCyan
-INCLUDEPATH += ../lib/src
+INCLUDEPATH += ../lib/src src
 
 include(../cyan.pri)
 
