@@ -393,3 +393,16 @@ void Editor::hasColorProfiles()
                            SLOT(quit()));
     }
 }
+
+void Editor::handleColorChanged(const QColor &color)
+{
+    qDebug() << "brush color changed" << color;
+    QList<QMdiSubWindow*> list = mdi->subWindowList();
+    for (int i=0;i<list.size();++i) {
+        QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
+        if (!window) { return; }
+        View *view = qobject_cast<View*>(window->widget());
+        if (!view) { return; }
+        view->setBrushColor(color);
+    }
+}

@@ -166,6 +166,31 @@ private slots:
     void handleBrushSize();
     void handleUpdateBrushSize(int stroke);
 
+    // layers
+    void handleLayerCompChanged(const QString &comp);
+    void populateCompBox();
+    void handleLayerActivated(QTreeWidgetItem *item,
+                              int col);
+    void handleLayerActivated(QTreeWidgetItem *item,
+                              QTreeWidgetItem *old);
+    void handleLayerDoubleclicked(QTreeWidgetItem *item,
+                                  int col);
+    void handleLayerSelected(int layer);
+    void handleLayersOpacity();
+    void handleLayersUpdated();
+    void handleLayerTreeSelectedLayer(int id);
+    void handleLayerVisibility(int id, bool visible);
+    void handleLayerLabel(int id, const QString &label);
+    void addLayerToView(Magick::Image image,
+                        View *view);
+
+    // tabs
+    void newTab(Common::Canvas canvas);
+    void newTab(Magick::Image image = Magick::Image(),
+                QSize geo = QSize(0, 0));
+    void handleTabActivated(QMdiSubWindow *tab);
+    void updateTabTitle(View *view = nullptr);
+
     // color
     void populateColorProfileMenu(QMenu *menu,
                                   Magick::ColorspaceType colorspace);
@@ -177,11 +202,9 @@ private slots:
                                          const QString &title);
     const QString selectedDefaultColorProfile(QMenu *menu);
     Magick::Blob selectedDefaultColorProfileData(QMenu *menu);
-
     void populateColorIntentMenu();
     void setDefaultColorIntent();
     void loadDefaultColorIntent();
-
     void handleColorConvertRGB(bool ignoreColor = false,
                                const QString &title = tr("Convert to RGB"));
     void handleColorConvertCMYK(bool ignoreColor = false,
@@ -192,8 +215,10 @@ private slots:
     void handleColorConvert(bool ignoreColor = false,
                             Magick::ColorspaceType colorspace = Magick::UndefinedColorspace,
                             const QString &title = tr("Convert"));
-
     void hasColorProfiles();
+    void handleColorChanged(const QColor &color);
+
+    //
 
     void saveSettings();
     void loadSettings();
@@ -224,60 +249,23 @@ private slots:
     void newImageDialog();
     void newLayerDialog();
 
-    void handleNewImage(Magick::Image image);
+
+    //void handleNewImage(Magick::Image image);
 
 
 
-    void newTab(Common::Canvas canvas);
-    void newTab(Magick::Image image = Magick::Image(),
-                QSize geo = QSize(0, 0));
     void connectView(View *view);
     void setViewTool(View *view);
+    void handleViewClosed();
+
 
     /*void newTabFromLayer(View *parentView,
                          int layerID);*/
-    void handleLayerCompChanged(const QString &comp);
-    void populateCompBox();
-
-    void handleLayerActivated(QTreeWidgetItem *item,
-                              int col);
-    void handleLayerActivated(QTreeWidgetItem *item,
-                              QTreeWidgetItem *old);
-    void handleLayerDoubleclicked(QTreeWidgetItem *item,
-                                  int col);
-    void handleLayerSelected(int layer);
-    void handleLayersOpacity();
-
-    void handleViewClosed();
-    void handleLayersUpdated();
 
 
-
-    void handleTabActivated(QMdiSubWindow *tab);
-    void updateTabTitle(View *view = nullptr);
-
-
-
-
-
-
-
-
-    void handleOpenImages(const QList<QUrl> urls);
-
-    void handleColorChanged(const QColor &color);
-
-    void handleLayerTreeSelectedLayer(int id);
-
-    void handleOpenLayers(QList<QUrl> urls);
-    void addLayerToView(Magick::Image image,
-                        View *view);
-
-
-
-    void handleLayerVisibility(int id, bool visible);
-    void handleLayerLabel(int id, const QString &label);
-
+    // TODO
+    void handleOpenImages(const QList<QUrl> &urls);
+    void handleOpenLayers(const QList<QUrl> &urls);
 };
 
 #endif // EDITOR_H

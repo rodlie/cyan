@@ -39,7 +39,9 @@ SOURCES += \
     setup.cpp \
     color.cpp \
     viewtool.cpp \
-    messages.cpp
+    messages.cpp \
+    layers.cpp \
+    tabs.cpp
 HEADERS += editor.h
 RESOURCES += \
     ../share/icons.qrc \

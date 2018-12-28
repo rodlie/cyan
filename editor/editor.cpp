@@ -662,106 +662,15 @@ void Editor::newLayerDialog()
                        SLOT(deleteLater()));
 }
 
-void Editor::handleNewImage(Magick::Image image)
+/*void Editor::handleNewImage(Magick::Image image)
 {
-    if (image.columns()>0 && image.rows()>0) { newTab(image); }
-}
+    if (image.columns()>0 &&
+        image.rows()>0) { newTab(image); }
+}*/
 
 
 
-void Editor::newTab(Common::Canvas canvas)
-{
-    qDebug() << "new tab from canvas/project";
-    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
-    tab->setAttribute(Qt::WA_DeleteOnClose);
 
-    View *view = new View(tab);
-
-    /*connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
-    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
-    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
-    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
-    connect(view, SIGNAL(switchMoveTool()), this, SLOT(handleSwitchMoveTool()));
-    connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
-    connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));*/
-    connectView(view);
-
-    view->setCanvasSpecsFromImage(canvas.image);
-    view->setLayersFromCanvas(canvas);
-    view->setFit(true);
-    view->setBrushColor(colorPicker->currentColor());
-
-    tab->setWidget(view);
-    tab->showMaximized();
-    tab->setWindowIcon(QIcon::fromTheme("applications-graphics"));
-
-    /*if (viewMoveAct->isChecked()) {
-        view->setInteractiveMode(View::IteractiveMoveMode);
-    } else if (viewDragAct->isChecked()) {
-        view->setInteractiveMode(View::InteractiveDragMode);
-    } else if (viewDrawAct->isChecked()) {
-        view->setInteractiveMode(View::InteractiveDrawMode);
-    }*/
-    setViewTool(view);
-    updateTabTitle(view);
-    handleTabActivated(tab);
-}
-
-void Editor::newTab(Magick::Image image, QSize geo)
-{
-    qDebug() << "new tab from image";
-    //if (!image.isValid()) { return; }
-    /*if ((image.columns()==0 || image.rows() == 0) && geo.width()==0) {
-        emit statusMessage(tr("Invalid image/size"));
-        return new View(this);
-    }*/
-
-    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
-    tab->setAttribute(Qt::WA_DeleteOnClose);
-
-    View *view = new View(tab);
-
-    /*connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
-    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
-    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
-    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
-    connect(view, SIGNAL(switchMoveTool()), this, SLOT(handleSwitchMoveTool()));
-    connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
-    connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));*/
-    connectView(view);
-
-    if (geo.width()>0) {
-        view->setupCanvas(geo.width(), geo.height());
-    } else if (image.columns()>0) {
-        view->setCanvasSpecsFromImage(image);
-    }
-    if (geo.width()>0) { view->addLayer(view->getCanvas()); }
-    else { view->addLayer(image); }
-    view->setFit(true);
-    view->setBrushColor(colorPicker->currentColor());
-
-    tab->setWidget(view);
-    tab->showMaximized();
-    tab->setWindowIcon(QIcon::fromTheme("applications-graphics"));
-
-    /*if (viewMoveAct->isChecked()) {
-        view->setInteractiveMode(View::IteractiveMoveMode);
-    } else if (viewDragAct->isChecked()) {
-        view->setInteractiveMode(View::InteractiveDragMode);
-    } else if (viewDrawAct->isChecked()) {
-        view->setInteractiveMode(View::InteractiveDrawMode);
-    }*/
-    setViewTool(view);
-    updateTabTitle(view);
-    handleTabActivated(tab);
-    //return view;
-}
 
 void Editor::connectView(View *view)
 {
@@ -838,167 +747,6 @@ void Editor::setViewTool(View *view)
     //parseImageInfo(view->getCanvas());
 }*/
 
-void Editor::handleLayerCompChanged(const QString &comp)
-{
-    if (comp.isEmpty()) { return; }
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
-    QMdiSubWindow *tab = mdi->currentSubWindow();
-    if (!layer || !tab) { return; }
-    View *view = qobject_cast<View*>(tab->widget());
-    if (!view) { return; }
-    QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
-    while (i.hasNext()) {
-        i.next();
-        if (i.value() == comp) {
-            layer->setComposite(i.key());
-            view->setLayerComposite(layer->getLayerID(), i.key());
-            break;
-        }
-    }
-}
-
-void Editor::populateCompBox()
-{
-    layersComp->clear();
-
-    /*
-    gimp modes in cyan:
-    normal - ok
-    dissolve - ok
-    lighten only - ok
-    screen - ok
-    dodge (color) - ok
-    addition (plus) - ok
-    darken only - ok
-    multiply - ok
-    burn (color) - ok
-    overlay - ok
-    soft light - ok
-    hard light - ok
-    difference - ok
-    substract (minus src) - ok
-    grain * - https://www.imagemagick.org/discourse-server/viewtopic.php?t=25085
-    divide (src) - ok
-    hue - ok
-    saturation - ok
-    color - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
-    value - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
-    */
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::OverCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DissolveCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::PlusCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::MultiplyCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::OverlayCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::ScreenCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::ColorDodgeCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearDodgeCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::ColorBurnCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearBurnCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::LightenCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DarkenCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LightenIntensityCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DarkenIntensityCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::SoftLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::HardLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::VividLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::PegtopLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::PinLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearLightCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::DifferenceCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::MinusSrcCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DivideSrcCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    layersComp->addItem(Common::compositeModes()[MagickCore::HueCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::SaturateCompositeOp]);
-
-    layersComp->insertSeparator(layersComp->count());
-
-    QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
-    while (i.hasNext()) {
-        i.next();
-        if (layersComp->findText(i.value(),
-                                  Qt::MatchExactly |
-                                  Qt::MatchCaseSensitive)==-1)
-        {
-            layersComp->addItem(i.value());
-        }
-    }
-
-    layersComp->setCurrentIndex(layersComp->findText(QString("Normal")));
-}
-
-void Editor::handleLayerActivated(QTreeWidgetItem *item, int col)
-{
-    Q_UNUSED(col)
-    handleLayerActivated(item, item);
-}
-
-void Editor::handleLayerActivated(QTreeWidgetItem *item, QTreeWidgetItem *old)
-{
-    Q_UNUSED(old)
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
-    if (!layer) { return; }
-    layersComp->setCurrentIndex(layersComp->findText(Common::compositeModes()[layer->getComposite()]));
-    //qDebug() << "???" << layer->getOpacity() << layer->getOpacity()*100;
-    layersOpacity->setValue(qRound(layer->getOpacity()*100));
-}
-
-// TODO
-void Editor::handleLayerDoubleclicked(QTreeWidgetItem *item, int col)
-{
-    qDebug() << "layer tree item double clicked";
-    Q_UNUSED(col)
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
-    View *view = qobject_cast<View*>(getCurrentView());
-    if (!layer || !view) { return; }
-    //newTabFromLayer(view, layer->getLayerID());
-}
-
-void Editor::handleLayerSelected(int layer)
-{
-    for (int i=0;i<layersTree->topLevelItemCount();++i) {
-        LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->topLevelItem(i));
-        if (!item) { continue; }
-        if (layer == item->getLayerID()) {
-            layersTree->setCurrentItem(item);
-            handleLayerActivated(item, 0);
-            return;
-        }
-    }
-}
-
-void Editor::handleLayersOpacity()
-{
-    double value = layersOpacity->value();
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
-    if (!layer) { return; }
-
-    qDebug() << "set layer opacity" << value << value/100;
-    QMdiSubWindow *tab = mdi->currentSubWindow();
-    if (!layer || !tab) { return; }
-    View *view = qobject_cast<View*>(tab->widget());
-    if (!view) { return; }
-    layer->setOpacity(value/100);
-    view->setLayerOpacity(layer->getLayerID(), value/100);
-}
 
 void Editor::handleViewClosed()
 {
@@ -1007,10 +755,6 @@ void Editor::handleViewClosed()
     layersTree->handleTabActivated(mdi->currentSubWindow());
 }
 
-void Editor::handleLayersUpdated()
-{
-    layersTree->handleTabActivated(mdi->currentSubWindow());
-}
 
 /*void Editor::handleSetDragMode(bool triggered)
 {
@@ -1024,38 +768,12 @@ void Editor::handleLayersUpdated()
 
 
 
-void Editor::handleTabActivated(QMdiSubWindow *tab)
-{
-    qDebug() << "handle tab activated";
-    if (!tab) { return; }
-    View *view = qobject_cast<View*>(tab->widget());
-    if (!view) { return; }
-
-    /*if (viewDragAct->isChecked()) {
-        view->setDragMode(QGraphicsView::ScrollHandDrag);
-        view->setInteractive(false);
-    } else {
-        view->setDragMode(QGraphicsView::NoDrag);
-        view->setInteractive(true);
-    }*/
-    updateTabTitle();
-    handleBrushSize();
-}
-
-void Editor::updateTabTitle(View *view)
-{
-    if (!view) { view = qobject_cast<View*>(getCurrentView()); }
-    if (!view) { return; }
-    QString title = Common::canvasWindowTitle(view->getCanvas());
-    qDebug() << "update canvas title" << title;
-    view->setWindowTitle(title);
-}
 
 
 
 
 
-void Editor::handleOpenImages(const QList<QUrl> urls)
+void Editor::handleOpenImages(const QList<QUrl> &urls)
 {
     qDebug() << "open images" << urls;
     if (urls.size()==0) { return; }
@@ -1086,27 +804,11 @@ void Editor::handleOpenImages(const QList<QUrl> urls)
 
 
 
-void Editor::handleColorChanged(const QColor &color)
-{
-    qDebug() << "brush color changed" << color;
-    QList<QMdiSubWindow*> list = mdi->subWindowList();
-    for (int i=0;i<list.size();++i) {
-        QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
-        if (!window) { return; }
-        View *view = qobject_cast<View*>(window->widget());
-        if (!view) { return; }
-        view->setBrushColor(color);
-    }
-}
 
-void Editor::handleLayerTreeSelectedLayer(int id)
-{
-    qDebug() << "set selected layer" << id;
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setSelectedLayer(id);
-}
 
-void Editor::handleOpenLayers(QList<QUrl> urls)
+
+
+void Editor::handleOpenLayers(const QList<QUrl> &urls)
 {
     View *view = qobject_cast<View*>(sender());
     if (!view) { return; }
@@ -1162,50 +864,7 @@ void Editor::handleOpenLayers(QList<QUrl> urls)
     view->scene()->update();
 }
 
-void Editor::addLayerToView(Magick::Image image,
-                            View *view)
-{
-    if (!view || image.columns()==0 || image.rows()==0) { return; }
-    try {
-        if (image.iccColorProfile().length()==0) {
-            qDebug() << "layer is missing color profile, add default";
-            QString defPro;
-            switch(image.colorSpace()) {
-            case Magick::CMYKColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
-                break;
-            case Magick::GRAYColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
-                break;
-            default:
-                defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
-            }
-            qDebug() << "has default profile?" << defPro;
-            image = Common::convertColorspace(image,
-                                              Magick::Blob(),
-                                              defPro);
-        }
-        qDebug() << "convert layer to canvas color profile";
-        image = Common::convertColorspace(image,
-                                          image.iccColorProfile(),
-                                          view->getCanvasProject().profile);
-        view->addLayer(image);
-    }
-    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
-    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
-}
 
 
-void Editor::handleLayerVisibility(int id, bool visible)
-{
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setLayerVisibility(id, visible);
-}
 
-void Editor::handleLayerLabel(int id, const QString &label)
-{
-    if (!getCurrentView()) { return; }
-    if (getCurrentView()->getLayerName(id) != label) {
-        getCurrentView()->setLayerName(id, label);
-    }
-}
+
