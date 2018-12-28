@@ -150,6 +150,22 @@ private slots:
     void setupShortcuts();
     void setupOptions();
 
+    // about
+    void aboutImageMagick();
+    void aboutLcms();
+
+    // messages
+    void handleError(const QString &message);
+    void handleWarning(const QString &message);
+    void handleStatus(const QString &message);
+
+    // view tools
+    void handleSwitchMoveTool(View::InteractiveMode tool = View::InteractiveNoMode);
+    void handleSetMoveMode(bool triggered);
+    void handleSetDrawMode(bool triggered);
+    void handleBrushSize();
+    void handleUpdateBrushSize(int stroke);
+
     // color
     void populateColorProfileMenu(QMenu *menu,
                                   Magick::ColorspaceType colorspace);
@@ -179,11 +195,9 @@ private slots:
 
     void hasColorProfiles();
 
-    // settings
     void saveSettings();
     void loadSettings();
 
-    // load/save
     void loadProject(const QString &filename);
     void saveProject(const QString &filename);
 
@@ -211,9 +225,8 @@ private slots:
     void newLayerDialog();
 
     void handleNewImage(Magick::Image image);
-    void handleError(const QString &message);
-    void handleWarning(const QString &message);
-    void handleStatus(const QString &message);
+
+
 
     void newTab(Common::Canvas canvas);
     void newTab(Magick::Image image = Magick::Image(),
@@ -238,17 +251,17 @@ private slots:
     void handleViewClosed();
     void handleLayersUpdated();
 
-    void handleSetMoveMode(bool triggered);
+
 
     void handleTabActivated(QMdiSubWindow *tab);
     void updateTabTitle(View *view = nullptr);
 
-    void handleSwitchMoveTool(View::InteractiveMode tool = View::InteractiveNoMode);
 
-    void handleSetDrawMode(bool triggered);
 
-    void handleBrushSize();
-    void handleUpdateBrushSize(int stroke);
+
+
+
+
 
     void handleOpenImages(const QList<QUrl> urls);
 
@@ -265,9 +278,6 @@ private slots:
     void handleLayerVisibility(int id, bool visible);
     void handleLayerLabel(int id, const QString &label);
 
-    // about
-    void aboutImageMagick();
-    void aboutLcms();
 };
 
 #endif // EDITOR_H

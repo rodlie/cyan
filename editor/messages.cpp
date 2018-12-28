@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,31 +28,32 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TARGET = Cyan
-TEMPLATE = app
-QT += widgets concurrent
+#include "editor.h"
+#include <QMessageBox>
 
-SOURCES += \
-    main.cpp \
-    editor.cpp \
-    about.cpp \
-    setup.cpp \
-    color.cpp \
-    viewtool.cpp \
-    messages.cpp
-HEADERS += editor.h
-RESOURCES += \
-    ../share/icons.qrc \
-    ../share/icc.qrc
-
-LIBS += -L../lib/build -lCyan
-INCLUDEPATH += ../lib/src
-
-include(../cyan.pri)
-
-mac {
-    ICON = ../share/icons/Cyan.icns
-    QMAKE_INFO_PLIST = ../share/Info.plist
+void Editor::handleError(const QString &message)
+{
+    qWarning() << "error" << message;
+    mainStatusBar->showMessage(message, 6000);
+    QMessageBox::warning(this,
+                         tr("Cyan Error"),
+                         message);
 }
-win32: RC_ICONS += ../share/icons/cyan.ico
+
+void Editor::handleWarning(const QString &message)
+{
+    qWarning() << "warning" << message;
+    mainStatusBar->showMessage(message);
+    /*QMessageBox::warning(this,
+                         tr("Cyan Warning"),
+                         message);*/
+}
+
+void Editor::handleStatus(const QString &message)
+{
+    qDebug() << "status" << message;
+    mainStatusBar->showMessage(message,
+                               6000);
+}

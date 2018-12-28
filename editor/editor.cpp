@@ -667,30 +667,7 @@ void Editor::handleNewImage(Magick::Image image)
     if (image.columns()>0 && image.rows()>0) { newTab(image); }
 }
 
-void Editor::handleError(const QString &message)
-{
-    qWarning() << "error" << message;
-    mainStatusBar->showMessage(message, 6000);
-    QMessageBox::warning(this,
-                         tr("Cyan Error"),
-                         message);
-}
 
-void Editor::handleWarning(const QString &message)
-{
-    qWarning() << "warning" << message;
-    mainStatusBar->showMessage(message);
-    /*QMessageBox::warning(this,
-                         tr("Cyan Warning"),
-                         message);*/
-}
-
-void Editor::handleStatus(const QString &message)
-{
-    qDebug() << "status" << message;
-    mainStatusBar->showMessage(message,
-                               6000);
-}
 
 void Editor::newTab(Common::Canvas canvas)
 {
@@ -1045,15 +1022,7 @@ void Editor::handleLayersUpdated()
     handleSwitchMoveTool(View::InteractiveDragMode);
 }*/
 
-void Editor::handleSetMoveMode(bool triggered)
-{
-    qDebug() << "set move mode" << triggered;
-    if (!triggered) {
-        viewMoveAct->setChecked(true);
-        return;
-    }
-    handleSwitchMoveTool(View::IteractiveMoveMode);
-}
+
 
 void Editor::handleTabActivated(QMdiSubWindow *tab)
 {
@@ -1082,83 +1051,9 @@ void Editor::updateTabTitle(View *view)
     view->setWindowTitle(title);
 }
 
-void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
-{
-    qDebug() << "handle switch view tool" << tool;
-    View::InteractiveMode mode = View::InteractiveNoMode;
-    if (tool == View::InteractiveNoMode) {
-        if (viewMoveAct->isChecked()) {
-            /*// drag
-            viewMoveAct->setChecked(false);
-            viewDragAct->setChecked(true);
-            viewDrawAct->setChecked(false);
-            mode = View::InteractiveDragMode;
-        } else if (viewDragAct->isChecked()) {*/
-            // draw
-            viewMoveAct->setChecked(false);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(true);
-            mode = View::InteractiveDrawMode;
-        } else if (viewDrawAct->isChecked()) {
-            // move
-            viewMoveAct->setChecked(true);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(false);
-            mode = View::IteractiveMoveMode;
-        }
-    } else {
-        mode = tool;
-        switch(mode) {
-        /*case View::InteractiveDragMode:
-            viewMoveAct->setChecked(false);
-            viewDragAct->setChecked(true);
-            viewDrawAct->setChecked(false);
-            break;*/
-        case View::InteractiveDrawMode:
-            viewMoveAct->setChecked(false);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(true);
-            break;
-        case View::IteractiveMoveMode:
-            viewMoveAct->setChecked(true);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(false);
-            break;
-        default:;
-        }
-    }
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setInteractiveMode(mode);
-}
 
-void Editor::handleSetDrawMode(bool triggered)
-{
-    qDebug() << "set draw mode" << triggered;
-    if (!triggered) {
-        viewDrawAct->setChecked(true);
-        return;
-    }
-    handleSwitchMoveTool(View::InteractiveDrawMode);
-}
 
-void Editor::handleBrushSize()
-{
-    qDebug() << "handle update brush size";
-    QList<QMdiSubWindow*> list = mdi->subWindowList();
-    for (int i=0;i<list.size();++i) {
-        QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
-        if (!window) { return; }
-        View *view = qobject_cast<View*>(window->widget());
-        if (!view) { return; }
-        view->setBrushStroke(brushSize->value());
-    }
-}
 
-void Editor::handleUpdateBrushSize(int stroke)
-{
-    qDebug() << "update brush size" << stroke;
-    brushSize->setValue(stroke);
-}
 
 void Editor::handleOpenImages(const QList<QUrl> urls)
 {
