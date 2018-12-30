@@ -896,12 +896,8 @@ void ColorPickerPopup::regenerateGrid()
 */
 void ColorPickerPopup::getColorFromDialog()
 {
-    bool ok;
-    QRgb rgb = QColorDialog::getRgba(lastSel.rgba(), &ok, parentWidget());
-    if (!ok)
-	return;
-
-    QColor col = QColor::fromRgba(rgb);
+    QColor col = QColorDialog::getColor(lastSel,parentWidget());
+    if (!col.isValid()) { return; }
     insertColor(col, tr("Custom"), -1);
     lastSel = col;
     emit selected(col);
