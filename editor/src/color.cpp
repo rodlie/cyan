@@ -368,6 +368,7 @@ void Editor::handleColorConvert(bool ignoreColor,
                                                               canvas.profile,
                                                               dialog->getProfile());
         }
+        canvas.profile = canvas.image.iccColorProfile();
         getCurrentView()->updateCanvas(canvas);
         updateTabTitle(getCurrentView());
     }
