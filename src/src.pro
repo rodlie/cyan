@@ -126,8 +126,7 @@ unix:!mac {
 
     target.path = $${BINDIR}
     docs1.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-    docs2.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}/Icons
-    docs3.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}/QtSolutions
+    docs2.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}/QtSolutions
     icons.path = $${ICONDIR}
     icc.path = $${ICCDIR}/$${TARGET}
     desktop.path = $${APPDIR}
@@ -142,12 +141,13 @@ unix:!mac {
         share/icons/Cyan \
         share/icons/hicolor
     docs1.files = \
+        ../README.md \
         ../docs/LICENSE.CeCILLv21 \
         ../docs/LICENSE.txt \
-        ../README.md
+        ../docs/LICENSE-FatCow.txt \
+        ../docs/LICENSE-Adwaita.txt \
+        ../docs/LICENSE-ICC.txt
     docs2.files = \
-        ../docs/LICENSE-FATCOW.txt
-    docs3.files = \
         ../docs/LGPL_EXCEPTION.txt \
         ../docs/LICENSE.LGPLv21
 
@@ -155,7 +155,6 @@ unix:!mac {
         target \
         docs1 \
         docs2 \
-        docs3 \
         icons \
         icc \
         desktop
