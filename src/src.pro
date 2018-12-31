@@ -81,6 +81,10 @@ RESOURCES += \
     share/icons.qrc \
     share/icc.qrc
 
+OTHER_FILES += \
+    common/ci.sh \
+    share/gimp.py
+
 INCLUDEPATH += \
     app \
     canvas \
@@ -120,32 +124,28 @@ QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 CONFIG += c++11
 
-# docs
+# install docs
 target.path = $${LIBDIR}
 docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
 docs.files = \
     ../docs/LGPL_EXCEPTION.txt \
     ../docs/LICENSE.CeCILLv21 \
     ../docs/LICENSE.LGPLv21 \
-    ../docs/LICENSE-ImageMagick.txt \
     ../docs/LICENSE.txt \
     ../docs/LICENSE-FATCOW.txt
 INSTALLS += docs
 
 mac {
-    # we have standarized on Qt 5.9 on all platforms, and 10.10 is the lowest supported.
-    # If you build against Qt 5.6 then you will be able to target 10.7 at the lowest.
-    # fopenmp is only needed when you build against a static IM, but
-    # Cyan on Mac is only supported through the official binaries, so that's what we hardcode:
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -fopenmp
+    CONFIG(deploy) {
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -fopenmp
+    }
     ICON = share/icons/Cyan.icns
     QMAKE_INFO_PLIST = share/Info.plist
 }
 
-# Needed by the official binary
-win32-g++: LIBS += -lpthread
+CONFIG(deploy): win32-g++: LIBS += -lpthread
 
 # add win32 icon
 win32: RC_ICONS += share/icons/cyan.ico
@@ -160,10 +160,8 @@ PKGCONFIG += lcms2
 # ImageMagick7
 MAGICK_CONFIG = Magick++-7.Q16HDRI
 !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
-PKG_CONFIG_BIN = pkg-config
-!isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
 PKGCONFIG += $${MAGICK_CONFIG}
-CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+CONFIG(deploy): LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
 
 # ffmpeg
 CONFIG(with_ffmpeg) {
