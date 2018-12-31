@@ -14,11 +14,15 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
 ## Build
 
 Supported build options:
- * ``CONFIG+=with_ffmpeg`` - enable *experimental* ffmpeg 3+ support
- * ``PREFIX=</usr/local>`` - installation folder *(currently not used)*
- * ``DOCDIR=<PREFIX/share/doc>`` - documentation folder *(currently not used)*
- * ``MANDIR=<PREFIX/share/man>`` - manual folder *(currently not used)*
- * ``LIBDIR=<PREFIX/lib>`` - library folder *(currently not used)*
+ * ``CONFIG+=with_ffmpeg`` - enable *experimental* ffmpeg support
+ * ``PREFIX = </usr/local>``
+ * ``DOCDIR = <PREFIX/share/doc>``
+ * ``MANDIR = <PREFIX/share/man>``
+ * ``LIBDIR = <PREFIX/lib>``
+ * ``BINDIR = <PREFIX/bin>``
+ * ``ICONDIR = <PREFIX/share/icons>``
+ * ``ICCDIR = <PREFIX/share/color/icc>``
+ * ``APPDIR = <PREFIX/share/applications>``
 
 Normal build:
 ```
@@ -28,10 +32,10 @@ mkdir build
 cd build
 qmake ..
 make
-./src/build/Cyan
+sudo make install
 ```
 
-Package build (currently not available):
+Package build:
 ```
 qmake PREFIX=/usr ..
 make

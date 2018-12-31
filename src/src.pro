@@ -34,6 +34,8 @@ VERSION_TYPE=alpha1
 TARGET = Cyan
 TEMPLATE = app
 QT += widgets concurrent
+CONFIG += c++11
+CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
 SOURCES += \
     app/main.cpp \
@@ -77,13 +79,12 @@ HEADERS += \
     layers/layertree.h
 CONFIG(with_ffmpeg): HEADERS += dialog/videodialog.h
 
-RESOURCES += \
-    share/icons.qrc \
-    share/icc.qrc
+CONFIG(deploy) : RESOURCES += share/icons.qrc share/icc.qrc
 
 OTHER_FILES += \
     common/ci.sh \
-    share/gimp.py
+    share/gimp.py \
+    ../docs/README.md
 
 INCLUDEPATH += \
     app \
@@ -102,38 +103,59 @@ DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
-DEFINES += CYAN_DEVEL
+!CONFIG(deploy): DEFINES += CYAN_DEVEL
 
-# force static lib on release and avoid spamming the terminal with debug
-CONFIG(release, debug|release) {
-    DEFINES += QT_NO_DEBUG_OUTPUT
-    CONFIG += staticlib
-}
-
-# unix path for installation
-isEmpty(PREFIX): PREFIX = /usr/local
-isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
-isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
-isEmpty(LIBDIR): LIBDIR = $$PREFIX/lib
-
-# win32 stuff
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
-CONFIG += c++11
+unix:!mac {
+    isEmpty(PREFIX): PREFIX = /usr/local
+    isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
+    isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
+    isEmpty(LIBDIR): LIBDIR = $$PREFIX/lib
+    isEmpty(BINDIR): BINDIR = $$PREFIX/bin
+    isEmpty(ICONDIR): ICONDIR = $$PREFIX/share/icons
+    isEmpty(ICCDIR): ICCDIR = $$PREFIX/share/color/icc
+    isEmpty(APPDIR): APPDIR = $$PREFIX/share/applications
 
-# install docs
-target.path = $${LIBDIR}
-docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
-docs.files = \
-    ../docs/LGPL_EXCEPTION.txt \
-    ../docs/LICENSE.CeCILLv21 \
-    ../docs/LICENSE.LGPLv21 \
-    ../docs/LICENSE.txt \
-    ../docs/LICENSE-FATCOW.txt
-INSTALLS += docs
+    target.path = $${BINDIR}
+    docs1.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
+    docs2.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}/Icons
+    docs3.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}/QtSolutions
+    icons.path = $${ICONDIR}
+    icc.path = $${ICCDIR}/$${TARGET}
+    desktop.path = $${APPDIR}
+
+    desktop.files = \
+        share/cyan.desktop
+    icc.files = \
+        share/icc/rgb.icc \
+        share/icc/cmyk.icc \
+        share/icc/gray.icc
+    icons.files = \
+        share/icons/Cyan \
+        share/icons/hicolor
+    docs1.files = \
+        ../docs/LICENSE.CeCILLv21 \
+        ../docs/LICENSE.txt \
+        ../README.md
+    docs2.files = \
+        ../docs/LICENSE-FATCOW.txt
+    docs3.files = \
+        ../docs/LGPL_EXCEPTION.txt \
+        ../docs/LICENSE.LGPLv21
+
+    INSTALLS += \
+        target \
+        docs1 \
+        docs2 \
+        docs3 \
+        icons \
+        icc \
+        desktop
+}
 
 mac {
     CONFIG(deploy) {
@@ -145,6 +167,7 @@ mac {
     QMAKE_INFO_PLIST = share/Info.plist
 }
 
+# deploy fix
 CONFIG(deploy): win32-g++: LIBS += -lpthread
 
 # add win32 icon
