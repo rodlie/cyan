@@ -112,8 +112,8 @@ if [ "${OS}" = "Linux" ]; then
   qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ..
   make
   #make test
-  strip -s editor/build/Cyan
-  mv editor/build/Cyan .
+  strip -s src/build/Cyan
+  mv src/build/Cyan .
 
   echo "===> Building win64 ..."
   mkdir -p ${CWD}/win64
@@ -129,8 +129,8 @@ if [ "${OS}" = "Linux" ]; then
   ${QMAKE} GIT=${COMMIT} CONFIG+=release ..
   make
   #make test
-  ${STRIP} -s editor/build/Cyan.exe
-  mv editor/build/Cyan.exe .
+  ${STRIP} -s src/build/Cyan.exe
+  mv src/build/Cyan.exe .
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
   PKG_CONFIG=${SDK}/bin/pkg-config
@@ -141,11 +141,11 @@ elif [ "${OS}" = "Darwin" ]; then
   make
   #make test
   MP=/opt/local/lib/libomp/libomp.dylib
-  cp ${MP} editor/build/Cyan.app/Contents/MacOS/
-  install_name_tool -change ${MP} @executable_path/libomp.dylib editor/build/Cyan.app/Contents/MacOS/Cyan
-  install_name_tool -id @executable_path/libomp.dylib editor/build/Cyan.app/Contents/MacOS/libomp.dylib
-  strip -u -r editor/build/Cyan.app/Contents/MacOS/*
-  mv editor/build/Cyan.app .
+  cp ${MP} src/build/Cyan.app/Contents/MacOS/
+  install_name_tool -change ${MP} @executable_path/libomp.dylib src/build/Cyan.app/Contents/MacOS/Cyan
+  install_name_tool -id @executable_path/libomp.dylib src/build/Cyan.app/Contents/MacOS/libomp.dylib
+  strip -u -r src/build/Cyan.app/Contents/MacOS/*
+  mv src/build/Cyan.app .
 fi
 
 echo "===> Creating archives ..."
@@ -164,8 +164,8 @@ if [ "${OS}" = "Linux" ]; then
   cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
   cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
   cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
-  cp ${CWD}/share/cyan.desktop Cyan-${TAG}-Linux/
-  cp -a ${CWD}/share/icons/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
+  cp ${CWD}/src/share/cyan.desktop Cyan-${TAG}-Linux/
+  cp -a ${CWD}/src/share/icons/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
   7za -mx=9 a -r Cyan-${TAG}-Windows.7z Cyan-${TAG}-Windows
   WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.7z | awk '{print $1}'`
   cp Cyan-${TAG}-Windows.7z ${DEPLOY}/

@@ -31,6 +31,64 @@
 VERSION = 2.0.0
 VERSION_TYPE=alpha1
 
+TARGET = Cyan
+TEMPLATE = app
+QT += widgets concurrent
+
+SOURCES += \
+    app/main.cpp \
+    app/editor.cpp \
+    app/about.cpp \
+    app/setup.cpp \
+    app/color.cpp \
+    app/viewtool.cpp \
+    app/messages.cpp \
+    app/layers.cpp \
+    app/tabs.cpp \
+    canvas/view.cpp \
+    canvas/layeritem.cpp \
+    canvas/tileitem.cpp \
+    common/common.cpp \
+    common/mdi.cpp \
+    colors/qtcolorpicker.cpp \
+    colors/qtcolortriangle.cpp \
+    colors/colorrgb.cpp \
+    colors/colorcmyk.cpp \
+    colors/colorhsv.cpp \
+    dialog/newmediadialog.cpp \
+    dialog/convertdialog.cpp \
+    layers/layertree.cpp
+CONFIG(with_ffmpeg): SOURCES += dialog/videodialog.cpp
+
+HEADERS += \
+    app/editor.h \
+    canvas/view.h \
+    canvas/layeritem.h \
+    canvas/tileitem.h \
+    common/common.h \
+    common/mdi.h \
+    colors/qtcolorpicker.h \
+    colors/qtcolortriangle.h \
+    colors/colorrgb.h \
+    colors/colorcmyk.h \
+    colors/colorhsv.h \
+    dialog/newmediadialog.h \
+    dialog/convertdialog.h \
+    layers/layertree.h
+CONFIG(with_ffmpeg): HEADERS += dialog/videodialog.h
+
+RESOURCES += \
+    share/icons.qrc \
+    share/icc.qrc
+
+INCLUDEPATH += \
+    app \
+    canvas \
+    common \
+    colors \
+    dialog \
+    layers
+
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
 MOC_DIR = $${DESTDIR}/.moc
@@ -60,8 +118,19 @@ QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
-# If you have an older compiler than gcc 4.8 maybe about time to upgrade!?
 CONFIG += c++11
+
+# docs
+target.path = $${LIBDIR}
+docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
+docs.files = \
+    ../docs/LGPL_EXCEPTION.txt \
+    ../docs/LICENSE.CeCILLv21 \
+    ../docs/LICENSE.LGPLv21 \
+    ../docs/LICENSE-ImageMagick.txt \
+    ../docs/LICENSE.txt \
+    ../docs/LICENSE-FATCOW.txt
+INSTALLS += docs
 
 mac {
     # we have standarized on Qt 5.9 on all platforms, and 10.10 is the lowest supported.
@@ -71,10 +140,15 @@ mac {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -fopenmp
+    ICON = share/icons/Cyan.icns
+    QMAKE_INFO_PLIST = share/Info.plist
 }
 
 # Needed by the official binary
 win32-g++: LIBS += -lpthread
+
+# add win32 icon
+win32: RC_ICONS += share/icons/cyan.ico
 
 # pkg-config
 QT_CONFIG -= no-pkg-config
