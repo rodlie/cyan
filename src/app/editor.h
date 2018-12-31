@@ -82,6 +82,7 @@ private:
     QAction *saveProjectAct;
     QAction *saveProjectAsAct;
     QAction *newLayerAct;
+    QAction *openLayerAct;
     QAction *saveLayerAct;
     QAction *blackPointAct;
     QAction *quitAct;
@@ -121,6 +122,13 @@ private:
 
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
+
+
+    QPushButton *newLayerButton;
+    QPushButton *removeLayerButton;
+    QPushButton *moveLayerUpButton;
+    QPushButton *moveLayerDownButton;
+    QPushButton *mergeLayerDownButton;
 
 signals:
 

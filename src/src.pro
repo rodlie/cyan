@@ -52,6 +52,8 @@ SOURCES += \
     canvas/tileitem.cpp \
     common/common.cpp \
     common/mdi.cpp \
+    common/colorconvert.cpp \
+    common/render.cpp \
     colors/qtcolorpicker.cpp \
     colors/qtcolortriangle.cpp \
     colors/colorrgb.cpp \
@@ -69,6 +71,8 @@ HEADERS += \
     canvas/tileitem.h \
     common/common.h \
     common/mdi.h \
+    common/colorconvert.h \
+    common/render.h \
     colors/qtcolorpicker.h \
     colors/qtcolortriangle.h \
     colors/colorrgb.h \

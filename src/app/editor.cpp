@@ -55,6 +55,8 @@
 
 #include "newmediadialog.h"
 #include "convertdialog.h"
+#include "colorconvert.h"
+#include "render.h"
 
 #ifdef WITH_FFMPEG
 #include "videodialog.h"
@@ -78,6 +80,7 @@ Editor::Editor(QWidget *parent)
     , saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
     , newLayerAct(nullptr)
+    , openLayerAct(nullptr)
     , saveLayerAct(nullptr)
     , quitAct(nullptr)
     , viewMoveAct(nullptr)
@@ -110,6 +113,11 @@ Editor::Editor(QWidget *parent)
     , brushDock(nullptr)
     , colorTriangle(nullptr)
     , colorPicker(nullptr)
+    , newLayerButton(nullptr)
+    , removeLayerButton(nullptr)
+    , moveLayerUpButton(nullptr)
+    , moveLayerDownButton(nullptr)
+    , mergeLayerDownButton(nullptr)
 {
     setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
@@ -356,7 +364,7 @@ void Editor::readImage(Magick::Blob blob,
                 Magick::Image input;
                 input.read(dialog->getProfile().toStdString());
                 input.write(&profile);
-                image = Common::convertColorspace(image,
+                image = ColorConvert::convertColorspace(image,
                                                   Magick::Blob(),
                                                   profile);
                 if (image.columns()>0 &&
@@ -391,7 +399,7 @@ void Editor::writeImage(const QString &filename)
 {
     if (filename.isEmpty() || !getCurrentView()) { return; }
 
-    Magick::Image image = common.renderCanvasToImage(getCurrentView()->getCanvasProject());
+    Magick::Image image = Render::renderCanvasToImage(getCurrentView()->getCanvasProject());
     // TODO: add options for file format
     try {
         QFileInfo info(filename);

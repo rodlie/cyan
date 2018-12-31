@@ -149,10 +149,6 @@ public:
     static QMap<Magick::CompositeOperator, QString> compositeModes();
     static Magick::CompositeOperator compositeModeFromString(const QString &name);
 
-    static Magick::Image compLayers(Magick::Image canvas,
-                                    QMap<int, Common::Layer> layers,
-                                    Magick::Geometry crop = Magick::Geometry());
-
     static const QString canvasWindowTitle(Magick::Image image);
 
     static int getDiskResource();
@@ -165,15 +161,8 @@ public:
 
     static bool writeCanvas(Common::Canvas canvas,
                             const QString &filename,
-                            Magick::CompressionType compress = Magick::LZMACompression);
+                            Magick::CompressionType compress = Magick::NoCompression);
     static Common::Canvas readCanvas(const QString &filename);
-
-    static Magick::Image renderCanvasToImage(Common::Canvas canvas);
-    static bool renderCanvasToFile(Common::Canvas canvas,
-                            const QString &filename,
-                            Magick::CompressionType compress = Magick::NoCompression,
-                            QMap<QString, QString> attr = QMap<QString, QString>(),
-                            QMap<QString, QString> arti = QMap<QString, QString>());
 
     static bool isValidCanvas(const QString &filename);
     static bool isValidImage(const QString &filename);
@@ -181,27 +170,6 @@ public:
     static int hasLayers(const QString &filename);
 
     static Common::Canvas readImage(const QString &filename);
-
-    static Magick::Image convertColorspace(Magick::Image image,
-                                           Magick::Blob input,
-                                           Magick::Blob output,
-                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
-                                           bool blackpoint = true);
-    static Magick::Image convertColorspace(Magick::Image image,
-                                           const QString &input,
-                                           const QString &output,
-                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
-                                           bool blackpoint = true);
-    static Magick::Image convertColorspace(Magick::Image image,
-                                           Magick::Blob input,
-                                           const QString &output,
-                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
-                                           bool blackpoint = true);
-    static Magick::Image convertColorspace(Magick::Image image,
-                                           const QString &input,
-                                           Magick::Blob output,
-                                           Magick::RenderingIntent intent = Magick::PerceptualIntent,
-                                           bool blackpoint = true);
 
     static QStringList getColorProfilesPath();
     static QMap<QString, QString> getColorProfiles(Magick::ColorspaceType colorspace);
@@ -241,22 +209,6 @@ public:
     static const QString humanFileSize(float num,
                                        bool mp = false,
                                        bool are = false);
-
-
-    /*void populateColorProfileMenu(QMenu *menu,
-                                  Magick::ColorspaceType colorspace);
-    void setDefaultColorProfileFromFilename(QMenu *menu,
-                                            const QString &filename);
-    void setDefaultColorProfileFromTitle(QMenu *menu,
-                                         const QString &title);
-    Magick::Blob selectedDefaultColorProfileData(QMenu *menu);
-
-    const QString selectedDefaultColorProfile(QMenu *menu);
-
-signals:
-    void errorMessage(const QString &message);
-    void warningMessage(const QString &message);*/
-
 
 #ifdef WITH_FFMPEG
     static QByteArray getEmbeddedCoverArt(const QString &filename);

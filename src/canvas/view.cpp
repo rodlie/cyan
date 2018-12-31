@@ -43,6 +43,7 @@
 #include <QTimer>
 
 #include "common.h"
+#include "render.h"
 
 View::View(QWidget* parent, bool setup) :
     QGraphicsView(parent)
@@ -1059,7 +1060,7 @@ void View::renderTile(int tile, Magick::Image canvas, QMap<int, Common::Layer> l
     if (crop.width()==0 || tile==-1 || layers.size()==0 || canvas.columns()==0) { return; }
 
     // comp tile and write pixmap
-    Magick::Image tmp = Common::compLayers(canvas, layers, crop);
+    Magick::Image tmp = Render::compLayers(canvas, layers, crop);
     tmp.quiet(true);
     tmp.magick("BMP");
     Magick::Blob preview;

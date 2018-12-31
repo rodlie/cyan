@@ -429,7 +429,23 @@ void Editor::setupImageLayers()
     layersDock = new QDockWidget(this);
     layersDock->setObjectName(QString("layersDock"));
     layersDock->setWindowTitle(tr("Layers"));
-   // layersDock->setFeatures(QDockWidget::DockWidgetMovable/*|QDockWidget::DockWidgetClosable*/);
+
+    openLayerAct = new QAction(this);
+    newLayerButton = new QPushButton(this);
+    removeLayerButton = new QPushButton(this);
+    moveLayerUpButton = new QPushButton(this);
+    moveLayerDownButton = new QPushButton(this);
+    mergeLayerDownButton = new QPushButton(this);
+
+    QWidget *layerButtonsWidget = new QWidget(this);
+    QHBoxLayout *layerButtonsLayout = new QHBoxLayout(layerButtonsWidget);
+    layerButtonsLayout->setContentsMargins(0, 0, 0, 0);
+
+    layerButtonsLayout->addWidget(newLayerButton);
+    layerButtonsLayout->addWidget(removeLayerButton);
+    layerButtonsLayout->addWidget(moveLayerDownButton);
+    layerButtonsLayout->addWidget(moveLayerUpButton);
+    layerButtonsLayout->addWidget(mergeLayerDownButton);
 
     QWidget *layersContainer = new QWidget(this);
     QVBoxLayout *layersContainerLayout = new QVBoxLayout(layersContainer);
@@ -438,6 +454,7 @@ void Editor::setupImageLayers()
     layersContainerLayout->addWidget(layersComp);
     layersContainerLayout->addWidget(layersOpacity);
     layersContainerLayout->addWidget(layersTree);
+    layersContainerLayout->addWidget(layerButtonsWidget);
     layersDock->setWidget(layersContainer);
 
     addDockWidget(Qt::LeftDockWidgetArea, layersDock);

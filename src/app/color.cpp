@@ -37,6 +37,7 @@
 #include <QApplication>
 
 #include "convertdialog.h"
+#include "colorconvert.h"
 
 void Editor::populateColorProfileMenu(QMenu *menu,
                                       Magick::ColorspaceType colorspace)
@@ -360,11 +361,11 @@ void Editor::handleColorConvert(bool ignoreColor,
     {
         qDebug() << "CONVERT USING" << dialog->getProfile();
         Common::Canvas canvas = getCurrentView()->getCanvasProject();
-        canvas.image = Common::convertColorspace(canvas.image,
+        canvas.image = ColorConvert::convertColorspace(canvas.image,
                                                  canvas.profile,
                                                  dialog->getProfile());
         for (int i=0;i<canvas.layers.size();++i) {
-            canvas.layers[i].image= Common::convertColorspace(canvas.layers[i].image,
+            canvas.layers[i].image= ColorConvert::convertColorspace(canvas.layers[i].image,
                                                               canvas.profile,
                                                               dialog->getProfile());
         }

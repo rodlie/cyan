@@ -31,6 +31,7 @@
 */
 
 #include "editor.h"
+#include "colorconvert.h"
 
 void Editor::handleLayerCompChanged(const QString &comp)
 {
@@ -244,12 +245,12 @@ void Editor::addLayerToView(Magick::Image image,
                 defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
             }
             qDebug() << "has default profile?" << defPro;
-            image = Common::convertColorspace(image,
+            image = ColorConvert::convertColorspace(image,
                                               Magick::Blob(),
                                               defPro);
         }
         qDebug() << "convert layer to canvas color profile";
-        image = Common::convertColorspace(image,
+        image = ColorConvert::convertColorspace(image,
                                           image.iccColorProfile(),
                                           view->getCanvasProject().profile);
         view->addLayer(image);
