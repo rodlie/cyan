@@ -33,6 +33,7 @@
 #include "render.h"
 
 #include <QDebug>
+#include <QFile>
 
 Render::Render(QObject *parent) : QObject (parent)
 {

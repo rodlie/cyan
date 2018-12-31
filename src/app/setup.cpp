@@ -34,6 +34,7 @@
 #include <QStyleFactory>
 #include <QApplication>
 #include <QVBoxLayout>
+#include <QDir>
 
 #include "colorrgb.h"
 #include "colorcmyk.h"
@@ -44,9 +45,27 @@ void Editor::setupStyle()
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
 
-    QIcon::setThemeName("Cyan");
-    setWindowIcon(QIcon::fromTheme("cyan"));
+    // set icon theme path(s)
+    QStringList iconsPath = QIcon::themeSearchPaths();
+    QString iconsHomeLocal = QString("%1/.local/share/icons").arg(QDir::homePath());
+    QString iconsHome = QString("%1/.icons").arg(QDir::homePath());
+    if (QFile::exists(iconsHomeLocal) &&
+        !iconsPath.contains(iconsHomeLocal)) { iconsPath.prepend(iconsHomeLocal); }
+    if (QFile::exists(iconsHome) &&
+        !iconsPath.contains(iconsHome)) { iconsPath.prepend(iconsHome); }
+    iconsPath << QString("%1/../share/icons").arg(qApp->applicationDirPath());
+    iconsPath << QString("%1/icons").arg(qApp->applicationDirPath());
+    QIcon::setThemeSearchPaths(iconsPath);
+    qDebug() << "using icon theme search path" << QIcon::themeSearchPaths();
 
+    // set icon theme
+    if (QIcon::themeName().isEmpty() ||
+        QIcon::themeName() == QString("hicolor"))
+    {
+        QIcon::setThemeName("Cyan");
+    }
+
+    // set colors
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(53,53,53));
     palette.setColor(QPalette::WindowText, Qt::white);
@@ -65,6 +84,7 @@ void Editor::setupStyle()
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
 
+    // stylesheet
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
                           /*"QMainWindow, QMenu, QDockWidget, QMenuBar, QDialog,"
                           "QPushButton, QSpinBox, QDoubleSpinBox, QLineEdit, QRadioButton"
@@ -501,6 +521,8 @@ void Editor::setupConnections()
 
 void Editor::setupIcons()
 {
+    setWindowIcon(QIcon::fromTheme("cyan"));
+
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
     newButton->setIcon(QIcon::fromTheme("document-new"));
