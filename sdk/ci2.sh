@@ -93,7 +93,7 @@ if [ "${OS}" = "Linux" ]; then
   echo "==> Building regular CI ..."
   mkdir -p $CWD/ci1
   cd $CWD/ci1
-  qmake PREFIX=/usr CONFIG+=no_ffmpeg ..
+  qmake PREFIX=/usr ..
   make
   #make test
   make INSTALL_ROOT=`pwd`/pkg install

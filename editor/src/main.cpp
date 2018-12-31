@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
     Magick::InitializeMagick(nullptr);
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
     av_register_all();
     avdevice_register_all();
     avcodec_register_all();

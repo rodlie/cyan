@@ -92,9 +92,11 @@ PKGCONFIG += $${MAGICK_CONFIG}
 CONFIG(staticlib): LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 
 # ffmpeg
-CONFIG(no_ffmpeg): DEFINES += NO_FFMPEG
-!CONFIG(no_ffmpeg): PKGCONFIG += libavdevice \
-                                 libswscale \
-                                 libavformat \
-                                 libavcodec \
-                                 libavutil
+CONFIG(with_ffmpeg) {
+    DEFINES += WITH_FFMPEG
+    PKGCONFIG += libavdevice \
+                 libswscale \
+                 libavformat \
+                 libavcodec \
+                 libavutil
+}

@@ -56,7 +56,7 @@
 #include "newmediadialog.h"
 #include "convertdialog.h"
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
 #include "videodialog.h"
 #endif
 
@@ -451,7 +451,7 @@ void Editor::writeLayer(const QString &filename, int id)
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
 void Editor::readAudio(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
@@ -618,7 +618,7 @@ void Editor::loadImageDialog()
 
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(filename);
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
     if (type.name().startsWith(QString("audio"))) {
         readAudio(filename);
     } else if(type.name().startsWith(QString("video"))) {
@@ -781,7 +781,7 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
         QString filename = urls.at(i).toLocalFile();
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(filename);
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
         if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
             readAudio(filename);
         } else if (type.name().startsWith(QString("video"))) { // get frame from video
@@ -823,7 +823,7 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
         Magick::Image image;
 
         try {
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
             if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
                 QByteArray coverart = common.getEmbeddedCoverArt(filename);
                 if (coverart.size()==0) { continue; }

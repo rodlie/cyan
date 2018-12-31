@@ -26,7 +26,7 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
 ## Build
 
 Supported build options:
- * ``CONFIG+=no_ffmpeg`` - disable ffmpeg support
+ * ``CONFIG+=with_ffmpeg`` - enable ffmpeg support
  * ``PREFIX=</usr/local>`` - installation folder
  * ``DOCDIR=<PREFIX/share/doc>`` - documentation folder
  * ``MANDIR=<PREFIX/share/man>`` - manual folder *(currently not used)*

@@ -229,6 +229,7 @@ void Editor::setupWidgets()
 {
     mdi = new Mdi(this);
     mdi->setBackground(QBrush(QColor(20, 20, 20)));
+    //mdi->setViewMode(QMdiArea::TabbedView);
 
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));

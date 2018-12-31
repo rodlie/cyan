@@ -48,7 +48,7 @@ SOURCES += \
     src/convertdialog.cpp \
     src/layertree.cpp
 
-!CONFIG(no_ffmpeg): SOURCES += src/videodialog.cpp
+CONFIG(with_ffmpeg): SOURCES += src/videodialog.cpp
 
 HEADERS += \
     src/view.h \
@@ -65,7 +65,7 @@ HEADERS += \
     src/convertdialog.h \
     src/layertree.h
 
-!CONFIG(no_ffmpeg): HEADERS += src/videodialog.h
+CONFIG(with_ffmpeg): HEADERS += src/videodialog.h
 
 INCLUDEPATH += src
 

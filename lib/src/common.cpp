@@ -923,11 +923,13 @@ const QString Common::getProfileTag(cmsHPROFILE profile,
 
 const QString Common::supportedWriteFormats()
 {
-    // TODO
     QString result;
     if (supportsJpeg()) {
         result.append(QString("*.jpeg "));
         result.append(QString("*.jpg "));
+    }
+    if (supportsJP2()) {
+        result.append(QString("*.jp2 "));
     }
     if (supportsPng()) {
         result.append(QString("*.png "));
@@ -936,7 +938,12 @@ const QString Common::supportedWriteFormats()
         result.append(QString("*.tiff "));
         result.append(QString("*.tif "));
     }
+    if (supportsOpenExr()) {
+        result.append(QString("*.exr "));
+    }
     result.append(QString("*.bmp "));
+    result.append(QString("*.psd "));
+
     return result;
 }
 
@@ -1161,7 +1168,7 @@ const QString Common::humanFileSize(float num, bool mp, bool are)
     return QString().setNum(num,'f',2)+" "+unit;
 }
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
 QByteArray Common::getEmbeddedCoverArt(const QString &filename)
 {
     QByteArray result;

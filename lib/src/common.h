@@ -42,7 +42,7 @@
 #include <lcms2.h>
 #include <Magick++.h>
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
 extern "C" {
 #include <libavutil/avutil.h>
 #include <libavutil/imgutils.h>
@@ -258,7 +258,7 @@ signals:
     void warningMessage(const QString &message);*/
 
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
     static QByteArray getEmbeddedCoverArt(const QString &filename);
     static int getVideoMaxFrames(const QString &filename);
     static Magick::Image getVideoFrame(const QString &filename,

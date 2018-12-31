@@ -233,7 +233,7 @@ private slots:
     void writeImage(const QString &filename);
     void writeLayer(const QString &filename, int id);
 
-#ifndef NO_FFMPEG
+#ifdef WITH_FFMPEG
     void readAudio(const QString &filename);
     void readVideo(const QString &filename);
     void readVideo(const QString &filename, int frame);
