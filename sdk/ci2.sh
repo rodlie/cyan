@@ -64,7 +64,7 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
     echo "Extracting win64 sdk ..."
     mkdir -p ${MXE}
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-2.x-20181230-win64-sdk.tar.xz/download && mv download download.tar.xz
+    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
     #echo "Update win64 sdk ..."
