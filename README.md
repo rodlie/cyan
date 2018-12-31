@@ -15,29 +15,38 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
 
 Supported build options:
  * ``CONFIG+=with_ffmpeg`` - enable *experimental* ffmpeg support
- * ``PREFIX = </usr/local>``
- * ``DOCDIR = <PREFIX/share/doc>``
- * ``MANDIR = <PREFIX/share/man>``
- * ``LIBDIR = <PREFIX/lib>``
- * ``BINDIR = <PREFIX/bin>``
- * ``ICONDIR = <PREFIX/share/icons>``
- * ``ICCDIR = <PREFIX/share/color/icc>``
- * ``APPDIR = <PREFIX/share/applications>``
+ * ``PREFIX = </usr/local>`` - install prefix
+ * ``DOCDIR = <PREFIX/share/doc>`` - documentation install path
+ * ``MANDIR = <PREFIX/share/man>`` - manual install path
+ * ``LIBDIR = <PREFIX/lib>`` - library install path
+ * ``BINDIR = <PREFIX/bin>`` - executable install path
+ * ``ICONDIR = <PREFIX/share/icons>`` - icon themes path
+ * ``ICCDIR = <PREFIX/share/color/icc>`` - ICC color profile path
+ * ``APPDIR = <PREFIX/share/applications>`` - .desktop (applications) path
 
 Normal build:
 ```
-git clone https://github.com/rodlie/cyan
-cd cyan
 mkdir build
 cd build
 qmake ..
 make
+```
+
+Install:
+
+```
 sudo make install
+```
+
+Or run from the build folder:
+```
+make INSTALL_ROOT=`pwd`/pkg install
+./pkg/usr/local/bin/Cyan
 ```
 
 Package build:
 ```
-qmake PREFIX=/usr ..
+qmake PREFIX=/usr
 make
 make INSTALL_ROOT=<pkg_path> install
 ```
