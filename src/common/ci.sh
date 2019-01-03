@@ -73,7 +73,7 @@ if [ "${SETUP}" = 1 ]; then
     #tar xf download.tar.xz -C ${MXE}/
     #rm -f download.tar.xz
     echo "Extracting linux64 sdk ..."
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226-linux64.tar.xz/download && mv download download.tar.xz
+    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C /opt
     rm -f download.tar.xz
   elif [ "${OS}" = "Darwin" ]; then
@@ -93,18 +93,18 @@ if [ "${OS}" = "Linux" ]; then
   echo "==> Building regular CI ..."
   mkdir -p $CWD/ci1
   cd $CWD/ci1
-  qmake PREFIX=/usr CONFIG+=deploy ..
+  qmake PREFIX=/usr ..
   make
   #make test
   make INSTALL_ROOT=`pwd`/pkg install
   tree pkg
-  mkdir -p $CWD/ci2
-  cd $CWD/ci2
-  qmake PREFIX=/usr CONFIG+=deploy CONFIG+=with_ffmpeg ..
-  make
-  #make test
-  make INSTALL_ROOT=`pwd`/pkg install
-  tree pkg
+#  mkdir -p $CWD/ci2
+#  cd $CWD/ci2
+#  qmake PREFIX=/usr CONFIG+=deploy CONFIG+=with_ffmpeg ..
+#  make
+#  #make test
+#  make INSTALL_ROOT=`pwd`/pkg install
+#  tree pkg
 
   cd ${CWD}
   echo "===> Building for Linux64 ..."
