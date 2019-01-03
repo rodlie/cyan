@@ -57,11 +57,11 @@ if [ "${SETUP}" = 1 ]; then
     echo "Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
-    sudo apt-get install cmake tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev
-    sudo apt-get install scons autoconf automake autopoint bash bison bzip2 gettext git gperf intltool
-    sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils wine
-    sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
-    sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
+    sudo apt-get install cmake pkg-config p7zip-full unzip xz-utils tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev wine
+    #sudo apt-get install scons autoconf automake autopoint bash bison bzip2 gettext git gperf intltool
+    #sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils
+    #sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
+    #sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
     echo "Extracting win64 sdk ..."
     mkdir -p ${MXE}
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz

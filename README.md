@@ -8,13 +8,13 @@ Cyan is an open source cross-platform image editor. Originally designed for prep
 
  * QtWidgets 5.6+
  * QtConcurrent 5.6+
- * lcms 2.x
+ * Little CMS 2.x
  * ImageMagick 7.0.8-20+
 
 ## Build
 
 Supported build options:
- * ``CONFIG+=with_ffmpeg`` - enable *experimental* ffmpeg support
+ * ``CONFIG += with_ffmpeg`` - enable *experimental* ffmpeg support
  * ``PREFIX = </usr/local>`` - install prefix
  * ``DOCDIR = <PREFIX/share/doc>`` - documentation install path
  * ``MANDIR = <PREFIX/share/man>`` - manual install path
@@ -23,11 +23,11 @@ Supported build options:
  * ``ICONDIR = <PREFIX/share/icons>`` - icon themes path
  * ``ICCDIR = <PREFIX/share/color/icc>`` - ICC color profile path
  * ``APPDIR = <PREFIX/share/applications>`` - .desktop (applications) path
+ * ``MAGICK = <Magick++-7.Q16HDRI>`` - ImageMagick pkg-config .pc file
 
 Normal build:
 ```
-mkdir build
-cd build
+mkdir build && cd build
 qmake ..
 make
 ```
