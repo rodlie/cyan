@@ -90,14 +90,14 @@ if [ "${OS}" = "Linux" ]; then
   export PATH="${SDK}/bin:/usr/bin:/bin"
   export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
 
-  echo "==> Building regular CI ..."
-  mkdir -p $CWD/ci1
-  cd $CWD/ci1
-  qmake PREFIX=/usr ..
-  make
-  #make test
-  make INSTALL_ROOT=`pwd`/pkg install
-  tree pkg
+#  echo "==> Building regular CI ..."
+#  mkdir -p $CWD/ci1
+#  cd $CWD/ci1
+#  qmake PREFIX=/usr ..
+#  make
+#  #make test
+#  make INSTALL_ROOT=`pwd`/pkg install
+#  tree pkg
 #  mkdir -p $CWD/ci2
 #  cd $CWD/ci2
 #  qmake PREFIX=/usr CONFIG+=deploy CONFIG+=with_ffmpeg ..
