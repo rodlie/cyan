@@ -50,28 +50,19 @@ fi
 
 if [ "${SETUP}" = 1 ]; then
   echo "Extracting sdk legal ..."
-  wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-legal.tar.xz/download && mv download download.tar.xz
+  wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-2.x-legal.tar.gz/download && mv download download.tar.xz
   tar xf download.tar.xz -C /opt
   rm -f download.tar.xz
   if [ "${OS}" = "Linux" ]; then
     echo "Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
-    sudo apt-get install cmake pkg-config p7zip-full unzip xz-utils tree qtbase5-dev libpng-dev libjpeg-dev liblcms2-dev libtiff-dev libbz2-dev zlib1g-dev liblzma-dev wine
-    #sudo apt-get install scons autoconf automake autopoint bash bison bzip2 gettext git gperf intltool
-    #sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils
-    #sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
-    #sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
+    sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree wine rpm dpkg
     echo "Extracting win64 sdk ..."
     mkdir -p ${MXE}
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
-    #echo "Update win64 sdk ..."
-    #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226_3-win64-static.tar.xz/download && mv download download.tar.xz
-    #rm -rf ${MXE}/usr/x86_64-w64-mingw32.static
-    #tar xf download.tar.xz -C ${MXE}/
-    #rm -f download.tar.xz
     echo "Extracting linux64 sdk ..."
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C /opt
@@ -157,11 +148,11 @@ if [ "${TRAVIS_TAG}" != "" ]; then
 fi
 
 if [ "${OS}" = "Linux" ]; then
-  mkdir -p Cyan-${TAG}-Windows/third-party Cyan-${TAG}-Linux/third-party
-  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Windows/
-  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Linux/
-  cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
-  cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
+  mkdir -p Cyan-${TAG}-Windows/legal Cyan-${TAG}-Linux/legal
+  #cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Windows/
+  #cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Linux/
+  #cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
+  #cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
   cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
   cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
   cp ${CWD}/src/share/cyan.desktop Cyan-${TAG}-Linux/
@@ -177,9 +168,9 @@ if [ "${OS}" = "Linux" ]; then
   LIN_CHECKSUM=`sha256sum Cyan-${TAG}-Linux.txz | awk '{print $1}'`
   echo "===> Linux checksum ${LIN_CHECKSUM}"
 elif [ "${OS}" = "Darwin" ]; then
-  mkdir -p Cyan-${TAG}-Mac/third-party
-  cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Mac/
-  cp -a /opt/legal/Mac/* Cyan-${TAG}-Mac/third-party/
+  mkdir -p Cyan-${TAG}-Mac/legal
+  #cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Mac/
+  #cp -a /opt/legal/Mac/* Cyan-${TAG}-Mac/third-party/
   cp -a ${CWD}/mac64/Cyan.app Cyan-${TAG}-Mac/
   hdiutil create -volname "Cyan ${TAG}" -srcfolder Cyan-${TAG}-Mac -ov -format UDBZ Cyan-${TAG}-Mac.dmg
   cp Cyan-${TAG}-Mac.dmg ${DEPLOY}/
@@ -195,14 +186,14 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]
       echo "===> Windows snapshot ${UPLOAD_WIN}"
       echo "===> Linux snapshot ${UPLOAD_LIN}"
       if [ "${UPLOAD_WIN}" != "" ] && [ "${UPLOAD_LIN}" != "" ]; then
-          COMMENT="**CI for this pull request:** Windows build is available at ${UPLOAD_WIN} with SHA256 checksum ${WIN_CHECKSUM}. Linux build is available at ${UPLOAD_LIN} with SHA256 checksum ${LIN_CHECKSUM}."
+          COMMENT="**CI:** Windows build is available at ${UPLOAD_WIN} with SHA256 checksum ${WIN_CHECKSUM}. Linux build is available at ${UPLOAD_LIN} with SHA256 checksum ${LIN_CHECKSUM}."
           curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       fi
     elif [ "${OS}" = "Darwin" ]; then
       UPLOAD_MAC=`curl --upload-file ./Cyan-${TAG}-Mac.dmg https://transfer.sh/Cyan-${TAG}-Mac.dmg`
       echo "===> Mac snapshot ${UPLOAD_MAC}"
       if [ "${UPLOAD_MAC}" != "" ]; then
-        COMMENT="**CI for this pull request:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
+        COMMENT="**CI:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
         curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
       fi
     fi
