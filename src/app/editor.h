@@ -191,6 +191,7 @@ private slots:
     void handleLayerLabel(int id, const QString &label);
     void addLayerToView(Magick::Image image,
                         View *view);
+    void handleRemoveLayer();
 
     // tabs
     void newTab(Common::Canvas canvas);

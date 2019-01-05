@@ -569,7 +569,7 @@ void View::removeLayer(int layer)
         LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
         if (!item) { continue; }
         if (item->getID()==layer) {
-            // remove layer graphics item
+            qDebug() << "remove layer graphics item";
             _scene->removeItem(item);
             item->deleteLater();
             break;
@@ -579,6 +579,7 @@ void View::removeLayer(int layer)
     emit updatedLayers();
     emit statusMessage(tr("Removed layer %1 from canvas")
                        .arg(layer));
+    refreshTiles();
 }
 
 void View::setupCanvas(int width,

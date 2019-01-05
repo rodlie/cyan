@@ -452,7 +452,9 @@ void Editor::setupImageLayers()
 
     openLayerAct = new QAction(this);
     newLayerButton = new QPushButton(this);
+    newLayerButton->setToolTip(tr("New layer"));
     removeLayerButton = new QPushButton(this);
+    removeLayerButton->setToolTip(tr("Remove layer"));
     moveLayerUpButton = new QPushButton(this);
     moveLayerDownButton = new QPushButton(this);
     mergeLayerDownButton = new QPushButton(this);
@@ -487,7 +489,13 @@ void Editor::setupConnections()
     //connect(&common, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
 
     connect(newImageAct, SIGNAL(triggered(bool)), this, SLOT(newImageDialog()));
+
+
     connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
+
+    connect(newLayerButton, SIGNAL(released()), this, SLOT(newLayerDialog()));
+    connect(removeLayerButton, SIGNAL(released()), this, SLOT(handleRemoveLayer()));
+
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
@@ -525,7 +533,10 @@ void Editor::setupIcons()
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newLayerButton->setIcon(QIcon::fromTheme("document-new"));
     newButton->setIcon(QIcon::fromTheme("document-new"));
+
+    removeLayerButton->setIcon(QIcon::fromTheme("edit-delete"));
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));

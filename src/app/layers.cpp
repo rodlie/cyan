@@ -33,6 +33,8 @@
 #include "editor.h"
 #include "colorconvert.h"
 
+#include <QMessageBox>
+
 void Editor::handleLayerCompChanged(const QString &comp)
 {
     if (comp.isEmpty()) { return; }
@@ -257,4 +259,18 @@ void Editor::addLayerToView(Magick::Image image,
     }
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
+}
+
+void Editor::handleRemoveLayer()
+{
+    if (!getCurrentView()) { return; }
+    LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    if (!item) { return; }
+    int id = item->getLayerID();
+    int ret = QMessageBox::question(this,
+                                    tr("Remove layer"),
+                                    tr("Are you sure you want to remove layer %1?")
+                                    .arg(id));
+    if (ret != QMessageBox::Yes) { return; }
+    getCurrentView()->removeLayer(id);
 }
