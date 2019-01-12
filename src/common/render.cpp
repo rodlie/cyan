@@ -80,6 +80,8 @@ Magick::Image Render::compLayers(Magick::Image canvas,
         // copy layer
         Magick::Image layer(layers[id].image);
 
+        if (!layers[id].visible || !layer.isValid()) { continue; } //skip
+
         // get layer offset
         int offsetX = layers[id].pos.width();
         int offsetY = layers[id].pos.height();
