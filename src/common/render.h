@@ -36,6 +36,7 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
+#include <QPair>
 
 #include <Magick++.h>
 
@@ -47,6 +48,15 @@ class Render: public QObject
     Q_OBJECT
 
 public:
+
+    struct QPairSortFirst
+    {
+        template<typename T1, typename T2>
+        bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
+        {
+            return a.first < b.first;
+        }
+    };
 
     Render(QObject *parent = nullptr);
 

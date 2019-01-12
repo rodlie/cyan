@@ -153,52 +153,60 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab)
     }
 }
 
-void LayerTree::populateTree(View *image)
+void LayerTree::populateTree(View *view)
 {
-    if (!image) { return; }
+    if (!view) { return; }
     clear();
-    setCanvasID(image->getCanvasID());
-    for (int i=0;i<image->getLayerCount();++i) {
+    setCanvasID(view->getCanvasID());
+    QMapIterator<int, Common::Layer> layers(view->getCanvasProject().layers);
+    while (layers.hasNext()) {
+        layers.next();
         LayerTreeItem *item = new LayerTreeItem(this);
         blockSignals(true);
-        Magick::Image thumb(Magick::Geometry(32, 32), Magick::ColorRGB(0, 0, 0));
+        Magick::Image thumb(Magick::Geometry(32, 32),
+                            Magick::ColorRGB(0, 0, 0));
         thumb.depth(8);
         thumb.alpha(false);
-        Magick::Image layer = image->getLayer(i).image;
-        layer.depth(8);
-        layer.alpha(false);
-        layer.scale(Magick::Geometry(32, 32));
-        size_t offX = 0;
-        size_t offY = 0;
-        if (layer.columns()<thumb.columns()) {
-            offX = (thumb.columns()-layer.columns())/2;
+
+        try {
+            Magick::Image layer(layers.value().image);
+            layer.depth(8);
+            layer.alpha(false);
+            layer.scale(Magick::Geometry(32, 32));
+            size_t offX = 0;
+            size_t offY = 0;
+            if (layer.columns()<thumb.columns()) {
+                offX = (thumb.columns()-layer.columns())/2;
+            }
+            if (layer.rows()<thumb.rows()) {
+                offY = (thumb.rows()-layer.rows())/2;
+            }
+            thumb.composite(layer,
+                            offX,
+                            offY,
+                            Magick::OverCompositeOp);
         }
-        if (layer.rows()<thumb.rows()) {
-            offY = (thumb.rows()-layer.rows())/2;
-        }
-        thumb.composite(layer, offX, offY, Magick::OverCompositeOp);
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
         thumb.magick("BMP");
         Magick::Blob pix;
         thumb.write(&pix);
         QPixmap pixmap = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
                                                                                       static_cast<int>(pix.length())));
         item->setIconSize(QSize(32, 32));
-        item->setIcon(2,QIcon(pixmap));
+        item->setIcon(2, QIcon(pixmap));
 
-        item->setText(0,
-                      QString::number(i));
-        item->setText(2,
-                      image->getLayerName(i));
+        item->setText(0, QString::number(layers.value().order));
+        item->setText(2, layers.value().label);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
-        item->setLayerID(i);
-        item->setLayerName(image->getLayerName(i));
-        item->setComposite(image->getLayerComposite(i));
-        item->setOpacity(image->getLayerOpacity(i));
-        item->setVisibility(image->getLayerVisibility(i));
-        item->setCheckState(1,
-                            image->getLayerVisibility(i)?Qt::Checked:Qt::Unchecked);
+        item->setLayerID(layers.key());
+        item->setLayerName(layers.value().label);
+        item->setComposite(layers.value().composite);
+        item->setOpacity(layers.value().opacity);
+        item->setVisibility(layers.value().visible);
+        item->setCheckState(1, layers.value().visible?Qt::Checked:Qt::Unchecked);
         addTopLevelItem(item);
-        if (i==0) { setCurrentItem(item); }
         blockSignals(false);
     }
     sortByColumn(0);

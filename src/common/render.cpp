@@ -46,7 +46,7 @@ Magick::Image Render::compLayers(Magick::Image canvas,
 {
     // copy canvas to comp
     Magick::Image comp(canvas);
-    comp.quiet(true);
+    comp.quiet(true); // ignore warnings
 
     // crop comp
     if (crop.width()>0) {
@@ -54,25 +54,35 @@ Magick::Image Render::compLayers(Magick::Image canvas,
             comp.crop(crop);
             comp.repage();
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Error &error_) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }
     }
 
-    QMapIterator<int, Common::Layer> i(layers);
-    while (i.hasNext()) {
-        i.next();
+    // re-order layers for rendering
+    QList<QPair<int, int> > order;
+    QMapIterator<int, Common::Layer> layer(layers);
+    while (layer.hasNext()) {
+        layer.next();
+        QPair<int, int> pair(layer.value().order,
+                             layer.key());
+        order.append(pair);
+    }
+    std::sort(order.begin(),
+              order.end(),
+              QPairSortFirst());
+    qDebug() << "LAYERS?" << layers.size();
+    qDebug() << "COMP ORDER:" << order;
 
-        // layer
-        Magick::Image layer(i.value().image);
+    for (int i=0;i<order.size();++i) {
+        // get layer id
+        int id = order.at(i).second;
 
-        // skip if layer not visible or broken
-        if (!i.value().visible || !layer.isValid()) { continue; }
-
-        layer.quiet(true);
+        // copy layer
+        Magick::Image layer(layers[id].image);
 
         // get layer offset
-        int offsetX = i.value().pos.width();
-        int offsetY = i.value().pos.height();
+        int offsetX = layers[id].pos.width();
+        int offsetY = layers[id].pos.height();
 
         // crop
         if (crop.width()>0) {
@@ -94,7 +104,7 @@ Magick::Image Render::compLayers(Magick::Image canvas,
                 ignore = true;
             }
 
-            if (ignore) { continue; }
+            if (ignore) { continue; } // something failed, skip
 
             // repage layer
             layer.repage();
@@ -107,19 +117,19 @@ Magick::Image Render::compLayers(Magick::Image canvas,
         }
 
         // set layer opacity
-        if (i.value().opacity<1) {
+        if (layers[id].opacity<1) {
             try {
                 layer.alpha(true);
                 layer.evaluate(Magick::AlphaChannel,
                                Magick::MultiplyEvaluateOperator,
-                               i.value().opacity);
+                               layers[id].opacity);
             }
-            catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-            catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+            catch(Magick::Error &error_) { qWarning() << error_.what(); }
+            catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }
         }
 
         // set layer composite operator
-        Magick::CompositeOperator layerComp = i.value().composite;
+        Magick::CompositeOperator layerComp = layers[id].composite;
 
         // composite current layer over previous comp
         /*if (i.value().composite != Magick::OverCompositeOp &&
@@ -157,8 +167,8 @@ Magick::Image Render::compLayers(Magick::Image canvas,
                            layerComp);
             //comp.repage();
         }
-        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Error &error_) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }
     }
     return comp;
 }

@@ -101,7 +101,7 @@ public slots:
 
 private slots:
 
-    void populateTree(View *image);
+    void populateTree(View *view);
     void handleItemActivated(QTreeWidgetItem *item,
                              int col);
     void handleItemChanged(QTreeWidgetItem *item,

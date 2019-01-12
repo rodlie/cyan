@@ -53,8 +53,8 @@ extern "C" {
 
 #include "tileitem.h"
 
-#define CYAN_PROJECT_VERSION 1.0
-#define CYAN_LAYER_VERSION 1.0
+#define CYAN_PROJECT_VERSION 2.0
+#define CYAN_LAYER_VERSION 2.0
 
 #define CYAN_PROJECT "cyan-project"
 #define CYAN_LAYER "cyan-layer"
@@ -64,7 +64,7 @@ extern "C" {
 #define CYAN_LAYER_COMPOSE "cyan-compose"
 #define CYAN_LAYER_X "cyan-layer-x"
 #define CYAN_LAYER_Y "cyan-layer-y"
-
+#define CYAN_LAYER_ORDER "cyan-layer-order"
 
 class Common: public QObject
 {
@@ -123,6 +123,7 @@ public:
         bool visible = true;
         double opacity = 1.0;
         QString label = QObject::tr("New Layer");
+        int order = -1;
     };
 
     struct Canvas

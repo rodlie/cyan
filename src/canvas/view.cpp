@@ -335,10 +335,12 @@ void View::setLayer(Magick::Image image,
 void View::addLayer(Magick::Image image,
                     bool updateView)
 {
-    qDebug() << "ADD LAYER" << QString::fromStdString(image.label());
-    int id = _canvas.layers.size();
+    int id = getLastLayerID()+1;
     _canvas.layers[id].image = image;
+    _canvas.layers[id].order = getLastLayerOrder()+1;
     //_canvas.layers[id].visible = true;
+
+    qDebug() << "ADD LAYER" << QString::fromStdString(image.label()) << id;
     if (!image.label().empty()) {
         _canvas.layers[id].label = QString::fromStdString(image.label());
     }
@@ -375,7 +377,7 @@ void View::addLayer(Magick::Image image,
     emit addedLayer(id);
     emit updatedLayers();
 
-    if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
+    if (updateView) { refreshTiles(); }
 }
 
 void View::addLayer(int id,
@@ -420,6 +422,28 @@ void View::addLayer(int id,
     emit updatedLayers();
 
     if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
+}
+
+int View::getLastLayerID()
+{
+    int id = -1;
+    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        if (layer.key()>id) { id = layer.key(); }
+    }
+    return id;
+}
+
+int View::getLastLayerOrder()
+{
+    int order = -1;
+    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        if (layer.value().order>order) { order = layer.value().order; }
+    }
+    return order;
 }
 
 void View::clearLayers()

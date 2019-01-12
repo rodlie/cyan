@@ -141,6 +141,10 @@ public slots:
                   QSize pos,
                   bool updateView = true);
 
+
+    int getLastLayerID();
+    int getLastLayerOrder();
+
     void clearLayers();
     Magick::Image getCanvas();
     QSize getCanvasSize();
