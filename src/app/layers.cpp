@@ -299,3 +299,29 @@ void Editor::handleMoveLayerDown()
     layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
     // TODO! gfx item z index!!!
 }
+
+void Editor::handleMoveLayerUp()
+{
+    if (!getCurrentView()) { return; }
+    LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    if (!item) { return; }
+    int currentID = item->getLayerID();
+    int overID = -1;
+    int currentOrder = getCurrentView()->getLayerOrder(currentID);
+    if (currentOrder<0 || currentOrder>=getCurrentView()->getLayerMaxOrder()) { return; }
+
+    int overOrder = -1;
+    QList<QPair<int, int> > order = getCurrentView()->getSortedLayers();
+    for (int i=0;i<order.size();++i) {
+        int id = order.at(i).second;
+        if (id==currentID && order.size()>i) {
+            overID = order.at(i+1).second;
+            overOrder = order.at(i+1).first;
+        } else { continue; }
+    }
+    if (overOrder<0 || overID<0 || overOrder>getCurrentView()->getLayerMaxOrder()) { return; }
+    getCurrentView()->setLayerOrder(currentID, overOrder);
+    getCurrentView()->setLayerOrder(overID, currentOrder);
+    layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
+    // TODO! gfx item z index!!!
+}

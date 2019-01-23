@@ -163,6 +163,8 @@ public slots:
 
     QList<QPair<int, int> > getSortedLayers();
     int getLayerOrder(int layer);
+    int getLayerMinOrder();
+    int getLayerMaxOrder();
 
     Common::Layer getLayer(int layer);
     void setLayer(int layer, Magick::Image image);

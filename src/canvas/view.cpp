@@ -493,7 +493,10 @@ void View::setLayerVisibility(int layer,
 
 bool View::getLayerVisibility(int layer)
 {
+    if (_canvas.layers.contains(layer)) {
     return _canvas.layers[layer].visible;
+    }
+    return false;
 }
 
 void View::setLayerComposite(int layer,
@@ -507,7 +510,10 @@ void View::setLayerComposite(int layer,
 
 Magick::CompositeOperator View::getLayerComposite(int layer)
 {
-    return _canvas.layers[layer].composite;
+    if (_canvas.layers.contains(layer)) {
+        return _canvas.layers[layer].composite;
+    }
+    return Magick::NoCompositeOp;
 }
 
 int View::getLayerCount()
@@ -539,9 +545,28 @@ int View::getLayerOrder(int layer)
     return -1;
 }
 
+int View::getLayerMinOrder()
+{
+    return 0;
+}
+
+int View::getLayerMaxOrder()
+{
+    int index = -1;
+    QList<QPair<int, int> > order = getSortedLayers();
+    for (int i=0;i<order.size();++i) {
+        int currentOrder = order.at(i).first;
+        if (currentOrder>index) { index = currentOrder; }
+    }
+    return index;
+}
+
 Common::Layer View::getLayer(int layer)
 {
-    return _canvas.layers[layer];
+    if (_canvas.layers.contains(layer)) {
+        return _canvas.layers[layer];
+    }
+    return  Common::Layer();
 }
 
 void View::setLayer(int layer, Magick::Image image)

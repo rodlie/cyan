@@ -193,6 +193,7 @@ private slots:
                         View *view);
     void handleRemoveLayer();
     void handleMoveLayerDown();
+    void handleMoveLayerUp();
 
     // tabs
     void newTab(Common::Canvas canvas);

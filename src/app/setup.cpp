@@ -527,6 +527,7 @@ void Editor::setupConnections()
     connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 
     connect(moveLayerDownButton, SIGNAL(released()), this, SLOT(handleMoveLayerDown()));
+    connect(moveLayerUpButton, SIGNAL(released()), this, SLOT(handleMoveLayerUp()));
 }
 
 void Editor::setupIcons()
@@ -570,6 +571,7 @@ void Editor::setupIcons()
     aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
 
     moveLayerDownButton->setIcon(QIcon::fromTheme("go-down"));
+    moveLayerUpButton->setIcon(QIcon::fromTheme("go-up"));
 }
 
 void Editor::setupShortcuts()
