@@ -48,13 +48,14 @@
 #include <QGraphicsPixmapItem>
 #include <QFuture>
 #include <QKeyEvent>
+#include <QList>
 
 #include "common.h"
 #include "layeritem.h"
 
 #define TILE_Z 6
-#define LAYER_Z 7
-#define BRUSH_Z 100
+#define LAYER_Z 100
+#define BRUSH_Z std::numeric_limits<qreal>::max()
 
 class View : public QGraphicsView
 {
@@ -141,7 +142,7 @@ public slots:
                   QSize pos,
                   bool updateView = true);
 
-
+    Common::Layer getLayerFromOrder(int order);
     int getLastLayerID();
     int getLastLayerOrder();
 
@@ -160,6 +161,9 @@ public slots:
     Magick::CompositeOperator getLayerComposite(int layer);
     int getLayerCount();
 
+    QList<QPair<int, int> > getSortedLayers();
+    int getLayerOrder(int layer);
+
     Common::Layer getLayer(int layer);
     void setLayer(int layer, Magick::Image image);
     void setLayerFromCanvas(Common::Canvas canvas,
@@ -168,6 +172,7 @@ public slots:
 
     void updateCanvas(Common::Canvas canvas);
 
+    void setLayerOrder(int layer, int order);
     QSize getLayerOffset(int layer);
     void setLayerOffset(int layer,
                         QSize offset);

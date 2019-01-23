@@ -274,3 +274,28 @@ void Editor::handleRemoveLayer()
     if (ret != QMessageBox::Yes) { return; }
     getCurrentView()->removeLayer(id);
 }
+
+void Editor::handleMoveLayerDown()
+{
+    if (!getCurrentView()) { return; }
+    LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    if (!item) { return; }
+    int topID = item->getLayerID();
+    int bottomID = -1;
+    int topOrder = getCurrentView()->getLayerOrder(topID);
+    if (topOrder<1) { return; }
+    int bottomOrder = -1;
+    QList<QPair<int, int> > order = getCurrentView()->getSortedLayers();
+    for (int i=0;i<order.size();++i) {
+        int id = order.at(i).second;
+        if (id==topID) {
+            bottomID = order.at(i-1).second;
+            bottomOrder = order.at(i-1).first;
+        } else { continue; }
+    }
+    if (bottomOrder<0 || bottomID<0) { return; }
+    getCurrentView()->setLayerOrder(topID, bottomOrder);
+    getCurrentView()->setLayerOrder(bottomID, topOrder);
+    layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
+    // TODO! gfx item z index!!!
+}

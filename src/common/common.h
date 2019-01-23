@@ -37,6 +37,7 @@
 #include <QMap>
 #include <QDateTime>
 #include <QMenu>
+#include <QPair>
 
 #include <list>
 #include <lcms2.h>
@@ -71,6 +72,15 @@ class Common: public QObject
     Q_OBJECT
 
 public:
+
+    struct QPairSortFirst
+    {
+        template<typename T1, typename T2>
+        bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
+        {
+            return a.first < b.first;
+        }
+    };
 
     enum MoveLayer {
         MoveLayerUp,

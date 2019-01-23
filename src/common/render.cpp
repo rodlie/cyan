@@ -69,9 +69,9 @@ Magick::Image Render::compLayers(Magick::Image canvas,
     }
     std::sort(order.begin(),
               order.end(),
-              QPairSortFirst());
-    qDebug() << "LAYERS?" << layers.size();
-    qDebug() << "COMP ORDER:" << order;
+              Common::QPairSortFirst());
+    //qDebug() << "LAYERS?" << layers.size();
+    //qDebug() << "COMP ORDER:" << order;
 
     for (int i=0;i<order.size();++i) {
         // get layer id

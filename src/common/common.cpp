@@ -286,6 +286,18 @@ bool Common::writeCanvas(Common::Canvas canvas,
         }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
+        // add order
+        try {
+            layer.attribute(QString(CYAN_LAYER_ORDER).toStdString(),
+                            QString("%1").arg(layers.value().order)
+                            .toStdString());
+        }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
         // add position
         try {
             layer.attribute(QString(CYAN_LAYER_X).toStdString(),
@@ -423,6 +435,10 @@ Common::Canvas Common::readCanvas(const QString &filename)
             int visibility = QString::fromStdString(it->attribute(QString(CYAN_LAYER_VISIBILITY)
                                                                   .toStdString())).toInt();
 
+            // get order
+            int order = QString::fromStdString(it->attribute(QString(CYAN_LAYER_ORDER)
+                                                                  .toStdString())).toInt();
+
             // get position
             int offX = QString::fromStdString(it->attribute(QString(CYAN_LAYER_X)
                                                             .toStdString())).toInt();
@@ -441,6 +457,7 @@ Common::Canvas Common::readCanvas(const QString &filename)
             layer.pos = pos;
             layer.opacity = opacity;
             layer.composite = compose;
+            layer.order = order;
 
             /*if (canvas.profile.length()==0 &&
                 layer.image.iccColorProfile().length()>0)

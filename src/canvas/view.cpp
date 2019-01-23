@@ -372,7 +372,8 @@ void View::addLayer(Magick::Image image,
 
     _scene->addItem(layer);
     layer->setMovable(true);
-    layer->setZValue(LAYER_Z);
+    layer->setZValue(LAYER_Z+scene()->items().size());
+    qDebug() << "added layer at" << layer->zValue();
 
     emit addedLayer(id);
     emit updatedLayers();
@@ -414,7 +415,8 @@ void View::addLayer(int id,
 
     _scene->addItem(layer);
     layer->setMovable(true);
-    layer->setZValue(LAYER_Z);
+    layer->setZValue(LAYER_Z+scene()->items().size());
+    qDebug() << "added layer at" << layer->zValue();
 
     layer->setPos(pos.width(), pos.height());
 
@@ -422,6 +424,18 @@ void View::addLayer(int id,
     emit updatedLayers();
 
     if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
+}
+
+Common::Layer View::getLayerFromOrder(int order)
+{
+    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        if (layer.value().order==order) {
+            return layer.value();
+        }
+    }
+    return  Common::Layer();
 }
 
 int View::getLastLayerID()
@@ -501,6 +515,30 @@ int View::getLayerCount()
     return  _canvas.layers.size();
 }
 
+QList<QPair<int, int> > View::getSortedLayers()
+{
+    QList<QPair<int, int> > order;
+    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        QPair<int, int> pair(layer.value().order,
+                             layer.key());
+        order.append(pair);
+    }
+    std::sort(order.begin(),
+              order.end(),
+              Common::QPairSortFirst());
+    return order;
+}
+
+int View::getLayerOrder(int layer)
+{
+    if (_canvas.layers.contains(layer)) {
+        return _canvas.layers[layer].order;
+    }
+    return -1;
+}
+
 Common::Layer View::getLayer(int layer)
 {
     return _canvas.layers[layer];
@@ -547,6 +585,13 @@ void View::updateCanvas(Common::Canvas canvas)
 {
     _image = canvas.image;
     _canvas = canvas;
+    refreshTiles();
+}
+
+void View::setLayerOrder(int layer, int order)
+{
+    _canvas.layers[layer].order = order;
+    emit updatedLayers();
     refreshTiles();
 }
 

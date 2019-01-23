@@ -192,6 +192,7 @@ private slots:
     void addLayerToView(Magick::Image image,
                         View *view);
     void handleRemoveLayer();
+    void handleMoveLayerDown();
 
     // tabs
     void newTab(Common::Canvas canvas);

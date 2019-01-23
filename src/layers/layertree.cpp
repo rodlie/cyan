@@ -110,7 +110,8 @@ LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
     headerItem()->setIcon(2, QIcon::fromTheme("layer"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
     headerItem()->setToolTip(1, tr("Layer visibility"));
-    setColumnWidth(0, 16);
+    //setColumnWidth(0, 16);
+    setColumnHidden(0, true);
     setColumnWidth(1, 16);
     setIconSize(QSize(32, 32));
 
@@ -142,12 +143,13 @@ const QString LayerTree::getCanvasID()
     return _canvasID;
 }
 
-void LayerTree::handleTabActivated(QMdiSubWindow *tab)
+void LayerTree::handleTabActivated(QMdiSubWindow *tab, bool force)
 {
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
     bool equalID = getCanvasID().isEmpty() && (getCanvasID() == view->getCanvasID());
+    if (force) { equalID = false; }
     if (!equalID || view->getLayerCount() != topLevelItemCount()) {
         populateTree(view);
     }

@@ -49,15 +49,6 @@ class Render: public QObject
 
 public:
 
-    struct QPairSortFirst
-    {
-        template<typename T1, typename T2>
-        bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
-        {
-            return a.first < b.first;
-        }
-    };
-
     Render(QObject *parent = nullptr);
 
     static Magick::Image compLayers(Magick::Image canvas,

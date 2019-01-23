@@ -97,7 +97,7 @@ public slots:
 
     void setCanvasID(const QString &id);
     const QString getCanvasID();
-    void handleTabActivated(QMdiSubWindow *tab);
+    void handleTabActivated(QMdiSubWindow *tab, bool force = false);
 
 private slots:
 
