@@ -297,7 +297,8 @@ void Editor::handleMoveLayerDown()
     getCurrentView()->setLayerOrder(topID, bottomOrder);
     getCurrentView()->setLayerOrder(bottomID, topOrder);
     layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
-    // TODO! gfx item z index!!!
+
+    getCurrentView()->moveLayerItemDown(topID);
 }
 
 void Editor::handleMoveLayerUp()
@@ -323,5 +324,6 @@ void Editor::handleMoveLayerUp()
     getCurrentView()->setLayerOrder(currentID, overOrder);
     getCurrentView()->setLayerOrder(overID, currentOrder);
     layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
-    // TODO! gfx item z index!!!
+
+    getCurrentView()->moveLayerItemUp(currentID);
 }

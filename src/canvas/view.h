@@ -166,6 +166,14 @@ public slots:
     int getLayerMinOrder();
     int getLayerMaxOrder();
 
+    void moveLayerItemDown(int id);
+    void moveLayerItemUp(int id);
+
+    int getLayerItemIndex(int id);
+    LayerItem* getLayerItemFromId(int id);
+    LayerItem* getLayerItemUnderId(int id);
+    LayerItem* getLayerItemOverId(int id);
+
     Common::Layer getLayer(int layer);
     void setLayer(int layer, Magick::Image image);
     void setLayerFromCanvas(Common::Canvas canvas,

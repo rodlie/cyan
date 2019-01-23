@@ -372,7 +372,7 @@ void View::addLayer(Magick::Image image,
 
     _scene->addItem(layer);
     layer->setMovable(true);
-    layer->setZValue(LAYER_Z+scene()->items().size());
+    layer->setZValue(LAYER_Z);
     qDebug() << "added layer at" << layer->zValue();
 
     emit addedLayer(id);
@@ -415,7 +415,7 @@ void View::addLayer(int id,
 
     _scene->addItem(layer);
     layer->setMovable(true);
-    layer->setZValue(LAYER_Z+scene()->items().size());
+    layer->setZValue(LAYER_Z);
     qDebug() << "added layer at" << layer->zValue();
 
     layer->setPos(pos.width(), pos.height());
@@ -559,6 +559,96 @@ int View::getLayerMaxOrder()
         if (currentOrder>index) { index = currentOrder; }
     }
     return index;
+}
+
+void View::moveLayerItemDown(int id)
+{
+    int layerOverIndex=getLayerItemIndex(id);
+    LayerItem* layerOver = getLayerItemFromId(id);
+    if (layerOverIndex==-1 || !layerOver) { return; }
+    LayerItem* layerUnder =  getLayerItemUnderId(id);
+    if (!layerUnder) { return; }
+
+    qDebug() << "RESTACK ITEMS (move layer down) ...";
+    layerOver->stackBefore(layerUnder);
+}
+
+void View::moveLayerItemUp(int id)
+{
+    int layerUnderIndex = getLayerItemIndex(id);
+    LayerItem* layerUnder = getLayerItemFromId(id);
+    if (layerUnderIndex==-1 || !layerUnder) { return; }
+    LayerItem* layerOver =  getLayerItemOverId(id);
+    if (!layerOver) { return; }
+
+    qDebug() << "RESTACK ITEMS (move layer up) ...";
+    layerOver->stackBefore(layerUnder);
+}
+
+int View::getLayerItemIndex(int id)
+{
+    if (id>-1) {
+        QList<QGraphicsItem*> items = _scene->items();
+        for (int i=0;i<items.size();++i) {
+            LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
+            if (!item) { continue; }
+            if (item->getID()==id) {
+                qDebug() << "found item at index" << i;
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+LayerItem *View::getLayerItemFromId(int id)
+{
+    QList<QGraphicsItem*> items = _scene->items();
+    for (int i=0;i<items.size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
+        if (!item) { continue; }
+        if (item->getID()==id) {
+            return item;
+        }
+    }
+    return nullptr;
+}
+
+LayerItem *View::getLayerItemUnderId(int id)
+{
+    int index = -1;
+    QList<QGraphicsItem*> items = _scene->items();
+    for (int i=0;i<items.size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
+        if (!item) { continue; }
+        if (item->getID()==id) {
+            index = i;
+            break;
+        }
+    }
+    if (index>-1 && items.size()>=index) {
+        return dynamic_cast<LayerItem*>(items.at(index+1));
+    }
+    return nullptr;
+}
+
+LayerItem *View::getLayerItemOverId(int id)
+{
+    int index = -1;
+    QList<QGraphicsItem*> items = _scene->items();
+    for (int i=0;i<items.size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
+        if (!item) { continue; }
+        if (item->getID()==id && i>0) {
+            qDebug() << "found layer under at" <<i;
+            index = i;
+            break;
+        }
+    }
+    if (index>-1 && items.size()>=index) {
+        return dynamic_cast<LayerItem*>(items.at(index-1));
+    }
+    return nullptr;
 }
 
 Common::Layer View::getLayer(int layer)
