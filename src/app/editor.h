@@ -128,7 +128,6 @@ private:
     QPushButton *removeLayerButton;
     QPushButton *moveLayerUpButton;
     QPushButton *moveLayerDownButton;
-    QPushButton *mergeLayerDownButton;
 
 signals:
 

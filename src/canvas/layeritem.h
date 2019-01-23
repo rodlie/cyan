@@ -38,6 +38,7 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsPixmapItem>
+#include <QGraphicsSceneHoverEvent>
 
 class LayerItem : public QObject, public QGraphicsRectItem
 {

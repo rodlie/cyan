@@ -457,7 +457,6 @@ void Editor::setupImageLayers()
     removeLayerButton->setToolTip(tr("Remove layer"));
     moveLayerUpButton = new QPushButton(this);
     moveLayerDownButton = new QPushButton(this);
-    mergeLayerDownButton = new QPushButton(this);
 
     QWidget *layerButtonsWidget = new QWidget(this);
     QHBoxLayout *layerButtonsLayout = new QHBoxLayout(layerButtonsWidget);
@@ -467,7 +466,6 @@ void Editor::setupImageLayers()
     layerButtonsLayout->addWidget(removeLayerButton);
     layerButtonsLayout->addWidget(moveLayerDownButton);
     layerButtonsLayout->addWidget(moveLayerUpButton);
-    layerButtonsLayout->addWidget(mergeLayerDownButton);
 
     QWidget *layersContainer = new QWidget(this);
     QVBoxLayout *layersContainerLayout = new QVBoxLayout(layersContainer);

@@ -117,7 +117,6 @@ Editor::Editor(QWidget *parent)
     , removeLayerButton(nullptr)
     , moveLayerUpButton(nullptr)
     , moveLayerDownButton(nullptr)
-    , mergeLayerDownButton(nullptr)
 {
     setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
