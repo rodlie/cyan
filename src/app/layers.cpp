@@ -288,7 +288,7 @@ void Editor::handleMoveLayerDown()
     QList<QPair<int, int> > order = getCurrentView()->getSortedLayers();
     for (int i=0;i<order.size();++i) {
         int id = order.at(i).second;
-        if (id==topID) {
+        if (id==topID && i>0) {
             bottomID = order.at(i-1).second;
             bottomOrder = order.at(i-1).first;
         } else { continue; }
