@@ -371,9 +371,8 @@ void View::addLayer(Magick::Image image,
             layer, SLOT(setDraw(bool)));
 
     _scene->addItem(layer);
-    layer->setMovable(true);
+    layer->setMovable(!_drawing);
     layer->setZValue(LAYER_Z);
-    qDebug() << "added layer at" << layer->zValue();
 
     emit addedLayer(id);
     emit updatedLayers();
@@ -414,10 +413,8 @@ void View::addLayer(int id,
             layer, SLOT(setDraw(bool)));
 
     _scene->addItem(layer);
-    layer->setMovable(true);
+    layer->setMovable(!_drawing);
     layer->setZValue(LAYER_Z);
-    qDebug() << "added layer at" << layer->zValue();
-
     layer->setPos(pos.width(), pos.height());
 
     emit addedLayer(id);
@@ -900,6 +897,7 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
 
 void View::setDrawMode(bool draw)
 {
+    qDebug() << "set draw mode" << draw;
     emit setDraw(draw);
     _drawing = draw;
     _brush->setVisible(draw);
