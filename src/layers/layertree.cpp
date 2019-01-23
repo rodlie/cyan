@@ -167,13 +167,14 @@ void LayerTree::populateTree(View *view)
         blockSignals(true);
         Magick::Image thumb(Magick::Geometry(32, 32),
                             Magick::ColorRGB(0, 0, 0));
+        thumb.read("pattern:checkerboard");
         thumb.depth(8);
         thumb.alpha(false);
 
         try {
             Magick::Image layer(layers.value().image);
             layer.depth(8);
-            layer.alpha(false);
+            //layer.alpha(false);
             layer.scale(Magick::Geometry(32, 32));
             size_t offX = 0;
             size_t offY = 0;
