@@ -82,50 +82,51 @@ void Editor::populateCompBox()
     value - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
     */
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::OverCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DissolveCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::OverCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::DissolveCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::PlusCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::MultiplyCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::OverlayCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::ScreenCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::PlusCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::MultiplyCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::OverlayCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::ScreenCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::ColorDodgeCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearDodgeCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::ColorBurnCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearBurnCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::ColorDodgeCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::LinearDodgeCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::ColorBurnCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::LinearBurnCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::LightenCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DarkenCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LightenIntensityCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DarkenIntensityCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::LightenCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::DarkenCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::LightenIntensityCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::DarkenIntensityCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::SoftLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::HardLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::VividLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::PegtopLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::PinLightCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::LinearLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::SoftLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::HardLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::VividLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::PegtopLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::PinLightCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::LinearLightCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::DifferenceCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::MinusSrcCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::DivideSrcCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::DifferenceCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::MinusSrcCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::DivideSrcCompositeOp]);
 
     layersComp->insertSeparator(layersComp->count());
 
-    layersComp->addItem(Common::compositeModes()[MagickCore::HueCompositeOp]);
-    layersComp->addItem(Common::compositeModes()[MagickCore::SaturateCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::HueCompositeOp]);
+    layersComp->addItem(Common::compositeModes()[Magick::SaturateCompositeOp]);
 
+    // add the "rest"
     layersComp->insertSeparator(layersComp->count());
 
     QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
@@ -156,7 +157,6 @@ void Editor::handleLayerActivated(QTreeWidgetItem *item,
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
     if (!layer) { return; }
     layersComp->setCurrentIndex(layersComp->findText(Common::compositeModes()[layer->getComposite()]));
-    //qDebug() << "???" << layer->getOpacity() << layer->getOpacity()*100;
     layersOpacity->setValue(qRound(layer->getOpacity()*100));
 }
 
@@ -167,7 +167,7 @@ void Editor::handleLayerDoubleclicked(QTreeWidgetItem *item,
     qDebug() << "layer tree item double clicked";
     Q_UNUSED(col)
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
-    View *view = qobject_cast<View*>(getCurrentView());
+    View *view = qobject_cast<View*>(getCurrentCanvas());
     if (!layer || !view) { return; }
     //newTabFromLayer(view, layer->getLayerID());
 }
@@ -180,7 +180,7 @@ void Editor::handleLayerSelected(int layer)
         if (layer == item->getLayerID()) {
             layersTree->setCurrentItem(item);
             handleLayerActivated(item, 0);
-            return;
+            break;
         }
     }
 }
@@ -191,7 +191,6 @@ void Editor::handleLayersOpacity()
     LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
     if (!layer) { return; }
 
-    qDebug() << "set layer opacity" << value << value/100;
     QMdiSubWindow *tab = mdi->currentSubWindow();
     if (!layer || !tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
@@ -207,24 +206,25 @@ void Editor::handleLayersUpdated()
 
 void Editor::handleLayerTreeSelectedLayer(int id)
 {
-    qDebug() << "set selected layer" << id;
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setSelectedLayer(id);
+    if (!getCurrentCanvas()) { return; }
+    getCurrentCanvas()->setSelectedLayer(id);
 }
 
 void Editor::handleLayerVisibility(int id,
                                    bool visible)
 {
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setLayerVisibility(id, visible);
+    if (!getCurrentCanvas()) { return; }
+    getCurrentCanvas()->setLayerVisibility(id,
+                                         visible);
 }
 
 void Editor::handleLayerLabel(int id,
                               const QString &label)
 {
-    if (!getCurrentView()) { return; }
-    if (getCurrentView()->getLayerName(id) != label) {
-        getCurrentView()->setLayerName(id, label);
+    if (!getCurrentCanvas()) { return; }
+    if (getCurrentCanvas()->getLayerName(id) != label) {
+        getCurrentCanvas()->setLayerName(id,
+                                       label);
     }
 }
 
@@ -251,7 +251,7 @@ void Editor::addLayerToView(Magick::Image image,
                                               Magick::Blob(),
                                               defPro);
         }
-        qDebug() << "convert layer to canvas color profile";
+
         image = ColorConvert::convertColorspace(image,
                                           image.iccColorProfile(),
                                           view->getCanvasProject().profile);
@@ -263,7 +263,7 @@ void Editor::addLayerToView(Magick::Image image,
 
 void Editor::handleRemoveLayer()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
     if (!item) { return; }
     int id = item->getLayerID();
@@ -272,20 +272,20 @@ void Editor::handleRemoveLayer()
                                     tr("Are you sure you want to remove layer %1?")
                                     .arg(id));
     if (ret != QMessageBox::Yes) { return; }
-    getCurrentView()->removeLayer(id);
+    getCurrentCanvas()->removeLayer(id);
 }
 
 void Editor::handleMoveLayerDown()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
     if (!item) { return; }
     int topID = item->getLayerID();
     int bottomID = -1;
-    int topOrder = getCurrentView()->getLayerOrder(topID);
+    int topOrder = getCurrentCanvas()->getLayerOrder(topID);
     if (topOrder<1) { return; }
     int bottomOrder = -1;
-    QList<QPair<int, int> > order = getCurrentView()->getSortedLayers();
+    QList<QPair<int, int> > order = getCurrentCanvas()->getSortedLayers();
     for (int i=0;i<order.size();++i) {
         int id = order.at(i).second;
         if (id==topID && i>0) {
@@ -294,25 +294,25 @@ void Editor::handleMoveLayerDown()
         } else { continue; }
     }
     if (bottomOrder<0 || bottomID<0) { return; }
-    getCurrentView()->setLayerOrder(topID, bottomOrder);
-    getCurrentView()->setLayerOrder(bottomID, topOrder);
+    getCurrentCanvas()->setLayerOrder(topID, bottomOrder);
+    getCurrentCanvas()->setLayerOrder(bottomID, topOrder);
     layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
 
-    getCurrentView()->moveLayerItemDown(topID);
+    getCurrentCanvas()->moveLayerItemDown(topID);
 }
 
 void Editor::handleMoveLayerUp()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     LayerTreeItem *item = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
     if (!item) { return; }
     int currentID = item->getLayerID();
     int overID = -1;
-    int currentOrder = getCurrentView()->getLayerOrder(currentID);
-    if (currentOrder<0 || currentOrder>=getCurrentView()->getLayerMaxOrder()) { return; }
+    int currentOrder = getCurrentCanvas()->getLayerOrder(currentID);
+    if (currentOrder<0 || currentOrder>=getCurrentCanvas()->getLayerMaxOrder()) { return; }
 
     int overOrder = -1;
-    QList<QPair<int, int> > order = getCurrentView()->getSortedLayers();
+    QList<QPair<int, int> > order = getCurrentCanvas()->getSortedLayers();
     for (int i=0;i<order.size();++i) {
         int id = order.at(i).second;
         if (id==currentID && order.size()>i) {
@@ -320,10 +320,10 @@ void Editor::handleMoveLayerUp()
             overOrder = order.at(i+1).first;
         } else { continue; }
     }
-    if (overOrder<0 || overID<0 || overOrder>getCurrentView()->getLayerMaxOrder()) { return; }
-    getCurrentView()->setLayerOrder(currentID, overOrder);
-    getCurrentView()->setLayerOrder(overID, currentOrder);
+    if (overOrder<0 || overID<0 || overOrder>getCurrentCanvas()->getLayerMaxOrder()) { return; }
+    getCurrentCanvas()->setLayerOrder(currentID, overOrder);
+    getCurrentCanvas()->setLayerOrder(overID, currentOrder);
     layersTree->handleTabActivated(mdi->currentSubWindow(), true /* force */);
 
-    getCurrentView()->moveLayerItemUp(currentID);
+    getCurrentCanvas()->moveLayerItemUp(currentID);
 }

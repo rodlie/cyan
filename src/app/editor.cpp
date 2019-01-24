@@ -42,7 +42,6 @@
 #include <QMdiSubWindow>
 #include <QVBoxLayout>
 #include <QTimer>
-
 #include <QMessageBox>
 #include <QImage>
 #include <QSettings>
@@ -51,7 +50,6 @@
 #include <QDebug>
 #include <QMimeDatabase>
 #include <QMimeType>
-
 
 #include "newmediadialog.h"
 #include "convertdialog.h"
@@ -118,14 +116,14 @@ Editor::Editor(QWidget *parent)
     , moveLayerUpButton(nullptr)
     , moveLayerDownButton(nullptr)
 {
+    // set window title
     setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
 
-    // register Magick types used
+    // register Magick Image
     qRegisterMetaType<Magick::Image>("Magick::Image");
-    qRegisterMetaType<Magick::Drawable>("Magick::Drawable");
-    qRegisterMetaType<Magick::Geometry>("Magick::Geometry");
 
+    // setup UI and load settings
     setupUI();
     loadSettings();
 
@@ -157,12 +155,14 @@ Editor::Editor(QWidget *parent)
 #endif
 }
 
+// save settings on quit
 Editor::~Editor()
 {
     saveSettings();
 }
 
-View *Editor::getCurrentView()
+// get current active canvas
+View *Editor::getCurrentCanvas()
 {
     QMdiSubWindow *tab = mdi->currentSubWindow();
     if (!tab) { return nullptr; }
@@ -171,10 +171,7 @@ View *Editor::getCurrentView()
     return view;
 }
 
-
-
-
-
+// save global settings
 void Editor::saveSettings()
 {
     emit statusMessage(tr("Saving settings ..."));
@@ -212,6 +209,7 @@ void Editor::saveSettings()
     settings.endGroup();
 }
 
+// load global settings
 void Editor::loadSettings()
 {
     emit statusMessage(tr("Loading settings ..."));
@@ -249,20 +247,26 @@ void Editor::loadSettings()
     emit statusMessage(tr("Engine memory limit: %1 GB")
                        .arg(Common::getMemoryResource()));
 
+    // setup color profiles
     setDefaultColorProfiles(colorProfileRGBMenu);
     setDefaultColorProfiles(colorProfileCMYKMenu);
     setDefaultColorProfiles(colorProfileGRAYMenu);
+
+    // setup color intent
     loadDefaultColorIntent();
+
+    // add blackpoint
     settings.beginGroup(QString("color"));
     blackPointAct->setChecked(settings.value(QString("blackpoint"),
                                              true)
                               .toBool());
     settings.endGroup();
 
-    // quit if no color profiles are available
+    // check if we have the required color profiles needed to do anything
     hasColorProfiles();
 }
 
+// load cyan image project (*.MIFF)
 void Editor::loadProject(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
@@ -274,17 +278,14 @@ void Editor::loadProject(const QString &filename)
     }
 }
 
+// save cyan image project (*.MIFF)
 void Editor::saveProject(const QString &filename)
 {
-    if (filename.isEmpty() || !getCurrentView()) { return; }
+    if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     qDebug() << "save project" << filename;
 
-    if (Common::writeCanvas(getCurrentView()->getCanvasProject(), filename)) {
-        /*Common::Canvas canvas = Common::readCanvas(filename);
-        qDebug() << "====> canvas" << canvas.label << canvas.layers.size();
-        newTab(canvas);
-        //view->loadCanvas(canvas);
-        mdi->tileSubWindows();*/
+    if (Common::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
+        // TODO, verify project!
     } else {
         QMessageBox::warning(this,
                              tr("Cyan Error"),
@@ -297,14 +298,16 @@ void Editor::saveImage(const QString &filename)
     qDebug() << "save image" << filename;
 }
 
+// load unknown image
 void Editor::loadImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
-    if (Common::isValidCanvas(filename)) {
+    if (Common::isValidCanvas(filename)) { // cyan project
         emit statusMessage(tr("Loading canvas %1").arg(filename));
         loadProject(filename);
         emit statusMessage(tr("Done"));
-    } else {
+    } else { // regular image
+        // TODO
         qDebug() << "HAS LAYERS?" << Common::hasLayers(filename);
         emit statusMessage(tr("Loading image %1").arg(filename));
         readImage(filename);
@@ -312,6 +315,7 @@ void Editor::loadImage(const QString &filename)
     }
 }
 
+// read "regular" new image
 void Editor::readImage(Magick::Blob blob,
                        const QString &filename)
 {
@@ -334,11 +338,12 @@ void Editor::readImage(Magick::Blob blob,
     try {
         image.magick("MIFF");
         image.fileName(filename.toStdString());
-        if (image.label().empty()) {
+        if (image.label().empty()) { // add label, use filename as fallback
             QFileInfo fileInfo(filename);
             image.label(fileInfo.baseName().toStdString());
         }
 
+        // check for color profile, if none add
         if (image.iccColorProfile().length()==0) {
             QString defPro;
             switch(image.colorSpace()) {
@@ -370,7 +375,7 @@ void Editor::readImage(Magick::Blob blob,
                     image.rows()>0 &&
                     image.iccColorProfile().length()>0)
                 {
-                    newTab(image);
+                    newTab(image); // add new image to new tab
                 }
             }
             QTimer::singleShot(100,
@@ -380,7 +385,7 @@ void Editor::readImage(Magick::Blob blob,
             if (image.columns()>0 &&
                 image.rows()>0)
             {
-                newTab(image);
+                newTab(image); // add new image to new tab
             }
         }
     }
@@ -388,17 +393,19 @@ void Editor::readImage(Magick::Blob blob,
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
+// read image "wrapper"
 void Editor::readImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     readImage(Magick::Blob(), filename);
 }
 
+// write "regular" image to file
 void Editor::writeImage(const QString &filename)
 {
-    if (filename.isEmpty() || !getCurrentView()) { return; }
+    if (filename.isEmpty() || !getCurrentCanvas()) { return; }
 
-    Magick::Image image = Render::renderCanvasToImage(getCurrentView()->getCanvasProject());
+    Magick::Image image = Render::renderCanvasToImage(getCurrentCanvas()->getCanvasProject());
     // TODO: add options for file format
     try {
         QFileInfo info(filename);
@@ -426,11 +433,13 @@ void Editor::writeImage(const QString &filename)
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-void Editor::writeLayer(const QString &filename, int id)
+// write "regular" image from selected layer to file
+void Editor::writeLayer(const QString &filename,
+                        int id)
 {
-    if (filename.isEmpty() || !getCurrentView() || id<0) { return; }
+    if (filename.isEmpty() || !getCurrentCanvas() || id<0) { return; }
 
-    Magick::Image image = getCurrentView()->getCanvasProject().layers[id].image;
+    Magick::Image image = getCurrentCanvas()->getCanvasProject().layers[id].image;
     // TODO: add options for file format
     try {
         QFileInfo info(filename);
@@ -549,9 +558,10 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
 }
 #endif
 
+// save cyan project filename dialog
 void Editor::saveProjectDialog()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Project"),
                                                     QDir::homePath(),
@@ -561,14 +571,15 @@ void Editor::saveProjectDialog()
     saveProject(filename);
 }
 
+// save "regular" image filename dialog
 void Editor::saveImageDialog()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Image"),
                                                     QString("%1/%2")
                                                     .arg(QDir::homePath())
-                                                    .arg(getCurrentView()->getCanvasProject().label),
+                                                    .arg(getCurrentCanvas()->getCanvasProject().label),
                                                     tr("Image files (%1)")
                                                     .arg(common.supportedWriteFormats()));
     if (filename.isEmpty()) { return; }
@@ -582,9 +593,10 @@ void Editor::saveImageDialog()
     writeImage(filename);
 }
 
+// save selected layer to "regular" image filename dialog
 void Editor::saveLayerDialog()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     LayerTreeItem *layerItem = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
     if (!layerItem) {
         QMessageBox::warning(this,
@@ -592,9 +604,9 @@ void Editor::saveLayerDialog()
                              tr("No layer selected"));
         return;
     }
-    QString label = getCurrentView()->getCanvasProject().label;
-    if (!getCurrentView()->getCanvasProject().layers[layerItem->getLayerID()].label.isEmpty()) {
-        label = getCurrentView()->getCanvasProject().layers[layerItem->getLayerID()].label;
+    QString label = getCurrentCanvas()->getCanvasProject().label;
+    if (!getCurrentCanvas()->getCanvasProject().layers[layerItem->getLayerID()].label.isEmpty()) {
+        label = getCurrentCanvas()->getCanvasProject().layers[layerItem->getLayerID()].label;
     }
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Image"),
@@ -652,16 +664,16 @@ void Editor::newImageDialog()
 
 void Editor::newLayerDialog()
 {
-    if (!getCurrentView()) { return; }
+    if (!getCurrentCanvas()) { return; }
     NewMediaDialog *dialog = new NewMediaDialog(this,
                                                 tr("New Layer"),
                                                 Common::newLayerDialogType,
-                                                getCurrentView()->getCanvas().colorSpace(),
-                                                getCurrentView()->getCanvasProject().profile,
-                                                getCurrentView()->getCanvasSize());
+                                                getCurrentCanvas()->getCanvas().colorSpace(),
+                                                getCurrentCanvas()->getCanvasProject().profile,
+                                                getCurrentCanvas()->getCanvasSize());
     int res =  dialog->exec();
     if (res == QDialog::Accepted) {
-        getCurrentView()->addLayer(dialog->getImage());
+        getCurrentCanvas()->addLayer(dialog->getImage());
     }
 
     QTimer::singleShot(100,

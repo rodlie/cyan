@@ -138,7 +138,7 @@ signals:
 
 public slots:
 
-    View* getCurrentView();
+    View* getCurrentCanvas();
 
 private slots:
 

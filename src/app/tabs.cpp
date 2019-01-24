@@ -146,7 +146,7 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
 
 void Editor::updateTabTitle(View *view)
 {
-    if (!view) { view = qobject_cast<View*>(getCurrentView()); }
+    if (!view) { view = qobject_cast<View*>(getCurrentCanvas()); }
     if (!view) { return; }
     QString title = Common::canvasWindowTitle(view->getCanvas());
     qDebug() << "update canvas title" << title;

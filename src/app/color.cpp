@@ -315,8 +315,8 @@ void Editor::handleColorConvertGRAY(bool ignoreColor, const QString &title)
 
 void Editor::handleColorProfileAssign()
 {
-    if (!getCurrentView()) { return; }
-    switch(getCurrentView()->getCanvas().colorSpace()) {
+    if (!getCurrentCanvas()) { return; }
+    switch(getCurrentCanvas()->getCanvas().colorSpace()) {
     case Magick::CMYKColorspace:
         handleColorConvertCMYK(true,
                                tr("Assign Color Profile"));
@@ -335,8 +335,8 @@ void Editor::handleColorConvert(bool ignoreColor,
                                 Magick::ColorspaceType colorspace,
                                 const QString &title)
 {
-    if (!getCurrentView()) { return; }
-    if (getCurrentView()->getCanvas().colorSpace() == colorspace && !ignoreColor) {
+    if (!getCurrentCanvas()) { return; }
+    if (getCurrentCanvas()->getCanvas().colorSpace() == colorspace && !ignoreColor) {
         emit statusMessage(tr("Already the requested colorspace"));
         return;
     }
@@ -360,7 +360,7 @@ void Editor::handleColorConvert(bool ignoreColor,
         !dialog->getProfile().isEmpty())
     {
         qDebug() << "CONVERT USING" << dialog->getProfile();
-        Common::Canvas canvas = getCurrentView()->getCanvasProject();
+        Common::Canvas canvas = getCurrentCanvas()->getCanvasProject();
         canvas.image = ColorConvert::convertColorspace(canvas.image,
                                                  canvas.profile,
                                                  dialog->getProfile());
@@ -370,8 +370,8 @@ void Editor::handleColorConvert(bool ignoreColor,
                                                               dialog->getProfile());
         }
         canvas.profile = canvas.image.iccColorProfile();
-        getCurrentView()->updateCanvas(canvas);
-        updateTabTitle(getCurrentView());
+        getCurrentCanvas()->updateCanvas(canvas);
+        updateTabTitle(getCurrentCanvas());
     }
 
     QTimer::singleShot(100,
@@ -388,7 +388,7 @@ void Editor::hasColorProfiles()
         QMessageBox::warning(this,
                              tr("Missing color profiles"),
                              tr("Missing color profiles."
-                                " Cyan needs at a minimum 1 color profile"
+                                " Cyan needs a minimum of one color profile"
                                 " for each supported color space (RGB/CMYK/GRAY)."));
         QTimer::singleShot(100,
                            qApp,
@@ -402,9 +402,9 @@ void Editor::handleColorChanged(const QColor &color)
     QList<QMdiSubWindow*> list = mdi->subWindowList();
     for (int i=0;i<list.size();++i) {
         QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
-        if (!window) { return; }
+        if (!window) { continue; }
         View *view = qobject_cast<View*>(window->widget());
-        if (!view) { return; }
+        if (!view) { continue; }
         view->setBrushColor(color);
     }
 }

@@ -77,8 +77,8 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
         default:;
         }
     }
-    if (!getCurrentView()) { return; }
-    getCurrentView()->setInteractiveMode(mode);
+    if (!getCurrentCanvas()) { return; }
+    getCurrentCanvas()->setInteractiveMode(mode);
 }
 
 void Editor::handleSetMoveMode(bool triggered)
