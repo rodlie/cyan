@@ -40,17 +40,17 @@
 
 #define RESOURCE_BYTE 1050000000
 
-Common::Common(QObject *parent): QObject (parent)
+CyanCommon::CyanCommon(QObject *parent): QObject (parent)
 {
 }
 
-QString Common::timestamp()
+QString CyanCommon::timestamp()
 {
     QDateTime date;
     return date.currentDateTime().toString("yyyyMMddHHmmsszzz");
 }
 
-QMap<Magick::CompositeOperator, QString> Common::compositeModes()
+QMap<Magick::CompositeOperator, QString> CyanCommon::compositeModes()
 {
     QMap<Magick::CompositeOperator, QString> result;
 
@@ -102,9 +102,9 @@ QMap<Magick::CompositeOperator, QString> Common::compositeModes()
     return result;
 }
 
-Magick::CompositeOperator Common::compositeModeFromString(const QString &name)
+Magick::CompositeOperator CyanCommon::compositeModeFromString(const QString &name)
 {
-    QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
+    QMapIterator<Magick::CompositeOperator, QString> i(CyanCommon::compositeModes());
     while (i.hasNext()) {
         i.next();
         if (i.value() == name) { return i.key(); }
@@ -112,7 +112,7 @@ Magick::CompositeOperator Common::compositeModeFromString(const QString &name)
     return Magick::UndefinedCompositeOp;
 }
 
-const QString Common::canvasWindowTitle(Magick::Image image)
+const QString CyanCommon::canvasWindowTitle(Magick::Image image)
 {
     // filename @ colorspace widthxheight dpixdpi bit
     QString label = QObject::tr("New image");
@@ -179,12 +179,12 @@ const QString Common::canvasWindowTitle(Magick::Image image)
     return result;
 }
 
-int Common::getDiskResource()
+int CyanCommon::getDiskResource()
 {
     return qRound(static_cast<double>(Magick::ResourceLimits::disk()/RESOURCE_BYTE));
 }
 
-void Common::setDiskResource(int gib)
+void CyanCommon::setDiskResource(int gib)
 {
     try {
         Magick::ResourceLimits::disk(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
@@ -193,12 +193,12 @@ void Common::setDiskResource(int gib)
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 }
 
-int Common::getMemoryResource()
+int CyanCommon::getMemoryResource()
 {
     return qRound(static_cast<double>(Magick::ResourceLimits::memory()/RESOURCE_BYTE));
 }
 
-void Common::setMemoryResource(int gib)
+void CyanCommon::setMemoryResource(int gib)
 {
     try {
         Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
@@ -208,13 +208,13 @@ void Common::setMemoryResource(int gib)
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 }
 
-void Common::setThreadResources(int thread)
+void CyanCommon::setThreadResources(int thread)
 {
     if (thread == 0) { return; }
     Magick::ResourceLimits::thread(static_cast<qulonglong>(thread));
 }
 
-bool Common::writeCanvas(Common::Canvas canvas,
+bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
                          const QString &filename,
                          Magick::CompressionType compress)
 {
@@ -270,7 +270,7 @@ bool Common::writeCanvas(Common::Canvas canvas,
     images.push_back(image);
 
     // add layers
-    QMapIterator<int, Common::Layer> layers(canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layers(canvas.layers);
     while (layers.hasNext()) {
         layers.next();
         Magick::Image layer(layers.value().image);
@@ -328,7 +328,7 @@ bool Common::writeCanvas(Common::Canvas canvas,
         // add compose mode
         try {
             layer.attribute(QString(CYAN_LAYER_COMPOSE).toStdString(),
-                            QString("%1").arg(Common::compositeModes()[layers.value().composite])
+                            QString("%1").arg(CyanCommon::compositeModes()[layers.value().composite])
                             .toStdString());
         }
         catch(Magick::Error &error_ ) {
@@ -390,9 +390,9 @@ bool Common::writeCanvas(Common::Canvas canvas,
     return false;
 }
 
-Common::Canvas Common::readCanvas(const QString &filename)
+CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
 {
-    Common::Canvas canvas;
+    CyanCommon::Canvas canvas;
 
     if (filename.isEmpty()) { return canvas; }
 
@@ -447,8 +447,8 @@ Common::Canvas Common::readCanvas(const QString &filename)
             QSize pos = QSize(offX, offY);
 
             // get composite
-            Magick::CompositeOperator compose = Common::compositeModeFromString(QString::fromStdString(it->attribute(QString(CYAN_LAYER_COMPOSE).toStdString())));
-            Common::Layer layer;
+            Magick::CompositeOperator compose = CyanCommon::compositeModeFromString(QString::fromStdString(it->attribute(QString(CYAN_LAYER_COMPOSE).toStdString())));
+            CyanCommon::Layer layer;
 
             // setup layer
             layer.image = *it;
@@ -487,7 +487,7 @@ Common::Canvas Common::readCanvas(const QString &filename)
     return canvas;
 }
 
-bool Common::isValidCanvas(const QString &filename)
+bool CyanCommon::isValidCanvas(const QString &filename)
 {
     if (filename.isEmpty()) { return false; }
 
@@ -504,7 +504,7 @@ bool Common::isValidCanvas(const QString &filename)
     return false;
 }
 
-bool Common::isValidImage(const QString &filename)
+bool CyanCommon::isValidImage(const QString &filename)
 {
     try {
         Magick::Image image;
@@ -517,7 +517,7 @@ bool Common::isValidImage(const QString &filename)
     return false;
 }
 
-int Common::hasLayers(const QString &filename)
+int CyanCommon::hasLayers(const QString &filename)
 {
     try {
         std::list<Magick::Image> layers;
@@ -530,9 +530,9 @@ int Common::hasLayers(const QString &filename)
     return 0;
 }
 
-Common::Canvas Common::readImage(const QString &filename)
+CyanCommon::Canvas CyanCommon::readImage(const QString &filename)
 {
-    Common::Canvas canvas;
+    CyanCommon::Canvas canvas;
     try {
         Magick::Image image;
         image.quiet(false);
@@ -552,7 +552,7 @@ Common::Canvas Common::readImage(const QString &filename)
     return canvas;
 }
 
-QStringList Common::getColorProfilesPath()
+QStringList CyanCommon::getColorProfilesPath()
 {
     QStringList folders;
     folders << QDir::rootPath() + "/WINDOWS/System32/spool/drivers/color";
@@ -566,7 +566,7 @@ QStringList Common::getColorProfilesPath()
     return folders;
 }
 
-QMap<QString, QString> Common::getColorProfiles(Magick::ColorspaceType colorspace)
+QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType colorspace)
 {
     QMap<QString, QString> output;
     QStringList folders = getColorProfilesPath();
@@ -585,7 +585,7 @@ QMap<QString, QString> Common::getColorProfiles(Magick::ColorspaceType colorspac
     return output;
 }
 
-Magick::ColorspaceType Common::getProfileColorspace(const QString &filename)
+Magick::ColorspaceType CyanCommon::getProfileColorspace(const QString &filename)
 {
     if (!filename.isEmpty()) {
         return getProfileColorspace(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"));
@@ -593,7 +593,7 @@ Magick::ColorspaceType Common::getProfileColorspace(const QString &filename)
     return Magick::UndefinedColorspace;
 }
 
-Magick::ColorspaceType Common::getProfileColorspace(cmsHPROFILE profile)
+Magick::ColorspaceType CyanCommon::getProfileColorspace(cmsHPROFILE profile)
 {
     Magick::ColorspaceType result = Magick::UndefinedColorspace;
     if (profile) {
@@ -609,8 +609,8 @@ Magick::ColorspaceType Common::getProfileColorspace(cmsHPROFILE profile)
     return result;
 }
 
-const QString Common::getProfileTag(const QString filename,
-                                    Common::ICCTag tag)
+const QString CyanCommon::getProfileTag(const QString filename,
+                                    CyanCommon::ICCTag tag)
 {
     if (!filename.isEmpty()) {
         return getProfileTag(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"), tag);
@@ -618,21 +618,21 @@ const QString Common::getProfileTag(const QString filename,
     return QString();
 }
 
-const QString Common::getProfileTag(cmsHPROFILE profile,
-                                    Common::ICCTag tag)
+const QString CyanCommon::getProfileTag(cmsHPROFILE profile,
+                                    CyanCommon::ICCTag tag)
 {
     std::string result;
     if (profile) {
         cmsUInt32Number size = 0;
         cmsInfoType cmsSelectedType;
         switch(tag) {
-        case Common::ICCManufacturer:
+        case CyanCommon::ICCManufacturer:
             cmsSelectedType = cmsInfoManufacturer;
             break;
-        case Common::ICCModel:
+        case CyanCommon::ICCModel:
             cmsSelectedType = cmsInfoModel;
             break;
-        case Common::ICCCopyright:
+        case CyanCommon::ICCCopyright:
             cmsSelectedType = cmsInfoCopyright;
             break;
         default:
@@ -660,7 +660,7 @@ const QString Common::getProfileTag(cmsHPROFILE profile,
     return QString::fromStdString(result);
 }
 
-const QString Common::supportedWriteFormats()
+const QString CyanCommon::supportedWriteFormats()
 {
     QString result;
     if (supportsJpeg()) {
@@ -686,7 +686,7 @@ const QString Common::supportedWriteFormats()
     return result;
 }
 
-const QString Common::supportedReadFormats()
+const QString CyanCommon::supportedReadFormats()
 {
     QString result;
     result.append(QString("*.miff "));
@@ -756,134 +756,134 @@ const QString Common::supportedReadFormats()
     return  result;
 }
 
-int Common::supportedQuantumDepth()
+int CyanCommon::supportedQuantumDepth()
 {
     return QString(MagickQuantumDepth)
            .replace(QString("Q"), QString(""))
             .toInt();
 }
 
-bool Common::supportsJpeg()
+bool CyanCommon::supportsJpeg()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("jpeg", Qt::CaseSensitive);
 }
 
-bool Common::supportsPng()
+bool CyanCommon::supportsPng()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("png", Qt::CaseSensitive);
 }
 
-bool Common::supportsTiff()
+bool CyanCommon::supportsTiff()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("tiff", Qt::CaseSensitive);
 }
 
-bool Common::supportsLcms()
+bool CyanCommon::supportsLcms()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("lcms", Qt::CaseSensitive);
 }
 
-bool Common::supportsHdri()
+bool CyanCommon::supportsHdri()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
             .contains("HDRI", Qt::CaseSensitive);
 }
 
-bool Common::supportsOpenMP()
+bool CyanCommon::supportsOpenMP()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
             .contains("OpenMP", Qt::CaseSensitive);
 }
 
-bool Common::supportsBzlib()
+bool CyanCommon::supportsBzlib()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("bzlib", Qt::CaseSensitive);
 }
 
-bool Common::supportsCairo()
+bool CyanCommon::supportsCairo()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("cairo", Qt::CaseSensitive);
 }
 
-bool Common::supportsFontConfig()
+bool CyanCommon::supportsFontConfig()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("fontconfig", Qt::CaseSensitive);
 }
 
-bool Common::supportsFreeType()
+bool CyanCommon::supportsFreeType()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("freetype", Qt::CaseSensitive);
 }
 
-bool Common::supportsJP2()
+bool CyanCommon::supportsJP2()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("openjp2", Qt::CaseSensitive);
 }
 
-bool Common::supportsLzma()
+bool CyanCommon::supportsLzma()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("lzma", Qt::CaseSensitive);
 }
 
-bool Common::supportsOpenExr()
+bool CyanCommon::supportsOpenExr()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("openexr", Qt::CaseSensitive);
 }
 
-bool Common::supportsPangoCairo()
+bool CyanCommon::supportsPangoCairo()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("pangocairo", Qt::CaseSensitive);
 }
 
-bool Common::supportsRaw()
+bool CyanCommon::supportsRaw()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("raw", Qt::CaseSensitive);
 }
 
-bool Common::supportsRsvg()
+bool CyanCommon::supportsRsvg()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("rsvg", Qt::CaseSensitive);
 }
 
-bool Common::supportsWebp()
+bool CyanCommon::supportsWebp()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("webp", Qt::CaseSensitive);
 }
 
-bool Common::supportsXml()
+bool CyanCommon::supportsXml()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("xml", Qt::CaseSensitive);
 }
 
-bool Common::supportsZlib()
+bool CyanCommon::supportsZlib()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("zlib", Qt::CaseSensitive);
 }
 
-bool Common::supportsJng()
+bool CyanCommon::supportsJng()
 {
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
             .contains("jng", Qt::CaseSensitive);
 }
 
-const QString Common::humanFileSize(float num, bool mp, bool are)
+const QString CyanCommon::humanFileSize(float num, bool mp, bool are)
 {
     float byte = 1024.0;
     QStringList list;
@@ -908,7 +908,7 @@ const QString Common::humanFileSize(float num, bool mp, bool are)
 }
 
 #ifdef WITH_FFMPEG
-QByteArray Common::getEmbeddedCoverArt(const QString &filename)
+QByteArray CyanCommon::getEmbeddedCoverArt(const QString &filename)
 {
     QByteArray result;
     if (!filename.isEmpty()) {
@@ -961,7 +961,7 @@ QByteArray Common::getEmbeddedCoverArt(const QString &filename)
     return result;
 }
 
-int Common::getVideoMaxFrames(const QString &filename)
+int CyanCommon::getVideoMaxFrames(const QString &filename)
 {
     int result = -1;
     if (filename.isEmpty()) { return result; }
@@ -1006,7 +1006,7 @@ int Common::getVideoMaxFrames(const QString &filename)
     return  result;
 }
 
-Magick::Image Common::getVideoFrame(const QString &filename,
+Magick::Image CyanCommon::getVideoFrame(const QString &filename,
                                     int frame)
 {
     Magick::Image result;

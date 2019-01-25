@@ -30,15 +30,13 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef TILEITEM
-#define TILEITEM
+#ifndef CYANCANVASTILEITEM_H
+#define CYANCANVASTILEITEM_H
 
 #include <QObject>
 #include <QGraphicsRectItem>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
-
-#include "layeritem.h"
 
 class TileItem: public QObject, public QGraphicsRectItem
 
@@ -60,7 +58,8 @@ public slots:
     void setPixmapItem(QGraphicsPixmapItem *pixmapItem);
     QGraphicsPixmapItem* getPixmapItem();
     void setPixmap(const QPixmap &pixmap);
-    void setPixmap(int id, const QPixmap &pixmap);
+    void setPixmap(int id,
+                   const QPixmap &pixmap);
 };
 
-#endif // TILEITEM_H
+#endif // CYANCANVASTILEITEM_H

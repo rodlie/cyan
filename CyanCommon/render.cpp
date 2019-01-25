@@ -41,7 +41,7 @@ Render::Render(QObject *parent) : QObject (parent)
 }
 
 Magick::Image Render::compLayers(Magick::Image canvas,
-                                 QMap<int, Common::Layer> layers,
+                                 QMap<int, CyanCommon::Layer> layers,
                                  Magick::Geometry crop)
 {
     // copy canvas to comp
@@ -60,7 +60,7 @@ Magick::Image Render::compLayers(Magick::Image canvas,
 
     // re-order layers for rendering
     QList<QPair<int, int> > order;
-    QMapIterator<int, Common::Layer> layer(layers);
+    QMapIterator<int, CyanCommon::Layer> layer(layers);
     while (layer.hasNext()) {
         layer.next();
         QPair<int, int> pair(layer.value().order,
@@ -69,7 +69,7 @@ Magick::Image Render::compLayers(Magick::Image canvas,
     }
     std::sort(order.begin(),
               order.end(),
-              Common::QPairSortFirst());
+              CyanCommon::QPairSortFirst());
     //qDebug() << "LAYERS?" << layers.size();
     //qDebug() << "COMP ORDER:" << order;
 
@@ -175,13 +175,13 @@ Magick::Image Render::compLayers(Magick::Image canvas,
     return comp;
 }
 
-Magick::Image Render::renderCanvasToImage(Common::Canvas canvas)
+Magick::Image Render::renderCanvasToImage(CyanCommon::Canvas canvas)
 {
     return compLayers(canvas.image,
                       canvas.layers);
 }
 
-bool Render::renderCanvasToFile(Common::Canvas canvas,
+bool Render::renderCanvasToFile(CyanCommon::Canvas canvas,
                                 const QString &filename,
                                 Magick::CompressionType compress,
                                 QMap<QString, QString> attr,

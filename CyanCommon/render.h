@@ -52,10 +52,10 @@ public:
     Render(QObject *parent = nullptr);
 
     static Magick::Image compLayers(Magick::Image canvas,
-                                    QMap<int, Common::Layer> layers,
+                                    QMap<int, CyanCommon::Layer> layers,
                                     Magick::Geometry crop = Magick::Geometry());
-    static Magick::Image renderCanvasToImage(Common::Canvas canvas);
-    static bool renderCanvasToFile(Common::Canvas canvas,
+    static Magick::Image renderCanvasToImage(CyanCommon::Canvas canvas);
+    static bool renderCanvasToFile(CyanCommon::Canvas canvas,
                             const QString &filename,
                             Magick::CompressionType compress = Magick::NoCompression,
                             QMap<QString, QString> attr = QMap<QString, QString>(),

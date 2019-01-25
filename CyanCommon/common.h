@@ -30,8 +30,8 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef CYAN_OMMON_H
+#define CYAN_COMMON_H
 
 #include <QObject>
 #include <QMap>
@@ -67,7 +67,7 @@ extern "C" {
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 
-class Common: public QObject
+class CyanCommon: public QObject
 {
     Q_OBJECT
 
@@ -127,7 +127,7 @@ public:
     struct Layer
     {
         Magick::Image image;
-        QMap<int, Common::Layer> layers;
+        QMap<int, CyanCommon::Layer> layers;
         Magick::CompositeOperator composite = Magick::OverCompositeOp;
         QSize pos = QSize(0, 0);
         bool visible = true;
@@ -139,11 +139,11 @@ public:
     struct Canvas
     {
         Magick::Image image;
-        QMap<int, Common::Layer> layers;
+        QMap<int, CyanCommon::Layer> layers;
         QString error;
         QString warning;
         QString label = QObject::tr("New Image");
-        QMap<int, Common::Tile> tiles;
+        QMap<int, CyanCommon::Tile> tiles;
         QSize tileSize;
         QColor brushColor;
         bool brushAA = true;
@@ -153,7 +153,7 @@ public:
         Magick::Blob profile;
     };
 
-    Common(QObject *parent = nullptr);
+    CyanCommon(QObject *parent = nullptr);
 
     static QString timestamp();
 
@@ -170,17 +170,17 @@ public:
 
     static void setThreadResources(int thread);
 
-    static bool writeCanvas(Common::Canvas canvas,
+    static bool writeCanvas(CyanCommon::Canvas canvas,
                             const QString &filename,
                             Magick::CompressionType compress = Magick::NoCompression);
-    static Common::Canvas readCanvas(const QString &filename);
+    static CyanCommon::Canvas readCanvas(const QString &filename);
 
     static bool isValidCanvas(const QString &filename);
     static bool isValidImage(const QString &filename);
 
     static int hasLayers(const QString &filename);
 
-    static Common::Canvas readImage(const QString &filename);
+    static CyanCommon::Canvas readImage(const QString &filename);
 
     static QStringList getColorProfilesPath();
     static QMap<QString, QString> getColorProfiles(Magick::ColorspaceType colorspace);
@@ -189,9 +189,9 @@ public:
     static Magick::ColorspaceType getProfileColorspace(cmsHPROFILE profile);
 
     static const QString getProfileTag(const QString filename,
-                                       Common::ICCTag tag = Common::ICCDescription);
+                                       CyanCommon::ICCTag tag = CyanCommon::ICCDescription);
     static const QString getProfileTag(cmsHPROFILE profile,
-                                       Common::ICCTag tag = Common::ICCDescription);
+                                       CyanCommon::ICCTag tag = CyanCommon::ICCDescription);
 
     static const QString supportedWriteFormats();
     static const QString supportedReadFormats();
@@ -229,4 +229,4 @@ public:
 #endif
 };
 
-#endif // COMMON_H
+#endif // CYANCOMMON_H
