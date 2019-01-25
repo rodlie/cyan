@@ -689,7 +689,7 @@ void Editor::connectView(View *view)
 {
     if (!view) { return; }
     qDebug() << "connect new view";
-    connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
+    //connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
     connect(view, SIGNAL(selectedLayer(int)), layersWidget, SLOT(setCurrentLayer(int)));
 
 

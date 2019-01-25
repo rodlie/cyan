@@ -176,5 +176,6 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
 
 void LayerTree::keyPressEvent(QKeyEvent *e)
 {
+    qDebug() << "MOVE LAYER KEY EVENT!";
     emit moveLayerEvent(e);
 }

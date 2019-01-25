@@ -185,6 +185,8 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     connect(layerMoveUpButton, SIGNAL(released()), this, SLOT(handleUpButtonReleased()));
     connect(layerMoveDownButton, SIGNAL(released()), this, SLOT(handleDownButtonReleased()));
 
+    connect(layerTree, SIGNAL(moveLayerEvent(QKeyEvent*)), this, SLOT(handleTreeMoveLayer(QKeyEvent*)));
+
     layerOpacitySpin->setValue(100.0);
 }
 
