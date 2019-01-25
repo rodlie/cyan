@@ -169,7 +169,7 @@ void videoDialog::handleSlider(int pos)
         _spin->blockSignals(false);
     }
     try {
-        Magick::Image image = Common::getVideoFrame(_filename,
+        Magick::Image image = CyanCommon::getVideoFrame(_filename,
                                                     pos);
         if (image.isValid()) {
             Magick::Blob buffer;

@@ -28,11 +28,31 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TEMPLATE = subdirs
+include($${top_srcdir}/cyan.pri)
 
-SUBDIRS += \
-    common \
-    canvas \
-    layers \
-    src
+TARGET = CyanLayers
+TEMPLATE = lib
 
+SOURCES += \
+    cyan_layertree.cpp \
+    cyan_layertreeitem.cpp \
+    cyan_layerwidget.cpp
+
+HEADERS += \
+    cyan_layertree.h \
+    cyan_layertreeitem.h \
+    cyan_layerwidget.h
+
+INCLUDEPATH += \
+    $${top_srcdir}/common \
+    $${top_srcdir}/canvas
+
+LIBS += \
+    -L$${DESTDIR} \
+    -lCyanCommon \
+    -lCyanCanvas
+
+unix:!mac {
+    target.path = $${LIBDIR}
+    INSTALLS += target
+}

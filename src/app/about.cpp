@@ -61,12 +61,12 @@ void Editor::aboutImageMagick()
 
     about.append(QString("<p><strong>Features</strong>:<br><br>%1 %2</p>").arg(MagickQuantumDepth).arg(MagickCore::GetMagickFeatures()));
     about.append(QString("<p><strong>Delegates</strong>:<br><br>%1</p>").arg(MagickCore::GetMagickDelegates()));
-    about.append(QString("<p><strong>Disk Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::disk())));
-    about.append(QString("<strong>Area Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::area(),false, true)));
-    about.append(QString("<strong>Map Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::map())));
-    about.append(QString("<strong>Memory Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::memory())));
-    about.append(QString("<strong>Width Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::width(), true)));
-    about.append(QString("<strong>Height Limit</strong>: %1<br>").arg(Common::humanFileSize(Magick::ResourceLimits::height(), true)));
+    about.append(QString("<p><strong>Disk Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::disk())));
+    about.append(QString("<strong>Area Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true)));
+    about.append(QString("<strong>Map Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::map())));
+    about.append(QString("<strong>Memory Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory())));
+    about.append(QString("<strong>Width Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::width(), true)));
+    about.append(QString("<strong>Height Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::height(), true)));
     about.append(QString("<strong>Thread Limit</strong>: %1</p>").arg(Magick::ResourceLimits::thread()));
 
     box.setText(about);

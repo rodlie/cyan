@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef CYAN_OMMON_H
+#ifndef CYAN_COMMON_H
 #define CYAN_COMMON_H
 
 #include <QObject>

@@ -43,7 +43,7 @@
 
 #include <Magick++.h>
 
-#include "common.h"
+#include "cyan_common.h"
 
 class NewMediaDialog : public QDialog
 {
@@ -53,7 +53,7 @@ public:
 
     NewMediaDialog(QWidget *parent = nullptr,
                    QString title = QObject::tr("New Image"),
-                   Common::newDialogType dialogType = Common::newImageDialogType,
+                   CyanCommon::newDialogType dialogType = CyanCommon::newImageDialogType,
                    Magick::ColorspaceType colorspace = Magick::UndefinedColorspace,
                    Magick::Blob profile = Magick::Blob(),
                    QSize size = QSize(0,0));
@@ -65,7 +65,7 @@ public slots:
 
 private:
 
-    Common::newDialogType _type;
+    CyanCommon::newDialogType _type;
     QSpinBox *_width;
     QSpinBox *_height;
     QPushButton *_ok;

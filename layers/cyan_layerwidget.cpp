@@ -1,4 +1,36 @@
-#include "cyanlayerwidget.h"
+/*
+# Copyright Ole-André Rodlie.
+#
+# ole.andre.rodlie@gmail.com
+#
+# This software is governed by the CeCILL license under French law and
+# abiding by the rules of distribution of free software. You can use,
+# modify and / or redistribute the software under the terms of the CeCILL
+# license as circulated by CEA, CNRS and INRIA at the following URL
+# "https://www.cecill.info".
+#
+# As a counterpart to the access to the source code and rights to
+# modify and redistribute granted by the license, users are provided only
+# with a limited warranty and the software's author, the holder of the
+# economic rights and the subsequent licensors have only limited
+# liability.
+#
+# In this respect, the user's attention is drawn to the associated risks
+# with loading, using, modifying and / or developing or reproducing the
+# software by the user in light of its specific status of free software,
+# that can mean that it is complicated to manipulate, and that also
+# so that it is for developers and experienced
+# professionals having in-depth computer knowledge. Users are therefore
+# encouraged to test and test the software's suitability
+# Requirements in the conditions of their systems
+# data to be ensured and, more generally, to use and operate
+# same conditions as regards security.
+#
+# The fact that you are presently reading this means that you have had
+# knowledge of the CeCILL license and that you accept its terms.
+*/
+
+#include "cyan_layerwidget.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -6,8 +38,7 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "common.h"
-#include "view.h"
+#include "cyan_view.h"
 
 CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     QWidget(parent)
@@ -230,54 +261,54 @@ void CyanLayerWidget::populateCompositeBox()
     value - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
     */
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::OverCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::DissolveCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::OverCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DissolveCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::PlusCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::MultiplyCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::OverlayCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::ScreenCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PlusCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::MultiplyCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::OverlayCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ScreenCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::ColorDodgeCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::LinearDodgeCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::ColorBurnCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::LinearBurnCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ColorDodgeCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearDodgeCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ColorBurnCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearBurnCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::LightenCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::DarkenCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::LightenIntensityCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::DarkenIntensityCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LightenCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DarkenCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LightenIntensityCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DarkenIntensityCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::SoftLightCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::HardLightCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::VividLightCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::PegtopLightCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::PinLightCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::LinearLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::SoftLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::HardLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::VividLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PegtopLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PinLightCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearLightCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::DifferenceCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::MinusSrcCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::DivideSrcCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DifferenceCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::MinusSrcCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DivideSrcCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::HueCompositeOp]);
-    layerCompositeBox->addItem(Common::compositeModes()[Magick::SaturateCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::HueCompositeOp]);
+    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::SaturateCompositeOp]);
 
     // add the "rest"
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
+    QMapIterator<Magick::CompositeOperator, QString> i(CyanCommon::compositeModes());
     while (i.hasNext()) {
         i.next();
         if (layerCompositeBox->findText(i.value(),
@@ -305,7 +336,7 @@ void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!layer) { return; }
 
-    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(Common::compositeModes()[layer->getComposite()]));
+    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(CyanCommon::compositeModes()[layer->getComposite()]));
     layerOpacitySpin->setValue(layer->getOpacity()*100);
 
     qDebug() << "layer selected" << layer->getLayerID() << layerCompositeBox->currentText() << layerOpacitySpin->value();
@@ -319,7 +350,7 @@ void CyanLayerWidget::handleLayerCompositeBox()
 
     qDebug() << "layer comp changed to" << layerCompositeBox->currentText();
 
-    QMapIterator<Magick::CompositeOperator, QString> i(Common::compositeModes());
+    QMapIterator<Magick::CompositeOperator, QString> i(CyanCommon::compositeModes());
     while (i.hasNext()) {
         i.next();
         if (i.value() == layerCompositeBox->currentText()) {

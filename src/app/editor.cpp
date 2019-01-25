@@ -54,7 +54,7 @@
 #include "newmediadialog.h"
 #include "convertdialog.h"
 #include "colorconvert.h"
-#include "render.h"
+#include "cyan_render.h"
 
 #ifdef WITH_FFMPEG
 #include "videodialog.h"
@@ -122,30 +122,30 @@ Editor::Editor(QWidget *parent)
     loadSettings();
 
 #ifdef QT_DEBUG
-    qDebug() << "color profile path" << Common::getColorProfilesPath();
-    qDebug() << "rgb color profiles" << Common::getColorProfiles(Magick::sRGBColorspace);
-    qDebug() << "cmyk color profiles" << Common::getColorProfiles(Magick::CMYKColorspace);
-    qDebug() << "gray color profiles" << Common::getColorProfiles(Magick::GRAYColorspace);
-    qDebug() << "q" << Common::supportedQuantumDepth();
-    qDebug() << "jpeg" << Common::supportsJpeg();
-    qDebug() << "png" << Common::supportsPng();
-    qDebug() << "tiff" << Common::supportsTiff();
-    qDebug() << "lcms" << Common::supportsLcms();
-    qDebug() << "hdri" << Common::supportsHdri();
-    qDebug() << "openmp" << Common::supportsOpenMP();
-    qDebug() << "bzlib" << Common::supportsBzlib();
-    qDebug() << "cairo" << Common::supportsCairo();
-    qDebug() << "fontconfig" << Common::supportsFontConfig();
-    qDebug() << "freetype" << Common::supportsFreeType();
-    qDebug() << "jp2" << Common::supportsJP2();
-    qDebug() << "lzma" << Common::supportsLzma();
-    qDebug() << "openexr" << Common::supportsOpenExr();
-    qDebug() << "pangocairo" << Common::supportsPangoCairo();
-    qDebug() << "raw" << Common::supportsRaw();
-    qDebug() << "rsvg" << Common::supportsRsvg();
-    qDebug() << "webp" << Common::supportsWebp();
-    qDebug() << "xml" << Common::supportsXml();
-    qDebug() << "zlib" << Common::supportsZlib();
+    qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
+    qDebug() << "rgb color profiles" << CyanCommon::getColorProfiles(Magick::sRGBColorspace);
+    qDebug() << "cmyk color profiles" << CyanCommon::getColorProfiles(Magick::CMYKColorspace);
+    qDebug() << "gray color profiles" << CyanCommon::getColorProfiles(Magick::GRAYColorspace);
+    qDebug() << "q" << CyanCommon::supportedQuantumDepth();
+    qDebug() << "jpeg" << CyanCommon::supportsJpeg();
+    qDebug() << "png" << CyanCommon::supportsPng();
+    qDebug() << "tiff" << CyanCommon::supportsTiff();
+    qDebug() << "lcms" << CyanCommon::supportsLcms();
+    qDebug() << "hdri" << CyanCommon::supportsHdri();
+    qDebug() << "openmp" << CyanCommon::supportsOpenMP();
+    qDebug() << "bzlib" << CyanCommon::supportsBzlib();
+    qDebug() << "cairo" << CyanCommon::supportsCairo();
+    qDebug() << "fontconfig" << CyanCommon::supportsFontConfig();
+    qDebug() << "freetype" << CyanCommon::supportsFreeType();
+    qDebug() << "jp2" << CyanCommon::supportsJP2();
+    qDebug() << "lzma" << CyanCommon::supportsLzma();
+    qDebug() << "openexr" << CyanCommon::supportsOpenExr();
+    qDebug() << "pangocairo" << CyanCommon::supportsPangoCairo();
+    qDebug() << "raw" << CyanCommon::supportsRaw();
+    qDebug() << "rsvg" << CyanCommon::supportsRsvg();
+    qDebug() << "webp" << CyanCommon::supportsWebp();
+    qDebug() << "xml" << CyanCommon::supportsXml();
+    qDebug() << "zlib" << CyanCommon::supportsZlib();
 #endif
 }
 
@@ -173,9 +173,9 @@ void Editor::saveSettings()
 
     settings.beginGroup("engine");
     settings.setValue("disk_limit",
-                      Common::getDiskResource());
+                      CyanCommon::getDiskResource());
     settings.setValue("memory_limit",
-                      Common::getMemoryResource());
+                      CyanCommon::getMemoryResource());
     settings.endGroup();
 
     settings.beginGroup("gui");
@@ -210,9 +210,9 @@ void Editor::loadSettings()
     QSettings settings;
 
     settings.beginGroup("engine");
-    Common::setDiskResource(settings
+    CyanCommon::setDiskResource(settings
                             .value("disk_limit", 0).toInt());
-    Common::setMemoryResource(settings
+    CyanCommon::setMemoryResource(settings
                               .value("memory_limit", 8).toInt());
     settings.endGroup();
 
@@ -237,9 +237,9 @@ void Editor::loadSettings()
     settings.endGroup();
 
     emit statusMessage(tr("Engine disk cache limit: %1 GB")
-                       .arg(Common::getDiskResource()));
+                       .arg(CyanCommon::getDiskResource()));
     emit statusMessage(tr("Engine memory limit: %1 GB")
-                       .arg(Common::getMemoryResource()));
+                       .arg(CyanCommon::getMemoryResource()));
 
     // setup color profiles
     setDefaultColorProfiles(colorProfileRGBMenu);
@@ -266,8 +266,8 @@ void Editor::loadProject(const QString &filename)
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().toLower() != "miff") { return; }
-    if (Common::isValidCanvas(filename)) {
-        Common::Canvas canvas = Common::readCanvas(filename);
+    if (CyanCommon::isValidCanvas(filename)) {
+        CyanCommon::Canvas canvas = CyanCommon::readCanvas(filename);
         newTab(canvas);
     }
 }
@@ -278,7 +278,7 @@ void Editor::saveProject(const QString &filename)
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     qDebug() << "save project" << filename;
 
-    if (Common::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
+    if (CyanCommon::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
         // TODO, verify project!
     } else {
         QMessageBox::warning(this,
@@ -296,13 +296,13 @@ void Editor::saveImage(const QString &filename)
 void Editor::loadImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
-    if (Common::isValidCanvas(filename)) { // cyan project
+    if (CyanCommon::isValidCanvas(filename)) { // cyan project
         emit statusMessage(tr("Loading canvas %1").arg(filename));
         loadProject(filename);
         emit statusMessage(tr("Done"));
     } else { // regular image
         // TODO
-        qDebug() << "HAS LAYERS?" << Common::hasLayers(filename);
+        qDebug() << "HAS LAYERS?" << CyanCommon::hasLayers(filename);
         emit statusMessage(tr("Loading image %1").arg(filename));
         readImage(filename);
         emit statusMessage(tr("Done"));
@@ -508,7 +508,7 @@ void Editor::readVideo(const QString &filename, int frame)
 {
     if (filename.isEmpty() || frame<0) { return; }
     try {
-        Magick::Image image = Common::getVideoFrame(filename, frame);
+        Magick::Image image = CyanCommon::getVideoFrame(filename, frame);
         Magick::Blob blob;
         image.write(&blob);
         if (blob.length()>0) { readImage(blob, filename); }
@@ -528,7 +528,7 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename)
                                           filename);
     int ret = dialog->exec();
     if (ret == QDialog::Accepted) {
-        result = Common::getVideoFrame(filename,
+        result = CyanCommon::getVideoFrame(filename,
                                        dialog->getFrame());
     }
     QTimer::singleShot(100,
@@ -546,7 +546,7 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
     if (maxFrame==0) { return result; }
     if (frame>maxFrame) { frame = maxFrame; }
     if (frame<0) { frame = 0; }
-    result = Common::getVideoFrame(filename,
+    result = CyanCommon::getVideoFrame(filename,
                                    frame);
     return result;
 }
@@ -661,7 +661,7 @@ void Editor::newLayerDialog()
     if (!getCurrentCanvas()) { return; }
     NewMediaDialog *dialog = new NewMediaDialog(this,
                                                 tr("New Layer"),
-                                                Common::newLayerDialogType,
+                                                CyanCommon::newLayerDialogType,
                                                 getCurrentCanvas()->getCanvas().colorSpace(),
                                                 getCurrentCanvas()->getCanvasProject().profile,
                                                 getCurrentCanvas()->getCanvasSize());
@@ -731,7 +731,7 @@ void Editor::setViewTool(View *view)
 
 
     if (!parentView) { return; }
-    Common::Layer layer  = parentView->getLayer(layerID);
+    CyanCommon::Layer layer  = parentView->getLayer(layerID);
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
     View *view = new View(this, layerID);
 
@@ -854,13 +854,13 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
             } else if (type.name().startsWith(QString("video"))) { // get frame from video
                 image = getVideoFrameAsImage(filename);
             } else { // "regular" image
-                if (Common::isValidCanvas(filename)) { continue; }
+                if (CyanCommon::isValidCanvas(filename)) { continue; }
                 image.read(filename.toStdString());
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
                 type.name().startsWith(QString("video"))) { continue; }
-            if (Common::isValidCanvas(filename)) {
+            if (CyanCommon::isValidCanvas(filename)) {
                 // skip projects
                 continue;
             }

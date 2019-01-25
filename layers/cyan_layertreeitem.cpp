@@ -30,56 +30,71 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef LAYERTREE_H
-#define LAYERTREE_H
+#include "cyan_layertreeitem.h"
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QMdiSubWindow>
-#include <QKeyEvent>
-
-#include "view.h"
-#include "cyanlayertreeitem.h"
-
-class LayerTree : public QTreeWidget
+CyanLayerTreeItem::CyanLayerTreeItem(QTreeWidget *parent) :
+    QTreeWidgetItem(parent)
+  , _composite(Magick::OverCompositeOp)
+  , _id(0)
+  , _name(tr("New Layer"))
+  , _visible(true)
 {
-    Q_OBJECT
+}
 
-public:
+CyanLayerTreeItem::~CyanLayerTreeItem()
+{
+}
 
-    explicit LayerTree(QWidget *parent = nullptr);
-    ~LayerTree();
+Magick::CompositeOperator CyanLayerTreeItem::getComposite()
+{
+    return _composite;
+}
 
-signals:
+void CyanLayerTreeItem::setComposite(Magick::CompositeOperator composite)
+{
+    if (composite == Magick::UndefinedCompositeOp ||
+        composite == Magick::NoCompositeOp) { return; }
+    _composite = composite;
+}
 
-    void selectedLayer(int id);
-    void moveLayerEvent(QKeyEvent *e);
-    void layerVisibilityChanged(int id,
-                                bool visible);
-    void layerLabelChanged(int id,
-                           const QString &label);
+int CyanLayerTreeItem::getLayerID()
+{
+    return _id;
+}
 
-private:
+void CyanLayerTreeItem::setLayerID(int id)
+{
+    if (id<0) { return; }
+    _id = id;
+}
 
-    QString _canvasID;
+QString CyanLayerTreeItem::getLayerName()
+{
+    return _name;
+}
 
-public slots:
+void CyanLayerTreeItem::setLayerName(QString name)
+{
+    if (name.isEmpty()) { return; }
+    _name = name;
+}
 
-    void setCanvasID(const QString &id);
-    const QString getCanvasID();
-    void handleTabActivated(QMdiSubWindow *tab, bool force = false);
+double CyanLayerTreeItem::getOpacity()
+{
+    return _opacity;
+}
 
-private slots:
+void CyanLayerTreeItem::setOpacity(double value)
+{
+    _opacity = value;
+}
 
-    void populateTree(View *view);
-    void handleItemActivated(QTreeWidgetItem *item,
-                             int col);
-    void handleItemChanged(QTreeWidgetItem *item,
-                           int col);
+bool CyanLayerTreeItem::getVisibility()
+{
+    return _visible;
+}
 
-protected:
-
-    void keyPressEvent(QKeyEvent *e);
-};
-
-#endif // LAYERTREE_H
+void CyanLayerTreeItem::setVisibility(bool visible)
+{
+    _visible = visible;
+}

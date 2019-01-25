@@ -37,7 +37,7 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-#include "common.h"
+#include "cyan_common.h"
 
 ConvertDialog::ConvertDialog(QWidget *parent,
                              const QString &title,
@@ -95,7 +95,7 @@ void ConvertDialog::populateProfiles()
     _box->clear();
     int index = -1;
     int c = 0;
-    QMapIterator<QString, QString> i(Common::getColorProfiles(_colorspace));
+    QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(_colorspace));
     while (i.hasNext()) {
         i.next();
         _box->addItem(i.key(),

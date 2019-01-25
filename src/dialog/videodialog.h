@@ -40,7 +40,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-#include "common.h"
+#include "cyan_common.h"
 
 class videoDialog : public QDialog
 {

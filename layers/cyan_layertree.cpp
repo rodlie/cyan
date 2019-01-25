@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "layertree.h"
+#include "cyan_layertree.h"
 
 #include <QDebug>
 #include <QLayout>
@@ -93,7 +93,7 @@ void LayerTree::populateTree(View *view)
     if (!view) { return; }
     clear();
     setCanvasID(view->getCanvasID());
-    QMapIterator<int, Common::Layer> layers(view->getCanvasProject().layers);
+    QMapIterator<int, CyanCommon::Layer> layers(view->getCanvasProject().layers);
     while (layers.hasNext()) {
         layers.next();
         CyanLayerTreeItem *item = new CyanLayerTreeItem(this);

@@ -50,13 +50,13 @@
 #include <QTreeWidgetItem>
 #include <QToolButton>
 
-#include "common.h"
-#include "view.h"
+//#include "common.h"
+//#include "cyan_view.h"
 #include "mdi.h"
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"
 
-#include "cyanlayerwidget.h"
+#include "cyan_layerwidget.h"
 
 class Editor : public QMainWindow
 {
@@ -69,7 +69,7 @@ public:
 
 private:
 
-    Common common;
+    CyanCommon common;
     Mdi *mdi;
 
     QToolBar *mainToolBar;
@@ -191,7 +191,7 @@ private slots:
     void handleMoveLayerUp(int id);
 
     // tabs
-    void newTab(Common::Canvas canvas);
+    void newTab(CyanCommon::Canvas canvas);
     void newTab(Magick::Image image = Magick::Image(),
                 QSize geo = QSize(0, 0));
     void handleTabActivated(QMdiSubWindow *tab);

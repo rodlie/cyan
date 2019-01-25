@@ -42,7 +42,7 @@
 
 NewMediaDialog::NewMediaDialog(QWidget *parent,
                                QString title,
-                               Common::newDialogType dialogType,
+                               CyanCommon::newDialogType dialogType,
                                Magick::ColorspaceType colorspace,
                                Magick::Blob profile,
                                QSize size) :
@@ -61,7 +61,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _forcedProfile(profile)
 {
     setWindowTitle(title);
-    setWindowIcon(_type==Common::newImageDialogType?QIcon(":/icons/image.png"):QIcon(":/icons/layer.png"));
+    setWindowIcon(_type==CyanCommon::newImageDialogType?QIcon(":/icons/image.png"):QIcon(":/icons/layer.png"));
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -125,7 +125,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     mainLayout->addWidget(buttonWidget);
     mainLayout->addStretch();
 
-    if (_type == Common::newLayerDialogType) {
+    if (_type == CyanCommon::newLayerDialogType) {
         _select->hide();
         _profile->hide();
     }
@@ -158,7 +158,7 @@ Magick::Image NewMediaDialog::getImage()
 void NewMediaDialog::handleOk()
 {
     Magick::ColorspaceType type = _colorspace;
-    if (_type == Common::newImageDialogType) {
+    if (_type == CyanCommon::newImageDialogType) {
         switch (_select->currentData().toInt()) {
         case 0:
             type = Magick::sRGBColorspace;
@@ -226,7 +226,7 @@ void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)
     }
     settings.endGroup();
 
-    QMapIterator<QString, QString> i(Common::getColorProfiles(colorspace));
+    QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(colorspace));
     while (i.hasNext()) {
         i.next();
         _profile->addItem(i.key(),

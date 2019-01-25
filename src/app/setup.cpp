@@ -39,9 +39,7 @@
 #include "colorrgb.h"
 #include "colorcmyk.h"
 #include "colorhsv.h"
-
-// test
-#include "cyanlayerwidget.h"
+#include "cyan_layerwidget.h"
 
 void Editor::setupStyle()
 {

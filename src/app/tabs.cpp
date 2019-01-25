@@ -32,7 +32,7 @@
 
 #include "editor.h"
 
-void Editor::newTab(Common::Canvas canvas)
+void Editor::newTab(CyanCommon::Canvas canvas)
 {
     qDebug() << "new tab from canvas/project";
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);
@@ -126,7 +126,7 @@ void Editor::updateTabTitle(View *view)
 {
     if (!view) { view = qobject_cast<View*>(getCurrentCanvas()); }
     if (!view) { return; }
-    QString title = Common::canvasWindowTitle(view->getCanvas());
+    QString title = CyanCommon::canvasWindowTitle(view->getCanvas());
     qDebug() << "update canvas title" << title;
     view->setWindowTitle(title);
 }

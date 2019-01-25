@@ -43,7 +43,7 @@ void Editor::populateColorProfileMenu(QMenu *menu,
                                       Magick::ColorspaceType colorspace)
 {
     menu->clear();
-    QMapIterator<QString, QString> i(Common::getColorProfiles(colorspace));
+    QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(colorspace));
     while (i.hasNext()) {
         i.next();
         QAction *action = new QAction(menu);
@@ -201,7 +201,7 @@ void Editor::populateColorIntentMenu()
     QIcon intentIcon = QIcon::fromTheme("monitor_window_flow");
     QAction *action1 = new QAction(colorIntentMenu);
     action1->setText(tr("Undefined"));
-    action1->setData(Common::UndefinedRenderingIntent);
+    action1->setData(CyanCommon::UndefinedRenderingIntent);
     action1->setCheckable(true);
     action1->setIcon(intentIcon);
     connect(action1,
@@ -211,7 +211,7 @@ void Editor::populateColorIntentMenu()
 
     QAction *action2 = new QAction(colorIntentMenu);
     action2->setText(tr("Saturation"));
-    action2->setData(Common::SaturationRenderingIntent);
+    action2->setData(CyanCommon::SaturationRenderingIntent);
     action2->setCheckable(true);
     action2->setIcon(intentIcon);
     connect(action2,
@@ -221,7 +221,7 @@ void Editor::populateColorIntentMenu()
 
     QAction *action3 = new QAction(colorIntentMenu);
     action3->setText(tr("Perceptual"));
-    action3->setData(Common::PerceptualRenderingIntent);
+    action3->setData(CyanCommon::PerceptualRenderingIntent);
     action3->setCheckable(true);
     action3->setIcon(intentIcon);
     connect(action3,
@@ -231,7 +231,7 @@ void Editor::populateColorIntentMenu()
 
     QAction *action4 = new QAction(colorIntentMenu);
     action4->setText(tr("Absolute"));
-    action4->setData(Common::AbsoluteRenderingIntent);
+    action4->setData(CyanCommon::AbsoluteRenderingIntent);
     action4->setCheckable(true);
     action4->setIcon(intentIcon);
     connect(action4,
@@ -241,7 +241,7 @@ void Editor::populateColorIntentMenu()
 
     QAction *action5 = new QAction(colorIntentMenu);
     action5->setText(tr("Relative"));
-    action5->setData(Common::RelativeRenderingIntent);
+    action5->setData(CyanCommon::RelativeRenderingIntent);
     action5->setCheckable(true);
     action5->setIcon(intentIcon);
     connect(action5,
@@ -284,7 +284,7 @@ void Editor::loadDefaultColorIntent()
         QAction *action = colorIntentMenu->actions().at(i);
         if (!action) { continue; }
         if (action->data().toInt() == settings.value(QString("intent"),
-                                                     Common::PerceptualRenderingIntent).toInt())
+                                                     CyanCommon::PerceptualRenderingIntent).toInt())
         {
             action->setChecked(true);
         } else { action->setChecked(false); }
@@ -360,7 +360,7 @@ void Editor::handleColorConvert(bool ignoreColor,
         !dialog->getProfile().isEmpty())
     {
         qDebug() << "CONVERT USING" << dialog->getProfile();
-        Common::Canvas canvas = getCurrentCanvas()->getCanvasProject();
+        CyanCommon::Canvas canvas = getCurrentCanvas()->getCanvasProject();
         canvas.image = ColorConvert::convertColorspace(canvas.image,
                                                  canvas.profile,
                                                  dialog->getProfile());
@@ -381,9 +381,9 @@ void Editor::handleColorConvert(bool ignoreColor,
 
 void Editor::hasColorProfiles()
 {
-    int rgbs = Common::getColorProfiles(Magick::sRGBColorspace).size();
-    int cmyks = Common::getColorProfiles(Magick::CMYKColorspace).size();
-    int grays = Common::getColorProfiles(Magick::GRAYColorspace).size();
+    int rgbs = CyanCommon::getColorProfiles(Magick::sRGBColorspace).size();
+    int cmyks = CyanCommon::getColorProfiles(Magick::CMYKColorspace).size();
+    int grays = CyanCommon::getColorProfiles(Magick::GRAYColorspace).size();
     if (rgbs<1 || cmyks<1 || grays<1) {
         QMessageBox::warning(this,
                              tr("Missing color profiles"),
