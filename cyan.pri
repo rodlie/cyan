@@ -79,3 +79,6 @@ CONFIG(with_ffmpeg) {
                  libavcodec \
                  libavutil
 }
+
+win32: CONFIG+=staticlib
+

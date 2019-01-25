@@ -40,9 +40,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneHoverEvent>
 
-#include "common_global.h"
-
-class CYAN_LAYERITEM_EXPORT LayerItem : public QObject, public QGraphicsRectItem
+class LayerItem : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 

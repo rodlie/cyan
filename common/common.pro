@@ -41,12 +41,11 @@ SOURCES += \
     cyan_view.cpp
 
 HEADERS += \
-    common_global.h \
     cyan_common.h \
     cyan_tileitem.h \
     cyan_render.h \
     cyan_layeritem.h \
-    cyan_view.h
+    cyan_view.h \
 
 unix:!mac {
     target.path = $${LIBDIR}
@@ -55,10 +54,3 @@ unix:!mac {
 
 # lcms
 PKGCONFIG += lcms2
-
-DEFINES += \
-    CYAN_COMMON_LIBRARY \
-    CYAN_TILEITEM_LIBRARY \
-    CYAN_RENDER_LIBRARY \
-    CYAN_LAYERITEM_LIBRARY \
-    CYAN_VIEW_LIBRARY

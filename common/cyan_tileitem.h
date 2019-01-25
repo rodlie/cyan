@@ -38,9 +38,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 
-#include "common_global.h"
-
-class CYAN_TILEITEM_EXPORT TileItem: public QObject, public QGraphicsRectItem
+class TileItem: public QObject, public QGraphicsRectItem
 
 {
   Q_OBJECT

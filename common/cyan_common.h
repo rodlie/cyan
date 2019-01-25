@@ -53,7 +53,6 @@ extern "C" {
 #endif
 
 #include "cyan_tileitem.h"
-#include "common_global.h"
 
 #define CYAN_PROJECT_VERSION 2.0
 #define CYAN_LAYER_VERSION 2.0
@@ -68,7 +67,7 @@ extern "C" {
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 
-class CYAN_COMMON_EXPORT CyanCommon: public QObject
+class CyanCommon: public QObject
 {
     Q_OBJECT
 

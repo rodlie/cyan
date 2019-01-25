@@ -41,9 +41,8 @@
 #include <Magick++.h>
 
 #include "cyan_common.h"
-#include "common_global.h"
 
-class CYAN_RENDER_EXPORT Render: public QObject
+class Render: public QObject
 {
 
     Q_OBJECT
