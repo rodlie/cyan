@@ -30,8 +30,8 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef LAYERITEM_H
-#define LAYERITEM_H
+#ifndef CYANCANVASLAYERITEM_H
+#define CYANCANVASLAYERITEM_H
 
 #include <QObject>
 #include <QMouseEvent>
@@ -87,4 +87,4 @@ public slots:
     void setDraw(bool draw);
 };
 
-#endif // LAYERITEM_H
+#endif // CYANCANVASLAYERITEM_H

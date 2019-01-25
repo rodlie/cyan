@@ -30,8 +30,8 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef VIEW_H
-#define VIEW_H
+#ifndef CYANCANVASVIEW_H
+#define CYANCANVASVIEW_H
 
 #include <QObject>
 #include <QGraphicsView>
@@ -50,12 +50,12 @@
 #include <QKeyEvent>
 #include <QList>
 
-#include "common.h"
-#include "layeritem.h"
+#include "cyan_render.h"
+#include "cyan_layeritem.h"
 
 #define TILE_Z 6
 #define LAYER_Z 100
-#define BRUSH_Z std::numeric_limits<qreal>::max()
+#define BRUSH_Z 200
 
 class View : public QGraphicsView
 {
@@ -80,7 +80,7 @@ private:
 
     QString _parentCanvas;
     int _parentLayer;
-    Common::Canvas _canvas;
+    CyanCommon::Canvas _canvas;
     Magick::Image _image;
     QGraphicsScene *_scene;
     QGraphicsRectItem *_rect;
@@ -142,14 +142,14 @@ public slots:
                   QSize pos,
                   bool updateView = true);
 
-    Common::Layer getLayerFromOrder(int order);
+    CyanCommon::Layer getLayerFromOrder(int order);
     int getLastLayerID();
     int getLastLayerOrder();
 
     void clearLayers();
     Magick::Image getCanvas();
     QSize getCanvasSize();
-    Common::Canvas getCanvasProject();
+    CyanCommon::Canvas getCanvasProject();
 
     void setLayerVisibility(int layer,
                             bool layerIsVisible);
@@ -174,13 +174,13 @@ public slots:
     LayerItem* getLayerItemUnderId(int id);
     LayerItem* getLayerItemOverId(int id);
 
-    Common::Layer getLayer(int layer);
+    CyanCommon::Layer getLayer(int layer);
     void setLayer(int layer, Magick::Image image);
-    void setLayerFromCanvas(Common::Canvas canvas,
+    void setLayerFromCanvas(CyanCommon::Canvas canvas,
                             int layer);
-    void setLayersFromCanvas(Common::Canvas canvas);
+    void setLayersFromCanvas(CyanCommon::Canvas canvas);
 
-    void updateCanvas(Common::Canvas canvas);
+    void updateCanvas(CyanCommon::Canvas canvas);
 
     void setLayerOrder(int layer, int order);
     QSize getLayerOffset(int layer);
@@ -240,7 +240,7 @@ private slots:
 
     void clearScene();
     void clearTiles();
-    QMap<int, Common::Tile> setupTiles(Magick::Image image,
+    QMap<int, CyanCommon::Tile> setupTiles(Magick::Image image,
                                        int tiles = 8);
 
     void handleLayerOverTiles(LayerItem *layerItem,
@@ -252,12 +252,12 @@ private slots:
 
     void renderTile(int tile,
                            Magick::Image canvas,
-                           QMap<int, Common::Layer> layers,
+                           QMap<int, CyanCommon::Layer> layers,
                            Magick::Geometry crop = Magick::Geometry());
 
     void paintCanvasBackground();
 
-    void moveSelectedLayer(Common::MoveLayer gravity, int skip = 1);
+    void moveSelectedLayer(CyanCommon::MoveLayer gravity, int skip = 1);
 
 protected:
 
@@ -273,4 +273,4 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 };
 
-#endif // VIEW_H
+#endif // CYANCANVASVIEW_H

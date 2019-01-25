@@ -30,9 +30,10 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "layeritem.h"
+#include "cyan_layeritem.h"
 #include <QPen>
-#include "tileitem.h"
+
+#include "cyan_tileitem.h"
 
 LayerItem::LayerItem(QGraphicsItem *parent)
     : QGraphicsRectItem(parent)

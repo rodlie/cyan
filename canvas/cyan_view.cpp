@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "view.h"
+#include "cyan_view.h"
 
 #include <QMimeData>
 #include <QUrl>
@@ -41,9 +41,6 @@
 #include <QTransform>
 #include <QtConcurrent/QtConcurrent>
 #include <QTimer>
-
-#include "common.h"
-#include "render.h"
 
 View::View(QWidget* parent, bool setup) :
     QGraphicsView(parent)
@@ -283,16 +280,16 @@ void View::keyPressEvent(QKeyEvent *e)
     if(e->modifiers() & Qt::ShiftModifier) { skip = 10; }
     switch (e->key()) {
     case Qt::Key_Left:
-        moveSelectedLayer(Common::MoveLayerLeft, skip);
+        moveSelectedLayer(CyanCommon::MoveLayerLeft, skip);
         return;
     case Qt::Key_Right:
-        moveSelectedLayer(Common::MoveLayerRight, skip);
+        moveSelectedLayer(CyanCommon::MoveLayerRight, skip);
         return;
     case Qt::Key_Up:
-        moveSelectedLayer(Common::MoveLayerUp, skip);
+        moveSelectedLayer(CyanCommon::MoveLayerUp, skip);
         return;
     case Qt::Key_Down:
-        moveSelectedLayer(Common::MoveLayerDown, skip);
+        moveSelectedLayer(CyanCommon::MoveLayerDown, skip);
         return;
     default:;
     }
@@ -423,22 +420,22 @@ void View::addLayer(int id,
     if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
 }
 
-Common::Layer View::getLayerFromOrder(int order)
+CyanCommon::Layer View::getLayerFromOrder(int order)
 {
-    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
     while (layer.hasNext()) {
         layer.next();
         if (layer.value().order==order) {
             return layer.value();
         }
     }
-    return  Common::Layer();
+    return  CyanCommon::Layer();
 }
 
 int View::getLastLayerID()
 {
     int id = -1;
-    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
     while (layer.hasNext()) {
         layer.next();
         if (layer.key()>id) { id = layer.key(); }
@@ -449,7 +446,7 @@ int View::getLastLayerID()
 int View::getLastLayerOrder()
 {
     int order = -1;
-    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
     while (layer.hasNext()) {
         layer.next();
         if (layer.value().order>order) { order = layer.value().order; }
@@ -474,7 +471,7 @@ QSize View::getCanvasSize()
                  static_cast<int>(_canvas.image.rows()));
 }
 
-Common::Canvas View::getCanvasProject()
+CyanCommon::Canvas View::getCanvasProject()
 {
     return _canvas;
 }
@@ -521,7 +518,7 @@ int View::getLayerCount()
 QList<QPair<int, int> > View::getSortedLayers()
 {
     QList<QPair<int, int> > order;
-    QMapIterator<int, Common::Layer> layer(_canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
     while (layer.hasNext()) {
         layer.next();
         QPair<int, int> pair(layer.value().order,
@@ -530,7 +527,7 @@ QList<QPair<int, int> > View::getSortedLayers()
     }
     std::sort(order.begin(),
               order.end(),
-              Common::QPairSortFirst());
+              CyanCommon::QPairSortFirst());
     return order;
 }
 
@@ -648,12 +645,12 @@ LayerItem *View::getLayerItemOverId(int id)
     return nullptr;
 }
 
-Common::Layer View::getLayer(int layer)
+CyanCommon::Layer View::getLayer(int layer)
 {
     if (_canvas.layers.contains(layer)) {
         return _canvas.layers[layer];
     }
-    return  Common::Layer();
+    return  CyanCommon::Layer();
 }
 
 void View::setLayer(int layer, Magick::Image image)
@@ -662,7 +659,7 @@ void View::setLayer(int layer, Magick::Image image)
     emit updatedLayers();
 }
 
-void View::setLayerFromCanvas(Common::Canvas canvas,
+void View::setLayerFromCanvas(CyanCommon::Canvas canvas,
                               int layer)
 {
     _canvas.layers[layer].image = canvas.image;
@@ -670,14 +667,14 @@ void View::setLayerFromCanvas(Common::Canvas canvas,
     emit updatedLayers();
 }
 
-void View::setLayersFromCanvas(Common::Canvas canvas)
+void View::setLayersFromCanvas(CyanCommon::Canvas canvas)
 {
     if (_canvas.layers.size()>0) {
         qWarning() << "DONT SET LAYERS IF EXISTS!";
         return;
     }
     _canvas.layers = canvas.layers;
-    QMapIterator<int, Common::Layer> layers(_canvas.layers);
+    QMapIterator<int, CyanCommon::Layer> layers(_canvas.layers);
     while (layers.hasNext()) {
         layers.next();
         addLayer(layers.key(),
@@ -693,7 +690,7 @@ void View::setLayersFromCanvas(Common::Canvas canvas)
     refreshTiles();
 }
 
-void View::updateCanvas(Common::Canvas canvas)
+void View::updateCanvas(CyanCommon::Canvas canvas)
 {
     _image = canvas.image;
     _canvas = canvas;
@@ -796,7 +793,7 @@ void View::setupCanvas(int width,
     _canvas.image = _image;
 
     // set timestamp
-    _canvas.timestamp = Common::timestamp();
+    _canvas.timestamp = CyanCommon::timestamp();
 
     // setup canvas tiles
     initTiles();
@@ -829,7 +826,7 @@ const QString View::getCanvasID()
 void View::refreshTiles()
 {
     qDebug() << "REFRESH TILES";
-    QMapIterator<int, Common::Tile> tiles(_canvas.tiles);
+    QMapIterator<int, CyanCommon::Tile> tiles(_canvas.tiles);
     while (tiles.hasNext()) {
         tiles.next();
         int tile = tiles.key();
@@ -1014,7 +1011,7 @@ void View::clearScene()
 
 void View::clearTiles()
 {
-    QMapIterator<int, Common::Tile> i(_canvas.tiles);
+    QMapIterator<int, CyanCommon::Tile> i(_canvas.tiles);
     while(i.hasNext()) {
         i.next();
         _scene->removeItem(i.value().rect);
@@ -1023,10 +1020,10 @@ void View::clearTiles()
     _canvas.tiles.clear();
 }
 
-QMap<int, Common::Tile> View::setupTiles(Magick::Image image,
+QMap<int, CyanCommon::Tile> View::setupTiles(Magick::Image image,
                                          int tiles)
 {
-    QMap<int, Common::Tile> result;
+    QMap<int, CyanCommon::Tile> result;
 
     // tile size
     int width = static_cast<int>(image.columns())/tiles;
@@ -1131,7 +1128,7 @@ void View::handleTileStatus()
         return;
     }*/
 
-    QMapIterator<int, Common::Tile> tiles(_canvas.tiles);
+    QMapIterator<int, CyanCommon::Tile> tiles(_canvas.tiles);
     while (tiles.hasNext()) {
         tiles.next();
         int tile = tiles.key();
@@ -1237,7 +1234,7 @@ void View::handleBrushOverTile(QPointF pos,
     }
 }
 
-void View::renderTile(int tile, Magick::Image canvas, QMap<int, Common::Layer> layers, Magick::Geometry crop)
+void View::renderTile(int tile, Magick::Image canvas, QMap<int, CyanCommon::Layer> layers, Magick::Geometry crop)
 {
     canvas.quiet(true);
     if (crop.width()==0 || tile==-1 || layers.size()==0 || canvas.columns()==0) { return; }
@@ -1281,7 +1278,7 @@ void View::paintCanvasBackground()
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-void View::moveSelectedLayer(Common::MoveLayer gravity, int skip)
+void View::moveSelectedLayer(CyanCommon::MoveLayer gravity, int skip)
 {
     qDebug() << "move selected layer" << _selectedLayer << gravity;
     for (int i=0;i<_scene->items().size();++i) {
@@ -1295,16 +1292,16 @@ void View::moveSelectedLayer(Common::MoveLayer gravity, int skip)
         if (item->getID() != _selectedLayer) { continue; }
         QPointF pos = item->pos();
         switch (gravity) {
-        case Common::MoveLayerUp:
+        case CyanCommon::MoveLayerUp:
             pos.setY(pos.y()-skip);
             break;
-        case Common::MoveLayerDown:
+        case CyanCommon::MoveLayerDown:
             pos.setY(pos.y()+skip);
             break;
-        case Common::MoveLayerLeft:
+        case CyanCommon::MoveLayerLeft:
             pos.setX(pos.x()-skip);
             break;
-        case Common::MoveLayerRight:
+        case CyanCommon::MoveLayerRight:
             pos.setX(pos.x()+skip);
             break;
         }
