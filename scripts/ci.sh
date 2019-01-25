@@ -100,7 +100,7 @@ if [ "${OS}" = "Linux" ]; then
   cd ${CWD}
   echo "===> Building for Linux64 ..."
   mkdir -p ${CWD}/linux64 && cd ${CWD}/linux64
-  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr CONFIG+=deploy ..
+  qmake GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib PREFIX=/usr CONFIG+=deploy ..
   make
   #make test
   strip -s src/build/Cyan
@@ -117,7 +117,7 @@ if [ "${OS}" = "Linux" ]; then
   STRIP="${MXE}/usr/bin/${TARGET}-strip"
   PATH="${MXE}/usr/bin:/usr/bin:/bin"
   PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-  ${QMAKE} GIT=${COMMIT} CONFIG+=release CONFIG+=deploy ..
+  ${QMAKE} GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
   make
   #make test
   ${STRIP} -s src/build/Cyan.exe
@@ -128,7 +128,7 @@ elif [ "${OS}" = "Darwin" ]; then
   PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
   PATH=${SDK}/bin:/usr/bin:/bin
   mkdir -p ${CWD}/mac64 && cd ${CWD}/mac64
-  qmake GIT=${COMMIT} CONFIG+=release CONFIG+=deploy ..
+  qmake GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
   make
   #make test
   MP=/opt/local/lib/libomp/libomp.dylib
