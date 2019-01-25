@@ -112,7 +112,7 @@ private:
     QMenu *colorProfileGRAYMenu;
     QMenu* colorIntentMenu;
 
-    QToolButton *newButton;
+    //QToolButton *newButton;
     QToolButton *saveButton;
     CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;

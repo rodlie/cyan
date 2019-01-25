@@ -118,7 +118,7 @@ void Editor::setupUI()
     mainMenu->addMenu(optMenu);
     mainMenu->addMenu(helpMenu);
 
-    mainToolBar->addWidget(newButton);
+    mainToolBar->addAction(newImageAct);
     mainToolBar->addAction(openImageAct);
     mainToolBar->addWidget(saveButton);
     mainToolBar->addAction(viewMoveAct);
@@ -339,13 +339,13 @@ void Editor::setupActions()
 
 void Editor::setupButtons()
 {
-    newButton = new QToolButton(this);
+    /*newButton = new QToolButton(this);
    // newButton->setIconSize(QSize(32, 32));
     newButton->setMenu(newMenu);
     newButton->setPopupMode(QToolButton::InstantPopup);
     newButton->setText(tr("New"));
     newButton->setToolTip(tr("New"));
-    //newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    //newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);*/
 
     saveButton = new QToolButton(this);
     //saveButton->setIconSize(QSize(32, 32));
