@@ -50,14 +50,16 @@
 #include <QKeyEvent>
 #include <QList>
 
+#include "cyan_common.h"
 #include "cyan_render.h"
 #include "cyan_layeritem.h"
+#include "common_global.h"
 
 #define TILE_Z 6
 #define LAYER_Z 100
 #define BRUSH_Z 200
 
-class View : public QGraphicsView
+class CYAN_VIEW_EXPORT View : public QGraphicsView
 {
     Q_OBJECT
 

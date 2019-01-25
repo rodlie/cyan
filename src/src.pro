@@ -141,15 +141,13 @@ win32: RC_ICONS += share/icons/cyan.ico
 # add libraries
 INCLUDEPATH += \
     $${top_srcdir}/common \
-    $${top_srcdir}/canvas \
     $${top_srcdir}/layers
 
 LIBS += \
     -L$${DESTDIR} \
     -lCyanCommon \
-    -lCyanCanvas \
     -lCyanLayers
 
-unix:!mac: QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
+!CONFIG(staticlib): unix:!mac: QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
 CONFIG(staticlib): PKGCONFIG += lcms2

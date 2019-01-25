@@ -41,8 +41,9 @@
 #include <Magick++.h>
 
 #include "cyan_common.h"
+#include "common_global.h"
 
-class Render: public QObject
+class CYAN_RENDER_EXPORT Render: public QObject
 {
 
     Q_OBJECT
@@ -56,10 +57,10 @@ public:
                                     Magick::Geometry crop = Magick::Geometry());
     static Magick::Image renderCanvasToImage(CyanCommon::Canvas canvas);
     static bool renderCanvasToFile(CyanCommon::Canvas canvas,
-                            const QString &filename,
-                            Magick::CompressionType compress = Magick::NoCompression,
-                            QMap<QString, QString> attr = QMap<QString, QString>(),
-                            QMap<QString, QString> arti = QMap<QString, QString>());
+                                   const QString &filename,
+                                   Magick::CompressionType compress = Magick::NoCompression,
+                                   QMap<QString, QString> attr = QMap<QString, QString>(),
+                                   QMap<QString, QString> arti = QMap<QString, QString>());
 
 };
 #endif // RENDER_H

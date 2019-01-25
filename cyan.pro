@@ -32,7 +32,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     common \
-    canvas \
     layers \
     src
 

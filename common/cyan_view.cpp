@@ -42,7 +42,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QTimer>
 
-#include <cyan_tileitem.h>
+#include "cyan_tileitem.h"
 
 View::View(QWidget* parent, bool setup) :
     QGraphicsView(parent)

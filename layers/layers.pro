@@ -44,15 +44,13 @@ HEADERS += \
     cyan_layerwidget.h
 
 INCLUDEPATH += \
-    $${top_srcdir}/common \
-    $${top_srcdir}/canvas
+    $${top_srcdir}/common
 
 LIBS += \
     -L$${DESTDIR} \
-    -lCyanCommon \
-    -lCyanCanvas
+    -lCyanCommon
 
 unix:!mac {
     target.path = $${LIBDIR}
-    INSTALLS += target
+    !CONFIG(staticlib): INSTALLS += target
 }

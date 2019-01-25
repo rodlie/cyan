@@ -38,7 +38,9 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 
-class TileItem: public QObject, public QGraphicsRectItem
+#include "common_global.h"
+
+class CYAN_TILEITEM_EXPORT TileItem: public QObject, public QGraphicsRectItem
 
 {
   Q_OBJECT
@@ -47,7 +49,7 @@ public:
 
     TileItem(QGraphicsItem *parent = nullptr,
                QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem());
-    QMap<int,bool> layers;
+    QMap<int, bool> layers;
 
 private:
 

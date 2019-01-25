@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,27 +28,65 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-include($${top_srcdir}/cyan.pri)
+#ifndef CYANCANVASLAYERITEM_H
+#define CYANCANVASLAYERITEM_H
 
-TARGET = CyanCanvas
-TEMPLATE = lib
+#include <QObject>
+#include <QMouseEvent>
+#include <QGraphicsRectItem>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsSceneHoverEvent>
 
-SOURCES += \
-    cyan_layeritem.cpp \
-    cyan_view.cpp
+#include "common_global.h"
 
-HEADERS += \
-    cyan_layeritem.h \
-    cyan_view.h
+class CYAN_LAYERITEM_EXPORT LayerItem : public QObject, public QGraphicsRectItem
+{
+    Q_OBJECT
 
-INCLUDEPATH += \
-    $${top_srcdir}/common
+public:
 
-LIBS += \
-    -L$${DESTDIR} -lCyanCommon
+    LayerItem(QGraphicsItem *parent = nullptr);
 
-unix:!mac {
-    target.path = $${LIBDIR}
-    INSTALLS += target
-}
+signals:
+
+    void movedItem(QPointF pos,
+                   int layerID);
+    void movingItem(QPointF pos,
+                    int layerID);
+    void selectedItem(int LayerID);
+
+private:
+
+    bool mouseIsDown;
+    bool _movable;
+    QPointF lpos;
+    QPointF llpos;
+    QPointF fpos;
+    bool _drag;
+    bool _draw;
+
+protected:
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
+public slots:
+
+    void setMovable(bool movable);
+    void setMovable(LayerItem *layer,
+                    bool movable);
+    bool isMovable();
+    //bool isDrag();
+    //void setDrag(bool drag);
+    int getID();
+    bool isDrawing();
+    void setDraw(bool draw);
+};
+
+#endif // CYANCANVASLAYERITEM_H

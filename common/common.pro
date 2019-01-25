@@ -36,16 +36,29 @@ TEMPLATE = lib
 SOURCES += \
     cyan_common.cpp \
     cyan_tileitem.cpp \
-    cyan_render.cpp
+    cyan_render.cpp \
+    cyan_layeritem.cpp \
+    cyan_view.cpp
 
 HEADERS += \
+    common_global.h \
     cyan_common.h \
     cyan_tileitem.h \
-    cyan_render.h
+    cyan_render.h \
+    cyan_layeritem.h \
+    cyan_view.h
 
 unix:!mac {
     target.path = $${LIBDIR}
-    INSTALLS += target
+    !CONFIG(staticlib): INSTALLS += target
 }
+
 # lcms
 PKGCONFIG += lcms2
+
+DEFINES += \
+    CYAN_COMMON_LIBRARY \
+    CYAN_TILEITEM_LIBRARY \
+    CYAN_RENDER_LIBRARY \
+    CYAN_LAYERITEM_LIBRARY \
+    CYAN_VIEW_LIBRARY

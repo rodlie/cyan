@@ -64,6 +64,6 @@ void TileItem::setPixmap(const QPixmap &pixmap)
 
 void TileItem::setPixmap(int id, const QPixmap &pixmap)
 {
-    if (!_pixmap || this->data(0).toInt()!=id) { return; }
+    if (!_pixmap || this->data(0).toInt() != id) { return; }
     setPixmap(pixmap);
 }
