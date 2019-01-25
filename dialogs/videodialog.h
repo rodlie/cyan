@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,54 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#ifndef VIDEODIALOG_H
+#define VIDEODIALOG_H
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+#include <QObject>
+#include <QDialog>
+#include <QLabel>
+#include <QSlider>
+#include <QPushButton>
+#include <QSpinBox>
 
+#include "cyan_common.h"
+
+class videoDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+
+    videoDialog(QWidget *parent = nullptr,
+                int max = 0,
+                const QString &filename = QString(),
+                bool showToAndFrom = false);
+    int getFrame();
+    QSize getFrames();
+
+private:
+    int _max;
+    QString _filename;
+    QLabel *_label;
+    QSlider *_slider;
+    QSpinBox *_spin;
+    QPushButton *_ok;
+    QPushButton *_cancel;
+    QPushButton *_fromMark;
+    QPushButton *_toMark;
+    QSpinBox *_from;
+    QSpinBox *_to;
+
+private slots:
+
+    void handleSlider(int pos);
+    void handleSpin(int pos);
+    void handleOk();
+    void handleCancel();
+    void handleFromMark();
+    void handleToMark();
+};
+
+#endif // VIDEODIALOG_H

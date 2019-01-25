@@ -28,16 +28,51 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+VERSION = 2.0.0
+VERSION_TYPE=alpha1
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+QT += widgets
+
+CONFIG += c++11
+CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+
+unix:!mac {
+    isEmpty(PREFIX): PREFIX = /usr/local
+    isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
+    isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
+    isEmpty(LIBDIR): LIBDIR = $$PREFIX/lib$${LIBSUFFIX}
+    isEmpty(BINDIR): BINDIR = $$PREFIX/bin
+    isEmpty(ICONDIR): ICONDIR = $$PREFIX/share/icons
+    isEmpty(ICCDIR): ICCDIR = $$PREFIX/share/color/icc
+    isEmpty(APPDIR): APPDIR = $$PREFIX/share/applications
+}
+
+QMAKE_TARGET_COMPANY = "$${TARGET}"
+QMAKE_TARGET_PRODUCT = "$${TARGET}"
+QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
+
+DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+
+DESTDIR = $${top_builddir}/build
+OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
+MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
+RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
+
+# pkg-config
+QT_CONFIG -= no-pkg-config
+CONFIG += link_pkgconfig
+
+# ffmpeg
+CONFIG(with_ffmpeg) {
+    DEFINES += WITH_FFMPEG
+    PKGCONFIG += libavdevice \
+                 libswscale \
+                 libavformat \
+                 libavcodec \
+                 libavutil
+}
+
+win32: CONFIG+=staticlib
 

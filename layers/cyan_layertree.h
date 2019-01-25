@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,58 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#ifndef CYANLAYERTREE_H
+#define CYANLAYERTREE_H
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QMdiSubWindow>
+#include <QKeyEvent>
 
+#include "cyan_view.h"
+#include "cyan_layertreeitem.h"
+
+class LayerTree : public QTreeWidget
+{
+    Q_OBJECT
+
+public:
+
+    explicit LayerTree(QWidget *parent = nullptr);
+    ~LayerTree();
+
+signals:
+
+    void selectedLayer(int id);
+    void moveLayerEvent(QKeyEvent *e);
+    void layerVisibilityChanged(int id,
+                                bool visible);
+    void layerLabelChanged(int id,
+                           const QString &label);
+
+private:
+
+    QString _canvasID;
+
+public slots:
+
+    void setCanvasID(const QString &id);
+    const QString getCanvasID();
+    void handleTabActivated(QMdiSubWindow *tab, bool force = false);
+
+private slots:
+
+    void populateTree(View *view);
+    void handleItemActivated(QTreeWidgetItem *item,
+                             int col);
+    void handleItemChanged(QTreeWidgetItem *item,
+                           int col);
+
+protected:
+
+    void keyPressEvent(QKeyEvent *e);
+};
+
+#endif // CYANLAYERTREE_H

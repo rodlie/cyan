@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,42 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#include "cyan_tileitem.h"
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+#include <QPointF>
+#include <QPen>
 
+TileItem::TileItem(QGraphicsItem *parent, QGraphicsPixmapItem *pixmapItem)
+    : QGraphicsRectItem(parent)
+    , _pixmap(pixmapItem)
+{
+    QPen newPen(Qt::transparent);
+    newPen.setWidth(0);
+    setPen(newPen);
+}
+
+void TileItem::setPixmapItem(QGraphicsPixmapItem *pixmapItem)
+{
+    if (!pixmapItem) { return; }
+    _pixmap = pixmapItem;
+}
+
+QGraphicsPixmapItem *TileItem::getPixmapItem()
+{
+    if (!_pixmap) { return new QGraphicsPixmapItem(); }
+    else { return _pixmap; }
+}
+
+void TileItem::setPixmap(const QPixmap &pixmap)
+{
+    if (!_pixmap) { return; }
+    _pixmap->setPixmap(pixmap);
+}
+
+void TileItem::setPixmap(int id, const QPixmap &pixmap)
+{
+    if (!_pixmap || this->data(0).toInt() != id) { return; }
+    setPixmap(pixmap);
+}

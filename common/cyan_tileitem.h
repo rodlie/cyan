@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,38 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#ifndef CYANCANVASTILEITEM_H
+#define CYANCANVASTILEITEM_H
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+#include <QObject>
+#include <QGraphicsRectItem>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
 
+class TileItem: public QObject, public QGraphicsRectItem
+
+{
+  Q_OBJECT
+
+public:
+
+    TileItem(QGraphicsItem *parent = nullptr,
+               QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem());
+    QMap<int, bool> layers;
+
+private:
+
+    QGraphicsPixmapItem *_pixmap;
+
+public slots:
+
+    void setPixmapItem(QGraphicsPixmapItem *pixmapItem);
+    QGraphicsPixmapItem* getPixmapItem();
+    void setPixmap(const QPixmap &pixmap);
+    void setPixmap(int id,
+                   const QPixmap &pixmap);
+};
+
+#endif // CYANCANVASTILEITEM_H

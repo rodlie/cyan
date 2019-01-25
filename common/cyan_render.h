@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,38 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#ifndef RENDER_H
+#define RENDER_H
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+#include <QObject>
+#include <QMap>
+#include <QString>
+#include <QPair>
 
+#include <Magick++.h>
+
+#include "cyan_common.h"
+
+class Render: public QObject
+{
+
+    Q_OBJECT
+
+public:
+
+    Render(QObject *parent = nullptr);
+
+    static Magick::Image compLayers(Magick::Image canvas,
+                                    QMap<int, CyanCommon::Layer> layers,
+                                    Magick::Geometry crop = Magick::Geometry());
+    static Magick::Image renderCanvasToImage(CyanCommon::Canvas canvas);
+    static bool renderCanvasToFile(CyanCommon::Canvas canvas,
+                                   const QString &filename,
+                                   Magick::CompressionType compress = Magick::NoCompression,
+                                   QMap<QString, QString> attr = QMap<QString, QString>(),
+                                   QMap<QString, QString> arti = QMap<QString, QString>());
+
+};
+#endif // RENDER_H

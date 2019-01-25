@@ -28,16 +28,9 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
-
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+# ImageMagick7
+MAGICK_CONFIG = Magick++-7.Q16HDRI
+!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
+PKGCONFIG += $${MAGICK_CONFIG}
+CONFIG(deploy): LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
 

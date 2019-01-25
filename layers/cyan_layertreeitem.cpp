@@ -1,3 +1,4 @@
+/*
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -27,17 +28,73 @@
 #
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
+*/
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+#include "cyan_layertreeitem.h"
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+CyanLayerTreeItem::CyanLayerTreeItem(QTreeWidget *parent) :
+    QTreeWidgetItem(parent)
+  , _composite(Magick::OverCompositeOp)
+  , _id(0)
+  , _name(tr("New Layer"))
+  , _visible(true)
+{
+}
 
+CyanLayerTreeItem::~CyanLayerTreeItem()
+{
+}
+
+Magick::CompositeOperator CyanLayerTreeItem::getComposite()
+{
+    return _composite;
+}
+
+void CyanLayerTreeItem::setComposite(Magick::CompositeOperator composite)
+{
+    if (composite == Magick::UndefinedCompositeOp ||
+        composite == Magick::NoCompositeOp) { return; }
+    _composite = composite;
+}
+
+int CyanLayerTreeItem::getLayerID()
+{
+    return _id;
+}
+
+void CyanLayerTreeItem::setLayerID(int id)
+{
+    if (id<0) { return; }
+    _id = id;
+}
+
+QString CyanLayerTreeItem::getLayerName()
+{
+    return _name;
+}
+
+void CyanLayerTreeItem::setLayerName(QString name)
+{
+    if (name.isEmpty()) { return; }
+    _name = name;
+}
+
+double CyanLayerTreeItem::getOpacity()
+{
+    return _opacity;
+}
+
+void CyanLayerTreeItem::setOpacity(double value)
+{
+    _opacity = value;
+}
+
+bool CyanLayerTreeItem::getVisibility()
+{
+    return _visible;
+}
+
+void CyanLayerTreeItem::setVisibility(bool visible)
+{
+    _visible = visible;
+}

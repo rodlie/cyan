@@ -19,6 +19,7 @@ Supported build options:
  * ``DOCDIR = <PREFIX/share/doc>`` - documentation install path
  * ``MANDIR = <PREFIX/share/man>`` - manual install path
  * ``LIBDIR = <PREFIX/lib>`` - library install path
+ * ``LIBSUFFIX = `` - library dir suffix (add ``64`` if using x86_64/amd64)
  * ``BINDIR = <PREFIX/bin>`` - executable install path
  * ``ICONDIR = <PREFIX/share/icons>`` - icon themes path
  * ``ICCDIR = <PREFIX/share/color/icc>`` - ICC color profile path
@@ -40,13 +41,13 @@ sudo make install
 
 Or run from the build folder:
 ```
-make INSTALL_ROOT=`pwd`/pkg install
-./pkg/usr/local/bin/Cyan
+make INSTALL_ROOT=`pwd` install
+./usr/local/bin/Cyan
 ```
 
 Package build:
 ```
-qmake PREFIX=/usr
+qmake PREFIX=/usr LIBSUFFIX=64
 make
 make INSTALL_ROOT=<pkg_path> install
 ```
