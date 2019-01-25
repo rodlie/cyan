@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
 title: Cyan
 description: Open source prepress image viewer and converter
-logo: https://github.com/rodlie/cyan/raw/master/src/share/icons/hicolor/256x256/apps/cyan.png
+logo: https://github.com/rodlie/cyan/raw/master/share/icons/hicolor/256x256/apps/cyan.png
 show_downloads: false
