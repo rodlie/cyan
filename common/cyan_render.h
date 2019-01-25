@@ -40,7 +40,7 @@
 
 #include <Magick++.h>
 
-#include "common.h"
+#include "cyan_common.h"
 
 class Render: public QObject
 {

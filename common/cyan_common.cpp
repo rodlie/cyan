@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "common.h"
+#include "cyan_common.h"
 
 #include <QDebug>
 #include <QFile>

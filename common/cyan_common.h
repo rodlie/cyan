@@ -52,7 +52,7 @@ extern "C" {
 }
 #endif
 
-#include "tileitem.h"
+#include "cyan_tileitem.h"
 
 #define CYAN_PROJECT_VERSION 2.0
 #define CYAN_LAYER_VERSION 2.0

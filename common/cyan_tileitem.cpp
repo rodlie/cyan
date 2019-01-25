@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "tileitem.h"
+#include "cyan_tileitem.h"
 
 #include <QPointF>
 #include <QPen>
