@@ -28,16 +28,30 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+include($${top_srcdir}/share/cyan.pri)
+include($${top_srcdir}/share/magick.pri)
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+TARGET = CyanDialogs
+TEMPLATE = lib
 
+SOURCES += \
+    newmediadialog.cpp \
+    convertdialog.cpp
+CONFIG(with_ffmpeg): SOURCES += videodialog.cpp
+
+HEADERS += \
+    newmediadialog.h \
+    convertdialog.h
+CONFIG(with_ffmpeg): HEADERS += videodialog.h
+
+INCLUDEPATH += \
+    $${top_srcdir}/common
+
+LIBS += \
+    -L$${DESTDIR} \
+    -lCyanCommon
+
+unix:!mac {
+    target.path = $${LIBDIR}
+    !CONFIG(staticlib): INSTALLS += target
+}

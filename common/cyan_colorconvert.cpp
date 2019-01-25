@@ -30,7 +30,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "colorconvert.h"
+#include "cyan_colorconvert.h"
 
 #include <QDebug>
 

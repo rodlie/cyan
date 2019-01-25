@@ -28,7 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-include($${top_srcdir}/cyan.pri)
+include($${top_srcdir}/share/cyan.pri)
+include($${top_srcdir}/share/magick.pri)
 
 TARGET = CyanCommon
 TEMPLATE = lib
@@ -38,7 +39,8 @@ SOURCES += \
     cyan_tileitem.cpp \
     cyan_render.cpp \
     cyan_layeritem.cpp \
-    cyan_view.cpp
+    cyan_view.cpp \
+    cyan_colorconvert.cpp
 
 HEADERS += \
     cyan_common.h \
@@ -46,6 +48,7 @@ HEADERS += \
     cyan_render.h \
     cyan_layeritem.h \
     cyan_view.h \
+    cyan_colorconvert.h
 
 unix:!mac {
     target.path = $${LIBDIR}

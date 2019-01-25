@@ -28,7 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-include($${top_srcdir}/cyan.pri)
+include($${top_srcdir}/share/cyan.pri)
+include($${top_srcdir}/share/magick.pri)
 
 TARGET = CyanLayers
 TEMPLATE = lib

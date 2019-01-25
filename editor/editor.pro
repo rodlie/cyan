@@ -28,61 +28,36 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-include($${top_srcdir}/cyan.pri)
+include($${top_srcdir}/share/cyan.pri)
+include($${top_srcdir}/share/magick.pri)
 
 TARGET = Cyan
 TEMPLATE = app
 QT += concurrent
 
 SOURCES += \
-    app/main.cpp \
-    app/editor.cpp \
-    app/about.cpp \
-    app/setup.cpp \
-    app/color.cpp \
-    app/viewtool.cpp \
-    app/messages.cpp \
-    app/layers.cpp \
-    app/tabs.cpp \
-    common/mdi.cpp \
-    common/colorconvert.cpp \
-    colors/qtcolorpicker.cpp \
-    colors/qtcolortriangle.cpp \
-    colors/colorrgb.cpp \
-    colors/colorcmyk.cpp \
-    colors/colorhsv.cpp \
-    dialog/newmediadialog.cpp \
-    dialog/convertdialog.cpp
-CONFIG(with_ffmpeg): SOURCES += dialog/videodialog.cpp
+    main.cpp \
+    editor.cpp \
+    about.cpp \
+    setup.cpp \
+    color.cpp \
+    viewtool.cpp \
+    messages.cpp \
+    layers.cpp \
+    tabs.cpp \
+    mdi.cpp \
 
 HEADERS += \
-    app/editor.h \
-    common/mdi.h \
-    common/colorconvert.h \
-    colors/qtcolorpicker.h \
-    colors/qtcolortriangle.h \
-    colors/colorrgb.h \
-    colors/colorcmyk.h \
-    colors/colorhsv.h \
-    dialog/newmediadialog.h \
-    dialog/convertdialog.h
-CONFIG(with_ffmpeg): HEADERS += dialog/videodialog.h
+    editor.h \
+    mdi.h \
 
-CONFIG(deploy) : RESOURCES += share/icons.qrc share/icc.qrc
-CONFIG(debug, release|debug): RESOURCES += share/icons.qrc
+CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons.qrc $${top_srcdir}/share/icc.qrc
+CONFIG(debug, release|debug): RESOURCES += $${top_srcdir}/share/icons.qrc
 
 OTHER_FILES += \
     $${top_srcdir}/scripts/ci.sh \
     $${top_srcdir}/scripts/gimp.py \
     $${top_srcdir}/docs/README.md
-
-INCLUDEPATH += \
-    app \
-    canvas \
-    common \
-    colors \
-    dialog \
-    layers
 
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
@@ -96,14 +71,14 @@ unix:!mac {
     desktop.path = $${APPDIR}
 
     desktop.files = \
-        share/cyan.desktop
+        $${top_srcdir}/share/cyan.desktop
     icc.files = \
-        share/icc/rgb.icc \
-        share/icc/cmyk.icc \
-        share/icc/gray.icc
+        $${top_srcdir}/share/icc/rgb.icc \
+        $${top_srcdir}/share/icc/cmyk.icc \
+        $${top_srcdir}/share/icc/gray.icc
     icons.files = \
-        share/icons/Cyan \
-        share/icons/hicolor
+        $${top_srcdir}/share/icons/Cyan \
+        $${top_srcdir}/share/icons/hicolor
     docs.files = \
         $${top_srcdir}/README.md \
         $${top_srcdir}/docs/LICENSE.CeCILLv21 \
@@ -128,25 +103,29 @@ mac {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -fopenmp
     }
-    ICON = share/icons/Cyan.icns
-    QMAKE_INFO_PLIST = share/Info.plist
+    ICON = $${top_srcdir}/share/icons/Cyan.icns
+    QMAKE_INFO_PLIST = $${top_srcdir}/share/Info.plist
 }
 
 # deploy fix
 CONFIG(deploy): win32-g++: LIBS += -lpthread
 
 # add win32 icon
-win32: RC_ICONS += share/icons/cyan.ico
+win32: RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
 
 # add libraries
 INCLUDEPATH += \
     $${top_srcdir}/common \
-    $${top_srcdir}/layers
+    $${top_srcdir}/layers \
+    $${top_srcdir}/colors \
+    $${top_srcdir}/dialogs
 
 LIBS += \
     -L$${DESTDIR} \
     -lCyanCommon \
-    -lCyanLayers
+    -lCyanLayers \
+    -lCyanColors \
+    -lCyanDialogs
 
 !CONFIG(staticlib): unix:!mac: QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 

@@ -28,16 +28,26 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TEMPLATE = subdirs
-CONFIG -= ordered
-SUBDIRS += \
-    common \
-    layers \
-    colors \
-    dialogs \
-    editor
+include($${top_srcdir}/share/cyan.pri)
 
-layers.depends += common
-dialogs.depends += common
-editor.depends += common layers colors dialogs
+TARGET = CyanColors
+TEMPLATE = lib
 
+SOURCES += \
+    qtcolorpicker.cpp \
+    qtcolortriangle.cpp \
+    colorrgb.cpp \
+    colorcmyk.cpp \
+    colorhsv.cpp
+
+HEADERS += \
+    qtcolorpicker.h \
+    qtcolortriangle.h \
+    colorrgb.h \
+    colorcmyk.h \
+    colorhsv.h
+
+unix:!mac {
+    target.path = $${LIBDIR}
+    !CONFIG(staticlib): INSTALLS += target
+}
