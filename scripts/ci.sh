@@ -103,8 +103,8 @@ if [ "${OS}" = "Linux" ]; then
   qmake GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib PREFIX=/usr CONFIG+=deploy ..
   make
   #make test
-  strip -s src/build/Cyan
-  mv src/build/Cyan .
+  strip -s build/Cyan
+  mv build/Cyan .
 
   echo "===> Building win64 ..."
   mkdir -p ${CWD}/win64
@@ -120,8 +120,8 @@ if [ "${OS}" = "Linux" ]; then
   ${QMAKE} GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
   make
   #make test
-  ${STRIP} -s src/build/Cyan.exe
-  mv src/build/Cyan.exe .
+  ${STRIP} -s build/Cyan.exe
+  mv build/Cyan.exe .
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
   PKG_CONFIG=${SDK}/bin/pkg-config
@@ -132,11 +132,11 @@ elif [ "${OS}" = "Darwin" ]; then
   make
   #make test
   MP=/opt/local/lib/libomp/libomp.dylib
-  cp ${MP} src/build/Cyan.app/Contents/MacOS/
-  install_name_tool -change ${MP} @executable_path/libomp.dylib src/build/Cyan.app/Contents/MacOS/Cyan
-  install_name_tool -id @executable_path/libomp.dylib src/build/Cyan.app/Contents/MacOS/libomp.dylib
-  strip -u -r src/build/Cyan.app/Contents/MacOS/*
-  mv src/build/Cyan.app .
+  cp ${MP} build/Cyan.app/Contents/MacOS/
+  install_name_tool -change ${MP} @executable_path/libomp.dylib build/Cyan.app/Contents/MacOS/Cyan
+  install_name_tool -id @executable_path/libomp.dylib build/Cyan.app/Contents/MacOS/libomp.dylib
+  strip -u -r build/Cyan.app/Contents/MacOS/*
+  mv build/Cyan.app .
 fi
 
 echo "===> Creating archives ..."
