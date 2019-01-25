@@ -155,8 +155,8 @@ if [ "${OS}" = "Linux" ]; then
   #cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
   cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
   cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
-  cp ${CWD}/src/share/cyan.desktop Cyan-${TAG}-Linux/
-  cp -a ${CWD}/src/share/icons/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
+  cp ${CWD}/share/cyan.desktop Cyan-${TAG}-Linux/
+  cp -a ${CWD}/share/icons/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
   7za -mx=9 a -r Cyan-${TAG}-Windows.7z Cyan-${TAG}-Windows
   WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.7z | awk '{print $1}'`
   cp Cyan-${TAG}-Windows.7z ${DEPLOY}/
