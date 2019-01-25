@@ -61,7 +61,9 @@ SOURCES += \
     colors/colorhsv.cpp \
     dialog/newmediadialog.cpp \
     dialog/convertdialog.cpp \
-    layers/layertree.cpp
+    layers/layertree.cpp \
+    cyanlayerwidget.cpp \
+    cyanlayertreeitem.cpp
 CONFIG(with_ffmpeg): SOURCES += dialog/videodialog.cpp
 
 HEADERS += \
@@ -80,10 +82,13 @@ HEADERS += \
     colors/colorhsv.h \
     dialog/newmediadialog.h \
     dialog/convertdialog.h \
-    layers/layertree.h
+    layers/layertree.h \
+    cyanlayerwidget.h \
+    cyanlayertreeitem.h
 CONFIG(with_ffmpeg): HEADERS += dialog/videodialog.h
 
 CONFIG(deploy) : RESOURCES += share/icons.qrc share/icc.qrc
+CONFIG(debug, release|debug): RESOURCES += share/icons.qrc
 
 OTHER_FILES += \
     common/ci.sh \

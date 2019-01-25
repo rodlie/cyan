@@ -103,18 +103,12 @@ Editor::Editor(QWidget *parent)
     , colorIntentMenu(nullptr)
     , newButton(nullptr)
     , saveButton(nullptr)
-    , layersTree(nullptr)
+    , layersWidget(nullptr)
     , layersDock(nullptr)
-    , layersComp(nullptr)
-    , layersOpacity(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
     , colorTriangle(nullptr)
     , colorPicker(nullptr)
-    , newLayerButton(nullptr)
-    , removeLayerButton(nullptr)
-    , moveLayerUpButton(nullptr)
-    , moveLayerDownButton(nullptr)
 {
     // set window title
     setWindowTitle(qApp->applicationName());
@@ -597,7 +591,7 @@ void Editor::saveImageDialog()
 void Editor::saveLayerDialog()
 {
     if (!getCurrentCanvas()) { return; }
-    LayerTreeItem *layerItem = dynamic_cast<LayerTreeItem*>(layersTree->currentItem());
+    CyanLayerTreeItem *layerItem = layersWidget->getCurrentLayer();
     if (!layerItem) {
         QMessageBox::warning(this,
                              tr("No layer selected"),
@@ -696,6 +690,9 @@ void Editor::connectView(View *view)
     if (!view) { return; }
     qDebug() << "connect new view";
     connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
+    connect(view, SIGNAL(selectedLayer(int)), layersWidget, SLOT(setCurrentLayer(int)));
+
+
     connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
     connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
@@ -705,7 +702,11 @@ void Editor::connectView(View *view)
     connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
     connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
     connect(view, SIGNAL(openLayers(QList<QUrl>)), this, SLOT(handleOpenLayers(QList<QUrl>)));
-    connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));
+
+    connect(layersWidget,
+            SIGNAL(moveLayerEvent(QKeyEvent*)),
+            view,
+            SLOT(moveLayerEvent(QKeyEvent*)));
 }
 
 void Editor::setViewTool(View *view)
@@ -735,6 +736,8 @@ void Editor::setViewTool(View *view)
     View *view = new View(this, layerID);
 
     connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
+    connect(view, SIGNAL(selectedLayer(int)), layersWidget, SLOT(setCurrentLayer(int)));
+
     connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
     connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
@@ -770,8 +773,8 @@ void Editor::setViewTool(View *view)
 void Editor::handleViewClosed()
 {
     qDebug() << "view closed";
-    layersTree->clear();
-    layersTree->handleTabActivated(mdi->currentSubWindow());
+    layersWidget->clearTree();
+    layersWidget->handleTabActivated(mdi->currentSubWindow());
 }
 
 

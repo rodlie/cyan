@@ -277,5 +277,9 @@
         <file>icons/Cyan/32x32/actions/eye.png</file>
         <file>icons/Cyan/16x16/actions/layer.png</file>
         <file>icons/Cyan/32x32/actions/layer.png</file>
+        <file>icons/Cyan/32x32/actions/images_flickr.png</file>
+        <file>icons/Cyan/16x16/actions/images_flickr.png</file>
+        <file>icons/Cyan/16x16/actions/layers.png</file>
+        <file>icons/Cyan/32x32/actions/layers.png</file>
     </qresource>
 </RCC>

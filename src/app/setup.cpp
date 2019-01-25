@@ -40,6 +40,9 @@
 #include "colorcmyk.h"
 #include "colorhsv.h"
 
+// test
+#include "cyanlayerwidget.h"
+
 void Editor::setupStyle()
 {
     // style app
@@ -258,6 +261,14 @@ void Editor::setupWidgets()
     brushSize->setRange(1,256);
     brushSize->setValue(20);
     brushSize->setOrientation(Qt::Horizontal);
+
+    layersWidget = new CyanLayerWidget(this);
+    layersDock = new QDockWidget(this);
+    layersDock->setObjectName(QString("layersDock"));
+    layersDock->setWindowTitle(tr("Layers"));
+    layersDock->setWidget(layersWidget);
+
+    addDockWidget(Qt::LeftDockWidgetArea, layersDock);
 }
 
 
@@ -425,59 +436,20 @@ void Editor::setupColorManagement()
 
 void Editor::setupImageLayers()
 {
-    layersOpacity = new QSlider(this);
-    layersOpacity->setRange(0,100);
-    layersOpacity->setValue(100);
-    layersOpacity->setOrientation(Qt::Horizontal);
-    connect(layersOpacity, SIGNAL(sliderReleased()), this, SLOT(handleLayersOpacity()));
-    connect(layersOpacity, SIGNAL(sliderMoved(int)), this, SLOT(handleLayersOpacity()));
 
 
-    layersTree = new LayerTree(this);
-    layersTree->setExpandsOnDoubleClick(true);
-    connect(layersTree, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(handleLayerActivated(QTreeWidgetItem*,int)));
-    connect(layersTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(handleLayerActivated(QTreeWidgetItem*,int)));
-    connect(layersTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(handleLayerDoubleclicked(QTreeWidgetItem*,int)));
-    connect(layersTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(handleLayerActivated(QTreeWidgetItem*,QTreeWidgetItem*)));
-    connect(mdi, SIGNAL(subWindowActivated(QMdiSubWindow*)), layersTree, SLOT(handleTabActivated(QMdiSubWindow*)));
-    connect(mdi, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(handleTabActivated(QMdiSubWindow*)));
 
-    layersComp = new QComboBox(this);
-    populateCompBox();
-    connect(layersComp, SIGNAL(currentIndexChanged(QString)), this, SLOT(handleLayerCompChanged(QString)));
 
-    layersDock = new QDockWidget(this);
-    layersDock->setObjectName(QString("layersDock"));
-    layersDock->setWindowTitle(tr("Layers"));
 
     openLayerAct = new QAction(this);
-    newLayerButton = new QPushButton(this);
-    newLayerButton->setToolTip(tr("New layer"));
-    removeLayerButton = new QPushButton(this);
-    removeLayerButton->setToolTip(tr("Remove layer"));
-    moveLayerUpButton = new QPushButton(this);
-    moveLayerDownButton = new QPushButton(this);
 
-    QWidget *layerButtonsWidget = new QWidget(this);
-    QHBoxLayout *layerButtonsLayout = new QHBoxLayout(layerButtonsWidget);
-    layerButtonsLayout->setContentsMargins(0, 0, 0, 0);
 
-    layerButtonsLayout->addWidget(newLayerButton);
-    layerButtonsLayout->addWidget(removeLayerButton);
-    layerButtonsLayout->addWidget(moveLayerDownButton);
-    layerButtonsLayout->addWidget(moveLayerUpButton);
 
-    QWidget *layersContainer = new QWidget(this);
-    QVBoxLayout *layersContainerLayout = new QVBoxLayout(layersContainer);
-    layersContainerLayout->setContentsMargins(5, 5, 5, 0);
 
-    layersContainerLayout->addWidget(layersComp);
-    layersContainerLayout->addWidget(layersOpacity);
-    layersContainerLayout->addWidget(layersTree);
-    layersContainerLayout->addWidget(layerButtonsWidget);
-    layersDock->setWidget(layersContainer);
 
-    addDockWidget(Qt::LeftDockWidgetArea, layersDock);
+
+
+
 }
 
 void Editor::setupConnections()
@@ -491,8 +463,7 @@ void Editor::setupConnections()
 
     connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
 
-    connect(newLayerButton, SIGNAL(released()), this, SLOT(newLayerDialog()));
-    connect(removeLayerButton, SIGNAL(released()), this, SLOT(handleRemoveLayer()));
+
 
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
@@ -517,15 +488,52 @@ void Editor::setupConnections()
     connect(this, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     connect(this, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(mdi, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-
-    connect(layersTree, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerTreeSelectedLayer(int)));
-    connect(layersTree, SIGNAL(layerVisibilityChanged(int,bool)), this, SLOT(handleLayerVisibility(int,bool)));
-    connect(layersTree, SIGNAL(layerLabelChanged(int,QString)), this, SLOT(handleLayerLabel(int,QString)));
-
     connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 
-    connect(moveLayerDownButton, SIGNAL(released()), this, SLOT(handleMoveLayerDown()));
-    connect(moveLayerUpButton, SIGNAL(released()), this, SLOT(handleMoveLayerUp()));
+    connect(mdi,
+            SIGNAL(subWindowActivated(QMdiSubWindow*)),
+            this,
+            SLOT(handleTabActivated(QMdiSubWindow*)));
+    connect(mdi,
+            SIGNAL(subWindowActivated(QMdiSubWindow*)),
+            layersWidget,
+            SLOT(handleTabActivated(QMdiSubWindow*)));
+    connect(layersWidget,
+            SIGNAL(selectedLayer(int)),
+            this,
+            SLOT(handleLayerTreeSelectedLayer(int)));
+    connect(layersWidget,
+            SIGNAL(layerVisibilityChanged(int,bool)),
+            this,
+            SLOT(handleLayerVisibility(int,bool)));
+    connect(layersWidget,
+            SIGNAL(layerLabelChanged(int,QString)),
+            this,
+            SLOT(handleLayerLabel(int,QString)));
+    connect(layersWidget,
+            SIGNAL(newLayer()),
+            this,
+            SLOT(newLayerDialog()));
+    connect(layersWidget,
+            SIGNAL(removeLayer(int)),
+            this,
+            SLOT(handleRemoveLayer(int)));
+    connect(layersWidget,
+            SIGNAL(moveLayerUp(int)),
+            this,
+            SLOT(handleMoveLayerUp(int)));
+    connect(layersWidget,
+            SIGNAL(moveLayerDown(int)),
+            this,
+            SLOT(handleMoveLayerDown(int)));
+    connect(layersWidget,
+            SIGNAL(layerOpacityChanged(double,int)),
+            this,
+            SLOT(handleLayersOpacity(double,int)));
+    connect(layersWidget,
+            SIGNAL(layerCompositeChanged(Magick::CompositeOperator,int)),
+            this,
+            SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
 }
 
 void Editor::setupIcons()
@@ -534,10 +542,8 @@ void Editor::setupIcons()
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
-    newLayerButton->setIcon(QIcon::fromTheme("document-new"));
-    newButton->setIcon(QIcon::fromTheme("document-new"));
 
-    removeLayerButton->setIcon(QIcon::fromTheme("edit-delete"));
+
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
@@ -568,8 +574,7 @@ void Editor::setupIcons()
     aboutLcmsAct->setIcon(QIcon::fromTheme("help-about"));
     aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
 
-    moveLayerDownButton->setIcon(QIcon::fromTheme("go-down"));
-    moveLayerUpButton->setIcon(QIcon::fromTheme("go-up"));
+
 }
 
 void Editor::setupShortcuts()

@@ -39,37 +39,7 @@
 #include <QKeyEvent>
 
 #include "view.h"
-
-class LayerTreeItem : public QTreeWidget, public QTreeWidgetItem
-{
-    Q_OBJECT
-
-public:
-
-    explicit LayerTreeItem(QTreeWidget *parent = nullptr);
-    ~LayerTreeItem();
-
-private:
-
-    Magick::CompositeOperator _composite;
-    int _id;
-    QString _name;
-    double _opacity;
-    bool _visible;
-
-public slots:
-
-    Magick::CompositeOperator getComposite();
-    void setComposite(Magick::CompositeOperator composite);
-    int getLayerID();
-    void setLayerID(int id);
-    QString getLayerName();
-    void setLayerName(QString name);
-    double getOpacity();
-    void setOpacity(double value);
-    bool getVisibility();
-    void setVisibility(bool visible);
-};
+#include "cyanlayertreeitem.h"
 
 class LayerTree : public QTreeWidget
 {

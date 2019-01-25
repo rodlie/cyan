@@ -52,10 +52,11 @@
 
 #include "common.h"
 #include "view.h"
-#include "layertree.h"
 #include "mdi.h"
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"
+
+#include "cyanlayerwidget.h"
 
 class Editor : public QMainWindow
 {
@@ -113,10 +114,11 @@ private:
 
     QToolButton *newButton;
     QToolButton *saveButton;
-    LayerTree *layersTree;
+    CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;
-    QComboBox *layersComp;
-    QSlider *layersOpacity;
+
+
+
     QSlider *brushSize;
     QDockWidget *brushDock;
 
@@ -124,10 +126,7 @@ private:
     QtColorPicker *colorPicker;
 
 
-    QPushButton *newLayerButton;
-    QPushButton *removeLayerButton;
-    QPushButton *moveLayerUpButton;
-    QPushButton *moveLayerDownButton;
+
 
 signals:
 
@@ -174,25 +173,22 @@ private slots:
     void handleUpdateBrushSize(int stroke);
 
     // layers
-    void handleLayerCompChanged(const QString &comp);
-    void populateCompBox();
-    void handleLayerActivated(QTreeWidgetItem *item,
-                              int col);
-    void handleLayerActivated(QTreeWidgetItem *item,
-                              QTreeWidgetItem *old);
-    void handleLayerDoubleclicked(QTreeWidgetItem *item,
-                                  int col);
-    void handleLayerSelected(int layer);
-    void handleLayersOpacity();
+    void handleLayerCompChanged(Magick::CompositeOperator composite, int id);
+
+
+
+
+    void handleLayersOpacity(double value, int id);
+
     void handleLayersUpdated();
     void handleLayerTreeSelectedLayer(int id);
     void handleLayerVisibility(int id, bool visible);
     void handleLayerLabel(int id, const QString &label);
     void addLayerToView(Magick::Image image,
                         View *view);
-    void handleRemoveLayer();
-    void handleMoveLayerDown();
-    void handleMoveLayerUp();
+    void handleRemoveLayer(int id);
+    void handleMoveLayerDown(int id);
+    void handleMoveLayerUp(int id);
 
     // tabs
     void newTab(Common::Canvas canvas);

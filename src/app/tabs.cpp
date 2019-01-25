@@ -39,17 +39,6 @@ void Editor::newTab(Common::Canvas canvas)
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);
-
-    /*connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
-    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
-    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
-    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
-    connect(view, SIGNAL(switchMoveTool()), this, SLOT(handleSwitchMoveTool()));
-    connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
-    connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));*/
     connectView(view);
 
     view->setCanvasSpecsFromImage(canvas.image);
@@ -86,17 +75,6 @@ void Editor::newTab(Magick::Image image, QSize geo)
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);
-
-    /*connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
-    connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
-    connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
-    connect(view, SIGNAL(viewClosed()), this, SLOT(handleViewClosed()));
-    connect(view, SIGNAL(updatedLayers()), this, SLOT(handleLayersUpdated()));
-    connect(view, SIGNAL(switchMoveTool()), this, SLOT(handleSwitchMoveTool()));
-    connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
-    connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    connect(layersTree, SIGNAL(moveLayerEvent(QKeyEvent*)), view, SLOT(moveLayerEvent(QKeyEvent*)));*/
     connectView(view);
 
     if (geo.width()>0) {

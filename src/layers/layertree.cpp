@@ -37,77 +37,10 @@
 #include <QHeaderView>
 #include <QIcon>
 
-LayerTreeItem::LayerTreeItem(QTreeWidget *parent) :
-    QTreeWidgetItem(parent)
-  , _composite(MagickCore::OverCompositeOp)
-  , _id(0)
-  , _name(tr("New Layer"))
-  , _visible(true)
-{
-}
-
-LayerTreeItem::~LayerTreeItem()
-{
-}
-
-Magick::CompositeOperator LayerTreeItem::getComposite()
-{
-    return _composite;
-}
-
-void LayerTreeItem::setComposite(Magick::CompositeOperator composite)
-{
-    if (composite == MagickCore::UndefinedCompositeOp ||
-        composite == MagickCore::NoCompositeOp) { return; }
-    _composite = composite;
-}
-
-int LayerTreeItem::getLayerID()
-{
-    return _id;
-}
-
-void LayerTreeItem::setLayerID(int id)
-{
-    if (id<0) { return; }
-    _id = id;
-}
-
-QString LayerTreeItem::getLayerName()
-{
-    return _name;
-}
-
-void LayerTreeItem::setLayerName(QString name)
-{
-    if (name.isEmpty()) { return; }
-    _name = name;
-}
-
-double LayerTreeItem::getOpacity()
-{
-    return _opacity;
-}
-
-void LayerTreeItem::setOpacity(double value)
-{
-    _opacity = value;
-}
-
-bool LayerTreeItem::getVisibility()
-{
-    return _visible;
-}
-
-void LayerTreeItem::setVisibility(bool visible)
-{
-    _visible = visible;
-}
-
 LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
 {
     setHeaderLabels(QStringList() << QString("#") << QString("") << QString(""));
-    headerItem()->setIcon(2, QIcon::fromTheme("layer"));
+    headerItem()->setIcon(2, QIcon::fromTheme("layers"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
     headerItem()->setToolTip(1, tr("Layer visibility"));
     //setColumnWidth(0, 16);
@@ -163,7 +96,7 @@ void LayerTree::populateTree(View *view)
     QMapIterator<int, Common::Layer> layers(view->getCanvasProject().layers);
     while (layers.hasNext()) {
         layers.next();
-        LayerTreeItem *item = new LayerTreeItem(this);
+        CyanLayerTreeItem *item = new CyanLayerTreeItem(this);
         blockSignals(true);
         Magick::Image thumb(Magick::Geometry(32, 32),
                             Magick::ColorRGB(0, 0, 0));
@@ -218,14 +151,14 @@ void LayerTree::populateTree(View *view)
 void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)
 {
     Q_UNUSED(col)
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
+    CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!item) { return; }
     emit selectedLayer(layer->getLayerID());
 }
 
 void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
 {
-    LayerTreeItem *layer = dynamic_cast<LayerTreeItem*>(item);
+    CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!item) { return; }
     if (col == 2) {
         emit layerLabelChanged(layer->getLayerID(),
