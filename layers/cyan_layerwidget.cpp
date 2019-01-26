@@ -383,8 +383,16 @@ void CyanLayerWidget::handleTreeLayerLabel(int id, QString label)
 
 void CyanLayerWidget::handleTreeMoveLayer(QKeyEvent *e)
 {
-    qDebug() << "forward move layer";
-    emit moveLayerEvent(e);
+    switch (e->key()) {
+    case Qt::Key_PageUp:
+        handleUpButtonReleased();
+        break;
+    case Qt::Key_PageDown:
+        handleDownButtonReleased();
+        break;
+    default:
+        emit moveLayerEvent(e);
+    }
 }
 
 void CyanLayerWidget::handleNewButtonReleased()

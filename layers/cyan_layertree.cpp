@@ -37,7 +37,9 @@
 #include <QHeaderView>
 #include <QIcon>
 
-LayerTree::LayerTree(QWidget *parent) : QTreeWidget(parent)
+LayerTree::LayerTree(QWidget *parent) :
+    QTreeWidget(parent)
+  , lastLayerSelected(-1)
 {
     setHeaderLabels(QStringList() << QString("#") << QString("") << QString(""));
     headerItem()->setIcon(2, QIcon::fromTheme("layers"));
@@ -91,6 +93,12 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab, bool force)
 void LayerTree::populateTree(View *view)
 {
     if (!view) { return; }
+
+    CyanLayerTreeItem *currentLayer = dynamic_cast<CyanLayerTreeItem*>(currentItem());
+    if (currentLayer) { // get last item selected
+        lastLayerSelected = currentLayer->getLayerID();
+    } else { lastLayerSelected = -1; }
+
     clear();
     setCanvasID(view->getCanvasID());
     QMapIterator<int, CyanCommon::Layer> layers(view->getCanvasProject().layers);
@@ -146,6 +154,17 @@ void LayerTree::populateTree(View *view)
         blockSignals(false);
     }
     sortByColumn(0);
+
+    if (lastLayerSelected>=0) { // set last item selected
+        for (int i=0;i<topLevelItemCount();++i) {
+            CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(topLevelItem(i));
+            if (!layer) { continue; }
+            if (layer->getLayerID()==lastLayerSelected) {
+                setCurrentItem(layer);
+                break;
+            }
+        }
+    }
 }
 
 void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)

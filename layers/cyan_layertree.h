@@ -62,6 +62,7 @@ signals:
 private:
 
     QString _canvasID;
+    int lastLayerSelected;
 
 public slots:
 
