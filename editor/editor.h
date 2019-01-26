@@ -50,12 +50,11 @@
 #include <QTreeWidgetItem>
 #include <QToolButton>
 
-//#include "common.h"
-//#include "cyan_view.h"
+#include "cyan_common.h"
+#include "cyan_view.h"
 #include "mdi.h"
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"
-
 #include "cyan_layerwidget.h"
 
 class Editor : public QMainWindow
@@ -91,6 +90,7 @@ private:
     QAction *viewMoveAct;
     QAction *viewDrawAct;
 
+    QAction *aboutCyanAct;
     QAction *aboutImageMagickAct;
     QAction *aboutLcmsAct;
     QAction *aboutQtAct;
@@ -104,13 +104,14 @@ private:
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
-    QMenu *newMenu;
+    //QMenu *newMenu;
     QMenu *saveMenu;
     QMenu *colorMenu;
     QMenu *colorProfileRGBMenu;
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
-    QMenu* colorIntentMenu;
+    QMenu *colorIntentMenu;
+    QMenu *layerMenu;
 
     //QToolButton *newButton;
     QToolButton *saveButton;
@@ -150,13 +151,13 @@ private slots:
     void setupActions();
     void setupButtons();
     void setupColorManagement();
-    void setupImageLayers();
     void setupConnections();
     void setupIcons();
     void setupShortcuts();
     void setupOptions();
 
     // about
+    void aboutCyan();
     void aboutImageMagick();
     void aboutLcms();
 
@@ -174,12 +175,7 @@ private slots:
 
     // layers
     void handleLayerCompChanged(Magick::CompositeOperator composite, int id);
-
-
-
-
     void handleLayersOpacity(double value, int id);
-
     void handleLayersUpdated();
     void handleLayerTreeSelectedLayer(int id);
     void handleLayerVisibility(int id, bool visible);

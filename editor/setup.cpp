@@ -102,7 +102,6 @@ void Editor::setupUI()
     setupActions();
     setupButtons();
     setupColorManagement();
-    setupImageLayers();
     setupConnections();
     setupIcons();
     setupShortcuts();
@@ -110,11 +109,11 @@ void Editor::setupUI()
 
     setCentralWidget(mdi);
     setStatusBar(mainStatusBar);
-
     setMenuBar(mainMenu);
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(colorMenu);
+    mainMenu->addMenu(layerMenu);
     mainMenu->addMenu(optMenu);
     mainMenu->addMenu(helpMenu);
 
@@ -136,12 +135,13 @@ void Editor::setupUI()
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
+    helpMenu->addAction(aboutCyanAct);
     helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
     helpMenu->addAction(aboutQtAct);
 
-    newMenu->addAction(newImageAct);
-    newMenu->addAction(newLayerAct);
+    //newMenu->addAction(newImageAct);
+    //newMenu->addAction(newLayerAct);
 
     saveMenu->addAction(saveProjectAct);
     saveMenu->addAction(saveProjectAsAct);
@@ -210,14 +210,17 @@ void Editor::setupMenus()
     helpMenu = new QMenu(this);
     helpMenu->setTitle(tr("Help"));
 
-    newMenu = new QMenu(this);
-    newMenu->setTitle(tr("New"));
+    //newMenu = new QMenu(this);
+    //newMenu->setTitle(tr("New"));
 
     saveMenu = new QMenu(this);
     saveMenu->setTitle(tr("Save"));
 
     colorMenu = new QMenu(this);
-    colorMenu->setTitle(tr("Color"));
+    colorMenu->setTitle(tr("Colors"));
+
+    layerMenu = new QMenu(this);
+    layerMenu->setTitle(tr("Layers"));
 
     colorProfileRGBMenu = new QMenu(this);
     colorProfileRGBMenu->setTitle(tr("Default RGB profile"));
@@ -292,6 +295,8 @@ void Editor::setupActions()
     newLayerAct = new QAction(this);
     newLayerAct->setText(tr("New layer"));
 
+    openLayerAct = new QAction(this);
+
     saveLayerAct = new QAction(this);
     saveLayerAct->setText(tr("Save layer as ..."));
 
@@ -307,6 +312,9 @@ void Editor::setupActions()
     viewDrawAct->setText("Draw");
     viewDrawAct->setCheckable(true);
     viewDrawAct->setChecked(false);
+
+    aboutCyanAct = new QAction(this);
+    aboutCyanAct->setText(tr("About Cyan"));
 
     aboutImageMagickAct = new QAction(this);
     aboutImageMagickAct->setText(tr("About ImageMagick"));
@@ -432,24 +440,6 @@ void Editor::setupColorManagement()
                   colorCMYKDock);
 }
 
-void Editor::setupImageLayers()
-{
-
-
-
-
-
-    openLayerAct = new QAction(this);
-
-
-
-
-
-
-
-
-}
-
 void Editor::setupConnections()
 {
 
@@ -473,6 +463,7 @@ void Editor::setupConnections()
     connect(viewMoveAct, SIGNAL(triggered(bool)), this, SLOT(handleSetMoveMode(bool)));
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));
 
+    connect(aboutCyanAct, SIGNAL(triggered()), this, SLOT(aboutCyan()));
     connect(aboutImageMagickAct, SIGNAL(triggered()), this, SLOT(aboutImageMagick()));
     connect(aboutLcmsAct, SIGNAL(triggered()), this, SLOT(aboutLcms()));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -571,7 +562,7 @@ void Editor::setupIcons()
     aboutQtAct->setIcon(QIcon::fromTheme("help-about"));
     aboutLcmsAct->setIcon(QIcon::fromTheme("help-about"));
     aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
-
+    aboutCyanAct->setIcon(QIcon::fromTheme("help-about"));
 
 }
 
@@ -587,3 +578,5 @@ void Editor::setupOptions()
 {
 
 }
+
+

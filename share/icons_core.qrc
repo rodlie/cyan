@@ -28,5 +28,6 @@
         <file>icons/Cyan/16x16/actions/images_flickr.png</file>
         <file>icons/Cyan/16x16/actions/layers.png</file>
         <file>icons/Cyan/32x32/actions/layers.png</file>
+        <file>icons/hicolor/128x128/apps/cyan.png</file>
     </qresource>
 </RCC>

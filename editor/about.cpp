@@ -33,6 +33,28 @@
 #include "editor.h"
 #include <QMessageBox>
 
+void Editor::aboutCyan()
+{
+    QMessageBox box(this);
+    box.setWindowTitle(tr("About Cyan"));
+
+    box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/cyan.png")));
+
+    QString about;
+    about.append(QString("<h3>Cyan %1</h3>")
+                 .arg(CYAN_VERSION));
+    about.append(QString("<p>%1</p>")
+                 .arg(tr("Cyan is an open source cross-platform general-purpose image editor.")));
+    about.append(QString("<p>%1</p>")
+                 .arg(tr("&copy;2019 Ole-André Rodlie. All rights reserved.")));
+    about.append(QString("<p>%1</p>")
+                 .arg(tr("Cyan is distributed under the %1 license.")
+                      .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
+                                   "CeCILL v2.1</a>"))));
+    box.setText(about);
+    box.exec();
+}
+
 void Editor::aboutImageMagick()
 {
     QMessageBox box(this);
