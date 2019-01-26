@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/brushsize.png</file>
+        <file>icons/lcms_logo.png</file>
+        <file>icons/Cyan/16x16/actions/hand.png</file>
+        <file>icons/Cyan/32x32/actions/hand.png</file>
+        <file>icons/Cyan/16x16/actions/transform_move.png</file>
+        <file>icons/Cyan/32x32/actions/transform_move.png</file>
+        <file>icons/Cyan/16x16/actions/paintbrush.png</file>
+        <file>icons/Cyan/32x32/actions/paintbrush.png</file>
+        <file>icons/Cyan/16x16/actions/smartart_change_color_gallery.png</file>
+        <file>icons/Cyan/32x32/actions/smartart_change_color_gallery.png</file>
+        <file>icons/Cyan/16x16/apps/cyan.png</file>
+        <file>icons/Cyan/32x32/apps/cyan.png</file>
+        <file>icons/Cyan/16x16/actions/color_wheel.png</file>
+        <file>icons/Cyan/32x32/actions/color_wheel.png</file>
+        <file>icons/Cyan/16x16/actions/convert_color_to_gray.png</file>
+        <file>icons/Cyan/32x32/actions/convert_color_to_gray.png</file>
+        <file>icons/Cyan/16x16/actions/convert_gray_to_color.png</file>
+        <file>icons/Cyan/32x32/actions/convert_gray_to_color.png</file>
+        <file>icons/Cyan/16x16/actions/monitor_window_flow.png</file>
+        <file>icons/Cyan/32x32/actions/monitor_window_flow.png</file>
+        <file>icons/Cyan/16x16/actions/eye.png</file>
+        <file>icons/Cyan/32x32/actions/eye.png</file>
+        <file>icons/Cyan/16x16/actions/layer.png</file>
+        <file>icons/Cyan/32x32/actions/layer.png</file>
+        <file>icons/Cyan/32x32/actions/images_flickr.png</file>
+        <file>icons/Cyan/16x16/actions/images_flickr.png</file>
+        <file>icons/Cyan/16x16/actions/layers.png</file>
+        <file>icons/Cyan/32x32/actions/layers.png</file>
+    </qresource>
+</RCC>
