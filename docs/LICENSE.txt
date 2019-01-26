@@ -1,4 +1,4 @@
- * Cyan is licensed under CeCILL version 2.1
+ * Cyan is licensed under CeCILL version 2.1 license
  * qtcolorpicker/qtcolortriangle from QtSolutions is licensed under LGPL version 2.1
  * ImageMagick is licensed under Apache license
-
+ * Little CMS is licensed under MIT license

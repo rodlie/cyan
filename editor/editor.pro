@@ -28,7 +28,10 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
+# include common
 include($${top_srcdir}/share/cyan.pri)
+
+# project requires ImageMagick
 include($${top_srcdir}/share/magick.pri)
 
 TARGET = Cyan
@@ -51,8 +54,14 @@ HEADERS += \
     editor.h \
     mdi.h \
 
-CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons.qrc $${top_srcdir}/share/icc.qrc
-CONFIG(debug, release|debug): RESOURCES += $${top_srcdir}/share/icons.qrc
+# bundle core icons
+RESOURCES += $${top_srcdir}/share/icons_core.qrc
+
+# on deploy bundle icon theme and color profiles
+CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
+
+# on debug bundle icon theme
+CONFIG(debug, release|debug): RESOURCES += $${top_srcdir}/share/icons_theme.qrc
 
 OTHER_FILES += \
     $${top_srcdir}/scripts/ci.sh \
@@ -63,10 +72,12 @@ DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 !CONFIG(deploy): DEFINES += CYAN_DEVEL
 
+# install on unix (not mac)
 unix:!mac {
     target.path = $${BINDIR}
     docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
     icons.path = $${ICONDIR}
+    hicolor.path = $${ICONDIR}
     icc.path = $${ICCDIR}/$${TARGET}
     desktop.path = $${APPDIR}
 
@@ -75,28 +86,29 @@ unix:!mac {
     icc.files = \
         $${top_srcdir}/share/icc/rgb.icc \
         $${top_srcdir}/share/icc/cmyk.icc \
-        $${top_srcdir}/share/icc/gray.icc
+        $${top_srcdir}/share/icc/gray.icc \
+        $${top_srcdir}/docs/LICENSE-ICC.txt \
     icons.files = \
         $${top_srcdir}/share/icons/Cyan \
-        $${top_srcdir}/share/icons/hicolor
+        $${top_srcdir}/docs/LICENSE-FatCow.txt \
+        $${top_srcdir}/docs/LICENSE-Adwaita.txt \
+    hicolor.files = $${top_srcdir}/share/icons/hicolor
     docs.files = \
         $${top_srcdir}/README.md \
         $${top_srcdir}/docs/LICENSE.CeCILLv21 \
         $${top_srcdir}/docs/LICENSE.txt \
-        $${top_srcdir}/docs/LICENSE-FatCow.txt \
-        $${top_srcdir}/docs/LICENSE-Adwaita.txt \
-        $${top_srcdir}/docs/LICENSE-ICC.txt \
         $${top_srcdir}/docs/LGPL_EXCEPTION.txt \
         $${top_srcdir}/docs/LICENSE.LGPLv21
 
     INSTALLS += \
         target \
         docs \
-        icons \
-        icc \
+        hicolor \
         desktop
+    !CONFIG(deploy): INSTALLS += icons icc
 }
 
+# mac stuff
 mac {
     CONFIG(deploy) {
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
@@ -127,6 +139,8 @@ LIBS += \
     -lCyanColors \
     -lCyanDialogs
 
+# avoid linking against system libraries
 !CONFIG(staticlib): unix:!mac: QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
+# link against lcms2 if static
 CONFIG(staticlib): PKGCONFIG += lcms2
