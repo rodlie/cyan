@@ -886,6 +886,11 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
         emit errorMessage(tr("Missing color profile!"));
     }
 
+    // set timestamp
+    if (_canvas.timestamp.isEmpty()) {
+        _canvas.timestamp = CyanCommon::timestamp();
+    }
+
     // setup canvas tiles
     initTiles();
 
