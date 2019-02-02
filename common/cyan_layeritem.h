@@ -65,6 +65,7 @@ private:
     QPointF fpos;
     bool _drag;
     bool _draw;
+    bool _locked;
 
 protected:
 
@@ -76,10 +77,14 @@ protected:
 
 public slots:
 
+    void setLock(bool lock);
+    void setLock(LayerItem *layer,
+                 bool lock);
     void setMovable(bool movable);
     void setMovable(LayerItem *layer,
                     bool movable);
     bool isMovable();
+    bool isLocked();
     //bool isDrag();
     //void setDrag(bool drag);
     int getID();

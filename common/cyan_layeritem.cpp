@@ -42,6 +42,7 @@ LayerItem::LayerItem(QGraphicsItem *parent)
     , _movable(false)
     , _drag(false)
     , _draw(false)
+    , _locked(false)
 {
     setAcceptHoverEvents(true);
     QPen newPen(Qt::transparent);
@@ -93,7 +94,7 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     QPointF epos = mapToScene(event->pos());
 
-    if ((_draw && mouseIsDown) || !_movable || (epos==lpos)) {
+    if ((_draw && mouseIsDown) || !_movable || _locked || (epos==lpos)) {
         return;
     }
 
@@ -136,6 +137,16 @@ void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
+void LayerItem::setLock(bool lock)
+{
+    _locked = lock;
+}
+
+void LayerItem::setLock(LayerItem *layer, bool lock)
+{
+    if (layer == this) { setLock(lock); }
+}
+
 void LayerItem::setMovable(bool movable)
 {
     _movable = movable;
@@ -149,6 +160,11 @@ void LayerItem::setMovable(LayerItem *layer, bool movable)
 bool LayerItem::isMovable()
 {
     return _movable;
+}
+
+bool LayerItem::isLocked()
+{
+    return _locked;
 }
 
 /*bool LayerItem::isDrag()

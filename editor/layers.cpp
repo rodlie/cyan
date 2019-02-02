@@ -87,6 +87,14 @@ void Editor::handleLayerLabel(int id,
     }
 }
 
+void Editor::handleLayerLock(int id, bool lock)
+{
+    if (!getCurrentCanvas()) { return; }
+    qDebug() << "handle layer lock changed" << id << lock;
+    getCurrentCanvas()->setLayerLock(id,
+                                     lock);
+}
+
 void Editor::addLayerToView(Magick::Image image,
                             View *view)
 {

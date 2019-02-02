@@ -58,6 +58,8 @@ signals:
                                 bool visible);
     void layerLabelChanged(int id,
                            const QString &label);
+    void layerLockChanged(int id,
+                          bool lock);
 
 private:
 

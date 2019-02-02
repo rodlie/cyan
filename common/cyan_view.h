@@ -137,11 +137,13 @@ public slots:
     void setLayer(Magick::Image image,
                   int id);
     void addLayer(Magick::Image image,
-                  bool updateView = true);
+                  bool updateView = true,
+                  bool isLocked = false);
     void addLayer(int id,
                   QSize geo,
                   QSize pos,
-                  bool updateView = true);
+                  bool updateView = true,
+                  bool isLocked = false);
 
     CyanCommon::Layer getLayerFromOrder(int order);
     int getLastLayerID();
@@ -155,6 +157,10 @@ public slots:
     void setLayerVisibility(int layer,
                             bool layerIsVisible);
     bool getLayerVisibility(int layer);
+
+    void setLayerLock(int layer,
+                      bool layerIsLocked);
+    bool getLayerLock(int layer);
 
     void setLayerComposite(int layer,
                            Magick::CompositeOperator composite);

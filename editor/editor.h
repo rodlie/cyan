@@ -180,6 +180,7 @@ private slots:
     void handleLayerTreeSelectedLayer(int id);
     void handleLayerVisibility(int id, bool visible);
     void handleLayerLabel(int id, const QString &label);
+    void handleLayerLock(int id, bool lock);
     void addLayerToView(Magick::Image image,
                         View *view);
     void handleRemoveLayer(int id);

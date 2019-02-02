@@ -55,6 +55,7 @@ private:
     QString _name;
     double _opacity;
     bool _visible;
+    bool _locked;
 
 public slots:
 
@@ -68,6 +69,8 @@ public slots:
     void setOpacity(double value);
     bool getVisibility();
     void setVisibility(bool visible);
+    bool getLock();
+    void setLock(bool lock);
 };
 
 #endif // CYANLAYERTREEITEM_H

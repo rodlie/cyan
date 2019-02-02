@@ -76,7 +76,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     layerCompositeBox->setSizePolicy(QSizePolicy::Expanding,
                                      QSizePolicy::Fixed);
 
-    compositeLabel->setText(tr("Composite"));
+    compositeLabel->setText(tr("Mode"));
     compositeLabel->setSizePolicy(QSizePolicy::Minimum,
                                   QSizePolicy::Minimum);
     compositeIconLabel->setPixmap(QIcon::fromTheme("images_flickr")
@@ -178,7 +178,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
 
     connect(layerTree, SIGNAL(layerVisibilityChanged(int,bool)), this, SLOT(handleTreeLayerVisibility(int,bool)));
     connect(layerTree, SIGNAL(layerLabelChanged(int,QString)), this, SLOT(handleTreeLayerLabel(int,QString)));
-
+    connect(layerTree, SIGNAL(layerLockChanged(int,bool)), this, SLOT(handleTreeLayerLock(int,bool)));
 
     connect(layerNewButton, SIGNAL(released()), this, SLOT(handleNewButtonReleased()));
     connect(layerRemoveButton, SIGNAL(released()), this, SLOT(handleRemoveButtonReleased()));
@@ -379,6 +379,12 @@ void CyanLayerWidget::handleTreeLayerLabel(int id, QString label)
 {
     qDebug() << "forward layer label" << id << label;
     emit layerLabelChanged(id, label);
+}
+
+void CyanLayerWidget::handleTreeLayerLock(int id, bool lock)
+{
+    qDebug() << "forward layer lock" << id << lock;
+    emit layerLockChanged(id, lock);
 }
 
 void CyanLayerWidget::handleTreeMoveLayer(QKeyEvent *e)

@@ -66,6 +66,7 @@ extern "C" {
 #define CYAN_LAYER_X "cyan-layer-x"
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
+#define CYAN_LAYER_LOCK "cyan-layer-lock"
 
 class CyanCommon: public QObject
 {
@@ -131,6 +132,7 @@ public:
         Magick::CompositeOperator composite = Magick::OverCompositeOp;
         QSize pos = QSize(0, 0);
         bool visible = true;
+        bool locked = false;
         double opacity = 1.0;
         QString label = QObject::tr("New Layer");
         int order = -1;

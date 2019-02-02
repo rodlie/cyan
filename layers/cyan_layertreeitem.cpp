@@ -38,6 +38,7 @@ CyanLayerTreeItem::CyanLayerTreeItem(QTreeWidget *parent) :
   , _id(0)
   , _name(tr("New Layer"))
   , _visible(true)
+  , _locked(false)
 {
 }
 
@@ -97,4 +98,14 @@ bool CyanLayerTreeItem::getVisibility()
 void CyanLayerTreeItem::setVisibility(bool visible)
 {
     _visible = visible;
+}
+
+bool CyanLayerTreeItem::getLock()
+{
+    return _locked;
+}
+
+void CyanLayerTreeItem::setLock(bool lock)
+{
+    _locked = lock;
 }

@@ -41,13 +41,16 @@ LayerTree::LayerTree(QWidget *parent) :
     QTreeWidget(parent)
   , lastLayerSelected(-1)
 {
-    setHeaderLabels(QStringList() << QString("#") << QString("") << QString(""));
-    headerItem()->setIcon(2, QIcon::fromTheme("layers"));
+    setHeaderLabels(QStringList() << QString("#") << QString() << QString() << QString());
+    headerItem()->setIcon(3, QIcon::fromTheme("layers"));
+    headerItem()->setIcon(2, QIcon::fromTheme("emblem-readonly"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
     headerItem()->setToolTip(1, tr("Layer visibility"));
+    headerItem()->setToolTip(2, tr("Layer locked"));
     //setColumnWidth(0, 16);
     setColumnHidden(0, true);
     setColumnWidth(1, 16);
+    setColumnWidth(2, 16);
     setIconSize(QSize(32, 32));
 
     connect(this,
@@ -106,14 +109,21 @@ void LayerTree::populateTree(View *view)
         layers.next();
         CyanLayerTreeItem *item = new CyanLayerTreeItem(this);
         blockSignals(true);
-        Magick::Image thumb(Magick::Geometry(32, 32),
+
+        Magick::Image thumb(Magick::Geometry(256, 256),
                             Magick::ColorRGB(0, 0, 0));
-        thumb.read("pattern:checkerboard");
-        thumb.depth(8);
-        thumb.alpha(false);
+        try {
+            thumb.quiet(true);
+            thumb.read("pattern:checkerboard");
+            thumb.scale(Magick::Geometry(32, 32));
+            thumb.alpha(false);
+        }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
         try {
             Magick::Image layer(layers.value().image);
+            layer.quiet(true);
             layer.depth(8);
             //layer.alpha(false);
             layer.scale(Magick::Geometry(32, 32));
@@ -139,10 +149,9 @@ void LayerTree::populateTree(View *view)
         QPixmap pixmap = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
                                                                                       static_cast<int>(pix.length())));
         item->setIconSize(QSize(32, 32));
-        item->setIcon(2, QIcon(pixmap));
-
+        item->setIcon(3, QIcon(pixmap));
         item->setText(0, QString::number(layers.value().order));
-        item->setText(2, layers.value().label);
+        item->setText(3, layers.value().label);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setLayerID(layers.key());
         item->setLayerName(layers.value().label);
@@ -150,6 +159,8 @@ void LayerTree::populateTree(View *view)
         item->setOpacity(layers.value().opacity);
         item->setVisibility(layers.value().visible);
         item->setCheckState(1, layers.value().visible?Qt::Checked:Qt::Unchecked);
+        item->setCheckState(2, layers.value().locked?Qt::Checked:Qt::Unchecked);
+
         addTopLevelItem(item);
         blockSignals(false);
     }
@@ -179,7 +190,7 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
 {
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!item) { return; }
-    if (col == 2) {
+    if (col == 3) {
         emit layerLabelChanged(layer->getLayerID(),
                                item->text(col));
     }
@@ -190,6 +201,14 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
         }
         emit layerVisibilityChanged(layer->getLayerID(),
                                     visible);
+    }
+    if (col == 2) {
+        bool lock = false;
+        if (item->checkState(col) == Qt::Checked) {
+            lock = true;
+        }
+        emit layerLockChanged(layer->getLayerID(),
+                              lock);
     }
 }
 

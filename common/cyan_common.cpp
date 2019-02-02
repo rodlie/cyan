@@ -349,6 +349,18 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
         }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
+        // add lock
+        try {
+            layer.attribute(QString(CYAN_LAYER_LOCK).toStdString(),
+                            QString("%1").arg(layers.value().locked)
+                            .toStdString());
+        }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
         // add opacity
         try {
             layer.attribute(QString(CYAN_LAYER_OPACITY).toStdString(),
@@ -435,6 +447,10 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             int visibility = QString::fromStdString(it->attribute(QString(CYAN_LAYER_VISIBILITY)
                                                                   .toStdString())).toInt();
 
+            // get lock
+            int locked = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LOCK)
+                                                              .toStdString())).toInt();
+
             // get order
             int order = QString::fromStdString(it->attribute(QString(CYAN_LAYER_ORDER)
                                                                   .toStdString())).toInt();
@@ -454,6 +470,7 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             layer.image = *it;
             layer.label = QString::fromStdString(layer.image.label());
             layer.visible = visibility;
+            layer.locked = locked;
             layer.pos = pos;
             layer.opacity = opacity;
             layer.composite = compose;

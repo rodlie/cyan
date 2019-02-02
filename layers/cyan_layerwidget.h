@@ -63,6 +63,7 @@ signals:
     void selectedLayer(int id);
     void layerVisibilityChanged(int id, bool visible);
     void layerLabelChanged(int id, QString label);
+    void layerLockChanged(int id, bool lock);
     void moveLayerEvent(QKeyEvent *e);
     void newLayer();
     void removeLayer(int id);
@@ -110,6 +111,8 @@ private slots:
                                    bool visible);
     void handleTreeLayerLabel(int id,
                               QString label);
+    void handleTreeLayerLock(int id,
+                             bool lock);
     void handleTreeMoveLayer(QKeyEvent *e);
 
     void handleNewButtonReleased();

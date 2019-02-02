@@ -332,7 +332,8 @@ void View::setLayer(Magick::Image image,
 }
 
 void View::addLayer(Magick::Image image,
-                    bool updateView)
+                    bool updateView,
+                    bool isLocked)
 {
     int id = getLastLayerID()+1;
     _canvas.layers[id].image = image;
@@ -345,6 +346,8 @@ void View::addLayer(Magick::Image image,
     }
 
     LayerItem *layer = new LayerItem();
+    qDebug() << "set layer rect size" << image.columns() << image.rows();
+    layer->setLock(isLocked);
     layer->setRect(0,
                    0,
                    image.columns(),
@@ -382,11 +385,13 @@ void View::addLayer(Magick::Image image,
 void View::addLayer(int id,
                     QSize geo,
                     QSize pos,
-                    bool updateView)
+                    bool updateView,
+                    bool isLocked)
 {
     qDebug() << "ADD LAYER" << id;
    // _canvas.layers[id].visible = true;
     LayerItem *layer = new LayerItem();
+    layer->setLock(isLocked);
     layer->setRect(0,
                    0,
                    geo.width(),
@@ -481,6 +486,7 @@ CyanCommon::Canvas View::getCanvasProject()
 void View::setLayerVisibility(int layer,
                               bool layerIsVisible)
 {
+    if (!_canvas.layers.contains(layer)) { return; }
     if (_canvas.layers[layer].visible != layerIsVisible) {
         _canvas.layers[layer].visible = layerIsVisible;
         handleLayerOverTiles(layer);
@@ -490,7 +496,27 @@ void View::setLayerVisibility(int layer,
 bool View::getLayerVisibility(int layer)
 {
     if (_canvas.layers.contains(layer)) {
-    return _canvas.layers[layer].visible;
+        return _canvas.layers[layer].visible;
+    }
+    return false;
+}
+
+void View::setLayerLock(int layer, bool layerIsLocked)
+{
+    if (!_canvas.layers.contains(layer)) { return; }
+    if (_canvas.layers[layer].locked != layerIsLocked) {
+        _canvas.layers[layer].locked = layerIsLocked;
+        LayerItem *item = getLayerItemFromId(layer);
+        if (!item) { return; }
+        qDebug() << "SET LAYER LOCK" << layer << layerIsLocked;
+        item->setLock(layerIsLocked);
+    }
+}
+
+bool View::getLayerLock(int layer)
+{
+    if (_canvas.layers.contains(layer)) {
+        return _canvas.layers[layer].locked;
     }
     return false;
 }
@@ -685,7 +711,8 @@ void View::setLayersFromCanvas(CyanCommon::Canvas canvas)
                        static_cast<int>(layers.value()
                                         .image.rows())),
                  layers.value().pos,
-                 false);
+                 false,
+                 layers.value().locked);
         handleLayerOverTiles(layers.key());
     }
     emit updatedLayers();
@@ -767,6 +794,8 @@ void View::setupCanvas(int width,
                        int depth,
                        Magick::ColorspaceType colorspace)
 {
+    qDebug() << "setup canvas" << width << height << depth;
+
     // setup new image
     _image.size(Magick::Geometry(static_cast<size_t>(width),
                                  static_cast<size_t>(height)));
@@ -780,16 +809,14 @@ void View::setupCanvas(int width,
                     0.0);
 
     // set scene size
+    qDebug() << "set scene size" << width << height;
     _scene->setSceneRect(0,
                          0,
                          width,
                          height);
 
     // set background rectangle size
-    _rect->setRect(0,
-                   0,
-                   width,
-                   height);
+    _rect->setRect(_scene->sceneRect());
 
     // copy canvas
     _canvas.image = _image;
@@ -865,7 +892,7 @@ void View::moveLayerEvent(QKeyEvent *e)
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
-    qDebug() << "set canvas specs from image";
+    qDebug() << "set canvas specs from image" << image.columns() << image.rows();
     _image.label(image.label());
     _image.size(Magick::Geometry(image.columns(), image.rows()));
     _image.depth(image.depth());
@@ -876,8 +903,9 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
                     Magick::MultiplyEvaluateOperator,
                     0.0);
 
-    _scene->setSceneRect(0, 0, image.columns(), image.rows());
-    _rect->setRect(0, 0, image.columns(), image.rows());
+    qDebug() << "set scene size" << _image.columns() << image.rows();
+    _scene->setSceneRect(0, 0, _image.columns(), _image.rows());
+    _rect->setRect(_scene->sceneRect());
     _canvas.image = _image;
 
     // save color profile
@@ -1241,7 +1269,10 @@ void View::handleBrushOverTile(QPointF pos,
     }
 }
 
-void View::renderTile(int tile, Magick::Image canvas, QMap<int, CyanCommon::Layer> layers, Magick::Geometry crop)
+void View::renderTile(int tile,
+                      Magick::Image canvas,
+                      QMap<int, CyanCommon::Layer> layers,
+                      Magick::Geometry crop)
 {
     canvas.quiet(true);
     if (crop.width()==0 || tile==-1 || layers.size()==0 || canvas.columns()==0) { return; }
@@ -1258,22 +1289,24 @@ void View::renderTile(int tile, Magick::Image canvas, QMap<int, CyanCommon::Laye
         QPixmap pix = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(preview.data())),
                                                           static_cast<int>(preview.length())));
         if (pix.isNull()) { return; }
-        emit updateTilePixmap(tile, pix);
+        emit updateTilePixmap(tile,
+                              pix);
     }
 }
 
+// paint a checkerboard background to show transparency in image
 void View::paintCanvasBackground()
-{ // paint a checkerboard background to show transparency in image
+{
     try {
-        Magick::Image cb(_canvas.image);
+        Magick::Image cb;
         cb.quiet(true);
         cb.alpha(true);
-        cb.crop(Magick::Geometry(512, 512));
-        cb.extent(Magick::Geometry(512, 512));
+        cb.size(Magick::Geometry(30, 30));
+        cb.alpha(true);
         cb.read("pattern:checkerboard");
+        cb.scale(Magick::Geometry(256, 256));
         cb.magick("BMP");
-        cb.colorSpace(Magick::sRGBColorspace);
-        cb.depth(8);
+
         Magick::Blob pix;
         cb.write(&pix);
         if (pix.length()>0) {

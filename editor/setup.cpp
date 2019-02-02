@@ -500,6 +500,10 @@ void Editor::setupConnections()
             this,
             SLOT(handleLayerLabel(int,QString)));
     connect(layersWidget,
+            SIGNAL(layerLockChanged(int,bool)),
+            this,
+            SLOT(handleLayerLock(int,bool)));
+    connect(layersWidget,
             SIGNAL(newLayer()),
             this,
             SLOT(newLayerDialog()));
