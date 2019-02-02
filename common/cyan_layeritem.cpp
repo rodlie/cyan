@@ -52,6 +52,7 @@ LayerItem::LayerItem(QGraphicsItem *parent)
 
 void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (_locked) { return; }
     if (_drag) {
         QGraphicsItem::mousePressEvent(event);
         return;
@@ -68,6 +69,7 @@ void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void LayerItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (_locked) { return; }
     if (_drag) { QGraphicsItem::mouseReleaseEvent(event); }
     mouseIsDown = false;
     if (_movable) { mouseMoveEvent(event); }
@@ -110,6 +112,7 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (_locked) { return; }
     QPen newPen(Qt::green);
     newPen.setWidth(0);
     setPen(newPen);
@@ -118,6 +121,7 @@ void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (_locked) { return; }
     bool outOfBounds = true;
     for (int i=0;i<collidingItems().size();++i) {
         LayerItem *layer = dynamic_cast<LayerItem*>(collidingItems().at(i));
