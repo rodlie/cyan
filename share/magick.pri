@@ -32,7 +32,7 @@
 
 # Use ImageMagick-Windows on MSVC
 # https://github.com/ImageMagick/ImageMagick-Windows
-win32-msvc* {
+win32-msvc {
     isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
@@ -48,7 +48,7 @@ win32-msvc* {
 }
 
 # Use pkg-config on anything else
-!win32-msvc* {
+!win32-msvc {
     QT_CONFIG -= no-pkg-config
     CONFIG += link_pkgconfig
     MAGICK_CONFIG = Magick++-7.Q16HDRI
