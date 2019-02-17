@@ -45,9 +45,7 @@ LayerItem::LayerItem(QGraphicsItem *parent)
     , _locked(false)
 {
     setAcceptHoverEvents(true);
-    QPen newPen(Qt::transparent);
-    newPen.setWidth(0);
-    setPen(newPen);
+    setPen(Qt::NoPen);
 }
 
 void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -73,19 +71,6 @@ void LayerItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (_drag) { QGraphicsItem::mouseReleaseEvent(event); }
     mouseIsDown = false;
     if (_movable) { mouseMoveEvent(event); }
-
-    bool outOfBounds = true;
-    for (int i=0;i<collidingItems().size();++i) {
-        LayerItem *layer = dynamic_cast<LayerItem*>(collidingItems().at(i));
-        TileItem *tile = dynamic_cast<TileItem*>(collidingItems().at(i));
-        if (layer || tile) { continue; }
-        outOfBounds = false;
-    }
-    if (outOfBounds) {
-        QPen newPen(Qt::green);
-        newPen.setWidth(0);
-        setPen(newPen);
-    }
 }
 
 void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -94,8 +79,8 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QGraphicsItem::mouseMoveEvent(event);
         return;
     }
-    QPointF epos = mapToScene(event->pos());
 
+    QPointF epos = mapToScene(event->pos());
     if ((_draw && mouseIsDown) || !_movable || _locked || (epos==lpos)) {
         return;
     }
@@ -113,31 +98,12 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (_locked) { return; }
-    QPen newPen(Qt::green);
-    newPen.setWidth(0);
-    setPen(newPen);
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     if (_locked) { return; }
-    bool outOfBounds = true;
-    for (int i=0;i<collidingItems().size();++i) {
-        LayerItem *layer = dynamic_cast<LayerItem*>(collidingItems().at(i));
-        TileItem *tile = dynamic_cast<TileItem*>(collidingItems().at(i));
-        if (layer || tile) { continue; }
-        outOfBounds = false;
-    }
-    if (outOfBounds) {
-        QPen newPen(Qt::cyan);
-        newPen.setWidth(0);
-        setPen(newPen);
-    } else {
-        QPen newPen(Qt::transparent);
-        newPen.setWidth(0);
-        setPen(newPen);
-    }
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
