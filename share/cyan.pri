@@ -47,32 +47,31 @@ unix:!mac {
     isEmpty(APPDIR): APPDIR = $$PREFIX/share/applications
 }
 
-QMAKE_TARGET_COMPANY = "$${TARGET}"
-QMAKE_TARGET_PRODUCT = "$${TARGET}"
-QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
-QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
+QMAKE_TARGET_COMPANY = "Cyan"
+QMAKE_TARGET_PRODUCT = "Cyan"
+QMAKE_TARGET_DESCRIPTION = "Cyan Pixel Editor"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie <ole.andre.rodlie@gmail.com>"
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-DESTDIR = $${top_builddir}/build
-OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
-MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
-RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
-
-# pkg-config
-QT_CONFIG -= no-pkg-config
-CONFIG += link_pkgconfig
-
-# ffmpeg
-CONFIG(with_ffmpeg) {
-    DEFINES += WITH_FFMPEG
-    PKGCONFIG += libavdevice \
-                 libswscale \
-                 libavformat \
-                 libavcodec \
-                 libavutil
+!win32-msvc {
+    DESTDIR = $${top_builddir}/build
+    OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
+    MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
+    RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
 }
 
-win32: CONFIG+=staticlib
+# ffmpeg (experimental)
+CONFIG(with_ffmpeg) {
+    DEFINES += WITH_FFMPEG
+    !win32-msvc {
+        PKGCONFIG += libavdevice \
+                     libswscale \
+                     libavformat \
+                     libavcodec \
+                     libavutil
+    }
+}
 
+win32-g++: CONFIG+=staticlib

@@ -28,9 +28,31 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-# ImageMagick7
-MAGICK_CONFIG = Magick++-7.Q16HDRI
-!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
-PKGCONFIG += $${MAGICK_CONFIG}
-CONFIG(deploy): LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
+# ImageMagick Setup
 
+# Use ImageMagick-Windows on MSVC
+# https://github.com/ImageMagick/ImageMagick-Windows
+win32-msvc* {
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
+    INCLUDEPATH += \
+        $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
+        $${MAGICK_WINDOWS_PATH}/ImageMagick \
+        $${MAGICK_WINDOWS_PATH}/lcms/include
+    LIBS += \
+        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/lib \
+        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/bin \
+        -lCORE_RL_lcms_ \
+        -lCORE_RL_MagickCore_ \
+        -lCORE_RL_MagickWand_ \
+        -lCORE_RL_Magick++_
+}
+
+# Use pkg-config on anything else
+!win32-msvc* {
+    QT_CONFIG -= no-pkg-config
+    CONFIG += link_pkgconfig
+    MAGICK_CONFIG = Magick++-7.Q16HDRI
+    !isEmpty(MAGICK) : MAGICK_CONFIG = $${MAGICK}
+    PKGCONFIG += $${MAGICK_CONFIG} lcms2
+    CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK_CONFIG}`
+}
