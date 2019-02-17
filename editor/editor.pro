@@ -143,4 +143,4 @@ LIBS += \
 !CONFIG(staticlib): unix:!mac: QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
 # link against lcms2 if static
-CONFIG(staticlib): PKGCONFIG += lcms2
+#CONFIG(staticlib): PKGCONFIG += lcms2

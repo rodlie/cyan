@@ -54,6 +54,3 @@ unix:!mac {
     target.path = $${LIBDIR}
     !CONFIG(staticlib): INSTALLS += target
 }
-
-# lcms
-PKGCONFIG += lcms2
