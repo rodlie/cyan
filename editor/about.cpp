@@ -44,14 +44,16 @@ void Editor::aboutCyan()
     about.append(QString("<h3>Cyan %1</h3>")
                  .arg(CYAN_VERSION));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan is an open source cross-platform general-purpose image editor.")));
+                 .arg(tr("Cyan is an open source cross-platform image editor.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("&copy;2019 Ole-André Rodlie. All rights reserved.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("Cyan is distributed under the %1 license.")
                       .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
                                    "CeCILL v2.1</a>"))));
+
     box.setText(about);
+    box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }
 
@@ -92,6 +94,7 @@ void Editor::aboutImageMagick()
     about.append(QString("<strong>Thread Limit</strong>: %1</p>").arg(Magick::ResourceLimits::thread()));
 
     box.setText(about);
+    box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }
 
@@ -109,6 +112,8 @@ void Editor::aboutLcms()
                       .remove(3,1)));
     about.append(QString("<p><a href=\"http://www.littlecms.com/\">Little CMS</a> is an small-footprint color management engine, with special focus on accuracy and performance.</p><p>Little CMS is distributed under the following <a href=\"https://opensource.org/licenses/mit-license.php\">license</a>.</p>"));
     about.append(QString("<p>Copyright &copy; 2018 Marti Maria Saguer.<br>All rights reserved.</p>"));
+
     box.setText(about);
+    box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }
