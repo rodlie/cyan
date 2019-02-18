@@ -230,7 +230,7 @@ win32-msvc {
     QT_CONFIG -= no-pkg-config
     CONFIG += link_pkgconfig
     # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
-    !isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
+    isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
     PKGCONFIG += $${MAGICK} lcms2
     # deploy+static fix
     CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK}`
