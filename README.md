@@ -1,8 +1,10 @@
-# Cyan
+# Cyan2
 
-***v2.0 is currently under development, please use v1.2 https://github.com/rodlie/cyan/tree/1.2***
+***v2 is currently under development, please use v1.2 https://github.com/rodlie/cyan/tree/1.2 for color convertion and/or Gimp plug-in***
 
-Cyan is an open source cross-platform image editor. Originally designed for prepress color convertion, but now aims to be a general-purpose image editor. v2 started from scratch so it might take a while to get to the level of features you might expect from an image editor. ETA for v2 is Q1 2019.
+Cyan2 is an open source cross-platform image editor. Originally designed for prepress color convertion, but now aims to be a general-purpose image editor. v2 started from scratch so it might take a while to get to the level of features you might expect from an image editor.
+
+Note that this is currently a spare-time project, so development will be slow.
 
 ## Requirements
 
@@ -18,8 +20,6 @@ Supported build options:
  * ``PREFIX = </usr/local>`` - install prefix
  * ``DOCDIR = <PREFIX/share/doc>`` - documentation install path
  * ``MANDIR = <PREFIX/share/man>`` - manual install path
- * ``LIBDIR = <PREFIX/lib>`` - library install path
- * ``LIBSUFFIX = `` - library dir suffix (add ``64`` if using x86_64/amd64)
  * ``BINDIR = <PREFIX/bin>`` - executable install path
  * ``ICONDIR = <PREFIX/share/icons>`` - icon themes path
  * ``ICCDIR = <PREFIX/share/color/icc>`` - ICC color profile path
@@ -47,7 +47,7 @@ make INSTALL_ROOT=`pwd` install
 
 Package build:
 ```
-qmake PREFIX=/usr LIBSUFFIX=64
+qmake PREFIX=/usr
 make
 make INSTALL_ROOT=<pkg_path> install
 ```

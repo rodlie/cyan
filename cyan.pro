@@ -114,7 +114,8 @@ INCLUDEPATH += \
 OTHER_FILES += \
     $${top_srcdir}/scripts/ci.sh \
     $${top_srcdir}/scripts/gimp.py \
-    $${top_srcdir}/docs/README.md
+    $${top_srcdir}/docs/README.md \
+    $${top_srcdir}/README.md
 
 # build dir
 !win32-msvc {
