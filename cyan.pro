@@ -212,26 +212,42 @@ win32-msvc {
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
     # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK!!!
     isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
+
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
         $${MAGICK_WINDOWS_PATH}/ImageMagick \
         $${MAGICK_WINDOWS_PATH}/lcms/include
+
     LIBS += \
         -L$${MAGICK_WINDOWS_PATH}/VisualMagick/lib \
-        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/bin \
-        -lCORE_RL_lcms_ \
-        -lCORE_RL_MagickCore_ \
-        -lCORE_RL_MagickWand_ \
-        -lCORE_RL_Magick++_
+        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/bin
+
+    CONFIG(release, debug|release) {
+        LIBS += \
+            -lCORE_RL_lcms_ \
+            -lCORE_RL_MagickCore_ \
+            -lCORE_RL_MagickWand_ \
+            -lCORE_RL_Magick++_
+    }
+
+    CONFIG(debug, debug|release) {
+        LIBS += \
+            -lCORE_DB_lcms_ \
+            -lCORE_DB_MagickCore_ \
+            -lCORE_DB_MagickWand_ \
+            -lCORE_DB_Magick++_
+    }
 }
 
 # Use pkg-config on anything else
 !win32-msvc {
     QT_CONFIG -= no-pkg-config
     CONFIG += link_pkgconfig
+
     # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
     isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
     PKGCONFIG += $${MAGICK} lcms2
+
     # deploy+static fix
     CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK}`
 }
@@ -242,6 +258,7 @@ CONFIG(with_ffmpeg) {
     SOURCES += $${top_srcdir}/dialogs/videodialog.cpp
     HEADERS += $${top_srcdir}/dialogs/videodialog.h
     DEFINES += WITH_FFMPEG
+
     !win32-msvc {
         PKGCONFIG += libavdevice \
                      libswscale \
