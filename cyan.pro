@@ -1,3 +1,10 @@
+# Cyan Image Editor
+#
+# <https://cyan.fxarena.net>
+# <http://prepress.sf.net>
+# <https://github.com/rodlie/cyan>
+# <https://sourceforge.net/projects/prepress>
+#
 # Copyright Ole-André Rodlie.
 #
 # ole.andre.rodlie@gmail.com
@@ -28,14 +35,24 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-include($${top_srcdir}/share/cyan.pri)
-include($${top_srcdir}/share/magick.pri)
-
 TARGET = Cyan
-TEMPLATE = app
-QT += concurrent
+VERSION = 2.0.0
+VERSION_EXTRA = alpha1
 
-DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
+TEMPLATE = app
+QT += concurrent widgets
+
+CONFIG += c++11
+CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+
+QMAKE_TARGET_COMPANY = "Cyan"
+QMAKE_TARGET_PRODUCT = "Cyan"
+QMAKE_TARGET_DESCRIPTION = "Cyan Image Editor"
+QMAKE_TARGET_COPYRIGHT = "(c) Ole-Andre Rodlie <ole.andre.rodlie@gmail.com>"
+
+DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_EXTRA}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 !CONFIG(deploy): DEFINES += CYAN_DEVEL
 
@@ -66,7 +83,6 @@ SOURCES += \
     $${top_srcdir}/editor/mdi.cpp \
     $${top_srcdir}/dialogs/newmediadialog.cpp \
     $${top_srcdir}/dialogs/convertdialog.cpp
-CONFIG(with_ffmpeg) : SOURCES += $${top_srcdir}/dialogs/videodialog.cpp
 
 HEADERS += \
     $${top_srcdir}/common/cyan_common.h \
@@ -87,7 +103,6 @@ HEADERS += \
     $${top_srcdir}/editor/mdi.h \
     $${top_srcdir}/dialogs/newmediadialog.h \
     $${top_srcdir}/dialogs/convertdialog.h
-CONFIG(with_ffmpeg) : HEADERS += $${top_srcdir}/dialogs/videodialog.h
 
 INCLUDEPATH += \
     $${top_srcdir}/common \
@@ -95,33 +110,48 @@ INCLUDEPATH += \
     $${top_srcdir}/colors \
     $${top_srcdir}/dialogs
 
+# misc related
 OTHER_FILES += \
     $${top_srcdir}/scripts/ci.sh \
     $${top_srcdir}/scripts/gimp.py \
     $${top_srcdir}/docs/README.md
 
+# build dir
+!win32-msvc {
+    DESTDIR = $${top_builddir}/build
+    OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
+    MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
+    RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
+}
+
 # bundle core icons
 RESOURCES += $${top_srcdir}/share/icons_core.qrc
 
-# on deploy bundle icon theme and color profiles
+# bundle theme icons and color profiles on deploy
 CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
 
-# bundle icons and color profiles on Windows if MSVC
+# bundle theme icons and color profiles on msvc
 win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
 
-# on debug bundle icon theme
+# bundle theme icons on debug
 CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
 
-# add win32 icon
+# add win32 rc icon
 win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
 
-# mingw static fix
+# mingw deploy+static fix
 CONFIG(deploy) : win32-g++ : LIBS += -lpthread
 
-# mac stuff
+# mac
 mac {
     CONFIG(deploy) {
+        # win/lin/mac use the same version of Qt (and depends) to avoid "issues",
+        # since Qt 5.9 is the lowest we can go on Windows due to misc bugs
+        # we also need to ship Qt 5.9 on Mac, this means OSX 10.10 is the
+        # lowest version we can target.
+        # You can however build against Qt 5.6 to get compatibility with OSX 10.7.
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+        # static fix
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -fopenmp
     }
@@ -131,8 +161,18 @@ mac {
 
 # install on unix (not mac)
 unix:!mac {
+    # define default install paths
+    isEmpty(PREFIX) : PREFIX = /usr/local
+    isEmpty(DOCDIR) : DOCDIR = $$PREFIX/share/doc
+    isEmpty(MANDIR) : MANDIR = $$PREFIX/share/man
+    isEmpty(LIBDIR) : LIBDIR = $$PREFIX/lib$${LIBSUFFIX}
+    isEmpty(BINDIR) : BINDIR = $$PREFIX/bin
+    isEmpty(ICONDIR) : ICONDIR = $$PREFIX/share/icons
+    isEmpty(ICCDIR) : ICCDIR = $$PREFIX/share/color/icc
+    isEmpty(APPDIR) : APPDIR = $$PREFIX/share/applications
+
     target.path = $${BINDIR}
-    docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_TYPE}
+    docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_EXTRA}
     icons.path = $${ICONDIR}
     hicolor.path = $${ICONDIR}
     icc.path = $${ICCDIR}/$${TARGET}
@@ -163,4 +203,50 @@ unix:!mac {
         hicolor \
         desktop
     !CONFIG(deploy): INSTALLS += icons icc
+}
+
+# Use ImageMagick-Windows on msvc
+win32-msvc {
+    # path to your "VisualMagick" build
+    # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
+    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK!!!
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
+    INCLUDEPATH += \
+        $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
+        $${MAGICK_WINDOWS_PATH}/ImageMagick \
+        $${MAGICK_WINDOWS_PATH}/lcms/include
+    LIBS += \
+        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/lib \
+        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/bin \
+        -lCORE_RL_lcms_ \
+        -lCORE_RL_MagickCore_ \
+        -lCORE_RL_MagickWand_ \
+        -lCORE_RL_Magick++_
+}
+
+# Use pkg-config on anything else
+!win32-msvc {
+    QT_CONFIG -= no-pkg-config
+    CONFIG += link_pkgconfig
+    # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
+    !isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
+    PKGCONFIG += $${MAGICK} lcms2
+    # deploy+static fix
+    CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK}`
+}
+
+# ffmpeg experimental support
+# supports video (frames) and embedded images in audio files (coverart)
+CONFIG(with_ffmpeg) {
+    SOURCES += $${top_srcdir}/dialogs/videodialog.cpp
+    HEADERS += $${top_srcdir}/dialogs/videodialog.h
+    DEFINES += WITH_FFMPEG
+    !win32-msvc {
+        PKGCONFIG += libavdevice \
+                     libswscale \
+                     libavformat \
+                     libavcodec \
+                     libavutil
+    }
+    win32-msvc : error("Not supported/tested")
 }
