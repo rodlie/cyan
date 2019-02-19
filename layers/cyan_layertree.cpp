@@ -180,7 +180,7 @@ void LayerTree::populateTree(View *view)
 
 void LayerTree::handleItemActivated(QTreeWidgetItem *item, int col)
 {
-    Q_UNUSED(col)
+    if (col == 1 || col == 2) { return; } // ignore clicks on visible and locked
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!item) { return; }
     emit selectedLayer(layer->getLayerID());

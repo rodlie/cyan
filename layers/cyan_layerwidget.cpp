@@ -334,7 +334,7 @@ void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
 void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
                                            QTreeWidgetItem *old)
 {
-    Q_UNUSED(old)
+    if (item==old) { return; } // ignore if same
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!layer) { return; }
 
