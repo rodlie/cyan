@@ -190,6 +190,8 @@ public:
     static Magick::ColorspaceType getProfileColorspace(const QString &filename);
     static Magick::ColorspaceType getProfileColorspace(cmsHPROFILE profile);
 
+    static const QString getProfileTag(Magick::Blob buffer,
+                                       CyanCommon::ICCTag tag = CyanCommon::ICCDescription);
     static const QString getProfileTag(const QString filename,
                                        CyanCommon::ICCTag tag = CyanCommon::ICCDescription);
     static const QString getProfileTag(cmsHPROFILE profile,

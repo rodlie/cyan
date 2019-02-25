@@ -119,6 +119,8 @@ const QString CyanCommon::canvasWindowTitle(Magick::Image image)
     if (!QString::fromStdString(image.label()).isEmpty()) {
         label = QString::fromStdString(image.label());
     }
+    QString profile = CyanCommon::getProfileTag(image.iccColorProfile());
+    if (profile.isEmpty()) { profile = "N/A"; }
     QString colorspace;
     switch(image.colorSpace()) {
     case Magick::RGBColorspace:
@@ -164,14 +166,15 @@ const QString CyanCommon::canvasWindowTitle(Magick::Image image)
         int depth = static_cast<int>(image.depth());
         int dpiX = static_cast<int>(image.density().x());
         int dpiY = static_cast<int>(image.density().y());
-        result = QString("%1 @ %2 %3x%4 %5x%6 %7-bit")
+        result = QString("%1 @ %2 (%8) %3x%4 %5x%6 %7-bit")
                         .arg(label)
                         .arg(colorspace)
                         .arg(width)
                         .arg(height)
                         .arg(dpiX)
                          .arg(dpiY)
-                        .arg(depth);
+                        .arg(depth)
+                        .arg(profile);
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
@@ -624,6 +627,17 @@ Magick::ColorspaceType CyanCommon::getProfileColorspace(cmsHPROFILE profile)
     }
     cmsCloseProfile(profile);
     return result;
+}
+
+const QString CyanCommon::getProfileTag(Magick::Blob buffer,
+                                        CyanCommon::ICCTag tag)
+{
+    qDebug() << "get profile tag from blob" << buffer.length();
+    if (buffer.length()>0) {
+        return getProfileTag(cmsOpenProfileFromMem(buffer.data(),
+                                                   static_cast<cmsUInt32Number>(buffer.length())),tag);
+    }
+    return QString();
 }
 
 const QString CyanCommon::getProfileTag(const QString filename,

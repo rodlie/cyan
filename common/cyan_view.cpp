@@ -897,6 +897,7 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _image.size(Magick::Geometry(image.columns(), image.rows()));
     _image.depth(image.depth());
     _image.colorSpace(image.colorSpace());
+    _image.iccColorProfile(image.iccColorProfile());
 
     _image.alpha(true);
     _image.evaluate(Magick::AlphaChannel,
