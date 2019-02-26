@@ -149,11 +149,11 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     connect(layerTree, SIGNAL(layerLockChanged(int,bool)), this, SLOT(handleTreeLayerLock(int,bool)));
     connect(layerTree, SIGNAL(moveLayerEvent(QKeyEvent*)), this, SLOT(handleTreeMoveLayer(QKeyEvent*)));
 
-    connect(layerTree, SIGNAL(actDuplicate()), this, SLOT(handleDuplicateButtonReleased()));
-    connect(layerTree, SIGNAL(actMoveDown()), this, SLOT(handleDownButtonReleased()));
-    connect(layerTree, SIGNAL(actMoveUp()), this, SLOT(handleUpButtonReleased()));
-    connect(layerTree, SIGNAL(actNewImage()), this, SLOT(handleNewButtonReleased()));
-    connect(layerTree, SIGNAL(actRemove()), this, SLOT(handleRemoveButtonReleased()));
+    connect(layerTree, SIGNAL(actDuplicate()), this, SLOT(handleDuplicateLayer()));
+    connect(layerTree, SIGNAL(actMoveDown()), this, SLOT(handleMoveLayerDown()));
+    connect(layerTree, SIGNAL(actMoveUp()), this, SLOT(handleMoveLayerUp()));
+    connect(layerTree, SIGNAL(actNewImage()), this, SLOT(handleNewImageLayer()));
+    connect(layerTree, SIGNAL(actRemove()), this, SLOT(handleRemoveLayer()));
 
     layerOpacitySpin->setValue(100.0);
 }
@@ -359,23 +359,23 @@ void CyanLayerWidget::handleTreeMoveLayer(QKeyEvent *e)
 {
     switch (e->key()) {
     case Qt::Key_PageUp:
-        handleUpButtonReleased();
+        handleMoveLayerUp();
         break;
     case Qt::Key_PageDown:
-        handleDownButtonReleased();
+        handleMoveLayerDown();
         break;
     default:
         emit moveLayerEvent(e);
     }
 }
 
-void CyanLayerWidget::handleNewButtonReleased()
+void CyanLayerWidget::handleNewImageLayer()
 {
     qDebug() << "forward new layer";
     emit newLayer();
 }
 
-void CyanLayerWidget::handleRemoveButtonReleased()
+void CyanLayerWidget::handleRemoveLayer()
 {
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
     if (!layer) { return; }
@@ -384,7 +384,7 @@ void CyanLayerWidget::handleRemoveButtonReleased()
     emit removeLayer(layer->getLayerID());
 }
 
-void CyanLayerWidget::handleUpButtonReleased()
+void CyanLayerWidget::handleMoveLayerUp()
 {
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
     if (!layer) { return; }
@@ -393,7 +393,7 @@ void CyanLayerWidget::handleUpButtonReleased()
     emit moveLayerUp(layer->getLayerID());
 }
 
-void CyanLayerWidget::handleDownButtonReleased()
+void CyanLayerWidget::handleMoveLayerDown()
 {
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
     if (!layer) { return; }
@@ -402,7 +402,7 @@ void CyanLayerWidget::handleDownButtonReleased()
     emit moveLayerDown(layer->getLayerID());
 }
 
-void CyanLayerWidget::handleDuplicateButtonReleased()
+void CyanLayerWidget::handleDuplicateLayer()
 {
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
     if (!layer) { return; }

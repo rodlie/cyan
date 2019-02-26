@@ -111,11 +111,11 @@ private slots:
                              bool lock);
     void handleTreeMoveLayer(QKeyEvent *e);
 
-    void handleNewButtonReleased();
-    void handleRemoveButtonReleased();
-    void handleUpButtonReleased();
-    void handleDownButtonReleased();
-    void handleDuplicateButtonReleased();
+    void handleNewImageLayer();
+    void handleRemoveLayer();
+    void handleMoveLayerUp();
+    void handleMoveLayerDown();
+    void handleDuplicateLayer();
 };
 
 #endif // CYANLAYERWIDGET_H
