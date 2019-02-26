@@ -63,6 +63,12 @@ void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     mouseIsDown = true;
     emit selectedItem(data(1).toInt());
+
+    if (pen().color() != Qt::green) {
+        QPen newPen(Qt::green);
+        newPen.setWidth(0);
+        setPen(newPen);
+    }
 }
 
 void LayerItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -97,12 +103,18 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (pen().color() != Qt::green) {
+        QPen newPen(Qt::green);
+        newPen.setWidth(0);
+        setPen(newPen);
+    }
     if (_locked) { return; }
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void LayerItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (pen().color() == Qt::green) { setPen(Qt::NoPen); }
     if (_locked) { return; }
     QGraphicsItem::hoverLeaveEvent(event);
 }
