@@ -56,6 +56,7 @@ private:
     double _opacity;
     bool _visible;
     bool _locked;
+    int _order;
 
 public slots:
 
@@ -63,6 +64,8 @@ public slots:
     void setComposite(Magick::CompositeOperator composite);
     int getLayerID();
     void setLayerID(int id);
+    int getLayerOrder();
+    void setLayerOrder(int order);
     QString getLayerName();
     void setLayerName(QString name);
     double getOpacity();

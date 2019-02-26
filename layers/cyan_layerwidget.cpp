@@ -185,11 +185,23 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     connect(layerTree, SIGNAL(layerLabelChanged(int,QString)), this, SLOT(handleTreeLayerLabel(int,QString)));
     connect(layerTree, SIGNAL(layerLockChanged(int,bool)), this, SLOT(handleTreeLayerLock(int,bool)));
 
+
+
+
+    connect(layerTree, SIGNAL(actDuplicate()), this, SLOT(handleDuplicateButtonReleased()));
+    connect(layerTree, SIGNAL(actMoveDown()), this, SLOT(handleDownButtonReleased()));
+    connect(layerTree, SIGNAL(actMoveUp()), this, SLOT(handleUpButtonReleased()));
+    connect(layerTree, SIGNAL(actNewImage()), this, SLOT(handleNewButtonReleased()));
+    connect(layerTree, SIGNAL(actRemove()), this, SLOT(handleRemoveButtonReleased()));
+
     connect(layerNewButton, SIGNAL(released()), this, SLOT(handleNewButtonReleased()));
     connect(layerDuplicateButton, SIGNAL(released()), this, SLOT(handleDuplicateButtonReleased()));
     connect(layerRemoveButton, SIGNAL(released()), this, SLOT(handleRemoveButtonReleased()));
     connect(layerMoveUpButton, SIGNAL(released()), this, SLOT(handleUpButtonReleased()));
     connect(layerMoveDownButton, SIGNAL(released()), this, SLOT(handleDownButtonReleased()));
+
+
+
 
     connect(layerTree, SIGNAL(moveLayerEvent(QKeyEvent*)), this, SLOT(handleTreeMoveLayer(QKeyEvent*)));
 

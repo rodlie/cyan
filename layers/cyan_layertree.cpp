@@ -40,6 +40,12 @@
 LayerTree::LayerTree(QWidget *parent) :
     QTreeWidget(parent)
   , lastLayerSelected(-1)
+  , _maxLayersOrder(0)
+  , newImageLayerAct(nullptr)
+  , removeLayerAct(nullptr)
+  , moveUpLayerAct(nullptr)
+  , moveDownLayerAct(nullptr)
+  , duplicateLayerAct(nullptr)
 {
     setHeaderLabels(QStringList() << QString("#") << QString() << QString() << QString());
     headerItem()->setIcon(3, QIcon::fromTheme("layers"));
@@ -52,6 +58,40 @@ LayerTree::LayerTree(QWidget *parent) :
     setColumnWidth(1, 16);
     setColumnWidth(2, 16);
     setIconSize(QSize(32, 32));
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
+    newImageLayerAct = new QAction(tr("New"), this);
+    removeLayerAct = new QAction(tr("Remove"), this);
+    moveUpLayerAct = new QAction(tr("Move up"), this);
+    moveDownLayerAct = new QAction(tr("Move down"), this);
+    duplicateLayerAct = new QAction(tr("Duplicate"), this);
+
+    newImageLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    removeLayerAct->setIcon(QIcon::fromTheme("edit-delete"));
+    moveUpLayerAct->setIcon(QIcon::fromTheme("go-up"));
+    moveDownLayerAct->setIcon(QIcon::fromTheme("go-down"));
+    duplicateLayerAct->setIcon(QIcon::fromTheme("layers"));
+
+    connect(newImageLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleNewImageAct(bool)));
+    connect(removeLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleRemoveLayerAct(bool)));
+    connect(moveUpLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleMoveUpLayerAct(bool)));
+    connect(moveDownLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleMoveDownLayerAct(bool)));
+    connect(duplicateLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleDuplicateLayerAct(bool)));
 
     connect(this,
             SIGNAL(itemClicked(QTreeWidgetItem*,int)),
@@ -65,6 +105,10 @@ LayerTree::LayerTree(QWidget *parent) :
             SIGNAL(itemPressed(QTreeWidgetItem*,int)),
             this,
             SLOT(handleItemActivated(QTreeWidgetItem*, int)));
+    connect(this,
+            SIGNAL(customContextMenuRequested(QPoint)),
+            this,
+            SLOT(handleContextMenu(QPoint)));
 }
 
 LayerTree::~LayerTree()
@@ -104,9 +148,13 @@ void LayerTree::populateTree(View *view)
 
     clear();
     setCanvasID(view->getCanvasID());
+    _maxLayersOrder = 0;
+
     QMapIterator<int, CyanCommon::Layer> layers(view->getCanvasProject().layers);
     while (layers.hasNext()) {
         layers.next();
+        if (layers.value().order > _maxLayersOrder) { _maxLayersOrder = layers.value().order; }
+
         CyanLayerTreeItem *item = new CyanLayerTreeItem(this);
         blockSignals(true);
 
@@ -160,6 +208,7 @@ void LayerTree::populateTree(View *view)
         item->setVisibility(layers.value().visible);
         item->setCheckState(1, layers.value().visible?Qt::Checked:Qt::Unchecked);
         item->setCheckState(2, layers.value().locked?Qt::Checked:Qt::Unchecked);
+        item->setLayerOrder(layers.value().order);
 
         addTopLevelItem(item);
         blockSignals(false);
@@ -210,6 +259,67 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
         emit layerLockChanged(layer->getLayerID(),
                               lock);
     }
+}
+
+void LayerTree::handleContextMenu(const QPoint &pos)
+{
+    QMenu *menu = new QMenu(this);
+
+    bool hasLayer = false;
+    int layerOrder = -1;
+    CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(currentItem());
+    if (layer) {
+        layerOrder = layer->getLayerOrder();
+        hasLayer = true;
+    }
+
+    menu->addAction(newImageLayerAct);
+
+    if (hasLayer) {
+        menu->addSeparator();
+        menu->addAction(duplicateLayerAct);
+
+        bool canMoveUp = layerOrder<_maxLayersOrder;
+        bool canMoveDown = layerOrder>0 && topLevelItemCount()>1;
+        if (canMoveDown || canMoveUp) { menu->addSeparator(); }
+        if (canMoveUp) { menu->addAction(moveUpLayerAct); }
+        if (canMoveDown) { menu->addAction(moveDownLayerAct); }
+
+        menu->addSeparator();
+        menu->addAction(removeLayerAct);
+    }
+
+    menu->popup(viewport()->mapToGlobal(pos));
+}
+
+void LayerTree::handleNewImageAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actNewImage();
+}
+
+void LayerTree::handleRemoveLayerAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actRemove();
+}
+
+void LayerTree::handleMoveUpLayerAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actMoveUp();
+}
+
+void LayerTree::handleMoveDownLayerAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actMoveDown();
+}
+
+void LayerTree::handleDuplicateLayerAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actDuplicate();
 }
 
 void LayerTree::keyPressEvent(QKeyEvent *e)

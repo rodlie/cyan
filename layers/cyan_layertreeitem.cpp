@@ -39,6 +39,7 @@ CyanLayerTreeItem::CyanLayerTreeItem(QTreeWidget *parent) :
   , _name(tr("New Layer"))
   , _visible(true)
   , _locked(false)
+  , _order(0)
 {
 }
 
@@ -67,6 +68,16 @@ void CyanLayerTreeItem::setLayerID(int id)
 {
     if (id<0) { return; }
     _id = id;
+}
+
+int CyanLayerTreeItem::getLayerOrder()
+{
+    return _order;
+}
+
+void CyanLayerTreeItem::setLayerOrder(int order)
+{
+    _order = order;
 }
 
 QString CyanLayerTreeItem::getLayerName()

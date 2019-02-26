@@ -61,10 +61,24 @@ signals:
     void layerLockChanged(int id,
                           bool lock);
 
+    void actNewImage();
+    void actRemove();
+    void actDuplicate();
+    void actMoveUp();
+    void actMoveDown();
+
+
 private:
 
     QString _canvasID;
     int lastLayerSelected;
+    int _maxLayersOrder;
+
+    QAction *newImageLayerAct;
+    QAction *removeLayerAct;
+    QAction *moveUpLayerAct;
+    QAction *moveDownLayerAct;
+    QAction *duplicateLayerAct;
 
 public slots:
 
@@ -79,6 +93,13 @@ private slots:
                              int col);
     void handleItemChanged(QTreeWidgetItem *item,
                            int col);
+    void handleContextMenu(const QPoint &pos);
+
+    void handleNewImageAct(bool triggered);
+    void handleRemoveLayerAct(bool triggered);
+    void handleMoveUpLayerAct(bool triggered);
+    void handleMoveDownLayerAct(bool triggered);
+    void handleDuplicateLayerAct(bool triggered);
 
 protected:
 
