@@ -520,6 +520,10 @@ void Editor::setupConnections()
             this,
             SLOT(handleMoveLayerDown(int)));
     connect(layersWidget,
+            SIGNAL(duplicateLayer(int)),
+            this,
+            SLOT(handleDuplicateLayer(int)));
+    connect(layersWidget,
             SIGNAL(layerOpacityChanged(double,int)),
             this,
             SLOT(handleLayersOpacity(double,int)));

@@ -69,6 +69,7 @@ signals:
     void removeLayer(int id);
     void moveLayerUp(int id);
     void moveLayerDown(int id);
+    void duplicateLayer(int id);
 
 public slots:
 
@@ -92,6 +93,7 @@ private:
     QPushButton *layerRemoveButton;
     QPushButton *layerMoveUpButton;
     QPushButton *layerMoveDownButton;
+    QPushButton *layerDuplicateButton;
 
 private slots:
 
@@ -119,6 +121,7 @@ private slots:
     void handleRemoveButtonReleased();
     void handleUpButtonReleased();
     void handleDownButtonReleased();
+    void handleDuplicateButtonReleased();
 };
 
 #endif // CYANLAYERWIDGET_H

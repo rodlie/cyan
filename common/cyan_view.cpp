@@ -427,6 +427,48 @@ void View::addLayer(int id,
     if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
 }
 
+void View::duplicateLayer(int id)
+{
+    if (id<0) { return; }
+    qDebug() << "canvas duplicate layer" << id;
+
+    addLayer(_canvas.layers[id].image, false);
+
+    int origOrder = getLayerOrder(id);
+    int dupOrder = getLastLayerOrder();
+    int dupID = getLastLayerID();
+
+    _canvas.layers[dupID].label = QString(tr("Copy of %1").arg(_canvas.layers[id].label));
+    _canvas.layers[dupID].composite = _canvas.layers[id].composite;
+    _canvas.layers[dupID].locked = _canvas.layers[id].locked;
+    _canvas.layers[dupID].opacity = _canvas.layers[id].opacity;
+    _canvas.layers[dupID].pos = _canvas.layers[id].pos;
+
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        if ((layer.value().order > origOrder) &&
+            (layer.value().order < dupOrder))
+        {
+            _canvas.layers[layer.key()].order++;
+        }
+    }
+    _canvas.layers[dupID].order = origOrder+1;
+
+    for (int i=origOrder+1;i<dupOrder;++i) {
+        moveLayerItemDown(dupID);
+    }
+
+    LayerItem *dupItem = getLayerItemFromId(dupID);
+    if (dupItem) {
+        dupItem->setPos(_canvas.layers[dupID].pos.width(),
+                        _canvas.layers[dupID].pos.height());
+    }
+
+    emit updatedLayers();
+    refreshTiles();
+}
+
 CyanCommon::Layer View::getLayerFromOrder(int order)
 {
     QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);

@@ -50,6 +50,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
   , layerRemoveButton(nullptr)
   , layerMoveUpButton(nullptr)
   , layerMoveDownButton(nullptr)
+  , layerDuplicateButton(nullptr)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -97,16 +98,19 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     layerOpacitySpin->setRange(0, 100);
 
     layerNewButton = new QPushButton(this);
+    layerDuplicateButton = new QPushButton(this);
     layerRemoveButton = new QPushButton(this);
     layerMoveUpButton = new QPushButton(this);
     layerMoveDownButton = new QPushButton(this);
 
     layerNewButton->setToolTip(tr("New layer"));
+    layerDuplicateButton->setToolTip(tr("Duplicate layer"));
     layerRemoveButton->setToolTip(tr("Remove layer"));
     layerMoveUpButton->setToolTip(tr("Move layer up"));
     layerMoveDownButton->setToolTip(tr("Move layer down"));
 
     layerNewButton->setIcon(QIcon::fromTheme("document-new"));
+    layerDuplicateButton->setIcon(QIcon::fromTheme("layers"));
     layerRemoveButton->setIcon(QIcon::fromTheme("edit-delete"));
     layerMoveUpButton->setIcon(QIcon::fromTheme("go-up"));
     layerMoveDownButton->setIcon(QIcon::fromTheme("go-down"));
@@ -125,6 +129,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     //opacityLayout->setSpacing(0);
 
     layerButtonsLayout->addWidget(layerNewButton);
+    layerButtonsLayout->addWidget(layerDuplicateButton);
     layerButtonsLayout->addWidget(layerRemoveButton);
     layerButtonsLayout->addWidget(layerMoveUpButton);
     layerButtonsLayout->addWidget(layerMoveDownButton);
@@ -181,6 +186,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     connect(layerTree, SIGNAL(layerLockChanged(int,bool)), this, SLOT(handleTreeLayerLock(int,bool)));
 
     connect(layerNewButton, SIGNAL(released()), this, SLOT(handleNewButtonReleased()));
+    connect(layerDuplicateButton, SIGNAL(released()), this, SLOT(handleDuplicateButtonReleased()));
     connect(layerRemoveButton, SIGNAL(released()), this, SLOT(handleRemoveButtonReleased()));
     connect(layerMoveUpButton, SIGNAL(released()), this, SLOT(handleUpButtonReleased()));
     connect(layerMoveDownButton, SIGNAL(released()), this, SLOT(handleDownButtonReleased()));
@@ -432,6 +438,15 @@ void CyanLayerWidget::handleDownButtonReleased()
 
     qDebug() << "forward move layer down";
     emit moveLayerDown(layer->getLayerID());
+}
+
+void CyanLayerWidget::handleDuplicateButtonReleased()
+{
+    CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
+    if (!layer) { return; }
+
+    qDebug() << "forward duplicate layer" << layer->getLayerID();
+    emit duplicateLayer(layer->getLayerID());
 }
 
 void CyanLayerWidget::handleLayerOpacitySpin(double value)

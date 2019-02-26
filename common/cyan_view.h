@@ -145,6 +145,8 @@ public slots:
                   bool updateView = true,
                   bool isLocked = false);
 
+    void duplicateLayer(int id);
+
     CyanCommon::Layer getLayerFromOrder(int order);
     int getLastLayerID();
     int getLastLayerOrder();

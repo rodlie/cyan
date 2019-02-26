@@ -191,3 +191,9 @@ void Editor::handleMoveLayerUp(int id)
 
     getCurrentCanvas()->moveLayerItemUp(id);
 }
+
+void Editor::handleDuplicateLayer(int id)
+{
+    if (!getCurrentCanvas() || id<0) { return; }
+    getCurrentCanvas()->duplicateLayer(id);
+}

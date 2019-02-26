@@ -186,6 +186,7 @@ private slots:
     void handleRemoveLayer(int id);
     void handleMoveLayerDown(int id);
     void handleMoveLayerUp(int id);
+    void handleDuplicateLayer(int id);
 
     // tabs
     void newTab(CyanCommon::Canvas canvas);
