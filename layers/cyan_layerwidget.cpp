@@ -106,7 +106,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     mainLayout->addWidget(opacityWidget);
     mainLayout->addWidget(layerTree);
 
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins(0, 10, 0, 0);
     //mainLayout->setSpacing(0);
 
     populateCompositeBox();
@@ -231,49 +231,51 @@ void CyanLayerWidget::populateCompositeBox()
     value - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
     */
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::OverCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DissolveCompositeOp]);
+    QIcon icon = QIcon::fromTheme(QString("images_flickr"));
+
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::OverCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DissolveCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PlusCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::MultiplyCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::OverlayCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ScreenCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PlusCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::MultiplyCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::OverlayCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ScreenCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ColorDodgeCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearDodgeCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::ColorBurnCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearBurnCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ColorDodgeCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearDodgeCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ColorBurnCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearBurnCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LightenCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DarkenCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LightenIntensityCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DarkenIntensityCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LightenCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DarkenCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LightenIntensityCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DarkenIntensityCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::SoftLightCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::HardLightCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::VividLightCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PegtopLightCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::PinLightCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::LinearLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::SoftLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::HardLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::VividLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PegtopLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PinLightCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearLightCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DifferenceCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::MinusSrcCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::DivideSrcCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DifferenceCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::MinusSrcCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DivideSrcCompositeOp]);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::HueCompositeOp]);
-    layerCompositeBox->addItem(CyanCommon::compositeModes()[Magick::SaturateCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::HueCompositeOp]);
+    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::SaturateCompositeOp]);
 
     // add the "rest"
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
@@ -285,7 +287,7 @@ void CyanLayerWidget::populateCompositeBox()
                                   Qt::MatchExactly |
                                   Qt::MatchCaseSensitive)==-1)
         {
-            layerCompositeBox->addItem(i.value());
+            layerCompositeBox->addItem(icon, i.value());
         }
     }
 
