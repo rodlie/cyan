@@ -34,7 +34,6 @@
 #define CYANLAYERWIDGET_H
 
 #include <QWidget>
-#include <QPushButton>
 #include <QComboBox>
 #include <QSlider>
 #include <QDoubleSpinBox>
@@ -89,11 +88,6 @@ private:
     QComboBox *layerCompositeBox;
     QSlider *layerOpacitySlider;
     QDoubleSpinBox *layerOpacitySpin;
-    QPushButton *layerNewButton;
-    QPushButton *layerRemoveButton;
-    QPushButton *layerMoveUpButton;
-    QPushButton *layerMoveDownButton;
-    QPushButton *layerDuplicateButton;
 
 private slots:
 
