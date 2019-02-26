@@ -1,17 +1,17 @@
-# Cyan2
+# Cyan2 (WIP)
 
-***v2 is currently under development, please use v1.2 https://github.com/rodlie/cyan/tree/1.2 for color convertion and/or Gimp plug-in***
+***v2 is currently under early development and is not usable, please use v1.2 https://github.com/rodlie/cyan/tree/1.2***
 
-Cyan2 is an open source cross-platform image editor. Originally designed for prepress color convertion, but now aims to be a general-purpose image editor. v2 started from scratch so it might take a while to get to the level of features you might expect from an image editor.
+Cyan is an open source cross-platform prepress color converter and image editor based on ImageMagick.
 
-Note that this is currently a spare-time project, so development will be slow.
+*Note that this is currently a spare-time project, so development will be slow.*
 
 ## Requirements
 
- * QtWidgets 5.6+
- * QtConcurrent 5.6+
+ * QtWidgets 5.6+ (5.9.7/5.12.1 recommended)
+ * QtConcurrent 5.6+ (5.9.7/5.12.1 recommended)
  * Little CMS 2.x
- * ImageMagick 7.0.8-20+
+ * ImageMagick 7.0.8-29+
 
 ## Build
 
