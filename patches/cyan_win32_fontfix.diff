@@ -1,0 +1,22 @@
+diff --git a/coders/pango.c b/coders/pango.c
+index 0fe0be2b2..fd941a2a2 100644
+--- a/coders/pango.c
++++ b/coders/pango.c
+@@ -269,6 +269,17 @@ static Image *ReadPANGOImage(const ImageInfo *image_info,
+       if (LocaleCompare(option,"strong") == 0)
+         pango_context_set_gravity_hint(context,PANGO_GRAVITY_HINT_STRONG);
+     }
++
++  /* Cyan win32 workaround
++   * Fixes antialias issues when using pango_win32
++  */
++  cairo_font_options_t* options = cairo_font_options_create();
++  cairo_font_options_set_antialias(options,CAIRO_ANTIALIAS_GRAY);
++  cairo_font_options_set_hint_style(options,CAIRO_HINT_STYLE_FULL);
++  cairo_font_options_set_hint_metrics(options,CAIRO_HINT_METRICS_ON);
++  cairo_font_options_set_subpixel_order(options,CAIRO_SUBPIXEL_ORDER_BGR);
++  pango_cairo_context_set_font_options(context, options);
++
+   /*
+     Configure layout.
+   */
