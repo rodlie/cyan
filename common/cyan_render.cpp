@@ -40,6 +40,22 @@ Render::Render(QObject *parent) : QObject (parent)
 
 }
 
+Magick::Image Render::renderText(CyanCommon::Layer layer)
+{
+    qDebug() << "render text";
+    if (!layer.text.isEmpty()) {
+        try {
+            layer.image.quiet(true);
+            layer.image.alpha(true);
+            layer.image.backgroundColor(Magick::Color("transparent"));
+            layer.image.read(QString("PANGO: %1").arg(layer.text).toStdString());
+        }
+        catch(Magick::Error &error_) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }
+    }
+    return layer.image;
+}
+
 Magick::Image Render::compLayers(Magick::Image canvas,
                                  QMap<int, CyanCommon::Layer> layers,
                                  Magick::Geometry crop)

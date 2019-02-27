@@ -233,6 +233,8 @@ public slots:
 
     void moveLayerEvent(QKeyEvent *e);
 
+    void setLayerText(int id, const QString &text, bool update = true);
+
 private slots:
 
     void handleLayerMoving(QPointF pos,

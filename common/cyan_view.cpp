@@ -931,6 +931,15 @@ void View::moveLayerEvent(QKeyEvent *e)
     View::keyPressEvent(e);
 }
 
+void View::setLayerText(int id, const QString &text, bool update)
+{
+    if (!_canvas.layers.contains(id)) { return; }
+    qDebug() << "view set layer text" << id << text;
+    _canvas.layers[id].text = text;
+    _canvas.layers[id].image = Render::renderText(_canvas.layers[id]);
+    if (update) { handleLayerOverTiles(id); }
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {

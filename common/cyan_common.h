@@ -136,6 +136,7 @@ public:
         double opacity = 1.0;
         QString label = QObject::tr("New Layer");
         int order = -1;
+        QString text;
     };
 
     struct Canvas

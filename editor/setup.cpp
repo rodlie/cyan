@@ -269,6 +269,13 @@ void Editor::setupWidgets()
     layersDock->setWindowTitle(tr("Layers"));
     layersDock->setWidget(layersWidget);
 
+    textWidget = new CyanTextWidget(this);
+    textDock = new QDockWidget(this);
+    textDock->setObjectName(QString("textDock"));
+    textDock->setWindowTitle(tr("Text"));
+    textDock->setWidget(textWidget);
+
+    addDockWidget(Qt::LeftDockWidgetArea, textDock);
     addDockWidget(Qt::LeftDockWidgetArea, layersDock);
 }
 
@@ -531,6 +538,11 @@ void Editor::setupConnections()
             SIGNAL(layerCompositeChanged(Magick::CompositeOperator,int)),
             this,
             SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
+
+    connect(textWidget,
+            SIGNAL(textChanged()),
+            this,
+            SLOT(handleCurrentLayerTextChanged()));
 }
 
 void Editor::setupIcons()

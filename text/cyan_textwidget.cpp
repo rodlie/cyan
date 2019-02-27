@@ -30,37 +30,47 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef RENDER_H
-#define RENDER_H
+#include "cyan_textwidget.h"
+#include <QVBoxLayout>
+#include <QDebug>
+#include <QPushButton>
 
-#include <QObject>
-#include <QMap>
-#include <QString>
-#include <QPair>
+CyanTextWidget::CyanTextWidget(QWidget *parent) :
+    QWidget(parent)
+  , textEditor(nullptr)
+{
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-#include <Magick++.h>
+    textEditor = new QTextEdit(this);
 
-#include "cyan_common.h"
+    mainLayout->addWidget(textEditor);
 
-class Render: public QObject
+    QPushButton *button = new QPushButton(this);
+    button->setText(tr("Apply"));
+    mainLayout->addWidget(button);
+    connect(button,
+            SIGNAL(released()),
+            this,
+            SLOT(handleTextChanged()));
+}
+
+CyanTextWidget::~CyanTextWidget()
 {
 
-    Q_OBJECT
+}
 
-public:
+void CyanTextWidget::setText(const QString &text)
+{
+    qDebug() << "set layer text" << text;
+    textEditor->setPlainText(text);
+}
 
-    Render(QObject *parent = nullptr);
+const QString CyanTextWidget::getText()
+{
+    return textEditor->toPlainText();
+}
 
-    static Magick::Image renderText(CyanCommon::Layer layer);
-    static Magick::Image compLayers(Magick::Image canvas,
-                                    QMap<int, CyanCommon::Layer> layers,
-                                    Magick::Geometry crop = Magick::Geometry());
-    static Magick::Image renderCanvasToImage(CyanCommon::Canvas canvas);
-    static bool renderCanvasToFile(CyanCommon::Canvas canvas,
-                                   const QString &filename,
-                                   Magick::CompressionType compress = Magick::NoCompression,
-                                   QMap<QString, QString> attr = QMap<QString, QString>(),
-                                   QMap<QString, QString> arti = QMap<QString, QString>());
-
-};
-#endif // RENDER_H
+void CyanTextWidget::handleTextChanged()
+{
+    emit textChanged();
+}

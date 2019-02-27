@@ -56,6 +56,7 @@
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"
 #include "cyan_layerwidget.h"
+#include "cyan_textwidget.h"
 
 class Editor : public QMainWindow
 {
@@ -118,6 +119,8 @@ private:
     CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;
 
+    CyanTextWidget *textWidget;
+    QDockWidget *textDock;
 
 
     QSlider *brushSize;
@@ -187,6 +190,9 @@ private slots:
     void handleMoveLayerDown(int id);
     void handleMoveLayerUp(int id);
     void handleDuplicateLayer(int id);
+
+    // text
+    void handleCurrentLayerTextChanged();
 
     // tabs
     void newTab(CyanCommon::Canvas canvas);

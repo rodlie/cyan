@@ -67,6 +67,9 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     qDebug() << "HANDLE LAYER TREE SELECTED LAYER" << id;
     if (!getCurrentCanvas()) { return; }
     getCurrentCanvas()->setSelectedLayer(id);
+    CyanCommon::Layer layer = getCurrentCanvas()->getLayer(id);
+    if (!layer.image.isValid()) { return; }
+    textWidget->setText(layer.text);
 }
 
 void Editor::handleLayerVisibility(int id,
@@ -196,4 +199,16 @@ void Editor::handleDuplicateLayer(int id)
 {
     if (!getCurrentCanvas() || id<0) { return; }
     getCurrentCanvas()->duplicateLayer(id);
+}
+
+void Editor::handleCurrentLayerTextChanged()
+{
+    qDebug() << "handle current layer text changed";
+    if (!getCurrentCanvas()) { return; }
+    CyanLayerTreeItem *layerItem = layersWidget->getCurrentLayer();
+    if (!layerItem) { return; }
+    //CyanCommon::Layer layer = getCurrentCanvas()->getLayer(layerItem->getLayerID());
+    //if (!layer) { return; }
+    //qDebug() << "set new text for layer" << layerItem->getLayerID() << textWidget->getText();
+    getCurrentCanvas()->setLayerText(layerItem->getLayerID(), textWidget->getText());
 }

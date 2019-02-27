@@ -41,7 +41,6 @@
 
 #include <Magick++.h>
 
-//#include "cyan_layertreeitem.h"
 #include "cyan_layertree.h"
 
 class CyanLayerWidget : public QWidget

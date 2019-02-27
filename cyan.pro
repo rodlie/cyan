@@ -66,6 +66,7 @@ SOURCES += \
     $${top_srcdir}/layers/cyan_layertree.cpp \
     $${top_srcdir}/layers/cyan_layertreeitem.cpp \
     $${top_srcdir}/layers/cyan_layerwidget.cpp \
+    $${top_srcdir}/text/cyan_textwidget.cpp \
     $${top_srcdir}/colors/qtcolorpicker.cpp \
     $${top_srcdir}/colors/qtcolortriangle.cpp \
     $${top_srcdir}/colors/colorrgb.cpp \
@@ -94,6 +95,7 @@ HEADERS += \
     $${top_srcdir}/layers/cyan_layertree.h \
     $${top_srcdir}/layers/cyan_layertreeitem.h \
     $${top_srcdir}/layers/cyan_layerwidget.h \
+    $${top_srcdir}/text/cyan_textwidget.h \
     $${top_srcdir}/colors/qtcolorpicker.h \
     $${top_srcdir}/colors/qtcolortriangle.h \
     $${top_srcdir}/colors/colorrgb.h \
@@ -107,6 +109,7 @@ HEADERS += \
 INCLUDEPATH += \
     $${top_srcdir}/common \
     $${top_srcdir}/layers \
+    $${top_srcdir}/text \
     $${top_srcdir}/colors \
     $${top_srcdir}/dialogs
 
@@ -211,7 +214,7 @@ win32-msvc {
     # path to your "VisualMagick" build
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
     # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK!!!
-    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/fxarena/Documents/ImageMagick-Windows
 
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
