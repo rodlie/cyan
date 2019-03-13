@@ -40,8 +40,9 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
   , textEditor(nullptr)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0,0,0,10);
 
-    textEditor = new QTextEdit(this);
+    textEditor = new QPlainTextEdit(this);
 
     mainLayout->addWidget(textEditor);
 

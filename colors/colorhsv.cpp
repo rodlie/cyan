@@ -136,7 +136,7 @@ ColorHSV::ColorHSV(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(sWidget);
     mainLayout->addWidget(vWidget);
 
-    //mainLayout->addStretch();
+    mainLayout->addStretch();
 
     connect(spinH, SIGNAL(valueChanged(double)),
             this, SLOT(handleColorHChanged(double)));

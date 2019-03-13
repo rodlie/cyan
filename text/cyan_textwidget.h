@@ -34,7 +34,7 @@
 #define CYANTEXTWIDGET_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 
 class CyanTextWidget : public QWidget
 {
@@ -56,7 +56,7 @@ public slots:
 
 private:
 
-    QTextEdit *textEditor;
+    QPlainTextEdit *textEditor;
 
 private slots:
 
