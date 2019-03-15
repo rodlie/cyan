@@ -57,6 +57,7 @@
 #include "qtcolortriangle.h"
 #include "cyan_layerwidget.h"
 #include "cyan_textwidget.h"
+#include "qtwindowlistmenu.h"
 
 class Editor : public QMainWindow
 {
@@ -113,6 +114,7 @@ private:
     QMenu *colorProfileGRAYMenu;
     QMenu *colorIntentMenu;
     QMenu *layerMenu;
+    QtWindowListMenu *windowsMenu;
 
     //QToolButton *newButton;
     QToolButton *saveButton;

@@ -115,6 +115,8 @@ void Editor::setupUI()
     mainMenu->addMenu(colorMenu);
     mainMenu->addMenu(layerMenu);
     mainMenu->addMenu(optMenu);
+    windowsMenu->attachToMdiArea(mdi);
+    mainMenu->addMenu(windowsMenu);
     mainMenu->addMenu(helpMenu);
 
     mainToolBar->addAction(newImageAct);
@@ -221,6 +223,8 @@ void Editor::setupMenus()
 
     layerMenu = new QMenu(this);
     layerMenu->setTitle(tr("Layers"));
+
+    windowsMenu = new QtWindowListMenu(this);
 
     colorProfileRGBMenu = new QMenu(this);
     colorProfileRGBMenu->setTitle(tr("Default RGB profile"));
