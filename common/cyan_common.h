@@ -226,6 +226,8 @@ public:
                                        bool mp = false,
                                        bool are = false);
 
+    static const QString html2Pango(const QString &html);
+
 #ifdef WITH_FFMPEG
     static QByteArray getEmbeddedCoverArt(const QString &filename);
     static int getVideoMaxFrames(const QString &filename);

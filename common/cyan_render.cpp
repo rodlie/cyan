@@ -48,7 +48,8 @@ Magick::Image Render::renderText(CyanCommon::Layer layer)
             layer.image.quiet(true);
             layer.image.alpha(true);
             layer.image.backgroundColor(Magick::Color("transparent"));
-            layer.image.read(QString("PANGO: %1").arg(layer.text).toStdString());
+            QString markup = CyanCommon::html2Pango(layer.text);
+            layer.image.read(QString("PANGO: %1").arg(markup).toStdString());
         }
         catch(Magick::Error &error_) { qWarning() << error_.what(); }
         catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }

@@ -37,6 +37,8 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QAction>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #define RESOURCE_BYTE 1050000000
 
@@ -936,6 +938,105 @@ const QString CyanCommon::humanFileSize(float num, bool mp, bool are)
         num /= byte;
     }
     return QString().setNum(num,'f',2)+" "+unit;
+}
+
+const QString CyanCommon::html2Pango(const QString &html)
+{
+    QString tmp = html;
+    QStringList list = tmp
+                       .replace("<p", "<!PARA")
+                       .replace("<span","<!SPAN")
+                       .replace("</p>","</!PARA>")
+                       .replace("</span>","</!SPAN>")
+                       .split("<");
+
+    QString markup;
+    for (int i=0;i<list.size();++i) {
+        QString output;
+        if (list.at(i).startsWith("!PARA")) {
+            qDebug() << "PARA START" << list.at(i);
+            output = "<span>";
+        } else if (list.at(i).startsWith("/!PARA")) {
+            output = "</span>\n\n";
+        } else if (list.at(i).startsWith("!SPAN")) {
+            QString span = list.at(i);
+            //qDebug() << span;
+            QStringList item = span.split(">");
+            QString opt = item.first();
+            QString val = item.last();
+            //qDebug() << val << opt;
+            if (val.isEmpty()) { // container
+
+            } else { // span
+                QRegularExpression rxFontSize("(?<=font-size:)[^;]*");
+                QRegularExpressionMatch matchFontSize = rxFontSize.match(opt);
+                QString fontSize = matchFontSize.captured().replace("'","").trimmed();
+
+                QRegularExpression rxFontStyle("(?<=font-style:)[^;]*");
+                QRegularExpressionMatch matchFontStyle = rxFontStyle.match(opt);
+                QString fontStyle = matchFontStyle.captured().replace("'","").trimmed();
+
+                QRegularExpression rxFontFamily("(?<=font-family:)[^;]*");
+                QRegularExpressionMatch matchFontFamily = rxFontFamily.match(opt);
+                QString fontFamily = matchFontFamily.captured().replace("'","");
+
+                QRegularExpression rxFontWeight("(?<=font-weight:)[^;]*");
+                QRegularExpressionMatch matchFontWeight = rxFontWeight.match(opt);
+                QString fontWeight = matchFontWeight.captured().replace("'","").trimmed();
+
+                QRegularExpression rxFontDecoration("(?<=text-decoration:)[^;]*");
+                QRegularExpressionMatch matchFontDecoration = rxFontDecoration.match(opt);
+                QString fontDecoration = matchFontDecoration.captured().replace("'","").trimmed();
+
+                QRegularExpression rxFontColor("(?<=color:)[^;]*");
+                QRegularExpressionMatch matchFontColor = rxFontColor.match(opt);
+                QString fontColor = matchFontColor.captured().replace("'","").trimmed();
+
+                /*qDebug() << "FONT-SIZE" << fontSize;
+                qDebug() << "FONT STYLE" << fontStyle;
+                qDebug() << "FONT FAMILY" << fontFamily;
+                qDebug() << "FONT WEIGHT" << fontWeight;
+                qDebug() << "FONT DECORATION" << fontDecoration;
+                qDebug() << "FONT COLOR" << fontColor;*/
+
+                if (!fontSize.isEmpty()) {
+                    fontSize = QString("font='%1'").arg(fontSize.replace("pt","").toDouble());
+                }
+                if (!fontStyle.isEmpty()) {
+                    fontStyle = QString("font_style='%1'").arg(fontStyle);
+                }
+                if (!fontFamily.isEmpty()) {
+                    fontFamily = QString("font_family='%1'").arg(fontFamily);
+                }
+                if (!fontWeight.isEmpty()) {
+                    fontWeight = QString("font_weight='%1'").arg(fontWeight);
+                }
+                if (!fontDecoration.isEmpty()) {
+                    if (fontDecoration == "underline") {
+                        fontDecoration = QString("underline='single'");
+                    }
+                }
+                if (!fontColor.isEmpty()) {
+                    fontColor = QString("foreground='%1'").arg(fontColor);
+                }
+
+                QString pango = "<span";
+                if (!fontSize.isEmpty()) { pango.append(QString(" %1").arg(fontSize)); }
+                if (!fontStyle.isEmpty()) { pango.append(QString(" %1").arg(fontStyle)); }
+                if (!fontFamily.isEmpty()) { pango.append(QString(" %1").arg(fontFamily)); }
+                if (!fontWeight.isEmpty()) { pango.append(QString(" %1").arg(fontWeight)); }
+                if (!fontDecoration.isEmpty()) { pango.append(QString(" %1").arg(fontDecoration)); }
+                if (!fontColor.isEmpty()) { pango.append(QString(" %1").arg(fontColor)); }
+                pango.append(QString(">%1</span>").arg(val));
+                output = pango;
+            }
+        }
+        //qDebug() << "OUT" << output;
+        if (!output.isEmpty()) { markup.append(output); }
+    }
+
+    qDebug() << markup;
+    return markup;
 }
 
 #ifdef WITH_FFMPEG

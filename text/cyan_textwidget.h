@@ -35,6 +35,10 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
+#include <QTextEdit>
+#include <QPushButton>
+#include <QComboBox>
+#include <QFontComboBox>
 
 class CyanTextWidget : public QWidget
 {
@@ -56,9 +60,30 @@ public slots:
 
 private:
 
+    QTextEdit *htmlEditor;
     QPlainTextEdit *textEditor;
+    QPushButton *textBoldButton;
+    QPushButton *textItalicButton;
+    QPushButton *textUnderlineButton;
+    QFontComboBox *fontBox;
+    QComboBox *fontSizeBox;
+
+    void fontChanged(const QFont &f);
+    void colorChanged(const QColor &c);
+    void alignmentChanged(Qt::Alignment a);
 
 private slots:
+
+    void currentCharFormatChanged(const QTextCharFormat &format);
+    void cursorPositionChanged();
+    void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+    void handleBoldButton(bool triggered);
+    void handleItalicButton(bool triggered);
+    void handleUnderLineButton(bool triggered);
+    void handleTextFamily(const QString &f);
+    void handleTextSize(const QString &p);
+    void handleTextColor();
+
 
     void handleTextChanged();
 };
