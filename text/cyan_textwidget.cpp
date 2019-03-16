@@ -45,31 +45,36 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
   , textBoldButton(nullptr)
   , textItalicButton(nullptr)
   , textUnderlineButton(nullptr)
+  , textColorButton(nullptr)
   , fontBox(nullptr)
   , fontSizeBox(nullptr)
 {
+    setContentsMargins(0,0,0,0);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0,0,0,10);
+    mainLayout->setContentsMargins(0,0,0,0);
+    mainLayout->setSpacing(0);
 
     QWidget *formatWidget = new QWidget(this);
+    formatWidget->setContentsMargins(0,0,0,0);
     QHBoxLayout *formatLayout = new QHBoxLayout(formatWidget);
-
+    formatLayout->setContentsMargins(0,0,0,0);
 
     htmlEditor = new QTextEdit(this);
     textEditor = new QPlainTextEdit(this);
-
     textBoldButton = new QPushButton(this);
     textItalicButton = new QPushButton(this);
     textUnderlineButton = new QPushButton(this);
-
+    textColorButton = new QPushButton(this);
     fontBox = new QFontComboBox(this);
-
     fontSizeBox = new QComboBox(this);
+
     fontSizeBox->setEditable(true);
+    fontSizeBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     const QList<int> standardSizes = QFontDatabase::standardSizes();
-    foreach (int size, standardSizes)
+    foreach (int size, standardSizes) {
         fontSizeBox->addItem(QString::number(size));
+    }
     fontSizeBox->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
 
     textBoldButton->setIcon(QIcon::fromTheme("format-text-bold"));
@@ -80,16 +85,23 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     textItalicButton->setCheckable(true);
     textUnderlineButton->setCheckable(true);
 
-    textBoldButton->setText(tr("Bold"));
-    textItalicButton->setText(tr("Italic"));
-    textUnderlineButton->setText(tr("Underline"));
+    textBoldButton->setToolTip(tr("Bold"));
+    textItalicButton->setToolTip(tr("Italic"));
+    textUnderlineButton->setToolTip(tr("Underline"));
+    textColorButton->setToolTip(tr("Color"));
 
-    //htmlEditor->setStyleSheet(QString("background-color: #666;"));
+    textBoldButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    textItalicButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    textUnderlineButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    textColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    htmlEditor->setStyleSheet(QString("QTextEdit { background-color: #666; color: black;}"));
     textEditor->hide();
 
     formatLayout->addWidget(textBoldButton);
     formatLayout->addWidget(textItalicButton);
     formatLayout->addWidget(textUnderlineButton);
+    formatLayout->addWidget(textColorButton);
     formatLayout->addWidget(fontBox);
     formatLayout->addWidget(fontSizeBox);
 
@@ -97,36 +109,34 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     mainLayout->addWidget(htmlEditor);
     mainLayout->addWidget(textEditor);
 
-    /*QPushButton *button = new QPushButton(this);
-    button->setText(tr("Apply"));
-    mainLayout->addWidget(button);
-    connect(button,
-            SIGNAL(released()),
-            this,
-            SLOT(handleTextChanged()));*/
+    QFont textFont("Helvetica");
+    textFont.setStyleHint(QFont::SansSerif);
+    htmlEditor->setFont(textFont);
+    fontChanged(htmlEditor->font());
+    colorChanged(htmlEditor->textColor());
+    alignmentChanged(htmlEditor->alignment());
 
-    //TextEdit
+    //htmlEditor->setHtml("<span></span>");
 
+    QPixmap pix(16, 16);
+    pix.fill(Qt::black);
+    textColorButton->setIcon(pix);
 
-    htmlEditor->document();
-
-    connect(htmlEditor->document(), SIGNAL(contentsChanged()), this, SLOT(handleTextChanged()));
-
+    connect(htmlEditor->document(), SIGNAL(contentsChanged()),
+            this, SLOT(handleTextChanged()));
     connect(htmlEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this, SLOT(currentCharFormatChanged(QTextCharFormat)));
-
     connect(htmlEditor, SIGNAL(cursorPositionChanged()),
             this, SLOT(cursorPositionChanged()));
 
-
-
-
-
-    connect(textBoldButton, SIGNAL(toggled(bool)), this, SLOT(handleBoldButton(bool)));
-    connect(textItalicButton, SIGNAL(toggled(bool)), this, SLOT(handleItalicButton(bool)));
-    connect(textUnderlineButton, SIGNAL(toggled(bool)), this, SLOT(handleUnderLineButton(bool)));
-
-
+    connect(textBoldButton, SIGNAL(toggled(bool)),
+            this, SLOT(handleBoldButton(bool)));
+    connect(textItalicButton, SIGNAL(toggled(bool)),
+            this, SLOT(handleItalicButton(bool)));
+    connect(textUnderlineButton, SIGNAL(toggled(bool)),
+            this, SLOT(handleUnderLineButton(bool)));
+    connect(textColorButton, SIGNAL(released()),
+            this, SLOT(handleTextColor()));
 
     connect(fontBox,
             QOverload<const QString &>::of(&QComboBox::activated),
@@ -146,17 +156,15 @@ CyanTextWidget::~CyanTextWidget()
 
 void CyanTextWidget::setText(const QString &text)
 {
-    qDebug() << "set layer text" << text;
-    //textEditor->setPlainText(text);
+    blockSignals(true);
     htmlEditor->setHtml(text);
+    blockSignals(false);
 }
 
 const QString CyanTextWidget::getText()
 {
     return htmlEditor->toHtml();
 }
-
-
 
 void CyanTextWidget::fontChanged(const QFont &f)
 {
@@ -169,9 +177,9 @@ void CyanTextWidget::fontChanged(const QFont &f)
 
 void CyanTextWidget::colorChanged(const QColor &c)
 {
-    /*QPixmap pix(16, 16);
+    QPixmap pix(16, 16);
     pix.fill(c);
-    actionTextColor->setIcon(pix);*/
+    textColorButton->setIcon(pix);
 }
 
 void CyanTextWidget::alignmentChanged(Qt::Alignment a)
@@ -190,7 +198,6 @@ void CyanTextWidget::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
-    /*qDebug() << html2Pango(textEdit->toHtml());*/
     emit textChanged();
 }
 

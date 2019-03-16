@@ -957,7 +957,7 @@ const QString CyanCommon::html2Pango(const QString &html)
             qDebug() << "PARA START" << list.at(i);
             output = "<span>";
         } else if (list.at(i).startsWith("/!PARA")) {
-            output = "</span>\n\n";
+            output = "</span>\n";
         } else if (list.at(i).startsWith("!SPAN")) {
             QString span = list.at(i);
             //qDebug() << span;

@@ -48,7 +48,7 @@ CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 QMAKE_TARGET_COMPANY = "Cyan"
 QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Cyan Image Editor"
-QMAKE_TARGET_COPYRIGHT = "(c) Ole-Andre Rodlie <ole.andre.rodlie@gmail.com>"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
@@ -216,7 +216,7 @@ unix:!mac {
 win32-msvc {
     # path to your "VisualMagick" build
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
-    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK!!!
+    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK, ENABLE ZERO-CONF IN CONFIGURE.EXE !!!
     isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/fxarena/Documents/ImageMagick-Windows
 
     INCLUDEPATH += \

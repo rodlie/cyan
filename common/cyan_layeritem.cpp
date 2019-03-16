@@ -46,6 +46,7 @@ LayerItem::LayerItem(QGraphicsItem *parent)
 {
     setAcceptHoverEvents(true);
     setPen(Qt::NoPen);
+
 }
 
 void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

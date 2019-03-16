@@ -65,6 +65,7 @@ private:
     QPushButton *textBoldButton;
     QPushButton *textItalicButton;
     QPushButton *textUnderlineButton;
+    QPushButton *textColorButton;
     QFontComboBox *fontBox;
     QComboBox *fontSizeBox;
 
@@ -83,8 +84,6 @@ private slots:
     void handleTextFamily(const QString &f);
     void handleTextSize(const QString &p);
     void handleTextColor();
-
-
     void handleTextChanged();
 };
 
