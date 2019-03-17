@@ -333,11 +333,13 @@ void View::setLayer(Magick::Image image,
 
 void View::addLayer(Magick::Image image,
                     bool updateView,
-                    bool isLocked)
+                    bool isLocked,
+                    bool isText)
 {
     int id = getLastLayerID()+1;
     _canvas.layers[id].image = image;
     _canvas.layers[id].order = getLastLayerOrder()+1;
+    _canvas.layers[id].isText = isText;
     //_canvas.layers[id].visible = true;
 
     qDebug() << "ADD LAYER" << QString::fromStdString(image.label()) << id;
@@ -939,6 +941,11 @@ void View::setLayerText(int id, const QString &text, bool update)
 {
     if (!_canvas.layers.contains(id)) { return; }
     qDebug() << "view set layer text" << id << text;
+    if (_canvas.layers[id].text == text) { return; }
+    if (!_canvas.layers[id].isText) {
+        emit statusMessage(tr("Not a text layer"));
+        return;
+    }
     _canvas.layers[id].text = text;
     _canvas.layers[id].image = Render::renderText(_canvas.layers[id]);
     if (update) { handleLayerOverTiles(id); }
@@ -1277,6 +1284,8 @@ void View::handleBrushOverTile(QPointF pos,
             foundLayer = true;
             QPointF epos;
             int id = layerItem->getID();
+            if (!_canvas.layers.contains(id)) { continue; }
+            if (_canvas.layers[id].isText) { continue; }
             epos.setX(pos.x()-_canvas.layers[id].pos.width());
             epos.setY(pos.y()-_canvas.layers[id].pos.height());
 

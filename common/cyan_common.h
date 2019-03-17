@@ -138,6 +138,7 @@ public:
         QString label = QObject::tr("New Layer");
         int order = -1;
         QString text;
+        bool isText = false;
     };
 
     struct Canvas

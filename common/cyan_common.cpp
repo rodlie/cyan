@@ -509,6 +509,7 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             layer.composite = compose;
             layer.order = order;
             layer.text = text;
+            layer.isText = !text.isEmpty();
 
             /*if (canvas.profile.length()==0 &&
                 layer.image.iccColorProfile().length()>0)

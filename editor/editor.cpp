@@ -78,6 +78,7 @@ Editor::Editor(QWidget *parent)
     , saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
     , newLayerAct(nullptr)
+    , newTextLayerAct(nullptr)
     , openLayerAct(nullptr)
     , saveLayerAct(nullptr)
     , quitAct(nullptr)
@@ -661,23 +662,28 @@ void Editor::newImageDialog()
                        SLOT(deleteLater()));
 }
 
-void Editor::newLayerDialog()
+void Editor::newLayerDialog(bool isText)
 {
     if (!getCurrentCanvas()) { return; }
     NewMediaDialog *dialog = new NewMediaDialog(this,
-                                                tr("New Layer"),
+                                                tr(isText?"New Text Layer":"New Layer"),
                                                 CyanCommon::newLayerDialogType,
                                                 getCurrentCanvas()->getCanvas().colorSpace(),
                                                 getCurrentCanvas()->getCanvasProject().profile,
                                                 getCurrentCanvas()->getCanvasSize());
     int res =  dialog->exec();
     if (res == QDialog::Accepted) {
-        getCurrentCanvas()->addLayer(dialog->getImage());
+        getCurrentCanvas()->addLayer(dialog->getImage(), true, false, isText);
     }
 
     QTimer::singleShot(100,
                        dialog,
                        SLOT(deleteLater()));
+}
+
+void Editor::newTextLayerDialog()
+{
+    newLayerDialog(true /* isText */);
 }
 
 /*void Editor::handleNewImage(Magick::Image image)

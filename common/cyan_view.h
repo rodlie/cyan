@@ -138,7 +138,8 @@ public slots:
                   int id);
     void addLayer(Magick::Image image,
                   bool updateView = true,
-                  bool isLocked = false);
+                  bool isLocked = false,
+                  bool isText = false);
     void addLayer(int id,
                   QSize geo,
                   QSize pos,

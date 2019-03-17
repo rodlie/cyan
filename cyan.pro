@@ -217,7 +217,7 @@ win32-msvc {
     # path to your "VisualMagick" build
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
     # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK, ENABLE ZERO-CONF IN CONFIGURE.EXE !!!
-    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/fxarena/Documents/ImageMagick-Windows
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
 
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \

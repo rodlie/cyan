@@ -127,6 +127,7 @@ void Editor::setupUI()
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(newLayerAct);
+    fileMenu->addAction(newTextLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(openImageAct);
     fileMenu->addSeparator();
@@ -306,6 +307,9 @@ void Editor::setupActions()
     newLayerAct = new QAction(this);
     newLayerAct->setText(tr("New layer"));
 
+    newTextLayerAct = new QAction(this);
+    newTextLayerAct->setText(tr("New text layer"));
+
     openLayerAct = new QAction(this);
 
     saveLayerAct = new QAction(this);
@@ -461,6 +465,7 @@ void Editor::setupConnections()
 
 
     connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
+    connect(newTextLayerAct, SIGNAL(triggered(bool)), this, SLOT(newTextLayerDialog()));
 
 
 
@@ -555,6 +560,7 @@ void Editor::setupIcons()
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newTextLayerAct->setIcon(QIcon::fromTheme("document-new"));
 
 
 
@@ -594,6 +600,7 @@ void Editor::setupShortcuts()
 {
     newImageAct->setShortcut(QKeySequence(tr("Ctrl+N")));
     newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
+    newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
 }
