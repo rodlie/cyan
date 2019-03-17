@@ -75,6 +75,7 @@ private:
 
 private slots:
 
+    void setup();
     void currentCharFormatChanged(const QTextCharFormat &format);
     void cursorPositionChanged();
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);

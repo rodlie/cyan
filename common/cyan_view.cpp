@@ -747,6 +747,10 @@ void View::setLayersFromCanvas(CyanCommon::Canvas canvas)
     QMapIterator<int, CyanCommon::Layer> layers(_canvas.layers);
     while (layers.hasNext()) {
         layers.next();
+        if (!layers.value().text.isEmpty()) {
+            // render text layer
+            _canvas.layers[layers.key()].image = Render::renderText(layers.value());
+        }
         addLayer(layers.key(),
                  QSize(static_cast<int>(layers.value()
                                         .image.columns()),

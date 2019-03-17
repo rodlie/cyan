@@ -95,7 +95,7 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     textUnderlineButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     textColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    htmlEditor->setStyleSheet(QString("QTextEdit { background-color: #666; color: black;}"));
+    htmlEditor->setStyleSheet(QString("QTextEdit { background-color: #666; color: black; }"));
     htmlEditor->setAcceptRichText(false);
     textEditor->hide();
 
@@ -109,15 +109,6 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     mainLayout->addWidget(formatWidget);
     mainLayout->addWidget(htmlEditor);
     mainLayout->addWidget(textEditor);
-
-    QFont textFont("Helvetica");
-    textFont.setStyleHint(QFont::SansSerif);
-    htmlEditor->setFont(textFont);
-    fontChanged(htmlEditor->font());
-    colorChanged(htmlEditor->textColor());
-    alignmentChanged(htmlEditor->alignment());
-
-    //htmlEditor->setHtml("<span></span>");
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
@@ -148,6 +139,7 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
             this,
             &CyanTextWidget::handleTextSize);
 
+    setup();
 }
 
 CyanTextWidget::~CyanTextWidget()
@@ -159,6 +151,7 @@ void CyanTextWidget::setText(const QString &text)
 {
     blockSignals(true);
     htmlEditor->setHtml(text);
+    setup();
     blockSignals(false);
 }
 
@@ -193,6 +186,17 @@ void CyanTextWidget::alignmentChanged(Qt::Alignment a)
         actionAlignRight->setChecked(true);
     else if (a & Qt::AlignJustify)
         actionAlignJustify->setChecked(true);*/
+}
+
+void CyanTextWidget::setup()
+{
+    QFont textFont(fontBox->currentText());
+    //textFont.setStyleHint(QFont::SansSerif);
+    htmlEditor->setFont(textFont);
+    fontChanged(htmlEditor->font());
+    colorChanged(htmlEditor->textColor());
+    alignmentChanged(htmlEditor->alignment());
+    handleTextChanged();
 }
 
 void CyanTextWidget::currentCharFormatChanged(const QTextCharFormat &format)
@@ -242,6 +246,7 @@ void CyanTextWidget::handleUnderLineButton(bool triggered)
 
 void CyanTextWidget::handleTextFamily(const QString &f)
 {
+    qDebug() << "TEXT FAMILY" << f;
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
     mergeFormatOnWordOrSelection(fmt);
