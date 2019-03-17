@@ -291,6 +291,24 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
         }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
+        // add text
+        if (!layers.value().text.isEmpty()) {
+            try {
+                layer.alpha(true);
+                layer.evaluate(Magick::AlphaChannel,
+                                Magick::MultiplyEvaluateOperator,
+                                0.0);
+                layer.attribute(QString(CYAN_LAYER_TEXT).toStdString(),
+                                QString("%1").arg(layers.value().text)
+                                .toStdString());
+            }
+            catch(Magick::Error &error_ ) {
+                qWarning() << error_.what();
+                return false;
+            }
+            catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        }
+
         // add order
         try {
             layer.attribute(QString(CYAN_LAYER_ORDER).toStdString(),
@@ -456,6 +474,9 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             int locked = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LOCK)
                                                               .toStdString())).toInt();
 
+            // get text
+            QString text = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT).toStdString()));
+
             // get order
             int order = QString::fromStdString(it->attribute(QString(CYAN_LAYER_ORDER)
                                                                   .toStdString())).toInt();
@@ -472,7 +493,14 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             CyanCommon::Layer layer;
 
             // setup layer
-            layer.image = *it;
+            if (!text.isEmpty()) {
+                Magick::Image orig(*it);
+                layer.image.size(Magick::Geometry(orig.columns(), orig.rows()));
+                layer.image.depth(orig.depth());
+                layer.image.colorSpace(orig.colorSpace());
+            } else {
+                layer.image = *it;
+            }
             layer.label = QString::fromStdString(layer.image.label());
             layer.visible = visibility;
             layer.locked = locked;
@@ -480,6 +508,7 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             layer.opacity = opacity;
             layer.composite = compose;
             layer.order = order;
+            layer.text = text;
 
             /*if (canvas.profile.length()==0 &&
                 layer.image.iccColorProfile().length()>0)
@@ -955,7 +984,10 @@ const QString CyanCommon::html2Pango(const QString &html)
         QString output;
         if (list.at(i).startsWith("!PARA")) {
             qDebug() << "PARA START" << list.at(i);
+            QStringList item = list.at(i).split(">");
+            QString val = item.last();
             output = "<span>";
+            if (!val.isEmpty()) { output.append(val); }
         } else if (list.at(i).startsWith("/!PARA")) {
             output = "</span>\n";
         } else if (list.at(i).startsWith("!SPAN")) {

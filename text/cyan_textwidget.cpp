@@ -96,6 +96,7 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     textColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     htmlEditor->setStyleSheet(QString("QTextEdit { background-color: #666; color: black;}"));
+    htmlEditor->setAcceptRichText(false);
     textEditor->hide();
 
     formatLayout->addWidget(textBoldButton);
@@ -199,6 +200,7 @@ void CyanTextWidget::currentCharFormatChanged(const QTextCharFormat &format)
     fontChanged(format.font());
     colorChanged(format.foreground().color());
     emit textChanged();
+    qDebug() << htmlEditor->toHtml();
 }
 
 void CyanTextWidget::cursorPositionChanged()

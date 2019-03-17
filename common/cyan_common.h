@@ -67,6 +67,7 @@ extern "C" {
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 #define CYAN_LAYER_LOCK "cyan-layer-lock"
+#define CYAN_LAYER_TEXT "cyan-layer-text"
 
 class CyanCommon: public QObject
 {
