@@ -48,6 +48,8 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
   , textColorButton(nullptr)
   , fontBox(nullptr)
   , fontSizeBox(nullptr)
+  , textAlignBox(nullptr)
+  , textRotateSlider(nullptr)
 {
     setContentsMargins(0,0,0,0);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -67,6 +69,8 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     textColorButton = new QPushButton(this);
     fontBox = new QFontComboBox(this);
     fontSizeBox = new QComboBox(this);
+    textAlignBox = new QComboBox(this);
+    textRotateSlider = new QSlider(this);
 
     fontSizeBox->setEditable(true);
     fontSizeBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -76,6 +80,15 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
         fontSizeBox->addItem(QString::number(size));
     }
     fontSizeBox->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
+
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Left"), QString("left"));
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Right"), QString("right"));
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Center"), QString("center"));
+
+    textRotateSlider->setMinimum(-180);
+    textRotateSlider->setMaximum(180);
+    textRotateSlider->setValue(0);
+    textRotateSlider->setOrientation(Qt::Horizontal);
 
     textBoldButton->setIcon(QIcon::fromTheme("format-text-bold"));
     textItalicButton->setIcon(QIcon::fromTheme("format-text-italic"));
@@ -105,6 +118,8 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     formatLayout->addWidget(textColorButton);
     formatLayout->addWidget(fontBox);
     formatLayout->addWidget(fontSizeBox);
+    formatLayout->addWidget(textAlignBox);
+    formatLayout->addWidget(textRotateSlider);
 
     mainLayout->addWidget(formatWidget);
     mainLayout->addWidget(htmlEditor);
@@ -129,6 +144,10 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
             this, SLOT(handleUnderLineButton(bool)));
     connect(textColorButton, SIGNAL(released()),
             this, SLOT(handleTextColor()));
+
+
+    connect(textAlignBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleTextAlign(int)));
+    connect(textRotateSlider, SIGNAL(valueChanged(int)), this ,SLOT(handleTextRotate(int)));
 
     connect(fontBox,
             QOverload<const QString &>::of(&QComboBox::activated),
@@ -158,6 +177,35 @@ void CyanTextWidget::setText(const QString &text)
 const QString CyanTextWidget::getText()
 {
     return htmlEditor->toHtml();
+}
+
+void CyanTextWidget::setTextAlign(const QString &align)
+{
+    for (int i=0;i<textAlignBox->count();++i) {
+        if (textAlignBox->itemData(i).toString() == align) {
+            blockSignals(true);
+            textAlignBox->setCurrentIndex(i);
+            blockSignals(false);
+            return;
+        }
+    }
+}
+
+const QString CyanTextWidget::getTextAlign()
+{
+    return textAlignBox->currentData().toString();
+}
+
+void CyanTextWidget::setTextRotate(int value)
+{
+    blockSignals(true);
+    textRotateSlider->setValue(value);
+    blockSignals(false);
+}
+
+int CyanTextWidget::getTextRotate()
+{
+    return textRotateSlider->value();
 }
 
 void CyanTextWidget::fontChanged(const QFont &f)
@@ -260,6 +308,18 @@ void CyanTextWidget::handleTextSize(const QString &p)
         fmt.setFontPointSize(pointSize);
         mergeFormatOnWordOrSelection(fmt);
     }
+}
+
+void CyanTextWidget::handleTextAlign(int index)
+{
+    Q_UNUSED(index);
+    emit textChanged();
+}
+
+void CyanTextWidget::handleTextRotate(int value)
+{
+    Q_UNUSED(value)
+    emit textChanged();
 }
 
 void CyanTextWidget::handleTextColor()

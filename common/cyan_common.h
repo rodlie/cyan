@@ -67,7 +67,10 @@ extern "C" {
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 #define CYAN_LAYER_LOCK "cyan-layer-lock"
+
 #define CYAN_LAYER_TEXT "cyan-layer-text"
+#define CYAN_LAYER_TEXT_ALIGN "cyan-layer-text-align"
+#define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"
 
 class CyanCommon: public QObject
 {
@@ -139,6 +142,8 @@ public:
         int order = -1;
         QString text;
         bool isText = false;
+        QString textAlign;
+        int textRotate = 0;
     };
 
     struct Canvas

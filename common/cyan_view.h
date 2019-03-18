@@ -234,7 +234,11 @@ public slots:
 
     void moveLayerEvent(QKeyEvent *e);
 
-    void setLayerText(int id, const QString &text, bool update = true);
+    void setLayerText(int id,
+                      const QString &text,
+                      const QString &align = QString("left"),
+                      int rotate = 0,
+                      bool update = true);
 
 private slots:
 

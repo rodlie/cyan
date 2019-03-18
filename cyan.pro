@@ -138,7 +138,8 @@ RESOURCES += $${top_srcdir}/share/icons_core.qrc
 CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons and color profiles on msvc
-win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
+win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+# $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons on debug
 CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
@@ -217,7 +218,7 @@ win32-msvc {
     # path to your "VisualMagick" build
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
     # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK, ENABLE ZERO-CONF IN CONFIGURE.EXE !!!
-    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/olear/Documents/ImageMagick-Windows
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = $${top_srcdir}/ImageMagick-Windows
 
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \

@@ -301,6 +301,12 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
                 layer.attribute(QString(CYAN_LAYER_TEXT).toStdString(),
                                 QString("%1").arg(layers.value().text)
                                 .toStdString());
+                layer.attribute(QString(CYAN_LAYER_TEXT_ALIGN).toStdString(),
+                                QString("%1").arg(layers.value().textAlign)
+                                .toStdString());
+                layer.attribute(QString(CYAN_LAYER_TEXT_ROTATE).toStdString(),
+                                QString("%1").arg(layers.value().textRotate)
+                                .toStdString());
             }
             catch(Magick::Error &error_ ) {
                 qWarning() << error_.what();
@@ -476,6 +482,8 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
 
             // get text
             QString text = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT).toStdString()));
+            QString textAlign = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT_ALIGN).toStdString()));
+            int textRotate = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT_ROTATE).toStdString())).toInt();
 
             // get order
             int order = QString::fromStdString(it->attribute(QString(CYAN_LAYER_ORDER)
@@ -510,6 +518,8 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             layer.order = order;
             layer.text = text;
             layer.isText = !text.isEmpty();
+            layer.textAlign = textAlign;
+            layer.textRotate = textRotate;
 
             /*if (canvas.profile.length()==0 &&
                 layer.image.iccColorProfile().length()>0)
@@ -978,12 +988,40 @@ const QString CyanCommon::html2Pango(const QString &html)
                        .replace("<span","<!SPAN")
                        .replace("</p>","</!PARA>")
                        .replace("</span>","</!SPAN>")
+                       .replace("<body", "<!BODY")
+                       .replace("</body>", "</!BODY>")
                        .split("<");
 
     QString markup;
     for (int i=0;i<list.size();++i) {
         QString output;
-        if (list.at(i).startsWith("!PARA")) {
+        if (list.at(i).startsWith("!BODY")) {
+            QString body = list.at(i);
+            QRegularExpression rxFontSize("(?<=font-size:)[^;]*");
+            QRegularExpressionMatch matchFontSize = rxFontSize.match(body);
+            QString fontSize = matchFontSize.captured().replace("'","").trimmed();
+
+            QRegularExpression rxFontStyle("(?<=font-style:)[^;]*");
+            QRegularExpressionMatch matchFontStyle = rxFontStyle.match(body);
+            QString fontStyle = matchFontStyle.captured().replace("'","").trimmed();
+
+            QRegularExpression rxFontFamily("(?<=font-family:)[^;]*");
+            QRegularExpressionMatch matchFontFamily = rxFontFamily.match(body);
+            QString fontFamily = matchFontFamily.captured().replace("'","");
+
+            QRegularExpression rxFontWeight("(?<=font-weight:)[^;]*");
+            QRegularExpressionMatch matchFontWeight = rxFontWeight.match(body);
+            QString fontWeight = matchFontWeight.captured().replace("'","").trimmed();
+
+            output = "<span";
+            if (!fontSize.isEmpty()) { output.append(QString(" font='%1'").arg(fontSize.replace("pt","").toDouble())); }
+            if (!fontStyle.isEmpty()) { output.append(QString(" font_style='%1'").arg(fontStyle)); }
+            if (!fontFamily.isEmpty()) { output.append(QString(" font_family='%1'").arg(fontFamily)); }
+            if (!fontWeight.isEmpty()) { output.append(QString(" font_weight='%1'").arg(fontWeight)); }
+            output.append(">");
+        } else if(list.at(i).startsWith("/!BODY")) {
+            output = "</span>";
+        } else if (list.at(i).startsWith("!PARA")) {
             qDebug() << "PARA START" << list.at(i);
             QStringList item = list.at(i).split(">");
             QString val = item.last();

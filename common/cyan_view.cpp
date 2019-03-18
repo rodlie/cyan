@@ -342,7 +342,7 @@ void View::addLayer(Magick::Image image,
     _canvas.layers[id].isText = isText;
     //_canvas.layers[id].visible = true;
 
-    qDebug() << "ADD LAYER" << QString::fromStdString(image.label()) << id;
+    qDebug() << "ADD IMAGE LAYER" << QString::fromStdString(image.label()) << id;
     if (!image.label().empty()) {
         _canvas.layers[id].label = QString::fromStdString(image.label());
     }
@@ -390,8 +390,11 @@ void View::addLayer(int id,
                     bool updateView,
                     bool isLocked)
 {
-    qDebug() << "ADD LAYER" << id;
-   // _canvas.layers[id].visible = true;
+    if (!_canvas.layers.contains(id) || id<0) {
+        qDebug() << "can't add layer item without layer!" << id;
+        return;
+    }
+    qDebug() << "==> ADD ITEM LAYER" << id << _canvas.layers[id].label << _canvas.layers[id].order << _canvas.layers[id].isText;
     LayerItem *layer = new LayerItem();
     layer->setLock(isLocked);
     layer->setRect(0,
@@ -413,8 +416,8 @@ void View::addLayer(int id,
             layer, SLOT(setMovable(LayerItem*,bool)));
     connect(this, SIGNAL(lockLayers(bool)),
             layer, SLOT(setMovable(bool)));
-    connect(this, SIGNAL(isDrag(bool)),
-            layer, SLOT(setDrag(bool)));
+    /*connect(this, SIGNAL(isDrag(bool)),
+            layer, SLOT(setDrag(bool)));*/
     connect(this, SIGNAL(setDraw(bool)),
             layer, SLOT(setDraw(bool)));
 
@@ -445,6 +448,10 @@ void View::duplicateLayer(int id)
     _canvas.layers[dupID].locked = _canvas.layers[id].locked;
     _canvas.layers[dupID].opacity = _canvas.layers[id].opacity;
     _canvas.layers[dupID].pos = _canvas.layers[id].pos;
+    _canvas.layers[dupID].isText = _canvas.layers[id].isText;
+    _canvas.layers[dupID].text = _canvas.layers[id].text;
+    _canvas.layers[dupID].textAlign = _canvas.layers[id].textAlign;
+    _canvas.layers[dupID].textRotate = _canvas.layers[id].textRotate;
 
     QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
     while (layer.hasNext()) {
@@ -746,13 +753,46 @@ void View::setLayersFromCanvas(CyanCommon::Canvas canvas)
         return;
     }
     _canvas.layers = canvas.layers;
-    QMapIterator<int, CyanCommon::Layer> layers(_canvas.layers);
+
+    // re-order layers for correct stacking
+    QList<QPair<int, int> > order;
+    QMapIterator<int, CyanCommon::Layer> layer(_canvas.layers);
+    while (layer.hasNext()) {
+        layer.next();
+        QPair<int, int> pair(layer.value().order,
+                             layer.key());
+        order.append(pair);
+    }
+    std::sort(order.begin(),
+              order.end(),
+              CyanCommon::QPairSortFirst());
+    for (int i=0;i<order.size();++i) { // add layer item
+        int id = order.at(i).second;
+        if (!_canvas.layers[id].text.isEmpty() && _canvas.layers[id].isText) {
+            qDebug() << "need to render text layer...";
+            _canvas.layers[id].image = Render::renderText(_canvas.layers[id]);
+        }
+        qDebug() << "add layer item for id" << id;
+        addLayer(id,
+                 QSize(static_cast<int>(_canvas.layers[id]
+                                        .image.columns()),
+                       static_cast<int>(_canvas.layers[id]
+                                        .image.rows())),
+                 _canvas.layers[id].pos,
+                 false,
+                 _canvas.layers[id].locked);
+    }
+
+
+
+    /*QMapIterator<int, CyanCommon::Layer> layers(_canvas.layers);
     while (layers.hasNext()) {
         layers.next();
-        if (!layers.value().text.isEmpty()) {
-            // render text layer
+        if (!layers.value().text.isEmpty() && layers.value().isText) {
+            qDebug() << "need to render text layer...";
             _canvas.layers[layers.key()].image = Render::renderText(layers.value());
         }
+        qDebug() << "add layer" << layers.key();
         addLayer(layers.key(),
                  QSize(static_cast<int>(layers.value()
                                         .image.columns()),
@@ -761,8 +801,8 @@ void View::setLayersFromCanvas(CyanCommon::Canvas canvas)
                  layers.value().pos,
                  false,
                  layers.value().locked);
-        handleLayerOverTiles(layers.key());
-    }
+        //handleLayerOverTiles(layers.key());
+    }*/
     emit updatedLayers();
     refreshTiles();
 }
@@ -937,15 +977,31 @@ void View::moveLayerEvent(QKeyEvent *e)
     View::keyPressEvent(e);
 }
 
-void View::setLayerText(int id, const QString &text, bool update)
+void View::setLayerText(int id,
+                        const QString &text,
+                        const QString &align,
+                        int rotate,
+                        bool update)
 {
     if (!_canvas.layers.contains(id)) { return; }
     qDebug() << "view set layer text" << id << text;
-    if (_canvas.layers[id].text == text) { return; }
+
     if (!_canvas.layers[id].isText) {
         emit statusMessage(tr("Not a text layer"));
         return;
     }
+
+    bool needUpdate = false;
+    if (align != _canvas.layers[id].textAlign) {
+        _canvas.layers[id].textAlign = align;
+        needUpdate = true;
+    }
+    if (rotate != _canvas.layers[id].textRotate) {
+        _canvas.layers[id].textRotate = rotate;
+        needUpdate = true;
+    }
+    if (_canvas.layers[id].text == text && !needUpdate) { return; }
+
     _canvas.layers[id].text = text;
     _canvas.layers[id].image = Render::renderText(_canvas.layers[id]);
     if (update) { handleLayerOverTiles(id); }

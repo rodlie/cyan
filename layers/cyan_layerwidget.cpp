@@ -312,6 +312,8 @@ void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
     layerOpacitySpin->setValue(layer->getOpacity()*100);
 
     qDebug() << "layer selected" << layer->getLayerID() << layerCompositeBox->currentText() << layerOpacitySpin->value();
+
+    emit selectedLayer(layer->getLayerID());
 }
 
 void CyanLayerWidget::handleLayerCompositeBox()

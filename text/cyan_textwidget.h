@@ -39,6 +39,7 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QFontComboBox>
+#include <QSlider>
 
 class CyanTextWidget : public QWidget
 {
@@ -57,6 +58,10 @@ public slots:
 
     void setText(const QString &text);
     const QString getText();
+    void setTextAlign(const QString &align);
+    const QString getTextAlign();
+    void setTextRotate(int value);
+    int getTextRotate();
 
 private:
 
@@ -68,6 +73,8 @@ private:
     QPushButton *textColorButton;
     QFontComboBox *fontBox;
     QComboBox *fontSizeBox;
+    QComboBox *textAlignBox;
+    QSlider *textRotateSlider;
 
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
@@ -84,6 +91,8 @@ private slots:
     void handleUnderLineButton(bool triggered);
     void handleTextFamily(const QString &f);
     void handleTextSize(const QString &p);
+    void handleTextAlign(int index);
+    void handleTextRotate(int value);
     void handleTextColor();
     void handleTextChanged();
 };

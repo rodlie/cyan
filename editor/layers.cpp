@@ -69,7 +69,18 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     getCurrentCanvas()->setSelectedLayer(id);
     CyanCommon::Layer layer = getCurrentCanvas()->getLayer(id);
     if (!layer.image.isValid()) { return; }
-    textWidget->setText(layer.text);
+
+    if (layer.isText) {
+        textWidget->setEnabled(true);
+        textWidget->setText(layer.text);
+        textWidget->setTextAlign(layer.textAlign);
+        textWidget->setTextRotate(layer.textRotate);
+    } else {
+        textWidget->setEnabled(false);
+        textWidget->setText(QString());
+        textWidget->setTextAlign(QString("left"));
+        textWidget->setTextRotate(0);
+    }
 }
 
 void Editor::handleLayerVisibility(int id,
@@ -207,8 +218,8 @@ void Editor::handleCurrentLayerTextChanged()
     if (!getCurrentCanvas()) { return; }
     CyanLayerTreeItem *layerItem = layersWidget->getCurrentLayer();
     if (!layerItem) { return; }
-    //CyanCommon::Layer layer = getCurrentCanvas()->getLayer(layerItem->getLayerID());
-    //if (!layer) { return; }
-    //qDebug() << "set new text for layer" << layerItem->getLayerID() << textWidget->getText();
-    getCurrentCanvas()->setLayerText(layerItem->getLayerID(), textWidget->getText());
+    getCurrentCanvas()->setLayerText(layerItem->getLayerID(),
+                                     textWidget->getText(),
+                                     textWidget->getTextAlign(),
+                                     textWidget->getTextRotate());
 }

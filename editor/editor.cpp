@@ -273,6 +273,7 @@ void Editor::loadProject(const QString &filename)
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().toLower() != "miff") { return; }
     if (CyanCommon::isValidCanvas(filename)) {
+        qDebug() << "is valid project, reading ...";
         CyanCommon::Canvas canvas = CyanCommon::readCanvas(filename);
         newTab(canvas);
     }
