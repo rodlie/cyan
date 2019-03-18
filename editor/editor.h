@@ -56,6 +56,7 @@
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"
 #include "cyan_layerwidget.h"
+#include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
 
 class Editor : public QMainWindow
@@ -83,6 +84,7 @@ private:
     QAction *saveProjectAct;
     QAction *saveProjectAsAct;
     QAction *newLayerAct;
+    QAction *newTextLayerAct;
     QAction *openLayerAct;
     QAction *saveLayerAct;
     QAction *blackPointAct;
@@ -120,6 +122,8 @@ private:
     CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;
 
+    CyanTextWidget *textWidget;
+    QDockWidget *textDock;
 
 
     QSlider *brushSize;
@@ -190,6 +194,9 @@ private slots:
     void handleMoveLayerUp(int id);
     void handleDuplicateLayer(int id);
 
+    // text
+    void handleCurrentLayerTextChanged();
+
     // tabs
     void newTab(CyanCommon::Canvas canvas);
     void newTab(Magick::Image image = Magick::Image(),
@@ -253,7 +260,8 @@ private slots:
     void saveLayerDialog();
     void loadImageDialog();
     void newImageDialog();
-    void newLayerDialog();
+    void newLayerDialog(bool isText = false);
+    void newTextLayerDialog();
 
 
     //void handleNewImage(Magick::Image image);

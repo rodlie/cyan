@@ -87,10 +87,7 @@ void Editor::setupStyle()
 
     // stylesheet
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
-                          /*"QMainWindow, QMenu, QDockWidget, QMenuBar, QDialog,"
-                          "QPushButton, QSpinBox, QDoubleSpinBox, QLineEdit, QRadioButton"
-                          "{ font-size: %1pt; }"*/
-                          "QToolBar { border-color: none; }")/*.arg(CYAN_FONT_SIZE)*/);
+                          "QToolBar { border-color: none; }"));
 }
 
 void Editor::setupUI()
@@ -127,6 +124,7 @@ void Editor::setupUI()
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(newLayerAct);
+    fileMenu->addAction(newTextLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(openImageAct);
     fileMenu->addSeparator();
@@ -273,6 +271,13 @@ void Editor::setupWidgets()
     layersDock->setWindowTitle(tr("Layers"));
     layersDock->setWidget(layersWidget);
 
+    textWidget = new CyanTextWidget(this);
+    textDock = new QDockWidget(this);
+    textDock->setObjectName(QString("textDock"));
+    textDock->setWindowTitle(tr("Text"));
+    textDock->setWidget(textWidget);
+
+    addDockWidget(Qt::LeftDockWidgetArea, textDock);
     addDockWidget(Qt::LeftDockWidgetArea, layersDock);
 }
 
@@ -298,6 +303,9 @@ void Editor::setupActions()
 
     newLayerAct = new QAction(this);
     newLayerAct->setText(tr("New layer"));
+
+    newTextLayerAct = new QAction(this);
+    newTextLayerAct->setText(tr("New text layer"));
 
     openLayerAct = new QAction(this);
 
@@ -454,6 +462,7 @@ void Editor::setupConnections()
 
 
     connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
+    connect(newTextLayerAct, SIGNAL(triggered(bool)), this, SLOT(newTextLayerDialog()));
 
 
 
@@ -535,6 +544,11 @@ void Editor::setupConnections()
             SIGNAL(layerCompositeChanged(Magick::CompositeOperator,int)),
             this,
             SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
+
+    connect(textWidget,
+            SIGNAL(textChanged()),
+            this,
+            SLOT(handleCurrentLayerTextChanged()));
 }
 
 void Editor::setupIcons()
@@ -543,6 +557,7 @@ void Editor::setupIcons()
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newTextLayerAct->setIcon(QIcon::fromTheme("document-new"));
 
 
 
@@ -582,6 +597,7 @@ void Editor::setupShortcuts()
 {
     newImageAct->setShortcut(QKeySequence(tr("Ctrl+N")));
     newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
+    newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
 }

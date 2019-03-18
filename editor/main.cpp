@@ -35,6 +35,7 @@
 
 int main(int argc, char *argv[])
 {
+    //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
     QApplication::setApplicationName(QString("Cyan"));
     QApplication::setOrganizationName(QString("FxArena"));

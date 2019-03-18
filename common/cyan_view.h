@@ -138,7 +138,8 @@ public slots:
                   int id);
     void addLayer(Magick::Image image,
                   bool updateView = true,
-                  bool isLocked = false);
+                  bool isLocked = false,
+                  bool isText = false);
     void addLayer(int id,
                   QSize geo,
                   QSize pos,
@@ -232,6 +233,12 @@ public slots:
     void setSelectedLayer(int id);
 
     void moveLayerEvent(QKeyEvent *e);
+
+    void setLayerText(int id,
+                      const QString &text,
+                      const QString &align = QString("left"),
+                      int rotate = 0,
+                      bool update = true);
 
 private slots:
 

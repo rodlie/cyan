@@ -78,6 +78,7 @@ Editor::Editor(QWidget *parent)
     , saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
     , newLayerAct(nullptr)
+    , newTextLayerAct(nullptr)
     , openLayerAct(nullptr)
     , saveLayerAct(nullptr)
     , quitAct(nullptr)
@@ -108,6 +109,8 @@ Editor::Editor(QWidget *parent)
     , saveButton(nullptr)
     , layersWidget(nullptr)
     , layersDock(nullptr)
+    , textWidget(nullptr)
+    , textDock(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
     , colorTriangle(nullptr)
@@ -270,6 +273,7 @@ void Editor::loadProject(const QString &filename)
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().toLower() != "miff") { return; }
     if (CyanCommon::isValidCanvas(filename)) {
+        qDebug() << "is valid project, reading ...";
         CyanCommon::Canvas canvas = CyanCommon::readCanvas(filename);
         newTab(canvas);
     }
@@ -659,23 +663,28 @@ void Editor::newImageDialog()
                        SLOT(deleteLater()));
 }
 
-void Editor::newLayerDialog()
+void Editor::newLayerDialog(bool isText)
 {
     if (!getCurrentCanvas()) { return; }
     NewMediaDialog *dialog = new NewMediaDialog(this,
-                                                tr("New Layer"),
+                                                tr(isText?"New Text Layer":"New Layer"),
                                                 CyanCommon::newLayerDialogType,
                                                 getCurrentCanvas()->getCanvas().colorSpace(),
                                                 getCurrentCanvas()->getCanvasProject().profile,
                                                 getCurrentCanvas()->getCanvasSize());
     int res =  dialog->exec();
     if (res == QDialog::Accepted) {
-        getCurrentCanvas()->addLayer(dialog->getImage());
+        getCurrentCanvas()->addLayer(dialog->getImage(), true, false, isText);
     }
 
     QTimer::singleShot(100,
                        dialog,
                        SLOT(deleteLater()));
+}
+
+void Editor::newTextLayerDialog()
+{
+    newLayerDialog(true /* isText */);
 }
 
 /*void Editor::handleNewImage(Magick::Image image)

@@ -51,6 +51,7 @@ public:
 
     Render(QObject *parent = nullptr);
 
+    static Magick::Image renderText(CyanCommon::Layer layer);
     static Magick::Image compLayers(Magick::Image canvas,
                                     QMap<int, CyanCommon::Layer> layers,
                                     Magick::Geometry crop = Magick::Geometry());

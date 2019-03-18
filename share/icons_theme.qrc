@@ -253,5 +253,11 @@
         <file>icons/Cyan/32x32/status/software-update-urgent.png</file>
         <file>icons/Cyan/32x32/status/user-available.png</file>
         <file>icons/Cyan/32x32/status/weather-clear.png</file>
+        <file>icons/Cyan/16x16/actions/format-text-bold.png</file>
+        <file>icons/Cyan/16x16/actions/format-text-italic.png</file>
+        <file>icons/Cyan/16x16/actions/format-text-underline.png</file>
+        <file>icons/Cyan/32x32/actions/format-text-bold.png</file>
+        <file>icons/Cyan/32x32/actions/format-text-italic.png</file>
+        <file>icons/Cyan/32x32/actions/format-text-underline.png</file>
     </qresource>
 </RCC>

@@ -68,6 +68,10 @@ extern "C" {
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 #define CYAN_LAYER_LOCK "cyan-layer-lock"
 
+#define CYAN_LAYER_TEXT "cyan-layer-text"
+#define CYAN_LAYER_TEXT_ALIGN "cyan-layer-text-align"
+#define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"
+
 class CyanCommon: public QObject
 {
     Q_OBJECT
@@ -136,6 +140,10 @@ public:
         double opacity = 1.0;
         QString label = QObject::tr("New Layer");
         int order = -1;
+        QString text;
+        bool isText = false;
+        QString textAlign;
+        int textRotate = 0;
     };
 
     struct Canvas
@@ -224,6 +232,8 @@ public:
     static const QString humanFileSize(float num,
                                        bool mp = false,
                                        bool are = false);
+
+    static const QString html2Pango(const QString &html);
 
 #ifdef WITH_FFMPEG
     static QByteArray getEmbeddedCoverArt(const QString &filename);

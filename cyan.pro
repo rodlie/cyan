@@ -48,7 +48,7 @@ CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 QMAKE_TARGET_COMPANY = "Cyan"
 QMAKE_TARGET_PRODUCT = "Cyan"
 QMAKE_TARGET_DESCRIPTION = "Cyan Image Editor"
-QMAKE_TARGET_COPYRIGHT = "(c) Ole-Andre Rodlie <ole.andre.rodlie@gmail.com>"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
@@ -66,6 +66,7 @@ SOURCES += \
     $${top_srcdir}/layers/cyan_layertree.cpp \
     $${top_srcdir}/layers/cyan_layertreeitem.cpp \
     $${top_srcdir}/layers/cyan_layerwidget.cpp \
+    $${top_srcdir}/text/cyan_textwidget.cpp \
     $${top_srcdir}/colors/qtcolorpicker.cpp \
     $${top_srcdir}/colors/qtcolortriangle.cpp \
     $${top_srcdir}/colors/colorrgb.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     $${top_srcdir}/layers/cyan_layertree.h \
     $${top_srcdir}/layers/cyan_layertreeitem.h \
     $${top_srcdir}/layers/cyan_layerwidget.h \
+    $${top_srcdir}/text/cyan_textwidget.h \
     $${top_srcdir}/colors/qtcolorpicker.h \
     $${top_srcdir}/colors/qtcolortriangle.h \
     $${top_srcdir}/colors/colorrgb.h \
@@ -109,6 +111,7 @@ HEADERS += \
 INCLUDEPATH += \
     $${top_srcdir}/common \
     $${top_srcdir}/layers \
+    $${top_srcdir}/text \
     $${top_srcdir}/colors \
     $${top_srcdir}/dialogs \
     $${top_srcdir}/editor
@@ -135,7 +138,8 @@ RESOURCES += $${top_srcdir}/share/icons_core.qrc
 CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons and color profiles on msvc
-win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
+win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+# $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons on debug
 CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
@@ -213,8 +217,8 @@ unix:!mac {
 win32-msvc {
     # path to your "VisualMagick" build
     # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
-    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK!!!
-    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = C:/Users/fxarena/Documents/ImageMagick-Windows
+    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK, ENABLE ZERO-CONF IN CONFIGURE.EXE !!!
+    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = $${top_srcdir}/ImageMagick-Windows
 
     INCLUDEPATH += \
         $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \

@@ -40,6 +40,31 @@ Render::Render(QObject *parent) : QObject (parent)
 
 }
 
+Magick::Image Render::renderText(CyanCommon::Layer layer)
+{
+    qDebug() << "render text";
+    if (!layer.text.isEmpty() && layer.isText) {
+        try {
+            layer.image.quiet(true);
+            layer.image.alpha(true);
+            layer.image.backgroundColor(Magick::Color("transparent"));
+            QString markup = CyanCommon::html2Pango(layer.text);
+            qDebug() << "HTML" << layer.text;
+            qDebug() << "PANGO" << markup;
+            if (!layer.textAlign.isEmpty()) {
+                layer.image.defineValue("pango", "align", layer.textAlign.toStdString());
+            }
+            if (layer.textRotate!=0) {
+                layer.image.defineValue("pango", "rotate", QString::number(layer.textRotate).toStdString());
+            }
+            layer.image.read(QString("PANGO: %1").arg(markup).toStdString());
+        }
+        catch(Magick::Error &error_) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_) { qWarning() << warn_.what(); }
+    }
+    return layer.image;
+}
+
 Magick::Image Render::compLayers(Magick::Image canvas,
                                  QMap<int, CyanCommon::Layer> layers,
                                  Magick::Geometry crop)

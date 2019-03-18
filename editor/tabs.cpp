@@ -43,7 +43,7 @@ void Editor::newTab(CyanCommon::Canvas canvas)
 
     view->setCanvasSpecsFromImage(canvas.image);
     view->setLayersFromCanvas(canvas);
-    view->setFit(true);
+    //view->setFit(true);
     view->setBrushColor(colorPicker->currentColor());
 
     tab->setWidget(view);
@@ -84,7 +84,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
     }
     if (geo.width()>0) { view->addLayer(view->getCanvas()); }
     else { view->addLayer(image); }
-    view->setFit(true);
+    //view->setFit(true);
     view->setBrushColor(colorPicker->currentColor());
 
     tab->setWidget(view);
