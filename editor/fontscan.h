@@ -30,42 +30,23 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "editor.h"
+#ifndef FONTSCAN_H
+#define FONTSCAN_H
 
-#include <QApplication>
+#include <QDialog>
 
-#include "fontscan.h"
-
-int main(int argc, char *argv[])
+class FontScan : public QDialog
 {
-    //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication a(argc, argv);
-    QApplication::setApplicationName(QString("Cyan"));
-    QApplication::setOrganizationName(QString("FxArena"));
-    QApplication::setOrganizationDomain(QString("net.fxarena.cyan"));
-    QApplication::setApplicationVersion(QString(CYAN_VERSION));
+    Q_OBJECT
 
-    // setup fonts
-    FontScan f;
-    f.exec();
+public:
 
-    // setup imagemagick
-    Magick::InitializeMagick(nullptr);
+    FontScan(QWidget *parent = nullptr);
 
-    // setup ffmpeg
-#ifdef WITH_FFMPEG
-    av_register_all();
-    avdevice_register_all();
-    avcodec_register_all();
-    avformat_network_init();
-#ifdef QT_NO_DEBUG
-    av_log_set_level(AV_LOG_QUIET);
-#endif
-#endif
+private slots:
 
-    // setup editor
-    Editor w;
-    w.show();
+    void scan();
 
-    return a.exec();
-}
+};
+
+#endif // FONTSCAN_H

@@ -83,6 +83,7 @@ SOURCES += \
     $${top_srcdir}/editor/tabs.cpp \
     $${top_srcdir}/editor/mdi.cpp \
     $${top_srcdir}/editor/qtwindowlistmenu.cpp \
+    $${top_srcdir}/editor/fontscan.cpp \
     $${top_srcdir}/dialogs/newmediadialog.cpp \
     $${top_srcdir}/dialogs/convertdialog.cpp
 
@@ -105,6 +106,7 @@ HEADERS += \
     $${top_srcdir}/editor/editor.h \
     $${top_srcdir}/editor/mdi.h \
     $${top_srcdir}/editor/qtwindowlistmenu.h \
+    $${top_srcdir}/editor/fontscan.h \
     $${top_srcdir}/dialogs/newmediadialog.h \
     $${top_srcdir}/dialogs/convertdialog.h
 
@@ -253,7 +255,7 @@ win32-msvc {
 
     # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
     isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
-    PKGCONFIG += $${MAGICK} lcms2
+    PKGCONFIG += $${MAGICK} lcms2 fontconfig
 
     # deploy+static fix
     CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK}`
