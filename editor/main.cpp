@@ -33,21 +33,29 @@
 #include "editor.h"
 
 #include <QApplication>
+#include <QSplashScreen>
 
-#include "fontscan.h"
+#ifdef USE_FC
+#include <fontconfig/fontconfig.h>
+#endif
 
 int main(int argc, char *argv[])
 {
-    //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#ifdef USE_FC
+    qputenv("PANGOCAIRO_BACKEND", "fc");
+#endif
+
     QApplication a(argc, argv);
     QApplication::setApplicationName(QString("Cyan"));
     QApplication::setOrganizationName(QString("FxArena"));
     QApplication::setOrganizationDomain(QString("net.fxarena.cyan"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
-    // setup fonts
-    FontScan f;
-    f.exec();
+#ifdef USE_FC
+    QSplashScreen splash(QIcon(":/splash.png").pixmap(500,333), Qt::WindowStaysOnTopHint);
+    splash.setStyleSheet("font-weight:bold;");
+    splash.show();
+#endif
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
@@ -63,9 +71,22 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
-    // setup editor
+#ifdef USE_FC
+    // setup fontconfig
+    splash.showMessage(QObject::tr("Setup fontconfig, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
+    FcBool success = FcInit();
+    if (success) {
+        FcConfig *config = FcInitLoadConfigAndFonts();
+        FcConfigDestroy(config);
+    }
+#endif
+
     Editor w;
     w.show();
+
+#ifdef USE_FC
+    splash.finish(&w);
+#endif
 
     return a.exec();
 }
