@@ -197,19 +197,18 @@ unix:!mac {
     icc.files = \
         $${top_srcdir}/share/icc/rgb.icc \
         $${top_srcdir}/share/icc/cmyk.icc \
-        $${top_srcdir}/share/icc/gray.icc \
-        $${top_srcdir}/docs/LICENSE-ICC.txt \
-    icons.files = \
-        $${top_srcdir}/share/icons/Cyan \
-        $${top_srcdir}/docs/LICENSE-FatCow.txt \
-        $${top_srcdir}/docs/LICENSE-Adwaita.txt \
+        $${top_srcdir}/share/icc/gray.icc
+    icons.files = $${top_srcdir}/share/icons/Cyan
     hicolor.files = $${top_srcdir}/share/icons/hicolor
     docs.files = \
         $${top_srcdir}/README.md \
         $${top_srcdir}/docs/LICENSE.CeCILLv21 \
         $${top_srcdir}/docs/LICENSE.txt \
         $${top_srcdir}/docs/LGPL_EXCEPTION.txt \
-        $${top_srcdir}/docs/LICENSE.LGPLv21
+        $${top_srcdir}/docs/LICENSE.LGPLv21 \
+        $${top_srcdir}/docs/LICENSE-ICC.txt \
+        $${top_srcdir}/docs/LICENSE-FatCow.txt \
+        $${top_srcdir}/docs/LICENSE-Adwaita.txt
 
     INSTALLS += \
         target \
