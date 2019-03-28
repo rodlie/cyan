@@ -150,6 +150,12 @@ win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
 # mingw deploy+static fix
 CONFIG(deploy) : win32-g++ : LIBS += -lpthread
 
+# use fontconfig on mingw
+win32-g++: DEFINES+= USE_FC
+
+# splash on mingw
+win32-g++: RESOURCES += $${top_srcdir}/share/splash.qrc
+
 # mac
 mac {
     CONFIG(deploy) {
@@ -191,19 +197,18 @@ unix:!mac {
     icc.files = \
         $${top_srcdir}/share/icc/rgb.icc \
         $${top_srcdir}/share/icc/cmyk.icc \
-        $${top_srcdir}/share/icc/gray.icc \
-        $${top_srcdir}/docs/LICENSE-ICC.txt \
-    icons.files = \
-        $${top_srcdir}/share/icons/Cyan \
-        $${top_srcdir}/docs/LICENSE-FatCow.txt \
-        $${top_srcdir}/docs/LICENSE-Adwaita.txt \
+        $${top_srcdir}/share/icc/gray.icc
+    icons.files = $${top_srcdir}/share/icons/Cyan
     hicolor.files = $${top_srcdir}/share/icons/hicolor
     docs.files = \
         $${top_srcdir}/README.md \
         $${top_srcdir}/docs/LICENSE.CeCILLv21 \
         $${top_srcdir}/docs/LICENSE.txt \
         $${top_srcdir}/docs/LGPL_EXCEPTION.txt \
-        $${top_srcdir}/docs/LICENSE.LGPLv21
+        $${top_srcdir}/docs/LICENSE.LGPLv21 \
+        $${top_srcdir}/docs/LICENSE-ICC.txt \
+        $${top_srcdir}/docs/LICENSE-FatCow.txt \
+        $${top_srcdir}/docs/LICENSE-Adwaita.txt
 
     INSTALLS += \
         target \
@@ -254,6 +259,7 @@ win32-msvc {
     # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
     isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
     PKGCONFIG += $${MAGICK} lcms2
+    win32-g++: PKGCONFIG += fontconfig
 
     # deploy+static fix
     CONFIG(deploy) : LIBS += `pkg-config --libs --static $${MAGICK}`
