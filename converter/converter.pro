@@ -28,8 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TARGET = Cyan
-VERSION = 1.2.1
+TARGET = CyanCC
+VERSION = 1.3.0
 
 SOURCES += \
     src/main.cpp \
@@ -48,7 +48,7 @@ HEADERS += \
     src/helpdialog.h
 RESOURCES += \
     res/cyan.qrc \
-    docs/docs.qrc
+#    docs/docs.qrc
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -86,7 +86,7 @@ CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 unix:!mac {
     target.path = $${PREFIX}/bin
     target_desktop.path = $${PREFIX}/share/applications
-    target_desktop.files = res/cyan.desktop
+    target_desktop.files = res/CyanCC.desktop
     target_docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}
     target_docs.files = LICENSE
     INSTALLS += target target_desktop target_docs
