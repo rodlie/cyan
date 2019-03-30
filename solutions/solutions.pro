@@ -3,10 +3,16 @@ QT += widgets
 TARGET = CyanQtSolutions
 VERSION = 1.0.0
 TEMPLATE = lib
-CONFIG -= staticlib
+CONFIG -= static
+
+#DEFINES += QT_QTCOLORPICKER_EXPORT
+#DEFINES += QT_QTCOLORTRIANGLE_EXPORT
+#DEFINES += QT_QTWINDOWLISTMENU_EXPORT
 
 SOURCES += qtcolorpicker.cpp qtcolortriangle.cpp qtwindowlistmenu.cpp
 HEADERS += qtcolorpicker.h qtcolortriangle.h qtwindowlistmenu.h
+
+include($${top_srcdir}/share/common.pri)
 
 unix:!macx {
     DESTDIR = $${top_builddir}/build

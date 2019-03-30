@@ -57,7 +57,23 @@ class QMdiSubWindow;
 class QSignalMapper;
 class QMenuBar;
 
-class QtWindowListMenu : public QMenu
+#if defined(Q_WS_WIN)
+#  if !defined(QT_QTWINDOWLISTMENU_EXPORT) && !defined(QT_QTWINDOWLISTMENU_IMPORT)
+#    define QT_QTWINDOWLISTMENU_EXPORT
+#  elif defined(QT_QTWINDOWLISTMENU_IMPORT)
+#    if defined(QT_QTWINDOWLISTMENU_EXPORT)
+#      undef QT_QTWINDOWLISTMENU_EXPORT
+#    endif
+#    define QT_QTWINDOWLISTMENU_EXPORT __declspec(dllimport)
+#  elif defined(QT_QTWINDOWLISTMENU_EXPORT)
+#    undef QT_QTWINDOWLISTMENU_EXPORT
+#    define QT_QTWINDOWLISTMENU_EXPORT __declspec(dllexport)
+#  endif
+#else
+#  define QT_QTWINDOWLISTMENU_EXPORT
+#endif
+
+class QT_QTWINDOWLISTMENU_EXPORT QtWindowListMenu : public QMenu
 {
     Q_OBJECT
 
