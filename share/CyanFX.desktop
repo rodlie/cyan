@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Cyan
-GenericName=Cyan
-Comment=Prepress viewer and converter
+Name=Cyan FX
+GenericName=Cyan FX
+Comment=Experimental Image Editor
 Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
-Exec=Cyan %U
+Exec=CyanFX %U
 Icon=cyan
 StartupNotify=false
 Terminal=false

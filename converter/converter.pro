@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = CyanCC
-VERSION = 1.3.0
+VERSION = 1.2.2
 
 SOURCES += \
     src/main.cpp \
@@ -48,7 +48,7 @@ HEADERS += \
     src/helpdialog.h
 RESOURCES += \
     res/cyan.qrc \
-#    docs/docs.qrc
+    $${top_srcdir}/docs/docs.qrc
 
 DESTDIR = build
 OBJECTS_DIR = $${DESTDIR}/.obj
@@ -58,21 +58,7 @@ RCC_DIR = $${DESTDIR}/.qrc
 QT += widgets concurrent
 TEMPLATE = app
 
-CONFIG += c++11
-QT_CONFIG -= no-pkg-config
-CONFIG += link_pkgconfig
-PKGCONFIG += lcms2
-MAGICK_CONFIG = ImageMagick++
-!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
-PKG_CONFIG_BIN = pkg-config
-!isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
-
-PKGCONFIG += $${MAGICK_CONFIG}
-LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
-
-isEmpty(PREFIX): PREFIX = /usr/local
-isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
-isEmpty(MANDIR): MANDIR = $$PREFIX/share/man
+include($${top_srcdir}/share/common.pri)
 
 DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_TYPE}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
@@ -80,8 +66,6 @@ QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, INRIA"
-
-CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 unix:!mac {
     target.path = $${PREFIX}/bin
@@ -138,3 +122,6 @@ win32 {
     RC_ICONS += res/cyan.ico
     LIBS += -lpthread
 }
+
+include($${top_srcdir}/share/magick.pri)
+

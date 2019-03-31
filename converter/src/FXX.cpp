@@ -396,7 +396,7 @@ int FXX::readImageChannelCount(Magick::Image image)
         if ((imageInfo->channel & Magick::GreenChannel) != 0) channels++;
         if ((imageInfo->channel & Magick::BlueChannel) != 0) channels++;
         if (((imageInfo->channel & Magick::OpacityChannel) != 0)
-           && (image.matte() != Magick::MagickFalse)) channels++;
+           && (image.alpha() != Magick::MagickFalse)) channels++;
         if (((imageInfo->channel & Magick::IndexChannel) != 0)
            && (image.colorSpace() == Magick::CMYKColorspace)) channels++;
         //MagickCore::DestroyImageInfo(imageInfo);

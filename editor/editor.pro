@@ -1,4 +1,4 @@
-# Cyan Image Editor
+# Cyan 
 #
 # <https://cyan.fxarena.net>
 # <http://prepress.sf.net>
@@ -35,7 +35,7 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TARGET = Cyan
+TARGET = CyanFX
 VERSION = 2.0.0
 VERSION_EXTRA = alpha1
 
@@ -46,8 +46,8 @@ CONFIG += c++11
 CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
 QMAKE_TARGET_COMPANY = "Cyan"
-QMAKE_TARGET_PRODUCT = "Cyan"
-QMAKE_TARGET_DESCRIPTION = "Cyan Image Editor"
+QMAKE_TARGET_PRODUCT = "CyanFX"
+QMAKE_TARGET_DESCRIPTION = "Cyan FX"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -110,7 +110,10 @@ INCLUDEPATH += \
     $${top_srcdir}/editor/app \
     $${top_srcdir}/solutions
 
-LIBS += -L$${top_builddir}/build -lCyanQtSolutions
+# link cyan qt solutions
+CQTS = CyanQtSolutions
+win32 : CQTS = CyanQtSolutions1
+LIBS += -L$${top_builddir}/build -l$${CQTS}
 
 # misc related
 OTHER_FILES += \
@@ -126,7 +129,8 @@ include($${top_srcdir}/share/common.pri)
 RESOURCES += $${top_srcdir}/share/icons_core.qrc
 
 # bundle theme icons and color profiles on deploy
-CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc $${top_srcdir}/share/icc.qrc
+CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+# $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons and color profiles on msvc
 win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
@@ -156,14 +160,14 @@ mac {
 # install on unix (not mac)
 unix:!mac {
     target.path = $${BINDIR}
-    docs.path = $${DOCDIR}/$${TARGET}-$${VERSION}$${VERSION_EXTRA}
+    docs.path = $${DOCDIR}/cyan-$${VERSION}$${VERSION_EXTRA}
     icons.path = $${ICONDIR}
     hicolor.path = $${ICONDIR}
-    icc.path = $${ICCDIR}/$${TARGET}
+    icc.path = $${ICCDIR}/Cyan
     desktop.path = $${APPDIR}
 
     desktop.files = \
-        $${top_srcdir}/share/cyan.desktop
+        $${top_srcdir}/share/CyanFX.desktop
     icc.files = \
         $${top_srcdir}/share/icc/rgb.icc \
         $${top_srcdir}/share/icc/cmyk.icc \
