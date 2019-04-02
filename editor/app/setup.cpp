@@ -50,10 +50,14 @@ void Editor::setupStyle()
     QStringList iconsPath = QIcon::themeSearchPaths();
     QString iconsHomeLocal = QString("%1/.local/share/icons").arg(QDir::homePath());
     QString iconsHome = QString("%1/.icons").arg(QDir::homePath());
+    QString iconsDeploy = QString("%1/etc/icons").arg(qApp->applicationDirPath());
+
     if (QFile::exists(iconsHomeLocal) &&
         !iconsPath.contains(iconsHomeLocal)) { iconsPath.prepend(iconsHomeLocal); }
     if (QFile::exists(iconsHome) &&
         !iconsPath.contains(iconsHome)) { iconsPath.prepend(iconsHome); }
+    if (QFile::exists(iconsDeploy)) { iconsPath.prepend(iconsDeploy); }
+
     iconsPath << QString("%1/../share/icons").arg(qApp->applicationDirPath());
     iconsPath << QString("%1/icons").arg(qApp->applicationDirPath());
     QIcon::setThemeSearchPaths(iconsPath);

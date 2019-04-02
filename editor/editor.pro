@@ -126,18 +126,18 @@ OTHER_FILES += \
 include($${top_srcdir}/share/common.pri)
 
 # bundle core icons
-RESOURCES += $${top_srcdir}/share/icons_core.qrc
+# RESOURCES += $${top_srcdir}/share/icons_core.qrc
 
 # bundle theme icons and color profiles on deploy
-CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+# CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
 # $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons and color profiles on msvc
-win32-msvc : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+win32-msvc : RESOURCES += $${top_srcdir}/share/icons_core.qrc $${top_srcdir}/share/icons_theme.qrc
 # $${top_srcdir}/share/icc.qrc
 
 # bundle theme icons on debug
-CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_core.qrc $${top_srcdir}/share/icons_theme.qrc
 
 # add win32 rc icon
 win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
