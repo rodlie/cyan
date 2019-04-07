@@ -76,15 +76,11 @@ void Editor::aboutImageMagick()
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 
     QString about;
-    about.append(QString("<h3>%1 %2%3</h3>")
-                 .arg(MagickPackageName)
-                 .arg(MagickLibVersionText)
-                 .arg(MagickLibAddendum));
+    about.append(QString("<h3>ImageMagick</h3>"));
     about.append(QString("<p><a href=\"https://imagemagick.org\">ImageMagick®</a> is used to read, create, save, edit, compose, and  convert bitmap images.</p><p>ImageMagick is distributed under the following <a href=\"https://www.imagemagick.org/script/license.php\">license</a>.</p>"));
-    about.append(QString("<p>%1</p>").arg(MagickCopyright));
+    about.append(QString("<p>%1</p>").arg(MagickCore::GetMagickCopyright()));
 
-    about.append(QString("<p><strong>Features</strong>:<br><br>%1 %2</p>").arg(MagickQuantumDepth).arg(MagickCore::GetMagickFeatures()));
-    about.append(QString("<p><strong>Delegates</strong>:<br><br>%1</p>").arg(MagickCore::GetMagickDelegates()));
+    about.append(QString("<p><strong>Features</strong>:<br><br>%1 %2</p>").arg(MagickCore::GetMagickFeatures()).arg(MagickCore::GetMagickDelegates()));
     about.append(QString("<p><strong>Disk Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::disk())));
     about.append(QString("<strong>Area Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true)));
     about.append(QString("<strong>Map Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::map())));
