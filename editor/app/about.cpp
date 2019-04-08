@@ -40,9 +40,21 @@ void Editor::aboutCyan()
 
     box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/cyan.png")));
 
+    QString version;
+#ifdef CYAN_GIT
+    QString git = CYAN_GIT;
+    if (git.isEmpty()) { version = CYAN_VERSION; }
+    else {
+        version = QString("%1 (<a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>)")
+                  .arg(CYAN_VERSION)
+                  .arg(git);
+    }
+#else
+    version = CYAN_VERSION;
+#endif
     QString about;
     about.append(QString("<h2>Cyan FX %1</h2>")
-                 .arg(CYAN_VERSION));
+                 .arg(version));
     about.append(QString("<p>%1</p>")
                  .arg(tr("Cyan FX is an open source image editor.")));
     about.append(QString("<p>%1</p>")
