@@ -123,8 +123,16 @@ void Editor::setupUI()
     mainToolBar->addAction(newImageAct);
     mainToolBar->addAction(openImageAct);
     mainToolBar->addWidget(saveButton);
+    mainToolBar->addSeparator();
     mainToolBar->addAction(viewMoveAct);
     mainToolBar->addAction(viewDrawAct);
+    mainToolBar->addWidget(textButton);
+    //mainToolBar->addWidget(layerButton);
+    mainToolBar->addSeparator();
+    mainToolBar->addWidget(colorPicker);
+
+
+
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(newLayerAct);
@@ -198,6 +206,7 @@ void Editor::setupUI()
     brushDock->setWidget(brushWidget);
     addDockWidget(Qt::RightDockWidgetArea,
                   brushDock);
+
 }
 
 void Editor::setupMenus()
@@ -249,9 +258,10 @@ void Editor::setupToolbars()
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
     mainToolBar->setWindowTitle(tr("Main"));
+    mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
+    mainToolBar->setMovable(false);
 
-
-    addToolBar(Qt::LeftToolBarArea,
+    addToolBar(Qt::TopToolBarArea,
                mainToolBar);
 }
 
@@ -267,22 +277,29 @@ void Editor::setupWidgets()
     brushSize = new QSlider(this);
     brushSize->setRange(1,256);
     brushSize->setValue(20);
-    brushSize->setOrientation(Qt::Horizontal);
+    brushSize->setOrientation(Qt::Vertical);
 
+    // layer
     layersWidget = new CyanLayerWidget(this);
     layersDock = new QDockWidget(this);
     layersDock->setObjectName(QString("layersDock"));
     layersDock->setWindowTitle(tr("Layers"));
     layersDock->setWidget(layersWidget);
 
-    textWidget = new CyanTextWidget(this);
-    textDock = new QDockWidget(this);
-    textDock->setObjectName(QString("textDock"));
-    textDock->setWindowTitle(tr("Text"));
-    textDock->setWidget(textWidget);
+    // text
+    textButton = new QToolButton(this);
+    textButton->setToolTip(tr("Text"));
+    textButton->setIcon(QIcon::fromTheme("font"));
+    textButton->setCheckable(true);
 
-    addDockWidget(Qt::LeftDockWidgetArea, textDock);
-    addDockWidget(Qt::LeftDockWidgetArea, layersDock);
+    textPopup = new ctkPopupWidget(textButton);
+    QVBoxLayout *textPopupLayout = new QVBoxLayout(textPopup);
+    textWidget = new CyanTextWidget(textPopup);
+    textWidget->setDisabled(true);
+
+    textPopupLayout->addWidget(textWidget);
+    textPopup->setAutoShow(true);
+    textPopup->setAutoHide(true);
 }
 
 
@@ -378,82 +395,52 @@ void Editor::setupButtons()
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save"));
     //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+
+
+
 }
 
 void Editor::setupColorManagement()
 {
     colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(120,22));
-    colorPicker->setFlat(true);
-    colorPicker->setContentsMargins(0,0,0,0);
-    colorPicker->setFixedSize(colorPicker->iconSize());
-    colorPicker->setStyleSheet(QString("margin:0;padding:0;"));
+    colorPicker->setIconSize(QSize(24,24));
     colorPicker->setStandardColors();
-    colorPicker->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mainStatusBar->addPermanentWidget(colorPicker);
+    colorPopup = new ctkPopupWidget(colorPicker);
+    QVBoxLayout *colorPopupLayout = new QVBoxLayout(colorPopup);
 
-    colorTriangle = new QtColorTriangle(this);
+    colorPopup->setAutoShow(true);
+    colorPopup->setAutoHide(true);
+
+    colorTriangle = new QtColorTriangle(colorPopup);
     colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    QDockWidget *colorDock = new QDockWidget(this);
-    colorDock->setWindowIcon(QIcon(":/icons/colors.png"));
-    colorDock->setObjectName(QString("colorTriangle"));
-    colorDock->setWindowTitle(tr("Triangle"));
-    colorDock->setWidget(colorTriangle);
-    //colorDock->layout()->setContentsMargins(5, 5, 5, 5);
-    colorDock->setMinimumHeight(150);
-    colorDock->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    colorPopupLayout->addWidget(colorTriangle);
+    colorTriangle->setMinimumSize(QSize(175, 175));
 
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorPicker, SLOT(setCurrentColor(QColor)));
     connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
     connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
-    QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
+   // QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
 
-    QDockWidget *colorRGBDock = new QDockWidget(this);
-    colorRGBDock->setObjectName(QString("colorRGBDock"));
-    colorRGBDock->setWindowTitle(tr("RGB"));
-    colorRGBDock->setWindowIcon(colorsIcon);
-    //colorRGBDock->setMaximumHeight(100);
-
-    ColorRGB *colorRGB = new ColorRGB(this);
-    colorRGBDock->setWidget(colorRGB);
+    ColorRGB *colorRGB = new ColorRGB(colorPopup);
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorRGB, SLOT(setColor(QColor)));
     connect(colorRGB, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
-    QDockWidget *colorCMYKDock = new QDockWidget(this);
-    colorCMYKDock->setObjectName(QString("colorCMYKDock"));
-    colorCMYKDock->setWindowTitle(tr("CMYK"));
-    colorCMYKDock->setWindowIcon(colorsIcon);
-    //colorCMYKDock->setMaximumHeight(100);
-
     ColorCMYK *colorCMYK = new ColorCMYK(this);
-    colorCMYKDock->setWidget(colorCMYK);
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorCMYK, SLOT(setColor(QColor)));
     connect(colorCMYK, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
-    QDockWidget *colorHSVDock = new QDockWidget(this);
-    colorHSVDock->setObjectName(QString("colorHSVDock"));
-    colorHSVDock->setWindowTitle(tr("HSV"));
-    colorHSVDock->setWindowIcon(colorsIcon);
-    //colorHSVDock->setMaximumHeight(100);
-
     ColorHSV *colorHSV = new ColorHSV(this);
-    colorHSVDock->setWidget(colorHSV);
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
     connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
     colorTriangle->setColor(QColor(Qt::black));
 
-    addDockWidget(Qt::RightDockWidgetArea,
-                  colorDock);
-    addDockWidget(Qt::RightDockWidgetArea,
-                  colorHSVDock);
-    addDockWidget(Qt::RightDockWidgetArea,
-                  colorRGBDock);
-    addDockWidget(Qt::RightDockWidgetArea,
-                  colorCMYKDock);
+    colorPopupLayout->addWidget(colorHSV);
+    colorPopupLayout->addWidget(colorRGB);
+    colorPopupLayout->addWidget(colorCMYK);
 }
 
 void Editor::setupConnections()
@@ -553,6 +540,10 @@ void Editor::setupConnections()
             SIGNAL(textChanged()),
             this,
             SLOT(handleCurrentLayerTextChanged()));
+
+    //connect(layerButton, SIGNAL(toggled(bool)), layerPopup, SLOT(pinPopup(bool)));
+    connect(textButton, SIGNAL(toggled(bool)), textPopup, SLOT(pinPopup(bool)));
+
 }
 
 void Editor::setupIcons()
