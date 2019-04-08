@@ -138,11 +138,11 @@ OTHER_FILES += \
 
 include($${top_srcdir}/share/common.pri)
 
-# core icons on unix
-unix:!mac : RESOURCES += $${top_srcdir}/share/icons_core.qrc
+# icons
+RESOURCES += $${top_srcdir}/share/icons.qrc
 
 # bundle theme icons on debug
-CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
+CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_core.qrc $${top_srcdir}/share/icons_theme.qrc
 
 # add win32 rc icon
 win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
