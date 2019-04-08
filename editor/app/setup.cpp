@@ -330,7 +330,7 @@ void Editor::setupActions()
     viewDrawAct->setChecked(false);
 
     aboutCyanAct = new QAction(this);
-    aboutCyanAct->setText(tr("About Cyan"));
+    aboutCyanAct->setText(tr("About Cyan FX"));
 
     aboutImageMagickAct = new QAction(this);
     aboutImageMagickAct->setText(tr("About ImageMagick"));

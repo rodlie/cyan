@@ -36,8 +36,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = CyanFX
-VERSION = 2.0.0
-VERSION_EXTRA = alpha1
+VERSION = 0.9.0
 
 TEMPLATE = app
 QT += concurrent widgets
@@ -52,9 +51,8 @@ QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-DEFINES += CYAN_VERSION=\"\\\"$${VERSION}$${VERSION_EXTRA}\\\"\"
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
 DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
-!CONFIG(deploy): DEFINES += CYAN_DEVEL
 
 SOURCES += \
     $${top_srcdir}/editor/common/cyan_common.cpp \
@@ -114,42 +112,31 @@ INCLUDEPATH += \
 CQTS = CyanQtSolutions
 win32 : CQTS = CyanQtSolutions1
 LIBS += -L$${top_builddir}/build -l$${CQTS}
+QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
-# misc related
+# misc related (easier to access through qt-creator)
 OTHER_FILES += \
     $${top_srcdir}/scripts/ci.sh \
     $${top_srcdir}/scripts/gimp.py \
     $${top_srcdir}/docs/README.md \
     $${top_srcdir}/README.md
 
-
 include($${top_srcdir}/share/common.pri)
 
-# bundle core icons
-# RESOURCES += $${top_srcdir}/share/icons_core.qrc
-
-# bundle theme icons and color profiles on deploy
-# CONFIG(deploy) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
-# $${top_srcdir}/share/icc.qrc
-
-# bundle theme icons and color profiles on msvc
-win32-msvc : RESOURCES += $${top_srcdir}/share/icons_core.qrc $${top_srcdir}/share/icons_theme.qrc
-# $${top_srcdir}/share/icc.qrc
+# core icons on unix
+unix:!mac : RESOURCES += $${top_srcdir}/share/icons_core.qrc
 
 # bundle theme icons on debug
-CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_core.qrc $${top_srcdir}/share/icons_theme.qrc
+CONFIG(debug, release|debug) : RESOURCES += $${top_srcdir}/share/icons_theme.qrc
 
 # add win32 rc icon
 win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
 
-# mingw deploy+static fix
-CONFIG(deploy) : win32-g++ : LIBS += -lpthread
-
 # use fontconfig on mingw
-win32-g++: DEFINES+= USE_FC
+win32-g++ : DEFINES+= USE_FC
 
 # splash on mingw
-win32-g++: RESOURCES += $${top_srcdir}/share/splash.qrc
+win32-g++ : RESOURCES += $${top_srcdir}/share/splash.qrc
 
 # mac
 mac {
@@ -160,7 +147,7 @@ mac {
 # install on unix (not mac)
 unix:!mac {
     target.path = $${BINDIR}
-    docs.path = $${DOCDIR}/cyan-$${VERSION}$${VERSION_EXTRA}
+    docs.path = $${DOCDIR}/CyanFX-$${VERSION}
     icons.path = $${ICONDIR}
     hicolor.path = $${ICONDIR}
     icc.path = $${ICCDIR}/Cyan
@@ -186,14 +173,14 @@ unix:!mac {
         target \
         docs \
         hicolor \
-        desktop
-    !CONFIG(deploy): INSTALLS += icons icc
+        desktop \
+        icons \
+        icc
 }
 
 include($${top_srcdir}/share/magick.pri)
 
 # ffmpeg experimental support
-# supports video (frames) and embedded images in audio files (coverart)
 CONFIG(with_ffmpeg) {
     SOURCES += $${top_srcdir}/editor/dialogs/videodialog.cpp
     HEADERS += $${top_srcdir}/editor/dialogs/videodialog.h

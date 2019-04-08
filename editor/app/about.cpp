@@ -36,19 +36,19 @@
 void Editor::aboutCyan()
 {
     QMessageBox box(this);
-    box.setWindowTitle(tr("About Cyan"));
+    box.setWindowTitle(tr("About Cyan FX"));
 
     box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/cyan.png")));
 
     QString about;
-    about.append(QString("<h3>Cyan %1</h3>")
+    about.append(QString("<h2>Cyan FX %1</h2>")
                  .arg(CYAN_VERSION));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan is an open source cross-platform image editor.")));
+                 .arg(tr("Cyan FX is an open source image editor.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("&copy;2019 Ole-André Rodlie. All rights reserved.")));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan is distributed under the %1 license.")
+                 .arg(tr("Cyan FX is distributed under the %1 license.")
                       .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
                                    "CeCILL v2.1</a>"))));
 
@@ -75,12 +75,21 @@ void Editor::aboutImageMagick()
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 
+    size_t magickQ;
+    size_t magickV;
+    MagickCore::GetMagickQuantumDepth(&magickQ);
+    QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
+
     QString about;
-    about.append(QString("<h3>ImageMagick</h3>"));
-    about.append(QString("<p><a href=\"https://imagemagick.org\">ImageMagick®</a> is used to read, create, save, edit, compose, and  convert bitmap images.</p><p>ImageMagick is distributed under the following <a href=\"https://www.imagemagick.org/script/license.php\">license</a>.</p>"));
+    about.append(QString("<h2>%1</h2>").arg(magickInfo));
+    about.append(QString("<p><a href=\"https://imagemagick.org\">%2®</a> is used to read"
+                         ", create, save, edit, compose, and  convert bitmap images.</p><p>"
+                         "%2 is distributed under the following <a href=\"%1\">license</a>.</p>")
+                 .arg(MagickCore::GetMagickLicense())
+                 .arg(MagickCore::GetMagickPackageName()));
     about.append(QString("<p>%1</p>").arg(MagickCore::GetMagickCopyright()));
 
-    about.append(QString("<p><strong>Features</strong>:<br><br>%1 %2</p>").arg(MagickCore::GetMagickFeatures()).arg(MagickCore::GetMagickDelegates()));
+    about.append(QString("<p><strong>Features</strong>:<br><br>Q%1 %2 %3</p>").arg(magickQ).arg(MagickCore::GetMagickFeatures()).arg(MagickCore::GetMagickDelegates()));
     about.append(QString("<p><strong>Disk Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::disk())));
     about.append(QString("<strong>Area Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true)));
     about.append(QString("<strong>Map Limit</strong>: %1<br>").arg(CyanCommon::humanFileSize(Magick::ResourceLimits::map())));

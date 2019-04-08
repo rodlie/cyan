@@ -117,7 +117,7 @@ Editor::Editor(QWidget *parent)
     , colorPicker(nullptr)
 {
     // set window title
-    setWindowTitle(qApp->applicationName());
+    setWindowTitle(QString("Cyan FX"));
     setAttribute(Qt::WA_QuitOnClose);
 
     // register Magick Image
