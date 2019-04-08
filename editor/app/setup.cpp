@@ -285,6 +285,7 @@ void Editor::setupWidgets()
     layersDock->setObjectName(QString("layersDock"));
     layersDock->setWindowTitle(tr("Layers"));
     layersDock->setWidget(layersWidget);
+    addDockWidget(Qt::RightDockWidgetArea, layersDock);
 
     // text
     textButton = new QToolButton(this);
