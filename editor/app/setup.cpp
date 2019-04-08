@@ -128,6 +128,7 @@ void Editor::setupUI()
     mainToolBar->addAction(viewDrawAct);
     mainToolBar->addWidget(textButton);
     //mainToolBar->addWidget(layerButton);
+    mainToolBar->addWidget(convertButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
@@ -258,8 +259,8 @@ void Editor::setupToolbars()
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
     mainToolBar->setWindowTitle(tr("Main"));
-    mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
-    mainToolBar->setMovable(false);
+    //mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
+    //mainToolBar->setMovable(false);
 
     addToolBar(Qt::TopToolBarArea,
                mainToolBar);
@@ -398,6 +399,11 @@ void Editor::setupButtons()
     //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
 
+    convertButton = new QToolButton(this);
+    convertButton->setMenu(colorMenu);
+    convertButton->setPopupMode(QToolButton::InstantPopup);
+    convertButton->setText(tr("Color Convert"));
+    convertButton->setToolTip(tr("Color Convert"));
 
 
 }
@@ -587,6 +593,7 @@ void Editor::setupIcons()
     aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
     aboutCyanAct->setIcon(QIcon::fromTheme("help-about"));
 
+    convertButton->setIcon(colorsIcon);
 }
 
 void Editor::setupShortcuts()

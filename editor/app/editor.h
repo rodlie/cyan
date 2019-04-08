@@ -132,6 +132,7 @@ private:
     QtColorPicker *colorPicker;
 
     QToolButton *textButton;
+    QToolButton *convertButton;
 
     ctkPopupWidget *textPopup;
     ctkPopupWidget *layerPopup;
