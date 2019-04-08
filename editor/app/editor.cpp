@@ -110,11 +110,14 @@ Editor::Editor(QWidget *parent)
     , layersWidget(nullptr)
     , layersDock(nullptr)
     , textWidget(nullptr)
-    , textDock(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
     , colorTriangle(nullptr)
     , colorPicker(nullptr)
+    , textButton(nullptr)
+    , textPopup(nullptr)
+    , layerPopup(nullptr)
+    , colorPopup(nullptr)
 {
     // set window title
     setWindowTitle(QString("Cyan FX"));

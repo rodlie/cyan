@@ -58,6 +58,7 @@
 #include "cyan_layerwidget.h"
 #include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
+#include "ctkPopupWidget.h"
 
 class Editor : public QMainWindow
 {
@@ -123,8 +124,6 @@ private:
     QDockWidget *layersDock;
 
     CyanTextWidget *textWidget;
-    QDockWidget *textDock;
-
 
     QSlider *brushSize;
     QDockWidget *brushDock;
@@ -132,8 +131,11 @@ private:
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
+    QToolButton *textButton;
 
-
+    ctkPopupWidget *textPopup;
+    ctkPopupWidget *layerPopup;
+    ctkPopupWidget *colorPopup;
 
 signals:
 
