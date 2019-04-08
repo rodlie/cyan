@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Cyan FX
+GenericName=Cyan FX
+Comment=Experimental Image Editor
+Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
+Exec=CyanFX %U
+Icon=cyan
+StartupNotify=false
+Terminal=false
+Type=Application

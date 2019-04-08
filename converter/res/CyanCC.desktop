@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Cyan Converter
+GenericName=Cyan Color Converter
+Comment=Prepress viewer and converter
+Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
+Exec=CyanCC %U
+Icon=cyan
+StartupNotify=false
+Terminal=false
+Type=Application
