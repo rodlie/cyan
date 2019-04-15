@@ -340,6 +340,12 @@ void Editor::readImage(Magick::Blob blob,
     }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 
+    // DCM
+    if (image.format() == "Digital Imaging and Communications in Medicine image") {
+        image.defineValue("dcm", "display-range", "reset");
+        image.autoLevel();
+    }
+
     try {
         image.magick("MIFF");
         image.fileName(filename.toStdString());

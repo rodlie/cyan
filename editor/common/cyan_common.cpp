@@ -769,6 +769,7 @@ const QString CyanCommon::supportedReadFormats()
     result.append(QString("*.gif "));
     result.append(QString("*.hdr "));
     result.append(QString("*.ico "));
+    result.append(QString("*.dcm "));
 
     result.append(QString("*.k25 "));
     result.append(QString("*.kdc "));
