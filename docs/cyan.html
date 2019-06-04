@@ -2,9 +2,9 @@
 <head></head>
 <body>
 
-<h1 id="cyan">Cyan Color Converter _VERSION_</h1>
+<h1 id="cyan">Cyan _VERSION_</h1>
 
-<p align="justify">Cyan CC is an open source cross-platform image viewer and converter, designed for <a href="https://en.wikipedia.org/wiki/Prepress">prepress</a> (print) work. Cyan CC supports <a href="https://en.wikipedia.org/wiki/ICC_profile">color profiles</a> complying with the <a href="http://www.color.org/index.xalter">International Color Consortium</a> (ICC) standard, and strives to create as color-accurate images as possible, with support for <a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a>, <a href="https://en.wikipedia.org/wiki/CMYK_color_model">CMYK</a> and <a href="https://en.wikipedia.org/wiki/Grayscale">GRAY</a> with up to <a href="https://en.wikipedia.org/wiki/32-bit">32-bit</a> image depth.</p>
+<p align="justify">Cyan is an open source cross-platform image viewer and converter, designed for <a href="https://en.wikipedia.org/wiki/Prepress">prepress</a> (print) work. Like converting an image from <a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a> to <a href="https://en.wikipedia.org/wiki/CMYK_color_model">CMYK</a>, or the other way around. Cyan supports <a href="https://en.wikipedia.org/wiki/ICC_profile">color profiles</a> complying with the <a href="http://www.color.org/index.xalter">International Color Consortium</a> (ICC) standard, and strives to create as color-accurate images as possible, with support for <a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a>, <a href="https://en.wikipedia.org/wiki/CMYK_color_model">CMYK</a> and <a href="https://en.wikipedia.org/wiki/Grayscale">GRAY</a> with up to <a href="https://en.wikipedia.org/wiki/32-bit">32-bit</a> image depth.</p>
 
 <p align="center"><img src=":/docs/images/cyan-promo-01.png" alt="Promo"></p>
 
@@ -33,15 +33,15 @@ _CHANGELOG_
 <h1 id="usage">Usage</h1>
 <p align="center"><img src=":/docs/images/cyan-promo-04.png" alt="Promo"></p>
 
-<p align="justify">Cyan CC should be relatively easy to use and understand. The first thing you should know is that Cyan CC converts images using color profiles. Converting an image to another colorspace requires two profiles, one with the same colorspace as the image and a second profile with the desired output colorspace.</p>
+<p align="justify">Cyan should be relatively easy to use and understand. The first thing you should know is that Cyan converts images using color profiles. Converting an image to another colorspace requires two profiles, one with the same colorspace as the image and a second profile with the desired output colorspace.</p>
 
 <h2 id="setup">Setup</h2>
 
-<p align="justify">Cyan CC requires some minimal setup before usage. You will need to select default color profiles for RGB, CMYK and GRAY. These are used when you load an image without an embedded color profile.</p>
+<p align="justify">Cyan requires some minimal setup before usage. You will need to select default color profiles for RGB, CMYK and GRAY. These are used when you load an image without an embedded color profile.</p>
 
 <p align="center"><img src=":/docs/images/cyan-usage-02.png" alt="Promo" /></p>
 
-<p align="justify">You can set a color profile for your monitor if wanted, this will enable a RGB preview/proof of the final image. Note that this will add a performance penalty and you will need a color calibrated monitor with the color profile (available in Cyan CC).</p>
+<p align="justify">You can set a color profile for your monitor if wanted, this will enable a RGB preview/proof of the final image. Note that this will add a performance penalty and you will need a color calibrated monitor with the color profile (available in Cyan).</p>
 
 <p align="center"><img src=":/docs/images/cyan-usage-05.png" alt="Promo" /></p>
 
@@ -74,7 +74,7 @@ _CHANGELOG_
 <h1 id="integration">Integration</h1>
 <p align="center"><img src=":/docs/images/cyan-promo-06.png" alt="Promo"></p>
 
-<p align="justify">Cyan CC offers tight integration with <a href="https://www.gimp.org">GIMP</a> and works as an import/export plug-in in <a href="https://www.gimp.org">GIMP</a> 2.8+. Just select <code class="highlighter-rouge">Cyan/Import Image</code> or <code class="highlighter-rouge">Cyan/Export Image</code>.</p>
+<p align="justify">Cyan offers tight integration with <a href="https://www.gimp.org">GIMP</a> and works as an import/export plug-in in <a href="https://www.gimp.org">GIMP</a> 2.8+. Just select <code class="highlighter-rouge">Cyan/Import Image</code> or <code class="highlighter-rouge">Cyan/Export Image</code>.</p>
 
 <p align="center"><img src=":/docs/images/cyan-promo-07.png" alt="Promo" /></p>
 
@@ -84,23 +84,23 @@ _CHANGELOG_
 
 <h2 id="export-to-cmyk-from-gimp">Export to CMYK from GIMP</h2>
 
-<p align="justify">When you are finished editing in GIMP select <code class="highlighter-rouge">Cyan/Export Image</code>, in Cyan CC convert to CMYK then hit <code class="highlighter-rouge">save</code>, you can save to TIFF, JPEG and PSD.</p>
+<p align="justify">When you are finished editing in GIMP select <code class="highlighter-rouge">Cyan/Export Image</code>, in Cyan convert to CMYK then hit <code class="highlighter-rouge">save</code>, you can save to TIFF, JPEG and PSD.</p>
 
 <h2 id="gimp-notes">GIMP notes</h2>
 
-<p align="justify">When Cyan CC starts it will scan your home folder for GIMP 2.x plug-in folders, if found it will install a Cyan CC Python plug-in in the folder that does not have it.</p>
+<p align="justify">When Cyan starts it will scan your home folder for GIMP 2.x plug-in folders, if found it will install a Cyan Python plug-in in the folder that does not have it.</p>
 
-<p align="justify">If you upgrade GIMP and <code class="highlighter-rouge">Cyan/*</code> is gone just launch Cyan CC manually once to update the plug-in against your new version of GIMP, this will only happen on GIMP feature releases (2.8=&gt;2.10 etc).</p>
+<p align="justify">If you upgrade GIMP and <code class="highlighter-rouge">Cyan/*</code> is gone just launch Cyan manually once to update the plug-in against your new version of GIMP, this will only happen on GIMP feature releases (2.8=&gt;2.10 etc).</p>
 
 <h1 id="open-source">Open Source</h1>
 
 <p align="center"><img src=":/docs/images/cyan-promo-05.png" alt="Promo"></p>
 
-<p>Cyan CC is copyright Ole-André Rodlie, INRIA. All rights reserved.</p>
+<p>Cyan is copyright Ole-André Rodlie, INRIA. All rights reserved.</p>
 
 <p align="justify">This software is governed by the CeCILL license under French law and abiding by the rules of distribution of free software. You can use, modify and / or redistribute the software under the terms of the CeCILL license as circulated by CEA, CNRS and INRIA at the following <a href="https://www.cecill.info">URL</a>.</p>
 
-<p align="justify">Cyan CC includes ICC color profiles from <a href="http://www.basiccolor.de/">basICColor GmbH</a>, licensed under a <a href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-No Derivative Works 3.0 license</a>.</p>
+<p align="justify">Cyan includes ICC color profiles from <a href="http://www.basiccolor.de/">basICColor GmbH</a>, licensed under a <a href="http://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-No Derivative Works 3.0 license</a>.</p>
 
 <p>
 _3RDPARTY_
