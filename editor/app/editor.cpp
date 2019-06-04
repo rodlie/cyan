@@ -332,7 +332,7 @@ void Editor::readImage(Magick::Blob blob,
             image.read(blob);
         } else if (!filename.isEmpty()) {
             image.read(filename.toStdString());
-        }
+        } else { return; }
     }
     catch(Magick::Error &error_ ) {
         emit errorMessage(error_.what());
@@ -347,7 +347,7 @@ void Editor::readImage(Magick::Blob blob,
     }
 
     try {
-        image.magick("MIFF");
+        image.magick("MIFF"); // force internal format
         image.fileName(filename.toStdString());
         if (image.label().empty()) { // add label, use filename as fallback
             QFileInfo fileInfo(filename);
