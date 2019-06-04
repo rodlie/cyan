@@ -115,7 +115,7 @@ Cyan::Cyan(QWidget *parent)
     qApp->setPalette(palette);
     setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
     QString padding = "margin-right:5px;";
-    setWindowTitle(qApp->applicationName());
+    setWindowTitle(tr("Color Converter"));
     setWindowIcon(QIcon(":/cyan.png"));
     setAttribute(Qt::WA_QuitOnClose);
 
@@ -323,8 +323,7 @@ Cyan::Cyan(QWidget *parent)
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
 
-    QAction *aboutAction = new QAction(tr("About %1")
-                                       .arg(qApp->applicationName()), this);
+    QAction *aboutAction = new QAction(tr("About Color Converter"), this);
     aboutAction->setIcon(QIcon(":/cyan.png"));
     helpMenu->addAction(aboutAction);
 
@@ -547,7 +546,7 @@ void Cyan::aboutCyan()
             "h1#devel { font-size: small; }"
             ".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }";
     if (!html.isEmpty()) {
-        HelpDialog *dialog = new HelpDialog(this, tr("About Cyan"), html, style);
+        HelpDialog *dialog = new HelpDialog(this, tr("About Color Converter"), html, style);
         dialog->exec();
     }
 }

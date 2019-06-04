@@ -46,16 +46,18 @@ unix:QMAKE_POST_LINK = ./build/$${TARGET}
 win32-g++:QMAKE_POST_LINK = "wine64 build/$${TARGET}.exe"
 
 CONFIG += c++11
-QT_CONFIG -= no-pkg-config
-CONFIG += link_pkgconfig
-PKGCONFIG += lcms2
-MAGICK_CONFIG = ImageMagick++
-!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
-PKG_CONFIG_BIN = pkg-config
-!isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
+#QT_CONFIG -= no-pkg-config
+#CONFIG += link_pkgconfig
 
-PKGCONFIG += $${MAGICK_CONFIG}
-LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+include($${top_srcdir}/share/magick.pri)
+#PKGCONFIG += lcms2
+#MAGICK_CONFIG = ImageMagick++
+#!isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
+#PKG_CONFIG_BIN = pkg-config
+#!isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
+
+#PKGCONFIG += $${MAGICK_CONFIG}
+#LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 
 mac {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
