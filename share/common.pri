@@ -58,6 +58,8 @@ mac {
         # lowest version we can target.
         # You can however build against Qt 5.6 to get compatibility with OSX 10.7.
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -fopenmp
     }
 }
 

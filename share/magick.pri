@@ -77,6 +77,9 @@ win32-msvc {
     isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
     PKGCONFIG += $${MAGICK} lcms2
 
+    # get static 3rdparty depends
+    LIBS += `pkg-config --libs --static $${MAGICK}`
+
     # fontconfig is needed on mingw
     win32-g++ : PKGCONFIG += fontconfig
 }
