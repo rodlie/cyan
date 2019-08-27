@@ -131,7 +131,6 @@ Editor::Editor(QWidget *parent)
     setupUI();
     loadSettings();
 
-#ifdef QT_DEBUG
     qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
     qDebug() << "rgb color profiles" << CyanCommon::getColorProfiles(Magick::sRGBColorspace);
     qDebug() << "cmyk color profiles" << CyanCommon::getColorProfiles(Magick::CMYKColorspace);
@@ -139,7 +138,9 @@ Editor::Editor(QWidget *parent)
     qDebug() << "quantum depth" << CyanCommon::supportedQuantumDepth();
     qDebug() << "read formats" << CyanCommon::supportedReadFormats();
     qDebug() << "write formats" << CyanCommon::supportedWriteFormats();
-#endif
+    qDebug() << "rgb profile" << selectedDefaultColorProfile(colorProfileRGBMenu);
+    qDebug() << "cmyk profile" << selectedDefaultColorProfile(colorProfileCMYKMenu);
+    qDebug() << "gray profile" << selectedDefaultColorProfile(colorProfileGRAYMenu);
 }
 
 // save settings on quit
@@ -258,6 +259,7 @@ void Editor::loadSettings()
     setDefaultColorProfiles(colorProfileRGBMenu);
     setDefaultColorProfiles(colorProfileCMYKMenu);
     setDefaultColorProfiles(colorProfileGRAYMenu);
+    checkDefaultColorProfiles();
 
     // setup color intent
     loadDefaultColorIntent();

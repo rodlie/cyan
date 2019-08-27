@@ -39,6 +39,7 @@
 #include <QAction>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QApplication>
 
 #define RESOURCE_BYTE 1050000000
 
@@ -623,8 +624,7 @@ QStringList CyanCommon::getColorProfilesPath()
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
-    folders << QDir::homePath() + "/.config/Cyan/icc";
-    folders << QDir::homePath() + "/.config/FxArena/Cyan/icc";
+    folders << qApp->applicationDirPath() + "/profiles";
     return folders;
 }
 

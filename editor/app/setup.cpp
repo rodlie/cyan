@@ -45,30 +45,7 @@ void Editor::setupStyle()
 {
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
-
-    // set icon theme path(s)
-    QStringList iconsPath = QIcon::themeSearchPaths();
-    QString iconsHomeLocal = QString("%1/.local/share/icons").arg(QDir::homePath());
-    QString iconsHome = QString("%1/.icons").arg(QDir::homePath());
-    QString iconsDeploy = QString("%1/etc/icons").arg(qApp->applicationDirPath());
-
-    if (QFile::exists(iconsHomeLocal) &&
-        !iconsPath.contains(iconsHomeLocal)) { iconsPath.prepend(iconsHomeLocal); }
-    if (QFile::exists(iconsHome) &&
-        !iconsPath.contains(iconsHome)) { iconsPath.prepend(iconsHome); }
-    if (QFile::exists(iconsDeploy)) { iconsPath.prepend(iconsDeploy); }
-
-    iconsPath << QString("%1/../share/icons").arg(qApp->applicationDirPath());
-    iconsPath << QString("%1/icons").arg(qApp->applicationDirPath());
-    QIcon::setThemeSearchPaths(iconsPath);
-    qDebug() << "using icon theme search path" << QIcon::themeSearchPaths();
-
-    // set icon theme
-    if (QIcon::themeName().isEmpty() ||
-        QIcon::themeName() == QString("hicolor"))
-    {
-        QIcon::setThemeName("Cyan");
-    }
+    QIcon::setThemeName("Cyan");
 
     // set colors
     QPalette palette;
@@ -561,8 +538,6 @@ void Editor::setupIcons()
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));
     newTextLayerAct->setIcon(QIcon::fromTheme("document-new"));
-
-
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));

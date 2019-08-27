@@ -136,7 +136,6 @@ void Editor::setDefaultColorProfiles(QMenu *menu)
                                             QString("ISO Coated v2 - GREY 1c - (built-in)"));
         }
     }
-
     settings.endGroup();
 }
 
@@ -161,6 +160,74 @@ void Editor::setDefaultColorProfileFromTitle(QMenu *menu,
         if (action->text() == title) {
             action->setChecked(true);
         } else { action->setChecked(false); }
+    }
+}
+
+void Editor::checkDefaultColorProfiles()
+{
+    bool hasRGBProfiles = colorProfileRGBMenu->actions().size()>0?true:false;
+    bool hasCMYKProfiles = colorProfileCMYKMenu->actions().size()>0?true:false;
+    bool hasGRAYProfiles = colorProfileGRAYMenu->actions().size()>0?true:false;
+    bool hasRGBDefaultProfile = false;
+    bool hasCMYKDefaultProfile = false;
+    bool hasGRAYDefaultProfile = false;
+
+    if (hasRGBProfiles) {
+        for (int i=0;i<colorProfileRGBMenu->actions().size();++i) {
+            QAction *action = colorProfileRGBMenu->actions().at(i);
+            if (!action) { continue; }
+            if (action->isChecked()) {
+                hasRGBDefaultProfile = true;
+                break;
+            }
+        }
+        if (!hasRGBDefaultProfile) {
+            qWarning() << "NO RGB PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
+            colorProfileRGBMenu->actions().at(0)->setChecked(true);
+            QString defaultProfile = selectedDefaultColorProfile(colorProfileRGBMenu);
+            if (!defaultProfile.isEmpty()) {
+                setDefaultColorProfileFromFilename(colorProfileRGBMenu,
+                                                   defaultProfile);
+            }
+        }
+    }
+    if (hasCMYKProfiles) {
+        for (int i=0;i<colorProfileCMYKMenu->actions().size();++i) {
+            QAction *action = colorProfileCMYKMenu->actions().at(i);
+            if (!action) { continue; }
+            if (action->isChecked()) {
+                hasCMYKDefaultProfile = true;
+                break;
+            }
+        }
+        if (!hasCMYKDefaultProfile) {
+            qWarning() << "NO CMYK PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
+            colorProfileCMYKMenu->actions().at(0)->setChecked(true);
+            QString defaultProfile = selectedDefaultColorProfile(colorProfileCMYKMenu);
+            if (!defaultProfile.isEmpty()) {
+                setDefaultColorProfileFromFilename(colorProfileCMYKMenu,
+                                                   defaultProfile);
+            }
+        }
+    }
+    if (hasGRAYProfiles) {
+        for (int i=0;i<colorProfileGRAYMenu->actions().size();++i) {
+            QAction *action = colorProfileGRAYMenu->actions().at(i);
+            if (!action) { continue; }
+            if (action->isChecked()) {
+                hasGRAYDefaultProfile = true;
+                break;
+            }
+        }
+        if (!hasGRAYDefaultProfile) {
+            qWarning() << "NO GRAY PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
+            colorProfileGRAYMenu->actions().at(0)->setChecked(true);
+            QString defaultProfile = selectedDefaultColorProfile(colorProfileGRAYMenu);
+            if (!defaultProfile.isEmpty()) {
+                setDefaultColorProfileFromFilename(colorProfileCMYKMenu,
+                                                   defaultProfile);
+            }
+        }
     }
 }
 

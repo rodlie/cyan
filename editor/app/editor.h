@@ -216,6 +216,7 @@ private slots:
                                             const QString &filename);
     void setDefaultColorProfileFromTitle(QMenu *menu,
                                          const QString &title);
+    void checkDefaultColorProfiles();
     const QString selectedDefaultColorProfile(QMenu *menu);
     Magick::Blob selectedDefaultColorProfileData(QMenu *menu);
     void populateColorIntentMenu();
