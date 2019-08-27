@@ -3,7 +3,7 @@ QT += widgets
 TARGET = CyanQtSolutions
 VERSION = 1.0.0
 TEMPLATE = lib
-CONFIG -= static
+#CONFIG -= static
 
 SOURCES += qtcolorpicker.cpp qtcolortriangle.cpp qtwindowlistmenu.cpp
 HEADERS += qtcolorpicker.h qtcolortriangle.h qtwindowlistmenu.h
