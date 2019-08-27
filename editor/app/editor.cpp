@@ -196,6 +196,26 @@ void Editor::saveSettings()
     settings.endGroup();
 }
 
+void Editor::saveSettingsLastOpenDir(const QString &dir)
+{
+    if (dir.isEmpty()) { return; }
+    QSettings settings;
+    settings.beginGroup("files");
+    settings.setValue("lastOpenDir", dir);
+    settings.endGroup();
+    settings.sync();
+}
+
+void Editor::saveSettingsLastSaveDir(const QString &dir)
+{
+    if (dir.isEmpty()) { return; }
+    QSettings settings;
+    settings.beginGroup("files");
+    settings.setValue("lastSaveDir", dir);
+    settings.endGroup();
+    settings.sync();
+}
+
 // load global settings
 void Editor::loadSettings()
 {
@@ -251,6 +271,26 @@ void Editor::loadSettings()
 
     // check if we have the required color profiles needed to do anything
     hasColorProfiles();
+}
+
+const QString Editor::loadSettingsLastOpenDir()
+{
+    QString result;
+    QSettings settings;
+    settings.beginGroup("files");
+    result = settings.value("lastOpenDir", QDir::homePath()).toString();
+    settings.endGroup();
+    return result;
+}
+
+const QString Editor::loadSettingsLastSaveDir()
+{
+    QString result;
+    QSettings settings;
+    settings.beginGroup("files");
+    result = settings.value("lastSaveDir", QDir::homePath()).toString();
+    settings.endGroup();
+    return result;
 }
 
 // load cyan image project (*.MIFF)
@@ -557,10 +597,16 @@ void Editor::saveProjectDialog()
     if (!getCurrentCanvas()) { return; }
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Project"),
-                                                    QDir::homePath(),
+                                                    loadSettingsLastSaveDir(),
                                                     tr("Project Files (*.miff)"));
     if (!filename.endsWith(".miff",
                            Qt::CaseInsensitive)) { filename.append(".miff"); }
+
+    QFileInfo fileInfo(filename);
+    if (fileInfo.absolutePath() != loadSettingsLastSaveDir()) {
+        saveSettingsLastSaveDir(fileInfo.absolutePath());
+    }
+
     saveProject(filename);
 }
 
@@ -571,7 +617,7 @@ void Editor::saveImageDialog()
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Image"),
                                                     QString("%1/%2")
-                                                    .arg(QDir::homePath())
+                                                    .arg(loadSettingsLastSaveDir())
                                                     .arg(getCurrentCanvas()->getCanvasProject().label),
                                                     tr("Image files (%1)")
                                                     .arg(common.supportedWriteFormats()));
@@ -583,6 +629,11 @@ void Editor::saveImageDialog()
                              tr("Missing image suffix, try again."));
         return;
     }
+
+    if (fileInfo.absolutePath() != loadSettingsLastSaveDir()) {
+        saveSettingsLastSaveDir(fileInfo.absolutePath());
+    }
+
     writeImage(filename);
 }
 
@@ -604,7 +655,7 @@ void Editor::saveLayerDialog()
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Image"),
                                                     QString("%1/%2")
-                                                    .arg(QDir::homePath())
+                                                    .arg(loadSettingsLastSaveDir())
                                                     .arg(label),
                                                     tr("Image files (%1)")
                                                     .arg(common.supportedWriteFormats()));
@@ -616,6 +667,11 @@ void Editor::saveLayerDialog()
                              tr("Missing image suffix, try again."));
         return;
     }
+
+    if (fileInfo.absolutePath() != loadSettingsLastSaveDir()) {
+        saveSettingsLastSaveDir(fileInfo.absolutePath());
+    }
+
     writeLayer(filename, layerItem->getLayerID());
 }
 
@@ -623,10 +679,15 @@ void Editor::loadImageDialog()
 {
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open Media"),
-                                                    QDir::homePath(),
+                                                    loadSettingsLastOpenDir(),
                                                     tr("Media Files (%1)")
                                                     .arg(common.supportedReadFormats()));
     if (filename.isEmpty()) { return; }
+
+    QFileInfo fileInfo(filename);
+    if (fileInfo.absolutePath() != loadSettingsLastOpenDir()) {
+        saveSettingsLastOpenDir(fileInfo.absolutePath());
+    }
 
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(filename);

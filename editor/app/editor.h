@@ -237,7 +237,11 @@ private slots:
     //
 
     void saveSettings();
+    void saveSettingsLastOpenDir(const QString &dir);
+    void saveSettingsLastSaveDir(const QString &dir);
     void loadSettings();
+    const QString loadSettingsLastOpenDir();
+    const QString loadSettingsLastSaveDir();
 
     void loadProject(const QString &filename);
     void saveProject(const QString &filename);
