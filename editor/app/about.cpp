@@ -36,7 +36,7 @@
 void Editor::aboutCyan()
 {
     QMessageBox box(this);
-    box.setWindowTitle(tr("About Cyan FX"));
+    box.setWindowTitle(tr("About Cyan"));
 
     box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/cyan.png")));
 
@@ -53,14 +53,14 @@ void Editor::aboutCyan()
     version = CYAN_VERSION;
 #endif
     QString about;
-    about.append(QString("<h2>Cyan FX %1</h2>")
+    about.append(QString("<h2>Cyan %1</h2>")
                  .arg(version));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan FX is an open source image editor.")));
+                 .arg(tr("Open Source Prepress Image Converter/Viewer/Editor.")));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("&copy;2019 Ole-André Rodlie. All rights reserved.")));
+                 .arg(tr("&copy;2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan FX is distributed under the %1 license.")
+                 .arg(tr("Cyan is distributed under the %1 license.")
                       .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
                                    "CeCILL v2.1</a>"))));
 
