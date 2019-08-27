@@ -58,11 +58,11 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
     sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree wine rpm dpkg qtbase5-dev libfontconfig1-dev
-    echo "Extracting win64 sdk ..."
-    mkdir -p ${MXE}
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz
-    tar xf download.tar.xz -C ${MXE}/
-    rm -f download.tar.xz
+    #echo "Extracting win64 sdk ..."
+    #mkdir -p ${MXE}
+    #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz
+    #tar xf download.tar.xz -C ${MXE}/
+    #rm -f download.tar.xz
     echo "Extracting linux64 sdk ..."
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C /opt
@@ -106,22 +106,22 @@ if [ "${OS}" = "Linux" ]; then
   strip -s build/Cyan
   mv build/Cyan .
 
-  echo "===> Building win64 ..."
-  mkdir -p ${CWD}/win64
-  cd ${CWD}/win64
-  TARGET=x86_64-w64-mingw32.static
-  MINGW="${MXE}/usr/${TARGET}"
-  CMAKE="${TARGET}-cmake"
-  QT=${MINGW}/qt5
-  QMAKE=${QT}/bin/qmake
-  STRIP="${MXE}/usr/bin/${TARGET}-strip"
-  PATH="${MXE}/usr/bin:/usr/bin:/bin"
-  PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-  ${QMAKE} GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
-  make
-  #make test
-  ${STRIP} -s build/Cyan.exe
-  mv build/Cyan.exe .
+  #echo "===> Building win64 ..."
+  #mkdir -p ${CWD}/win64
+  #cd ${CWD}/win64
+  #TARGET=x86_64-w64-mingw32.static
+  #MINGW="${MXE}/usr/${TARGET}"
+  #CMAKE="${TARGET}-cmake"
+  #QT=${MINGW}/qt5
+  #QMAKE=${QT}/bin/qmake
+  #STRIP="${MXE}/usr/bin/${TARGET}-strip"
+  #PATH="${MXE}/usr/bin:/usr/bin:/bin"
+  #PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
+  #${QMAKE} GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
+  #make
+  ##make test
+  #${STRIP} -s build/Cyan.exe
+  #mv build/Cyan.exe .
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
   PKG_CONFIG=${SDK}/bin/pkg-config
@@ -153,14 +153,14 @@ if [ "${OS}" = "Linux" ]; then
   #cp ${CWD}/docs/LICENSE.CeCILLv21 Cyan-${TAG}-Linux/
   #cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
   #cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
-  cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
+  #cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
   cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
   cp ${CWD}/share/cyan.desktop Cyan-${TAG}-Linux/
   cp -a ${CWD}/share/icons/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
-  7za -mx=9 a -r Cyan-${TAG}-Windows.7z Cyan-${TAG}-Windows
-  WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.7z | awk '{print $1}'`
-  cp Cyan-${TAG}-Windows.7z ${DEPLOY}/
-  echo "===> Windows checksum ${WIN_CHECKSUM}"
+  #7za -mx=9 a -r Cyan-${TAG}-Windows.7z Cyan-${TAG}-Windows
+  #WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.7z | awk '{print $1}'`
+  #cp Cyan-${TAG}-Windows.7z ${DEPLOY}/
+  #echo "===> Windows checksum ${WIN_CHECKSUM}"
   tar cvvf Cyan-${TAG}-Linux.tar Cyan-${TAG}-Linux
   xz -9 Cyan-${TAG}-Linux.tar
   mv Cyan-${TAG}-Linux.tar.xz Cyan-${TAG}-Linux.txz
@@ -178,24 +178,24 @@ elif [ "${OS}" = "Darwin" ]; then
   echo "===> Mac checksum ${MAC_CHECKSUM}"
 fi
 
-if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then
-    echo "===> Uploading archives to transfer.sh ..."
-    if [ "${OS}" = "Linux" ]; then
-      UPLOAD_WIN=`curl --upload-file ./Cyan-${TAG}-Windows.7z https://transfer.sh/Cyan-${TAG}-Windows.7z`
-      UPLOAD_LIN=`curl --upload-file ./Cyan-${TAG}-Linux.txz https://transfer.sh/Cyan-${TAG}-Linux.txz`
-      echo "===> Windows snapshot ${UPLOAD_WIN}"
-      echo "===> Linux snapshot ${UPLOAD_LIN}"
-      if [ "${UPLOAD_WIN}" != "" ] && [ "${UPLOAD_LIN}" != "" ]; then
-          COMMENT="**CI:** Windows build is available at ${UPLOAD_WIN} with SHA256 checksum ${WIN_CHECKSUM}. Linux build is available at ${UPLOAD_LIN} with SHA256 checksum ${LIN_CHECKSUM}."
-          curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
-      fi
-    elif [ "${OS}" = "Darwin" ]; then
-      UPLOAD_MAC=`curl --upload-file ./Cyan-${TAG}-Mac.dmg https://transfer.sh/Cyan-${TAG}-Mac.dmg`
-      echo "===> Mac snapshot ${UPLOAD_MAC}"
-      if [ "${UPLOAD_MAC}" != "" ]; then
-        COMMENT="**CI:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
-        curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
-      fi
-    fi
-fi
+#if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then
+#    echo "===> Uploading archives to transfer.sh ..."
+#    if [ "${OS}" = "Linux" ]; then
+#      UPLOAD_WIN=`curl --upload-file ./Cyan-${TAG}-Windows.7z https://transfer.sh/Cyan-${TAG}-Windows.7z`
+#      UPLOAD_LIN=`curl --upload-file ./Cyan-${TAG}-Linux.txz https://transfer.sh/Cyan-${TAG}-Linux.txz`
+#      echo "===> Windows snapshot ${UPLOAD_WIN}"
+#      echo "===> Linux snapshot ${UPLOAD_LIN}"
+#      if [ "${UPLOAD_WIN}" != "" ] && [ "${UPLOAD_LIN}" != "" ]; then
+#          COMMENT="**CI:** Windows build is available at ${UPLOAD_WIN} with SHA256 checksum ${WIN_CHECKSUM}. Linux build is available at ${UPLOAD_LIN} with SHA256 checksum ${LIN_CHECKSUM}."
+#          curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+#      fi
+#    elif [ "${OS}" = "Darwin" ]; then
+#      UPLOAD_MAC=`curl --upload-file ./Cyan-${TAG}-Mac.dmg https://transfer.sh/Cyan-${TAG}-Mac.dmg`
+#      echo "===> Mac snapshot ${UPLOAD_MAC}"
+#      if [ "${UPLOAD_MAC}" != "" ]; then
+#        COMMENT="**CI:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
+#        curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
+#      fi
+#    fi
+#fi
 
