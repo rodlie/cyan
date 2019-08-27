@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QApplication::setApplicationName(QString("Cyan"));
     QApplication::setOrganizationName(QString("FxArena"));
-    QApplication::setOrganizationDomain(QString("net.fxarena.cyan"));
+    QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
 #ifdef USE_FC
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_FC
     // setup fontconfig
-    splash.showMessage(QObject::tr("Scanning for fonts, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
+    splash.showMessage(QObject::tr("Scanning font cache, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
