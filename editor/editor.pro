@@ -35,8 +35,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-TARGET = CyanFX
-VERSION = 0.9.0
+TARGET = Cyan
+VERSION = 20190827
 
 TEMPLATE = app
 QT += concurrent widgets
@@ -44,10 +44,10 @@ QT += concurrent widgets
 CONFIG += c++11
 CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
-QMAKE_TARGET_COMPANY = "Cyan"
-QMAKE_TARGET_PRODUCT = "CyanFX"
-QMAKE_TARGET_DESCRIPTION = "Cyan FX"
-QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
+QMAKE_TARGET_COMPANY = "FxArena DA"
+QMAKE_TARGET_PRODUCT = "Cyan"
+QMAKE_TARGET_DESCRIPTION = "Cyan"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, FxArena DA"
 
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
@@ -169,7 +169,7 @@ unix:!mac {
     desktop.path = $${APPDIR}
 
     desktop.files = \
-        $${top_srcdir}/share/CyanFX.desktop
+        $${top_srcdir}/share/Cyan.desktop
     icc.files = \
         $${top_srcdir}/share/icc/rgb.icc \
         $${top_srcdir}/share/icc/cmyk.icc \
