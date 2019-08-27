@@ -213,7 +213,7 @@ void LayerTree::populateTree(View *view)
         addTopLevelItem(item);
         blockSignals(false);
     }
-    sortByColumn(0);
+    sortByColumn(0, Qt::DescendingOrder);
 
     if (lastLayerSelected>=0) { // set last item selected
         for (int i=0;i<topLevelItemCount();++i) {

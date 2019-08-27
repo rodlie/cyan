@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
 #ifdef USE_FC
-    QSplashScreen splash(QIcon(":/splash.png").pixmap(500,333), Qt::WindowStaysOnTopHint);
+    QSplashScreen splash(QIcon(":/splash.png").pixmap(500,333), Qt::SplashScreen);
     splash.setStyleSheet("font-weight:bold;");
     splash.show();
 #endif
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_FC
     // setup fontconfig
-    splash.showMessage(QObject::tr("Setup fontconfig, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
+    splash.showMessage(QObject::tr("Scanning for fonts, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
