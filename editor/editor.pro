@@ -125,7 +125,7 @@ INCLUDEPATH += \
 
 # link cyan qt solutions
 CQTS = CyanQtSolutions
-win32 : CQTS = CyanQtSolutions1
+#win32 : CQTS = CyanQtSolutions1
 LIBS += -L$${top_builddir}/build -l$${CQTS}
 QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
