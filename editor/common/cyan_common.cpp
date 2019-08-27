@@ -735,99 +735,84 @@ const QString CyanCommon::getProfileTag(cmsHPROFILE profile,
 
 const QString CyanCommon::supportedWriteFormats()
 {
-    QString result;
-    if (supportsJpeg()) {
-        result.append(QString("*.jpeg "));
-        result.append(QString("*.jpg "));
-    }
-    if (supportsJP2()) {
-        result.append(QString("*.jp2 "));
-    }
-    if (supportsPng()) {
-        result.append(QString("*.png "));
-    }
-    if (supportsTiff()) {
-        result.append(QString("*.tiff "));
-        result.append(QString("*.tif "));
-    }
-    if (supportsOpenExr()) {
-        result.append(QString("*.exr "));
-    }
-    result.append(QString("*.bmp "));
-    result.append(QString("*.psd "));
-
-    return result;
+    QString formats =  supportedImageFormats(false);
+    if (hasDelegate("tiff")) { formats.append(" *.tif"); }
+    return formats;
 }
 
 const QString CyanCommon::supportedReadFormats()
 {
-    QString result;
-    result.append(QString("*.miff "));
-    result.append(QString("*.xcf "));
-    result.append(QString("*.psd "));
-    result.append(QString("*.bmp "));
-    result.append(QString("*.gif "));
-    result.append(QString("*.hdr "));
-    result.append(QString("*.ico "));
-    result.append(QString("*.dcm "));
+    return supportedImageFormats(true);
+}
 
-    result.append(QString("*.k25 "));
-    result.append(QString("*.kdc "));
-    result.append(QString("*.orf "));
-    result.append(QString("*.pcd "));
-    result.append(QString("*.pcds "));
-    result.append(QString("*.pct "));
-    result.append(QString("*.pict "));
-    result.append(QString("*.pix "));
-    result.append(QString("*.pnm "));
-    result.append(QString("*.ppm "));
-    result.append(QString("*.rmf "));
-    result.append(QString("*.rw2 "));
-    result.append(QString("*.sgi "));
-    result.append(QString("*.sr2 "));
-    result.append(QString("*.srf "));
-    result.append(QString("*.sun "));
-    result.append(QString("*.xpm "));
+const QString CyanCommon::supportedImageFormats(bool readFormats)
+{
+    QStringList found;
+    MagickCore::ExceptionInfo *exception;
+    const MagickCore::MagickInfo **mFormat = nullptr;
+    size_t nFormats;
 
-    result.append(QString("*.cr2 "));
-    result.append(QString("*.crw "));
-    result.append(QString("*.dcr "));
-    result.append(QString("*.dpx "));
+    MagickCoreGenesis((char *)nullptr, MagickCore::MagickFalse);
+    exception = MagickCore::AcquireExceptionInfo();
+    mFormat = GetMagickInfoList("*", &nFormats, exception);
 
-    if (supportsOpenExr()) { result.append(QString("*.exr ")); }
-    if (supportsJng()) { result.append(QString("*.jng ")); }
-    if (supportsJpeg()) {
-        result.append(QString("*.jpeg "));
-        result.append(QString("*.jpg "));
-    }
-    if (supportsJP2()) {
-        result.append(QString("*.j2c "));
-        result.append(QString("*.j2k "));
-        result.append(QString("*.jp2 "));
-        result.append(QString("*.jpc "));
-        result.append(QString("*.jpe "));
-        result.append(QString("*.jpm "));
-        result.append(QString("*.jps "));
-        result.append(QString("*.pgx "));
-    }
-    if (supportsPng()) {
-        result.append(QString("*.png "));
-        result.append(QString("*.mng "));
-    }
-    if (supportsTiff()) {
-        result.append(QString("*.tiff "));
-        result.append(QString("*.tif "));
-    }
-    if (supportsLcms()) {
-        result.append(QString("*.icc "));
-        result.append(QString("*.icm "));
+    if (!mFormat) { return found.join(""); }
+    for (size_t i=0;i<nFormats;i++) {
+        QString suffix = "*.";
+        if (readFormats && mFormat[i]->decoder) {
+            suffix.append(mFormat[i]->name);
+            if (isBlacklistedReadFormat(suffix.toLower())) { continue; }
+            found << suffix.toLower();
+        } else if (!readFormats && mFormat[i]->encoder) {
+            suffix.append(mFormat[i]->name);
+            if (isBlacklistedWriteFormat(suffix.toLower())) { continue; }
+            found << suffix.toLower();
+        }
     }
 
-    result.append(QString("*.mp3 "));
-    result.append(QString("*.mp4 "));
-    result.append(QString("*.mkv "));
+    delete [] mFormat;
+    exception = DestroyExceptionInfo(exception);
+    MagickCore::MagickCoreTerminus();
 
-    return  result;
+    return found.join(" ");
+}
+
+bool CyanCommon::isBlacklistedReadFormat(const QString &readFormat)
+{
+    if (readFormat.isEmpty()) { return true; }
+    QStringList blacklisted;
+    blacklisted << "*.k" << "*.group4" << "*.g" << "*.gradient" << "*.ftp" << "*.fractal";
+    blacklisted << "*.fax" << "*.file" << "*.clip" << "*.caption" << "*.canvas" << "*.label";
+    blacklisted << "*.m2v" << "*.a" << "*.b" << "*.c" << "*.o" << "*.txt" << "*.vst" << "*.tile";
+    blacklisted << "*.text" << "*.screenshot" << "*.radial-gradient" << "*.plasma" << "*.pattern";
+    blacklisted << "*.pango" << "*.mpg" << "*.mpeg" << "*.mov" << "*.mono" << "*.mkv" << "*.mat";
+    blacklisted<< "*.mask" << "*.map" << "*.m4v" << "*.avi" << "*.http";
+    if (blacklisted.contains(readFormat)) { return true; }
+    return false;
+}
+
+bool CyanCommon::isBlacklistedWriteFormat(const QString &writeFormat)
+{
+    if (writeFormat.isEmpty()) { return true; }
+    QStringList blacklisted;
+    blacklisted << "*.a" << "*.aai" << "*.ai" << "*.art" << "*.avs" << "*.b" << "*.bgr" << "*.bgra";
+    blacklisted << "*.bgro" << "*.brf" << "*.c" << "*.cal" << "*.cals" << "*.cin" << "*.cip" << "*.clip";
+    blacklisted << "*.cmyk" << "*.cmyka" << "*.cur" << "*.data" << "*.epdf" << "*.epi" << "*.eps" << "*.eps2";
+    blacklisted << "*.eps3" << "*.epsf" << "*.epsi" << "*.ept" << "*.ept2" << "*.ept3" << "*.fax" << "*.fits";
+    blacklisted << "*.fts" << "*.g" << "*.g3" << "*.g4" << "*.gray" << "*.graya" << "*.group4" << "*.hdr";
+    blacklisted << "*.histogram" << "*.hrz" << "*.htm" << "*.html" << "*.icb" << "*.ico" << "*.icon";
+    blacklisted << "*.info" << "*.inline" <<  "*.ipl" <<  "*.isobrl" <<  "*.isobrl6" << "*.json" <<  "*.k";
+    blacklisted <<  "*.m" << "*.m2v" << "*.m4v" << "*.map" << "*.mask" << "*.mat" << "*.matte";
+    blacklisted << "*.mkv" << "*.mng" << "*.mono" << "*.mov" << "*.mp4" << "*.mpc" << "*.mpeg" << "*.mpg";
+    blacklisted << "*.msl" << "*.msvg" << "*.mtv" << "*.mvg" << "*.null" << "*.o" << "*.otb" << "*.pal";
+    blacklisted << "*.palm" << "*.pam" << "*.pdb" << "*.pdf" << "*.pdfa" << "*.ps" << "*.ps2" << "*.ps3";
+    blacklisted << "*.psb" << "*.ptif" << "*.r" << "*.ras" << "*.rgb" << "*.rgba" << "*.rgbo" << "*.rgf";
+    blacklisted << "*.shtml" << "*.six" <<"*.sixel" << "*.sparse-color" << "*.svg" << "*.svgz" << "*.thumbnail" ;
+    blacklisted << "*.txt" << "*.ubrl" << "*.ubrl6" << "*.uil" << "*.uyvy" << "*.vda" << "*.vicar" << "*.vid";
+    blacklisted << "*.viff" << "*.vips" << "*.vst" << "*.wbmp" << "*.wmv" << "*.x" << "*.xbm" ;
+    blacklisted << "*.xv" << "*.xwd" << "*.y" << "*.ycbcr" << "*.ycbcra" << "*.yuv";
+    if (blacklisted.contains(writeFormat)) { return true; }
+    return false;
 }
 
 int CyanCommon::supportedQuantumDepth()
@@ -837,124 +822,18 @@ int CyanCommon::supportedQuantumDepth()
             .toInt();
 }
 
-bool CyanCommon::supportsJpeg()
+bool CyanCommon::hasDelegate(const QString &delegate)
 {
+    if (delegate.isEmpty()) { return false; }
     return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("jpeg", Qt::CaseSensitive);
+           .contains(delegate, Qt::CaseSensitive);
 }
 
-bool CyanCommon::supportsPng()
+bool CyanCommon::hasFeature(const QString &feature)
 {
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("png", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsTiff()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("tiff", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsLcms()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("lcms", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsHdri()
-{
+    if (feature.isEmpty()) { return false; }
     return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
-            .contains("HDRI", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsOpenMP()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickFeatures()))
-            .contains("OpenMP", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsBzlib()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("bzlib", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsCairo()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("cairo", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsFontConfig()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("fontconfig", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsFreeType()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("freetype", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsJP2()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("openjp2", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsLzma()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("lzma", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsOpenExr()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("openexr", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsPangoCairo()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("pangocairo", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsRaw()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("raw", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsRsvg()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("rsvg", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsWebp()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("webp", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsXml()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("xml", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsZlib()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("zlib", Qt::CaseSensitive);
-}
-
-bool CyanCommon::supportsJng()
-{
-    return QString(QString::fromStdString(MagickCore::GetMagickDelegates()))
-            .contains("jng", Qt::CaseSensitive);
+           .contains(feature, Qt::CaseSensitive);
 }
 
 const QString CyanCommon::humanFileSize(float num, bool mp, bool are)

@@ -207,27 +207,12 @@ public:
 
     static const QString supportedWriteFormats();
     static const QString supportedReadFormats();
+    static const QString supportedImageFormats(bool readFormats);
+    static bool isBlacklistedReadFormat(const QString &readFormat);
+    static bool isBlacklistedWriteFormat(const QString &writeFormat);
     static int supportedQuantumDepth();
-    static bool supportsJpeg();
-    static bool supportsPng();
-    static bool supportsTiff();
-    static bool supportsLcms();
-    static bool supportsHdri();
-    static bool supportsOpenMP();
-    static bool supportsBzlib();
-    static bool supportsCairo();
-    static bool supportsFontConfig();
-    static bool supportsFreeType();
-    static bool supportsJP2();
-    static bool supportsLzma();
-    static bool supportsOpenExr();
-    static bool supportsPangoCairo();
-    static bool supportsRaw();
-    static bool supportsRsvg();
-    static bool supportsWebp();
-    static bool supportsXml();
-    static bool supportsZlib();
-    static bool supportsJng();
+    static bool hasDelegate(const QString &delegate);
+    static bool hasFeature(const QString &feature);
 
     static const QString humanFileSize(float num,
                                        bool mp = false,

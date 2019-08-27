@@ -136,26 +136,9 @@ Editor::Editor(QWidget *parent)
     qDebug() << "rgb color profiles" << CyanCommon::getColorProfiles(Magick::sRGBColorspace);
     qDebug() << "cmyk color profiles" << CyanCommon::getColorProfiles(Magick::CMYKColorspace);
     qDebug() << "gray color profiles" << CyanCommon::getColorProfiles(Magick::GRAYColorspace);
-    qDebug() << "q" << CyanCommon::supportedQuantumDepth();
-    qDebug() << "jpeg" << CyanCommon::supportsJpeg();
-    qDebug() << "png" << CyanCommon::supportsPng();
-    qDebug() << "tiff" << CyanCommon::supportsTiff();
-    qDebug() << "lcms" << CyanCommon::supportsLcms();
-    qDebug() << "hdri" << CyanCommon::supportsHdri();
-    qDebug() << "openmp" << CyanCommon::supportsOpenMP();
-    qDebug() << "bzlib" << CyanCommon::supportsBzlib();
-    qDebug() << "cairo" << CyanCommon::supportsCairo();
-    qDebug() << "fontconfig" << CyanCommon::supportsFontConfig();
-    qDebug() << "freetype" << CyanCommon::supportsFreeType();
-    qDebug() << "jp2" << CyanCommon::supportsJP2();
-    qDebug() << "lzma" << CyanCommon::supportsLzma();
-    qDebug() << "openexr" << CyanCommon::supportsOpenExr();
-    qDebug() << "pangocairo" << CyanCommon::supportsPangoCairo();
-    qDebug() << "raw" << CyanCommon::supportsRaw();
-    qDebug() << "rsvg" << CyanCommon::supportsRsvg();
-    qDebug() << "webp" << CyanCommon::supportsWebp();
-    qDebug() << "xml" << CyanCommon::supportsXml();
-    qDebug() << "zlib" << CyanCommon::supportsZlib();
+    qDebug() << "quantum depth" << CyanCommon::supportedQuantumDepth();
+    qDebug() << "read formats" << CyanCommon::supportedReadFormats();
+    qDebug() << "write formats" << CyanCommon::supportedWriteFormats();
 #endif
 }
 
@@ -340,13 +323,12 @@ void Editor::readImage(Magick::Blob blob,
     }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 
-    // DCM
-    if (image.format() == "Digital Imaging and Communications in Medicine image") {
-        image.defineValue("dcm", "display-range", "reset");
-        image.autoLevel();
-    }
-
     try {
+        // DCM
+        if (image.format() == "Digital Imaging and Communications in Medicine image") {
+            image.defineValue("dcm", "display-range", "reset");
+            image.autoLevel();
+        }
         image.magick("MIFF"); // force internal format
         image.fileName(filename.toStdString());
         if (image.label().empty()) { // add label, use filename as fallback
