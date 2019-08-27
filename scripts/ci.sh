@@ -57,7 +57,7 @@ if [ "${SETUP}" = 1 ]; then
     echo "Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
-    sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree wine rpm dpkg qtbase5-dev
+    sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree wine rpm dpkg qtbase5-dev libfontconfig1-dev
     echo "Extracting win64 sdk ..."
     mkdir -p ${MXE}
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181231-mingw64.tar.xz/download && mv download download.tar.xz
