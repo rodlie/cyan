@@ -290,6 +290,7 @@ void Editor::setupWidgets()
 
     // text
     textButton = new QToolButton(this);
+    textButton->setText(tr("Text"));
     textButton->setToolTip(tr("Text"));
     textButton->setIcon(QIcon::fromTheme("font"));
     textButton->setCheckable(true);
@@ -309,7 +310,7 @@ void Editor::setupActions()
 {
 
     newImageAct = new QAction(this);
-    newImageAct->setText(tr("New image"));
+    newImageAct->setText(tr("New"));
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open"));
@@ -402,7 +403,7 @@ void Editor::setupButtons()
     convertButton = new QToolButton(this);
     convertButton->setMenu(colorMenu);
     convertButton->setPopupMode(QToolButton::InstantPopup);
-    convertButton->setText(tr("Color Convert"));
+    convertButton->setText(tr("Colors"));
     convertButton->setToolTip(tr("Color Convert"));
 
 
