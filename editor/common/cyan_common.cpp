@@ -220,20 +220,30 @@ void CyanCommon::setThreadResources(int thread)
     Magick::ResourceLimits::thread(static_cast<qulonglong>(thread));
 }
 
+// Write Cyan image format
 bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
-                         const QString &filename,
-                         Magick::CompressionType compress)
+                             const QString &filename,
+                             Magick::CompressionType compress)
 {
     if (filename.isEmpty() || !canvas.image.isValid()) { return false; }
+    std::list<Magick::Image> images; // our "layers"
+    Magick::Image image(canvas.image); // copy canvas
+    image.magick("MIFF"); // We use MIFF as project format
 
-    // setup project
-    std::list<Magick::Image> images;
-    Magick::Image image(canvas.image);
-    image.magick("MIFF");
+    // set canvas label on image
+    /*try {
+        image.label(canvas.label.isEmpty()?"Unnamed canvas":canvas.label.toStdString());
+    }
+    catch(Magick::Error &error_ ) {
+        qWarning() << error_.what();
+        return false;
+    }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }*/
 
-    // set label on image
+    // set cyan project name
     try {
-        image.label(canvas.label.toStdString());
+        image.attribute(QString(CYAN_LAYER_LABEL).toStdString(),
+                        canvas.label.toStdString());
     }
     catch(Magick::Error &error_ ) {
         qWarning() << error_.what();
@@ -241,7 +251,7 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
     }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
-    // mark as cyan project
+    // set cyan project version
     try {
         image.attribute(QString(CYAN_PROJECT).toStdString(),
                         QString("%1").arg(CYAN_PROJECT_VERSION)
@@ -283,8 +293,17 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
         layer.magick("MIFF");
 
         // add label
+        /*try {
+            layer.label(layers.value().label.isEmpty()?"Unnamed layer":layers.value().label.toStdString());
+        }
+        catch(Magick::Error &error_ ) {
+            qWarning() << error_.what();
+            return false;
+        }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }*/
         try {
-            layer.label(layers.value().label.toStdString());
+            layer.attribute(QString(CYAN_LAYER_LABEL).toStdString(),
+                            layers.value().label.toStdString());
         }
         catch(Magick::Error &error_ ) {
             qWarning() << error_.what();
@@ -299,7 +318,7 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
                 layer.evaluate(Magick::AlphaChannel,
                                 Magick::MultiplyEvaluateOperator,
                                 0.0);
-                layer.attribute(QString(CYAN_LAYER_TEXT).toStdString(),
+                layer.attribute(QString(CYAN_LAYER_TEXT_HTML).toStdString(),
                                 QString("%1").arg(layers.value().text)
                                 .toStdString());
                 layer.attribute(QString(CYAN_LAYER_TEXT_ALIGN).toStdString(),
@@ -343,7 +362,7 @@ bool CyanCommon::writeCanvas(CyanCommon::Canvas canvas,
         }
         catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
-        // mark as cyan layer
+        // set cyan layer version
         try {
             layer.attribute(QString(CYAN_LAYER).toStdString(),
                             QString("%1").arg(CYAN_LAYER_VERSION)
@@ -459,7 +478,8 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
             // set label
-            canvas.label = QString::fromStdString(it->label());
+            //canvas.label = QString::fromStdString(it->label());
+            canvas.label = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LABEL).toStdString()));
 
             //set profile
             canvas.profile = canvas.image.iccColorProfile();
@@ -482,7 +502,7 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
                                                               .toStdString())).toInt();
 
             // get text
-            QString text = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT).toStdString()));
+            QString text = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT_HTML).toStdString()));
             QString textAlign = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT_ALIGN).toStdString()));
             int textRotate = QString::fromStdString(it->attribute(QString(CYAN_LAYER_TEXT_ROTATE).toStdString())).toInt();
 
@@ -510,7 +530,8 @@ CyanCommon::Canvas CyanCommon::readCanvas(const QString &filename)
             } else {
                 layer.image = *it;
             }
-            layer.label = QString::fromStdString(layer.image.label());
+            //layer.label = QString::fromStdString(layer.image.label());
+            layer.label = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LABEL).toStdString()));
             layer.visible = visibility;
             layer.locked = locked;
             layer.pos = pos;

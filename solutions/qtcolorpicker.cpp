@@ -594,6 +594,10 @@ ColorPickerItem *ColorPickerPopup::find(const QColor &col) const
 */
 void ColorPickerPopup::insertColor(const QColor &col, const QString &text, int index)
 {
+    if (items.count()>MAX_ITEMS) {
+        delete items.takeFirst();
+    }
+
     // Don't add colors that we have already.
     ColorPickerItem *existingItem = find(col);
     ColorPickerItem *lastSelectedItem = find(lastSelected());
@@ -621,9 +625,6 @@ void ColorPickerPopup::insertColor(const QColor &col, const QString &text, int i
 
     if (index == -1) {
         index = items.count();
-        if (index>MAX_ITEMS) {
-            items.removeAt(0);
-        }
         index--;
     }
 
@@ -869,6 +870,7 @@ void ColorPickerPopup::regenerateGrid()
     grid = new QGridLayout(this);
     //grid->setMargin(1);
     grid->setSpacing(0);
+
 
     int ccol = 0, crow = 0;
     for (int i = 0; i < items.size(); ++i) {

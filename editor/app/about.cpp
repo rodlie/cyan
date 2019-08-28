@@ -53,10 +53,10 @@ void Editor::aboutCyan()
     version = CYAN_VERSION;
 #endif
     QString about;
-    about.append(QString("<h2>Cyan %1</h2>")
+    about.append(QString("<h2>Cyan %1 Alpha</h2>")
                  .arg(version));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Open Source Prepress Image Converter/Viewer/Editor.")));
+                 .arg(tr("Simple general-purpose image editor. Cyan is currently under early development and have many bugs and missing features.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("&copy;2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
     about.append(QString("<p>%1</p>")
@@ -65,6 +65,8 @@ void Editor::aboutCyan()
                                    "CeCILL v2.1</a>"))));
 
     box.setText(about);
+    box.setInformativeText(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
+                                   "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
     box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }

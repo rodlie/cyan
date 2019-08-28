@@ -109,19 +109,19 @@ INCLUDEPATH += \
     $${top_srcdir}/solutions
 
 # ctk
-QT += opengl
-SOURCES += \
-    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget.cpp \
-    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget.cpp \
-    $${top_srcdir}/editor/widgets/ctk/ctkWidgetsUtils.cpp
-HEADERS += \
-    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget.h \
-    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget_p.h \
-    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget.h \
-    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget_p.h \
-    $${top_srcdir}/editor/widgets/ctk/ctkWidgetsUtils.h
-INCLUDEPATH += \
-    $${top_srcdir}/editor/widgets/ctk
+#QT += opengl
+#SOURCES += \
+#    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget.cpp \
+#    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget.cpp \
+#    $${top_srcdir}/editor/widgets/ctk/ctkWidgetsUtils.cpp
+#HEADERS += \
+#    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget.h \
+#    $${top_srcdir}/editor/widgets/ctk/ctkBasePopupWidget_p.h \
+#    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget.h \
+#    $${top_srcdir}/editor/widgets/ctk/ctkPopupWidget_p.h \
+#    $${top_srcdir}/editor/widgets/ctk/ctkWidgetsUtils.h
+#INCLUDEPATH += \
+#    $${top_srcdir}/editor/widgets/ctk
 
 # link cyan qt solutions
 CQTS = CyanQtSolutions
@@ -140,6 +140,9 @@ include($${top_srcdir}/share/common.pri)
 
 # deploy
 CONFIG(deploy): DEFINES += DEPLOY
+
+# custom magick features
+CONFIG(custom_magick): DEFINES += CUSTOM_MAGICK
 
 # icons
 RESOURCES += $${top_srcdir}/share/icons_bundle.qrc

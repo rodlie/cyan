@@ -42,7 +42,7 @@ Render::Render(QObject *parent) : QObject (parent)
 
 Magick::Image Render::renderText(CyanCommon::Layer layer)
 {
-    qDebug() << "render text";
+    qDebug() << "render text" << layer.isText << layer.label;
     if (!layer.text.isEmpty() && layer.isText) {
         try {
             layer.image.quiet(true);

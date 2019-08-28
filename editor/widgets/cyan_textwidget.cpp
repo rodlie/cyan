@@ -112,18 +112,26 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     htmlEditor->setAcceptRichText(false);
     textEditor->hide();
 
+    QWidget *fontWidget = new QWidget(this);
+    QHBoxLayout *fontLayout = new QHBoxLayout(fontWidget);
+    fontLayout->addWidget(fontBox);
+    fontLayout->addWidget(fontSizeBox);
+    //fontLayout->addWidget(textColorButton);
+
     formatLayout->addWidget(textBoldButton);
     formatLayout->addWidget(textItalicButton);
     formatLayout->addWidget(textUnderlineButton);
     formatLayout->addWidget(textColorButton);
-    formatLayout->addWidget(fontBox);
-    formatLayout->addWidget(fontSizeBox);
+    //formatLayout->addWidget(fontBox);
+    //formatLayout->addWidget(fontSizeBox);
     formatLayout->addWidget(textAlignBox);
-    formatLayout->addWidget(textRotateSlider);
+    //formatLayout->addWidget(textRotateSlider);
 
     mainLayout->addWidget(formatWidget);
+    mainLayout->addWidget(fontWidget);
     mainLayout->addWidget(htmlEditor);
     mainLayout->addWidget(textEditor);
+    mainLayout->addWidget(textRotateSlider);
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);

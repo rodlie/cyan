@@ -54,12 +54,15 @@ extern "C" {
 
 #include "cyan_tileitem.h"
 
-#define CYAN_PROJECT_VERSION 2.0
-#define CYAN_LAYER_VERSION 2.0
 
+
+// project
 #define CYAN_PROJECT "cyan-project"
-#define CYAN_LAYER "cyan-layer"
+#define CYAN_PROJECT_VERSION 1
 
+// common layer
+#define CYAN_LAYER "cyan-layer"
+#define CYAN_LAYER_VERSION 1
 #define CYAN_LAYER_VISIBILITY "cyan-visibility"
 #define CYAN_LAYER_OPACITY "cyan-opacity"
 #define CYAN_LAYER_COMPOSE "cyan-compose"
@@ -67,8 +70,11 @@ extern "C" {
 #define CYAN_LAYER_Y "cyan-layer-y"
 #define CYAN_LAYER_ORDER "cyan-layer-order"
 #define CYAN_LAYER_LOCK "cyan-layer-lock"
+#define CYAN_LAYER_LABEL "cyan-layer-label"
 
-#define CYAN_LAYER_TEXT "cyan-layer-text"
+// text layer
+#define CYAN_LAYER_TEXT_HTML "cyan-layer-text-html"
+#define CYAN_LAYER_TEXT_PANGO "cyan-layer-text-pango"
 #define CYAN_LAYER_TEXT_ALIGN "cyan-layer-text-align"
 #define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"
 

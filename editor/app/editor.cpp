@@ -112,16 +112,18 @@ Editor::Editor(QWidget *parent)
     , textWidget(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
+    , textDock(nullptr)
+    , colorDock(nullptr)
     , colorTriangle(nullptr)
     , colorPicker(nullptr)
-    , textButton(nullptr)
+    //, textButton(nullptr)
     , convertButton(nullptr)
-    , textPopup(nullptr)
-    , layerPopup(nullptr)
-    , colorPopup(nullptr)
+    , mainSplitter(nullptr)
+    , rightSplitter(nullptr)
+    , leftSplitter(nullptr)
 {
     // set window title
-    setWindowTitle(QString("Cyan"));
+    setWindowTitle(qApp->applicationName());
     setAttribute(Qt::WA_QuitOnClose);
 
     // register Magick Image
@@ -130,8 +132,9 @@ Editor::Editor(QWidget *parent)
     // setup UI and load settings
     setupUI();
     loadSettings();
+    //QTimer::singleShot(10, this, SLOT(loadSettings()));
 
-    qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
+    /*qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
     qDebug() << "rgb color profiles" << CyanCommon::getColorProfiles(Magick::sRGBColorspace);
     qDebug() << "cmyk color profiles" << CyanCommon::getColorProfiles(Magick::CMYKColorspace);
     qDebug() << "gray color profiles" << CyanCommon::getColorProfiles(Magick::GRAYColorspace);
@@ -140,7 +143,7 @@ Editor::Editor(QWidget *parent)
     qDebug() << "write formats" << CyanCommon::supportedWriteFormats();
     qDebug() << "rgb profile" << selectedDefaultColorProfile(colorProfileRGBMenu);
     qDebug() << "cmyk profile" << selectedDefaultColorProfile(colorProfileCMYKMenu);
-    qDebug() << "gray profile" << selectedDefaultColorProfile(colorProfileGRAYMenu);
+    qDebug() << "gray profile" << selectedDefaultColorProfile(colorProfileGRAYMenu);*/
 }
 
 // save settings on quit
@@ -183,6 +186,12 @@ void Editor::saveSettings()
                       imageInfoTree->header()->saveState());
     settings.setValue("infotree_header_geometry",
                       imageInfoTree->header()->saveGeometry());*/
+    settings.setValue("mainSplitter_state", mainSplitter->saveState());
+    settings.setValue("mainSplitter_geometry", mainSplitter->saveGeometry());
+    settings.setValue("leftSplitter_state", leftSplitter->saveState());
+    settings.setValue("leftSplitter_geometry", leftSplitter->saveGeometry());
+    settings.setValue("rightSplitter_state", rightSplitter->saveState());
+    settings.setValue("rightSplitter_geometry", rightSplitter->saveGeometry());
     settings.endGroup();
 
     settings.beginGroup(QString("color"));
@@ -232,12 +241,10 @@ void Editor::loadSettings()
 
     settings.beginGroup("gui");
     if (settings.value("editor_state").isValid()) {
-        restoreState(settings
-                     .value("editor_state").toByteArray());
+        restoreState(settings.value("editor_state").toByteArray());
     }
     if (settings.value("editor_geometry").isValid()) {
-        restoreGeometry(settings
-                        .value("editor_geometry").toByteArray());
+        restoreGeometry(settings.value("editor_geometry").toByteArray());
     }
     /*if (settings.value("infotree_header_state").isValid()) {
         imageInfoTree->header()->restoreState(settings
@@ -247,6 +254,35 @@ void Editor::loadSettings()
         imageInfoTree->header()->restoreGeometry(settings
                                                  .value("infotree_header_geometry").toByteArray());
     }*/
+
+    if (settings.value("mainSplitter_state").isValid()) {
+        mainSplitter->restoreState(settings.value("mainSplitter_state").toByteArray());
+    }
+    if (settings.value("mainSplitter_geometry").isValid()) {
+        mainSplitter->restoreGeometry(settings.value("mainSplitter_geometry").toByteArray());
+    }
+    if (settings.value("leftSplitter_state").isValid()) {
+        leftSplitter->restoreState(settings.value("leftSplitter_state").toByteArray());
+    }
+    if (settings.value("leftSplitter_geometry").isValid()) {
+        leftSplitter->restoreGeometry(settings.value("leftSplitter_geometry").toByteArray());
+    }
+    if (settings.value("rightSplitter_state").isValid()) {
+        rightSplitter->restoreState(settings.value("rightSplitter_state").toByteArray());
+    }
+    if (settings.value("rightSplitter_geometry").isValid()) {
+        rightSplitter->restoreGeometry(settings.value("rightSplitter_geometry").toByteArray());
+    }
+
+    /*
+    settings.setValue("mainSplitter_state", mainSplitter->saveState());
+    settings.setValue("mainSplitter_geometry", mainSplitter->saveGeometry());
+    settings.setValue("leftSplitter_state", leftSplitter->saveState());
+    settings.setValue("leftSplitter_geometry", leftSplitter->saveGeometry());
+    settings.setValue("rightSplitter_state", rightSplitter->saveState());
+    settings.setValue("rightSplitter_geometry", rightSplitter->saveGeometry());
+    */
+
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
 

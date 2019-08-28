@@ -49,6 +49,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QToolButton>
+#include <QSplitter>
 
 #include "cyan_common.h"
 #include "cyan_view.h"
@@ -58,7 +59,7 @@
 #include "cyan_layerwidget.h"
 #include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
-#include "ctkPopupWidget.h"
+//#include "ctkPopupWidget.h"
 
 class Editor : public QMainWindow
 {
@@ -127,16 +128,23 @@ private:
 
     QSlider *brushSize;
     QDockWidget *brushDock;
+    QDockWidget *textDock;
+    QDockWidget *colorDock;
 
     QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
-    QToolButton *textButton;
+    //QToolButton *textButton;
     QToolButton *convertButton;
 
-    ctkPopupWidget *textPopup;
-    ctkPopupWidget *layerPopup;
-    ctkPopupWidget *colorPopup;
+    //ctkPopupWidget *textPopup;
+    //ctkPopupWidget *layerPopup;
+    //ctkPopupWidget *colorPopup;
+
+
+    QSplitter *mainSplitter;
+    QSplitter *rightSplitter;
+    QSplitter *leftSplitter;
 
 signals:
 
