@@ -1,5 +1,6 @@
 ## 1.9.0 - TBA
 
+* Re-license to LGPL v2.1
 * Complete re-write from ground up, now an image editor (well, it's a start)
 * Includes a bunch of bugs and missing features, enjoy :P
 

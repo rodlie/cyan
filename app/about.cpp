@@ -1,33 +1,18 @@
 /*
-# Copyright Ole-André Rodlie.
 #
-# ole.andre.rodlie@gmail.com
+# Cyan <https://cyan.fxarena.net>
+# Copyright Ole-André Rodlie, FxArena DA.
 #
-# This software is governed by the CeCILL license under French law and
-# abiding by the rules of distribution of free software. You can use,
-# modify and / or redistribute the software under the terms of the CeCILL
-# license as circulated by CEA, CNRS and INRIA at the following URL
-# "https://www.cecill.info".
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
-# As a counterpart to the access to the source code and rights to
-# modify and redistribute granted by the license, users are provided only
-# with a limited warranty and the software's author, the holder of the
-# economic rights and the subsequent licensors have only limited
-# liability.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# In this respect, the user's attention is drawn to the associated risks
-# with loading, using, modifying and / or developing or reproducing the
-# software by the user in light of its specific status of free software,
-# that can mean that it is complicated to manipulate, and that also
-# so that it is for developers and experienced
-# professionals having in-depth computer knowledge. Users are therefore
-# encouraged to test and test the software's suitability
-# Requirements in the conditions of their systems
-# data to be ensured and, more generally, to use and operate
-# same conditions as regards security.
-#
-# The fact that you are presently reading this means that you have had
-# knowledge of the CeCILL license and that you accept its terms.
 */
 
 #include "editor.h"
@@ -57,13 +42,8 @@ void Editor::aboutCyan()
                  .arg(version));
     about.append(QString("<h4>%1</h4>")
                  .arg(tr("Simple general-purpose image editor")));
-    about.append(QString("<p>%1<br>%2</p>")
-                 .arg(tr("Copyright &copy; 2016-2018 Ole-André Rodlie, INRIA. All rights reserved."))
-                 .arg(tr("Copyright &copy; 2018-2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
-    about.append(QString("<p>%1</p>")
-                 .arg(tr("Cyan is distributed under the %1 license.")
-                      .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
-                                   "CeCILL version 2.1</a>"))));
+    about.append(QString("Copyright &copy; 2018-2019 Ole-André Rodlie, FxArena DA. All rights reserved."));
+    about.append(QString("<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.</p>"));
     more.append(QString("<p>Cyan includes ICC color profiles from <a href=\"http://www.colormanagement.org/en/download.html\">basICColor GmbH</a>, licensed under a <a href=\"https://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> license.</p>"));
 
     more.append(QString("<p>Cyan includes icons from <a href=\"http://www.fatcow.com\">FatCow</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">Creative Commons Attribution 3.0</a> license. Copyright &copy; 2009-2014 FatCow Web Hosting. All rights reserved.</p>"));

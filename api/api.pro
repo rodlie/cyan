@@ -1,4 +1,3 @@
-/*
 #
 # Cyan <https://cyan.fxarena.net>
 # Copyright Ole-André Rodlie, FxArena DA.
@@ -13,37 +12,15 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-*/
 
-#include "mdi.h"
+include($${top_srcdir}/share/common.pri)
 
-#include <QMimeData>
+TARGET = CyanApi
+TEMPLATE = lib
 
-Mdi::Mdi(QWidget *parent)
-    : QMdiArea(parent)
-{
-    setAcceptDrops(true);
-}
+DEFINES += API_LIBRARY
 
-void Mdi::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->acceptProposedAction();
-}
+SOURCES += CyanApi.cpp
 
-void Mdi::dragMoveEvent(QDragMoveEvent *event)
-{
-    event->acceptProposedAction();
-}
+HEADERS += CyanApi.h CyanApiGlobal.h
 
-void Mdi::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    event->accept();
-}
-
-void Mdi::dropEvent(QDropEvent *event)
-{
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        emit openImages(mimeData->urls());
-    }
-}

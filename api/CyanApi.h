@@ -15,35 +15,16 @@
 #
 */
 
-#include "mdi.h"
+#ifndef CYANAPI_H
+#define CYANAPI_H
 
-#include <QMimeData>
+#include "CyanApiGlobal.h"
 
-Mdi::Mdi(QWidget *parent)
-    : QMdiArea(parent)
+class APISHARED_EXPORT CyanApi
 {
-    setAcceptDrops(true);
-}
 
-void Mdi::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->acceptProposedAction();
-}
+public:
+    CyanApi();
+};
 
-void Mdi::dragMoveEvent(QDragMoveEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void Mdi::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    event->accept();
-}
-
-void Mdi::dropEvent(QDropEvent *event)
-{
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        emit openImages(mimeData->urls());
-    }
-}
+#endif // CYANAPI_H

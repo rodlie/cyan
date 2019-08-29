@@ -15,35 +15,15 @@
 #
 */
 
-#include "mdi.h"
+#ifndef API_GLOBAL_H
+#define API_GLOBAL_H
 
-#include <QMimeData>
+#include <QtCore/qglobal.h>
 
-Mdi::Mdi(QWidget *parent)
-    : QMdiArea(parent)
-{
-    setAcceptDrops(true);
-}
+#if defined(API_LIBRARY)
+#  define APISHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define APISHARED_EXPORT Q_DECL_IMPORT
+#endif
 
-void Mdi::dragEnterEvent(QDragEnterEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void Mdi::dragMoveEvent(QDragMoveEvent *event)
-{
-    event->acceptProposedAction();
-}
-
-void Mdi::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    event->accept();
-}
-
-void Mdi::dropEvent(QDropEvent *event)
-{
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        emit openImages(mimeData->urls());
-    }
-}
+#endif // API_GLOBAL_H
