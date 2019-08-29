@@ -1,9 +1,0 @@
- * Cyan is licensed under CeCILL 2.1
-   * LICENSE.CeCILLv21
- * qtcolorpicker/qtcolortriangle/qtwindowlistmenu is licensed under LGPL 2.1
-   * LICENSE.LGPLv21
- * Icons are licensed under Creative Commons Attribution 3.0/Creative Commons Attribution-Share Alike 3.0
-   * LICENSE-Adwaita.txt
-   * LICENSE-FatCow.txt
- * Color profiles are licensed under Creative Commons Attribution-No Derivative Works 3.0
-   * LICENSE-ICC.txt
