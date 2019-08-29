@@ -14,10 +14,9 @@ Cyan v2 aims be a simple open source cross-platform general-purpose image editor
 
 ## License
 
-* Cyan the application is licensed under the [CeCILL](http://www.cecill.info/licences.en.html) version 2.1 license
-* Cyan the library is licenced under the [CeCILL](http://www.cecill.info/licences.en.html) version 2.1 (or at your option [CeCILL-C](http://www.cecill.info/licences.en.html) version 1.0) license and [LGPL](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) version 2.1 including [Nokia exception](https://github.com/rodlie/cyan/blob/master/docs/LGPL_EXCEPTION.txt).
-* The included ICC color profiles are licensed under the [Creative Commons Attribution-No Derivative Works 3.0](https://creativecommons.org/licenses/by-nd/3.0/) license.
-* The included icons are licensed under the [Creative Commons Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/) license.
+* Cyan is licensed under the [LGPL](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) version 2.1.
+* Color profiles are licensed under the [Creative Commons Attribution-No Derivative Works 3.0](https://creativecommons.org/licenses/by-nd/3.0/).
+* Icons are licensed under the [Creative Commons Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/).
 
 ## Build
 
