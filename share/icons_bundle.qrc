@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/paypal.png</file>
+        <file>icons/patron.png</file>
+        <file>icons/liberapay.png</file>
         <file>icons/brushsize.png</file>
         <file>icons/lcms_logo.png</file>
         <file>icons/Cyan/16x16/actions/hand.png</file>

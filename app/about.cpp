@@ -71,6 +71,7 @@ void Editor::aboutCyan()
     more.append(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
                         "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
 
+    more.append(QString("<p><a href=\"https://liberapay.com/rodlie/donate\"><img alt=\"Donate using Liberapay\" src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=CKVSFAUAZLUBL&currency_code=NOK&source=url\"><img src=\":/icons/paypal.png\"</a></p>"));
     QFile changeLogFile(":/docs/ChangeLog.md");
     if (changeLogFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
         box.setDetailedText(changeLogFile.readAll());
