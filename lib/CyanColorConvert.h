@@ -42,7 +42,9 @@
 
 #include <Magick++.h>
 
-class ColorConvert: public QObject
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT ColorConvert: public QObject
 {
 
     Q_OBJECT

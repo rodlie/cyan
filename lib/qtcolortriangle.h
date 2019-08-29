@@ -49,26 +49,12 @@
 #include <QtGui/QImage>
 #include <QtWidgets/QWidget>
 
+#include "CyanGlobal.h"
+
 class QPointF;
 struct Vertex;
 
-#if defined(Q_WS_WIN)
-#  if !defined(QT_QTCOLORTRIANGLE_EXPORT) && !defined(QT_QTCOLORTRIANGLE_IMPORT)
-#    define QT_QTCOLORTRIANGLE_EXPORT
-#  elif defined(QT_QTCOLORTRIANGLE_IMPORT)
-#    if defined(QT_QTCOLORTRIANGLE_EXPORT)
-#      undef QT_QTCOLORTRIANGLE_EXPORT
-#    endif
-#    define QT_QTCOLORTRIANGLE_EXPORT __declspec(dllimport)
-#  elif defined(QT_QTCOLORTRIANGLE_EXPORT)
-#    undef QT_QTCOLORTRIANGLE_EXPORT
-#    define QT_QTCOLORTRIANGLE_EXPORT __declspec(dllexport)
-#  endif
-#else
-#  define QT_QTCOLORTRIANGLE_EXPORT
-#endif
-
-class QT_QTCOLORTRIANGLE_EXPORT QtColorTriangle : public QWidget
+class CYANSHARED_EXPORT QtColorTriangle : public QWidget
 {
     Q_OBJECT
 
