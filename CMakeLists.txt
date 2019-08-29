@@ -132,6 +132,7 @@ find_package(Qt5Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
+pkg_search_module(FONTCONF REQUIRED fontconfig)
 
 include_directories(
     app
@@ -141,6 +142,7 @@ include_directories(
     lib
     ${MAGICK_INCLUDE_DIRS}
     ${LCMS2_INCLUDE_DIRS}
+    ${FONTCONF_INCLUDE_DIRS}
 )
 
 add_compile_options(-Wall -Wextra)
@@ -210,6 +212,7 @@ target_link_libraries(
     ${LCMS2_LIBRARIES}
     ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS}
+    ${FONTCONF_LDFLAGS}
 )
 target_link_libraries(
     ${PROJECT_NAME}Api
