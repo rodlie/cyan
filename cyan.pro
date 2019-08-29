@@ -15,5 +15,5 @@
 
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += api app lib
+SUBDIRS += app lib
 app.depends += lib

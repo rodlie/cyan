@@ -22,7 +22,7 @@ DEFINES += CYAN_LIBRARY
 DEFINES += CYAN_IMAGE_FORMAT_VERSION=\"\\\"$${VERSION}\\\"\"
 
 SOURCES += CyanImageFormat.cpp CyanTileItem.cpp CyanLayerItem.cpp CyanView.cpp CyanColorConvert.cpp
-HEADERS += CyanImageFormat.h CyanTileItem.h CyanLayerItem.h CyanView.h CyanColorConvert.h CyanGlobal.h
+HEADERS += CyanImageFormat.h CyanTileItem.h CyanLayerItem.h CyanView.h CyanColorConvert.h CyanWidgetApi.h CyanGlobal.h
 
 # Components taken from Qt4 Solutions a long time ago, maintained here
 SOURCES += qtcolorpicker.cpp qtcolortriangle.cpp qtwindowlistmenu.cpp

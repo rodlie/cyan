@@ -1,10 +1,10 @@
 [Desktop Entry]
 Name=Cyan
 GenericName=Cyan
-Comment=Prepress Image Editor
+Comment=Cyan Image Editor
 Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
 Exec=Cyan %U
-Icon=cyan
+Icon=Cyan
 StartupNotify=false
 Terminal=false
 Type=Application
