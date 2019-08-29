@@ -1,7 +1,8 @@
+/*
 #
-# Cyan Common Pri
+# Cyan Tile Item
 #
-# Copyright 2018, 2019 Ole-André Rodlie, FxArena DA.
+# Copyright Ole-André Rodlie, FxArena DA.
 #
 # ole.andre.rodlie@gmail.com / support@fxarena.net
 #
@@ -31,48 +32,42 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
+*/
 
-CONFIG += c++11
-CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+#include "CyanTileItem.h"
 
-DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+#include <QPointF>
+#include <QPen>
 
-# deploy
-CONFIG(deploy): DEFINES += DEPLOY
-
-
-# build dir
-!win32-msvc {
-    DESTDIR = $${top_builddir}/build
-    OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
-    MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
-    RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
+CyanTileItem::CyanTileItem(QGraphicsItem *parent, QGraphicsPixmapItem *pixmapItem)
+    : QGraphicsRectItem(parent)
+    , _pixmap(pixmapItem)
+{
+    QPen newPen(Qt::transparent);
+    newPen.setWidth(0);
+    setPen(newPen);
 }
 
-# mac
-mac {
-    CONFIG(deploy) {
-        # win/lin/mac use the same version of Qt (and depends) to avoid "issues",
-        # since Qt 5.9 is the lowest we can go on Windows due to misc bugs
-        # we also need to ship Qt 5.9 on Mac, this means OSX 10.10 is the
-        # lowest version we can target.
-        # You can however build against Qt 5.6 to get compatibility with OSX 10.7.
-        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-        QMAKE_CXXFLAGS += -fopenmp
-        QMAKE_LFLAGS += -fopenmp
-    }
+void CyanTileItem::setPixmapItem(QGraphicsPixmapItem *pixmapItem)
+{
+    if (!pixmapItem) { return; }
+    _pixmap = pixmapItem;
 }
 
-# install on unix (not mac)
-unix:!mac {
-    # define default install paths
-    isEmpty(PREFIX) : PREFIX = /usr/local
-    isEmpty(DOCDIR) : DOCDIR = $$PREFIX/share/doc
-    isEmpty(MANDIR) : MANDIR = $$PREFIX/share/man
-    isEmpty(LIBDIR) : LIBDIR = $$PREFIX/lib$${LIBSUFFIX}
-    isEmpty(BINDIR) : BINDIR = $$PREFIX/bin
-    isEmpty(ICONDIR) : ICONDIR = $$PREFIX/share/icons
-    isEmpty(ICCDIR) : ICCDIR = $$PREFIX/share/color/icc
-    isEmpty(APPDIR) : APPDIR = $$PREFIX/share/applications
+QGraphicsPixmapItem *CyanTileItem::getPixmapItem()
+{
+    if (!_pixmap) { return new QGraphicsPixmapItem(); }
+    else { return _pixmap; }
+}
+
+void CyanTileItem::setPixmap(const QPixmap &pixmap)
+{
+    if (!_pixmap) { return; }
+    _pixmap->setPixmap(pixmap);
+}
+
+void CyanTileItem::setPixmap(int id, const QPixmap &pixmap)
+{
+    if (!_pixmap || this->data(0).toInt() != id) { return; }
+    setPixmap(pixmap);
 }

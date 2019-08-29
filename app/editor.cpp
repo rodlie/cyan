@@ -54,7 +54,6 @@
 #include "newmediadialog.h"
 #include "convertdialog.h"
 #include "cyan_colorconvert.h"
-#include "cyan_render.h"
 
 #ifdef WITH_FFMPEG
 #include "videodialog.h"
@@ -337,9 +336,9 @@ void Editor::loadProject(const QString &filename)
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().toLower() != "miff") { return; }
-    if (CyanCommon::isValidCanvas(filename)) {
+    if (CyanImageFormat::isValidCanvas(filename)) {
         qDebug() << "is valid project, reading ...";
-        CyanCommon::Canvas canvas = CyanCommon::readCanvas(filename);
+        CyanImageFormat::CyanCanvas canvas = CyanImageFormat::readCanvas(filename);
         newTab(canvas);
     }
 }
@@ -350,7 +349,7 @@ void Editor::saveProject(const QString &filename)
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     qDebug() << "save project" << filename;
 
-    if (CyanCommon::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
+    if (CyanImageFormat::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
         // TODO, verify project!
     } else {
         QMessageBox::warning(this,
@@ -368,13 +367,13 @@ void Editor::saveImage(const QString &filename)
 void Editor::loadImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
-    if (CyanCommon::isValidCanvas(filename)) { // cyan project
+    if (CyanImageFormat::isValidCanvas(filename)) { // cyan project
         emit statusMessage(tr("Loading canvas %1").arg(filename));
         loadProject(filename);
         emit statusMessage(tr("Done"));
     } else { // regular image
         // TODO
-        qDebug() << "HAS LAYERS?" << CyanCommon::hasLayers(filename);
+        qDebug() << "HAS LAYERS?" << CyanImageFormat::hasLayers(filename);
         emit statusMessage(tr("Loading image %1").arg(filename));
         readImage(filename);
         emit statusMessage(tr("Done"));
@@ -476,7 +475,7 @@ void Editor::writeImage(const QString &filename)
 {
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
 
-    Magick::Image image = Render::renderCanvasToImage(getCurrentCanvas()->getCanvasProject());
+    Magick::Image image = CyanImageFormat::renderCanvasToImage(getCurrentCanvas()->getCanvasProject());
     // TODO: add options for file format
     try {
         QFileInfo info(filename);
@@ -658,7 +657,7 @@ void Editor::saveImageDialog()
                                                     .arg(loadSettingsLastSaveDir())
                                                     .arg(getCurrentCanvas()->getCanvasProject().label),
                                                     tr("Image files (%1)")
-                                                    .arg(common.supportedWriteFormats()));
+                                                    .arg(CyanImageFormat::supportedWriteFormats()));
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().isEmpty()) {
@@ -696,7 +695,7 @@ void Editor::saveLayerDialog()
                                                     .arg(loadSettingsLastSaveDir())
                                                     .arg(label),
                                                     tr("Image files (%1)")
-                                                    .arg(common.supportedWriteFormats()));
+                                                    .arg(CyanImageFormat::supportedWriteFormats()));
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().isEmpty()) {
@@ -719,7 +718,7 @@ void Editor::loadImageDialog()
                                                     tr("Open Media"),
                                                     loadSettingsLastOpenDir(),
                                                     tr("Media Files (%1)")
-                                                    .arg(common.supportedReadFormats()));
+                                                    .arg(CyanImageFormat::supportedReadFormats()));
     if (filename.isEmpty()) { return; }
 
     QFileInfo fileInfo(filename);
@@ -912,13 +911,13 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
         } else if (type.name().startsWith(QString("video"))) { // get frame from video
             readVideo(filename);
         } else { // "regular" image
-            if (common.isValidCanvas(filename)) { loadProject(filename); }
+            if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
             else { readImage(filename); }
         }
 #else
         if (type.name().startsWith(QString("audio")) ||
             type.name().startsWith(QString("video"))) { continue; }
-        if (common.isValidCanvas(filename)) { loadProject(filename); }
+        if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
         else { readImage(filename); }
 #endif
     }
@@ -957,13 +956,13 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
             } else if (type.name().startsWith(QString("video"))) { // get frame from video
                 image = getVideoFrameAsImage(filename);
             } else { // "regular" image
-                if (CyanCommon::isValidCanvas(filename)) { continue; }
+                if (CyanImageFormat::isValidCanvas(filename)) { continue; }
                 image.read(filename.toStdString());
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
                 type.name().startsWith(QString("video"))) { continue; }
-            if (CyanCommon::isValidCanvas(filename)) {
+            if (CyanImageFormat::isValidCanvas(filename)) {
                 // skip projects
                 continue;
             }

@@ -427,7 +427,7 @@ void Editor::handleColorConvert(bool ignoreColor,
         !dialog->getProfile().isEmpty())
     {
         qDebug() << "CONVERT USING" << dialog->getProfile();
-        CyanCommon::Canvas canvas = getCurrentCanvas()->getCanvasProject();
+        CyanImageFormat::CyanCanvas canvas = getCurrentCanvas()->getCanvasProject();
         canvas.image = ColorConvert::convertColorspace(canvas.image,
                                                  canvas.profile,
                                                  dialog->getProfile());

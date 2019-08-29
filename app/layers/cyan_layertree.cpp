@@ -36,6 +36,10 @@
 #include <QLayout>
 #include <QHeaderView>
 #include <QIcon>
+#include <QAction>
+#include <QMenu>
+
+#include "CyanImageFormat.h"
 
 LayerTree::LayerTree(QWidget *parent) :
     QTreeWidget(parent)
@@ -150,7 +154,7 @@ void LayerTree::populateTree(View *view)
     setCanvasID(view->getCanvasID());
     _maxLayersOrder = 0;
 
-    QMapIterator<int, CyanCommon::Layer> layers(view->getCanvasProject().layers);
+    QMapIterator<int, CyanImageFormat::CyanLayer> layers(view->getCanvasProject().layers);
     while (layers.hasNext()) {
         layers.next();
         if (layers.value().order > _maxLayersOrder) { _maxLayersOrder = layers.value().order; }

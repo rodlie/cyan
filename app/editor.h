@@ -51,6 +51,8 @@
 #include <QToolButton>
 #include <QSplitter>
 
+#include "CyanImageFormat.h"
+
 #include "cyan_common.h"
 #include "cyan_view.h"
 #include "mdi.h"
@@ -209,7 +211,7 @@ private slots:
     void handleCurrentLayerTextChanged();
 
     // tabs
-    void newTab(CyanCommon::Canvas canvas);
+    void newTab(CyanImageFormat::CyanCanvas canvas);
     void newTab(Magick::Image image = Magick::Image(),
                 QSize geo = QSize(0, 0));
     void handleTabActivated(QMdiSubWindow *tab);

@@ -32,7 +32,7 @@
 
 #include "editor.h"
 
-void Editor::newTab(CyanCommon::Canvas canvas)
+void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
 {
     qDebug() << "new tab from canvas/project";
     QMdiSubWindow *tab = new QMdiSubWindow(mdi);

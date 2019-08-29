@@ -33,8 +33,8 @@
 #include "cyan_layeritem.h"
 #include <QPen>
 
-#include "cyan_common.h"
-#include "cyan_tileitem.h"
+//#include "cyan_common.h"
+//#include "cyan_tileitem.h"
 
 LayerItem::LayerItem(QGraphicsItem *parent)
     : QGraphicsRectItem(parent)
@@ -46,7 +46,6 @@ LayerItem::LayerItem(QGraphicsItem *parent)
 {
     setAcceptHoverEvents(true);
     setPen(Qt::NoPen);
-
 }
 
 void LayerItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

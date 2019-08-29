@@ -50,8 +50,9 @@
 #include <QKeyEvent>
 #include <QList>
 
-#include "cyan_common.h"
-#include "cyan_render.h"
+#include "CyanImageFormat.h"
+//#include "cyan_common.h"
+//#include "cyan_render.h"
 #include "cyan_layeritem.h"
 
 #define TILE_Z 6
@@ -71,6 +72,12 @@ public:
         InteractiveDragMode,
         InteractiveDrawMode
     };
+    enum MoveLayer {
+        MoveLayerUp,
+        MoveLayerDown,
+        MoveLayerLeft,
+        MoveLayerRight
+    };
 
     explicit View(QWidget* parent = nullptr,
                   bool setup = false);
@@ -81,7 +88,7 @@ private:
 
     QString _parentCanvas;
     int _parentLayer;
-    CyanCommon::Canvas _canvas;
+    CyanImageFormat::CyanCanvas _canvas;
     Magick::Image _image;
     QGraphicsScene *_scene;
     QGraphicsRectItem *_rect;
@@ -148,14 +155,14 @@ public slots:
 
     void duplicateLayer(int id);
 
-    CyanCommon::Layer getLayerFromOrder(int order);
+    CyanImageFormat::CyanLayer getLayerFromOrder(int order);
     int getLastLayerID();
     int getLastLayerOrder();
 
     void clearLayers();
     Magick::Image getCanvas();
     QSize getCanvasSize();
-    CyanCommon::Canvas getCanvasProject();
+    CyanImageFormat::CyanCanvas getCanvasProject();
 
     void setLayerVisibility(int layer,
                             bool layerIsVisible);
@@ -184,13 +191,14 @@ public slots:
     LayerItem* getLayerItemUnderId(int id);
     LayerItem* getLayerItemOverId(int id);
 
-    CyanCommon::Layer getLayer(int layer);
-    void setLayer(int layer, Magick::Image image);
-    void setLayerFromCanvas(CyanCommon::Canvas canvas,
+    CyanImageFormat::CyanLayer getLayer(int layer);
+    void setLayer(int layer,
+                  Magick::Image image);
+    void setLayerFromCanvas(CyanImageFormat::CyanCanvas canvas,
                             int layer);
-    void setLayersFromCanvas(CyanCommon::Canvas canvas);
+    void setLayersFromCanvas(CyanImageFormat::CyanCanvas canvas);
 
-    void updateCanvas(CyanCommon::Canvas canvas);
+    void updateCanvas(CyanImageFormat::CyanCanvas canvas);
 
     void setLayerOrder(int layer, int order);
     QSize getLayerOffset(int layer);
@@ -236,7 +244,7 @@ public slots:
 
     void setLayerText(int id,
                       const QString &text,
-                      const QString &align = QString("left"),
+                      int align = 0,
                       int rotate = 0,
                       bool update = true);
 
@@ -256,8 +264,8 @@ private slots:
 
     void clearScene();
     void clearTiles();
-    QMap<int, CyanCommon::Tile> setupTiles(Magick::Image image,
-                                       int tiles = 8);
+    QMap<int, CyanImageFormat::CyanTile> setupTiles(Magick::Image image,
+                                                    int tiles = 8);
 
     void handleLayerOverTiles(LayerItem *layerItem,
                               bool ignoreRunning = false);
@@ -267,13 +275,14 @@ private slots:
                              bool draw = true);
 
     void renderTile(int tile,
-                           Magick::Image canvas,
-                           QMap<int, CyanCommon::Layer> layers,
-                           Magick::Geometry crop = Magick::Geometry());
+                    Magick::Image canvas,
+                    QMap<int, CyanImageFormat::CyanLayer> layers,
+                    Magick::Geometry crop = Magick::Geometry());
 
     void paintCanvasBackground();
 
-    void moveSelectedLayer(CyanCommon::MoveLayer gravity, int skip = 1);
+    void moveSelectedLayer(MoveLayer gravity,
+                           int skip = 1);
 
 protected:
 

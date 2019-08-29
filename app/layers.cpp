@@ -67,18 +67,18 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     qDebug() << "HANDLE LAYER TREE SELECTED LAYER" << id;
     if (!getCurrentCanvas()) { return; }
     getCurrentCanvas()->setSelectedLayer(id);
-    CyanCommon::Layer layer = getCurrentCanvas()->getLayer(id);
+    CyanImageFormat::CyanLayer layer = getCurrentCanvas()->getLayer(id);
     if (!layer.image.isValid()) { return; }
 
     if (layer.isText) {
         textWidget->setEnabled(true);
-        textWidget->setText(layer.text);
+        textWidget->setText(layer.html);
         textWidget->setTextAlign(layer.textAlign);
         textWidget->setTextRotate(layer.textRotate);
     } else {
         textWidget->setEnabled(false);
         textWidget->setText(QString());
-        textWidget->setTextAlign(QString("left"));
+        textWidget->setTextAlign(0);
         textWidget->setTextRotate(0);
     }
 }

@@ -58,8 +58,8 @@ public slots:
 
     void setText(const QString &text);
     const QString getText();
-    void setTextAlign(const QString &align);
-    const QString getTextAlign();
+    void setTextAlign(int align);
+    int getTextAlign();
     void setTextRotate(int value);
     int getTextRotate();
 

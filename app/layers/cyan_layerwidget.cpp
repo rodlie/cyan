@@ -38,6 +38,7 @@
 #include <QIcon>
 #include <QPixmap>
 
+#include "CyanImageFormat.h"
 #include "cyan_view.h"
 
 CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
@@ -233,61 +234,113 @@ void CyanLayerWidget::populateCompositeBox()
 
     QIcon icon = QIcon::fromTheme(QString("images_flickr"));
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::OverCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DissolveCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::OverCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::OverCompositeOp].second);
+
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::DissolveCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::DissolveCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PlusCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::MultiplyCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::OverlayCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ScreenCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::PlusCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::PlusCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::MultiplyCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::MultiplyCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::OverlayCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::OverlayCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::ScreenCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::ScreenCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ColorDodgeCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearDodgeCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::ColorBurnCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearBurnCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::ColorDodgeCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::ColorDodgeCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::LinearDodgeCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::LinearDodgeCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::ColorBurnCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::ColorBurnCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::LinearBurnCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::LinearBurnCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LightenCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DarkenCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LightenIntensityCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DarkenIntensityCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::LightenCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::LightenCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::DarkenCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::DarkenCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::LightenIntensityCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::LightenIntensityCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::DarkenIntensityCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::DarkenIntensityCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::SoftLightCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::HardLightCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::VividLightCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PegtopLightCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::PinLightCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::LinearLightCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::SoftLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::SoftLightCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::HardLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::HardLightCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::VividLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::VividLightCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::PegtopLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::PegtopLightCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::PinLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::PinLightCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::LinearLightCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::LinearLightCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DifferenceCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::MinusSrcCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::DivideSrcCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::DifferenceCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::DifferenceCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::MinusSrcCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::MinusSrcCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::DivideSrcCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::DivideSrcCompositeOp].second);
 
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::HueCompositeOp]);
-    layerCompositeBox->addItem(icon, CyanCommon::compositeModes()[Magick::SaturateCompositeOp]);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::HueCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::HueCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::SaturateCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::SaturateCompositeOp].second);
 
     // add the "rest"
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
-    QMapIterator<Magick::CompositeOperator, QString> i(CyanCommon::compositeModes());
+    QMapIterator<Magick::CompositeOperator, QPair<QString, int> > i(CyanImageFormat::compositeModes());
     while (i.hasNext()) {
         i.next();
-        if (layerCompositeBox->findText(i.value(),
+        // TODO move to ID
+        if (layerCompositeBox->findText(i.value().first,
                                   Qt::MatchExactly |
                                   Qt::MatchCaseSensitive)==-1)
         {
-            layerCompositeBox->addItem(icon, i.value());
+            layerCompositeBox->addItem(icon, i.value().first, i.value().second);
         }
     }
 
@@ -308,7 +361,7 @@ void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(item);
     if (!layer) { return; }
 
-    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(CyanCommon::compositeModes()[layer->getComposite()]));
+    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(CyanImageFormat::compositeModes()[layer->getComposite()].first));
     layerOpacitySpin->setValue(layer->getOpacity()*100);
 
     qDebug() << "layer selected" << layer->getLayerID() << layerCompositeBox->currentText() << layerOpacitySpin->value();
@@ -324,10 +377,10 @@ void CyanLayerWidget::handleLayerCompositeBox()
 
     qDebug() << "layer comp changed to" << layerCompositeBox->currentText();
 
-    QMapIterator<Magick::CompositeOperator, QString> i(CyanCommon::compositeModes());
+    QMapIterator<Magick::CompositeOperator, QPair<QString, int> > i(CyanImageFormat::compositeModes());
     while (i.hasNext()) {
         i.next();
-        if (i.value() == layerCompositeBox->currentText()) {
+        if (i.value().first == layerCompositeBox->currentText()) {
             layer->setComposite(i.key());
             emit layerCompositeChanged(i.key(), layer->getLayerID());
             break;

@@ -10,15 +10,15 @@ HEADERS += qtcolorpicker.h qtcolortriangle.h qtwindowlistmenu.h
 
 include($${top_srcdir}/share/common.pri)
 
-unix:!macx {
-    DESTDIR = $${top_builddir}/build
-    OBJECTS_DIR = $${DESTDIR}/.obj_solutions
-    MOC_DIR = $${DESTDIR}/.moc_solutions
-    RCC_DIR = $${DESTDIR}/.qrc_solutions
-
-    target.path = $${LIBDIR}
-    docs.path = $${DOCDIR}/CyanQtSolutions-$${VERSION}
-    docs.files += COPYING LGPL_EXCEPTION.txt README.md
-
-    INSTALLS += target docs
-}
+#unix:!macx {
+#    DESTDIR = $${top_builddir}/build
+#    OBJECTS_DIR = $${DESTDIR}/.obj_solutions
+#    MOC_DIR = $${DESTDIR}/.moc_solutions
+#    RCC_DIR = $${DESTDIR}/.qrc_solutions
+#
+#    target.path = $${LIBDIR}
+#    docs.path = $${DOCDIR}/CyanQtSolutions-$${VERSION}
+#    docs.files += COPYING LGPL_EXCEPTION.txt README.md
+#
+#    INSTALLS += target docs
+#}

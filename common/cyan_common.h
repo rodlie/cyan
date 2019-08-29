@@ -1,7 +1,7 @@
 /*
-# Copyright Ole-André Rodlie.
+# Copyright Ole-André Rodlie, FxArena DA.
 #
-# ole.andre.rodlie@gmail.com
+# ole.andre.rodlie@gmail.com / support@fxarena.net
 #
 # This software is governed by the CeCILL license under French law and
 # abiding by the rules of distribution of free software. You can use,
@@ -52,10 +52,10 @@ extern "C" {
 }
 #endif
 
-#include "cyan_tileitem.h"
+//#include "cyan_tileitem.h"
 
 
-
+/*
 // project
 #define CYAN_PROJECT "cyan-project"
 #define CYAN_PROJECT_VERSION 1
@@ -76,7 +76,7 @@ extern "C" {
 #define CYAN_LAYER_TEXT_HTML "cyan-layer-text-html"
 #define CYAN_LAYER_TEXT_PANGO "cyan-layer-text-pango"
 #define CYAN_LAYER_TEXT_ALIGN "cyan-layer-text-align"
-#define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"
+#define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"*/
 
 class CyanCommon: public QObject
 {
@@ -84,7 +84,7 @@ class CyanCommon: public QObject
 
 public:
 
-    struct QPairSortFirst
+    /*struct QPairSortFirst
     {
         template<typename T1, typename T2>
         bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
@@ -98,7 +98,7 @@ public:
         MoveLayerDown,
         MoveLayerLeft,
         MoveLayerRight
-    };
+    };*/
 
     enum ICCTag {
         ICCDescription,
@@ -130,7 +130,7 @@ public:
         RelativeRenderingIntent
     };
 
-    struct Tile
+    /*struct Tile
     {
         TileItem *rect;
     };
@@ -167,14 +167,12 @@ public:
         Magick::LineJoin brushLineJoin = Magick::MiterJoin;
         QString timestamp;
         Magick::Blob profile;
-    };
+    };*/
 
     CyanCommon(QObject *parent = nullptr);
 
-    static QString timestamp();
+    //static QString timestamp();
 
-    static QMap<Magick::CompositeOperator, QString> compositeModes();
-    static Magick::CompositeOperator compositeModeFromString(const QString &name);
 
     static const QString canvasWindowTitle(Magick::Image image);
 
@@ -186,17 +184,6 @@ public:
 
     static void setThreadResources(int thread);
 
-    static bool writeCanvas(CyanCommon::Canvas canvas,
-                            const QString &filename,
-                            Magick::CompressionType compress = Magick::NoCompression);
-    static CyanCommon::Canvas readCanvas(const QString &filename);
-
-    static bool isValidCanvas(const QString &filename);
-    static bool isValidImage(const QString &filename);
-
-    static int hasLayers(const QString &filename);
-
-    static CyanCommon::Canvas readImage(const QString &filename);
 
     static QStringList getColorProfilesPath();
     static QMap<QString, QString> getColorProfiles(Magick::ColorspaceType colorspace);
@@ -211,20 +198,12 @@ public:
     static const QString getProfileTag(cmsHPROFILE profile,
                                        CyanCommon::ICCTag tag = CyanCommon::ICCDescription);
 
-    static const QString supportedWriteFormats();
-    static const QString supportedReadFormats();
-    static const QString supportedImageFormats(bool readFormats);
-    static bool isBlacklistedReadFormat(const QString &readFormat);
-    static bool isBlacklistedWriteFormat(const QString &writeFormat);
-    static int supportedQuantumDepth();
-    static bool hasDelegate(const QString &delegate);
-    static bool hasFeature(const QString &feature);
 
     static const QString humanFileSize(float num,
                                        bool mp = false,
                                        bool are = false);
 
-    static const QString html2Pango(const QString &html);
+
 
 #ifdef WITH_FFMPEG
     static QByteArray getEmbeddedCoverArt(const QString &filename);

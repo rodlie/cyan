@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 CONFIG -= ordered
-SUBDIRS += solutions editor
-editor.depends += solutions
+SUBDIRS += app solutions format
+app.depends += format solutions

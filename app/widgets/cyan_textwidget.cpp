@@ -81,9 +81,9 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     }
     fontSizeBox->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
 
-    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Left"), QString("left"));
-    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Right"), QString("right"));
-    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Center"), QString("center"));
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Left"), 0);
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Right"), 1);
+    textAlignBox->addItem(QIcon::fromTheme("folder"), tr("Center"), 2);
 
     textRotateSlider->setMinimum(-180);
     textRotateSlider->setMaximum(180);
@@ -187,10 +187,10 @@ const QString CyanTextWidget::getText()
     return htmlEditor->toHtml();
 }
 
-void CyanTextWidget::setTextAlign(const QString &align)
+void CyanTextWidget::setTextAlign(int align)
 {
     for (int i=0;i<textAlignBox->count();++i) {
-        if (textAlignBox->itemData(i).toString() == align) {
+        if (textAlignBox->itemData(i).toInt() == align) {
             blockSignals(true);
             textAlignBox->setCurrentIndex(i);
             blockSignals(false);
@@ -199,9 +199,9 @@ void CyanTextWidget::setTextAlign(const QString &align)
     }
 }
 
-const QString CyanTextWidget::getTextAlign()
+int CyanTextWidget::getTextAlign()
 {
-    return textAlignBox->currentData().toString();
+    return textAlignBox->currentData().toInt();
 }
 
 void CyanTextWidget::setTextRotate(int value)

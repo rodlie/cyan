@@ -1,7 +1,7 @@
 #
-# Cyan Common Pri
+# Cyan Image Format
 #
-# Copyright 2018, 2019 Ole-André Rodlie, FxArena DA.
+# Copyright Ole-André Rodlie, FxArena DA.
 #
 # ole.andre.rodlie@gmail.com / support@fxarena.net
 #
@@ -32,47 +32,16 @@
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
 
-CONFIG += c++11
-CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
+QT = core gui widgets
+TARGET = CyanImageFormat
+VERSION = 1.0.0
+TEMPLATE = lib
 
-DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+DEFINES += FORMAT_LIBRARY
+DEFINES += CYAN_IMAGE_FORMAT_VERSION=\"\\\"$${VERSION}\\\"\"
 
-# deploy
-CONFIG(deploy): DEFINES += DEPLOY
+SOURCES += CyanImageFormat.cpp CyanTileItem.cpp
+HEADERS += CyanImageFormat.h CyanTileItem.h CyanImageFormatGlobal.h
 
-
-# build dir
-!win32-msvc {
-    DESTDIR = $${top_builddir}/build
-    OBJECTS_DIR = $${DESTDIR}/.obj_$${TARGET}
-    MOC_DIR = $${DESTDIR}/.moc_$${TARGET}
-    RCC_DIR = $${DESTDIR}/.qrc_$${TARGET}
-}
-
-# mac
-mac {
-    CONFIG(deploy) {
-        # win/lin/mac use the same version of Qt (and depends) to avoid "issues",
-        # since Qt 5.9 is the lowest we can go on Windows due to misc bugs
-        # we also need to ship Qt 5.9 on Mac, this means OSX 10.10 is the
-        # lowest version we can target.
-        # You can however build against Qt 5.6 to get compatibility with OSX 10.7.
-        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-        QMAKE_CXXFLAGS += -fopenmp
-        QMAKE_LFLAGS += -fopenmp
-    }
-}
-
-# install on unix (not mac)
-unix:!mac {
-    # define default install paths
-    isEmpty(PREFIX) : PREFIX = /usr/local
-    isEmpty(DOCDIR) : DOCDIR = $$PREFIX/share/doc
-    isEmpty(MANDIR) : MANDIR = $$PREFIX/share/man
-    isEmpty(LIBDIR) : LIBDIR = $$PREFIX/lib$${LIBSUFFIX}
-    isEmpty(BINDIR) : BINDIR = $$PREFIX/bin
-    isEmpty(ICONDIR) : ICONDIR = $$PREFIX/share/icons
-    isEmpty(ICCDIR) : ICCDIR = $$PREFIX/share/color/icc
-    isEmpty(APPDIR) : APPDIR = $$PREFIX/share/applications
-}
+include($${top_srcdir}/share/common.pri)
+include($${top_srcdir}/share/magick.pri)
