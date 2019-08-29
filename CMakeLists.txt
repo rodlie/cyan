@@ -182,7 +182,7 @@ endif()
 if(MINGW OR APPLE)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-        ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/fonts/fonts.conf
         @ONLY
     )
 endif()
@@ -283,10 +283,6 @@ if(MINGW)
         ${QT_ROOT}/bin/Qt5Gui.dll
         ${QT_ROOT}/bin/Qt5Widgets.dll
         )
-    set(
-        QT_PLATFORM
-        ${QT_ROOT}/bin/plugins/platforms/qwindows.dll
-        )
     add_custom_command(
         TARGET
         ${PROJECT_NAME}
@@ -297,10 +293,8 @@ if(MINGW)
         COMMAND ${CMAKE_COMMAND} -E copy
         ${QT_DLLS}
         ${CMAKE_CURRENT_BINARY_DIR}/
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${QT_PLATFORM}
-        ${CMAKE_CURRENT_BINARY_DIR}/platforms
     )
+    configure_file(${QT_ROOT}/plugins/platforms/qwindows.dll ${CMAKE_CURRENT_BINARY_DIR}/platforms/qwindows.dll COPYONLY)
 endif()
 
 if(UNIX AND NOT APPLE)
