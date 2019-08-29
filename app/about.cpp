@@ -47,11 +47,11 @@ void Editor::aboutCyan()
     more.append(QString("<p>Cyan includes ICC color profiles from <a href=\"http://www.colormanagement.org/en/download.html\">basICColor GmbH</a>, licensed under a <a href=\"https://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> license.</p>"));
 
     more.append(QString("<p>Cyan includes icons from <a href=\"http://www.fatcow.com\">FatCow</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">Creative Commons Attribution 3.0</a> license. Copyright &copy; 2009-2014 FatCow Web Hosting. All rights reserved.</p>"));
-    more.append(QString("<p>Cyan includes components from Qt4 Solutions, licensed under a <a href=\"https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html\">LGPL version 2.1</a> license with <a href=\"https://github.com/rodlie/cyan/blob/master/docs/LGPL_EXCEPTION.txt\">exceptions</a>. Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.</p>"));
+    more.append(QString("<p>Cyan includes components from Qt Solutions. Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.</p>"));
     more.append(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
                         "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
 
-    more.append(QString("<p><a href=\"https://liberapay.com/rodlie/donate\"><img alt=\"Donate using Liberapay\" src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=CKVSFAUAZLUBL&currency_code=NOK&source=url\"><img src=\":/icons/paypal.png\"</a></p>"));
+    more.append(QString("<p><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a></p>"));
     QFile changeLogFile(":/docs/ChangeLog.md");
     if (changeLogFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
         box.setDetailedText(changeLogFile.readAll());
