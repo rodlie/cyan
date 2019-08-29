@@ -7,7 +7,7 @@ AppPublisher=@COMPANY@
 AppPublisherURL=@WEBSITE@
 AppSupportURL=@WEBSITE@
 AppUpdatesURL=@WEBSITE@
-DefaultDirName={pf}\@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@\@PROJECT_NAME@
+DefaultDirName={pf64}\@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@\@PROJECT_NAME@
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 LicenseFile=docs\COPYING
@@ -26,9 +26,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "fonts.conf"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "profiles\*"; DestDir "{app}\profiles"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "docs\*"; DestDir "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "fonts.conf"; DestDir: "{app}\etc\fonts"; Flags: ignoreversion
+Source: "profiles\*"; DestDir: "{app}\etc\profiles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "docs\*"; DestDir: "{app}\etc\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]

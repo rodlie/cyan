@@ -185,7 +185,7 @@ endif()
 if(MINGW OR APPLE)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-        ${CMAKE_CURRENT_BINARY_DIR}/fonts/fonts.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf
         @ONLY
     )
 endif()
