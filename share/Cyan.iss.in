@@ -1,0 +1,36 @@
+[Setup]
+AppId={{@PROJECT_ID@}
+AppName=@PROJECT_NAME@
+AppVersion=@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
+;AppVerName=@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
+AppPublisher=@COMPANY@
+AppPublisherURL=@COMPANY_URL@
+AppSupportURL=@PROJECT_URL@
+AppUpdatesURL=@PROJECT_URL@
+DefaultDirName={pf}\@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@\@PROJECT_NAME@
+DisableDirPage=yes
+DisableProgramGroupPage=yes
+LicenseFile=@PROJECT_LICENSE@
+OutputDir=Output
+OutputBaseFilename=@PROJECT_NAME@-@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
+SetupIconFile=@PROJECT_ICO@
+Compression=lzma
+SolidCompression=yes
+
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Files]
+Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{commonprograms}\@PROJECT_NAME@"; Filename: "{app}\@PROJECT_NAME@.exe"
+Name: "{commondesktop}\@PROJECT_NAME@"; Filename: "{app}\@PROJECT_NAME@.exe"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\@PROJECT_NAME@.exe"; Description: "{cm:LaunchProgram,@PROJECT_NAME@}"; Flags: nowait postinstall skipifsilent
