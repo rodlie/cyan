@@ -1,19 +1,19 @@
 [Setup]
-AppId={{@PROJECT_ID@}
+AppId={{@INSTALLER_ID@}
 AppName=@PROJECT_NAME@
 AppVersion=@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
 ;AppVerName=@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
 AppPublisher=@COMPANY@
-AppPublisherURL=@COMPANY_URL@
-AppSupportURL=@PROJECT_URL@
-AppUpdatesURL=@PROJECT_URL@
+AppPublisherURL=@WEBSITE@
+AppSupportURL=@WEBSITE@
+AppUpdatesURL=@WEBSITE@
 DefaultDirName={pf}\@PROJECT_NAME@ @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@\@PROJECT_NAME@
 DisableDirPage=yes
 DisableProgramGroupPage=yes
-LicenseFile=@PROJECT_LICENSE@
-OutputDir=Output
+LicenseFile=docs\COPYING
+OutputDir=deploy
 OutputBaseFilename=@PROJECT_NAME@-@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
-SetupIconFile=@PROJECT_ICO@
+SetupIconFile=@PROJECT_NAME@.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -26,6 +26,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "*.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "*.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "fonts.conf"; DestDir: "{app}\fonts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "profiles\*"; DestDir "{app}\profiles"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "docs\*"; DestDir "{app}\docs"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "platforms\*"; DestDir: "{app}\platforms"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]

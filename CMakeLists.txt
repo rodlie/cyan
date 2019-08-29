@@ -28,6 +28,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(COMPANY "FxArena DA")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie, FxArena DA. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
+set(WEBSITE "https://cyan.fxarena.net")
+set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 
 set(
@@ -174,9 +176,10 @@ if(WIN32)
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
         @ONLY
     )
-#    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.iss.in
-#                   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.iss
-#                   @ONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.iss.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.iss
+        @ONLY)
 endif()
 
 if(MINGW OR APPLE)
@@ -295,6 +298,16 @@ if(MINGW)
         ${CMAKE_CURRENT_BINARY_DIR}/
     )
     configure_file(${QT_ROOT}/plugins/platforms/qwindows.dll ${CMAKE_CURRENT_BINARY_DIR}/platforms/qwindows.dll COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/docs/COPYING COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/docs/README.md COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md ${CMAKE_CURRENT_BINARY_DIR}/docs/ChangeLog.md COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Icons.txt COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ICC.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/ICC.txt COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/rgb.icc COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/cmyk.icc COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/gray.icc COPYONLY)
 endif()
 
 if(UNIX AND NOT APPLE)
