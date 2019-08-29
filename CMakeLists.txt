@@ -21,10 +21,6 @@ if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
 
-if(COMPILER_MSVC)
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -102,6 +98,7 @@ set(
 set(
     RESOURCES
     share/icons_bundle.qrc
+    share/splash.qrc
     docs/docs2.qrc
 )
 
@@ -113,6 +110,13 @@ add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
 add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 add_definitions(-DCYAN_LIBRARY)
+
+if(MINGW)
+    add_definitions(-DUSE_FC)
+endif()
+if(COMPILER_MSVC)
+    add_definitions(-DUNICODE -D_UNICODE)
+endif()
 
 #if(MINGW OR APPLE)
 #    find_package(OpenMP)
@@ -181,16 +185,23 @@ endif()
 
 add_executable(
     ${PROJECT_NAME}
-    ${SOURCES_LIB}
     ${SOURCES_APP}
-    ${HEADERS_LIB}
     ${HEADERS_APP}
     ${HEADERS_API}
     ${RESOURCES}
 )
+add_library(
+    ${PROJECT_NAME}Api
+    SHARED
+    ${SOURCES_LIB}
+    ${HEADERS_LIB}
+    ${HEADERS_API}
+)
 target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
+    ${PROJECT_NAME}Api
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -200,6 +211,18 @@ target_link_libraries(
     ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS}
 )
+target_link_libraries(
+    ${PROJECT_NAME}Api
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Concurrent
+    ${MAGICK_LIBRARIES}
+    ${LCMS2_LIBRARIES}
+    ${MAGICK_LDFLAGS}
+    ${LCMS2_LDFLAGS}
+)
+
 #if(MINGW)
 #    target_link_libraries(${PROJECT_NAME} Threads::Threads)
 #endif()
