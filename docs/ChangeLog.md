@@ -1,3 +1,8 @@
+## 1.9.0 - TBA
+
+* Complete re-write from ground up, now an image editor (well, it's a start)
+* Includes a bunch of bugs and missing features, enjoy :P
+
 ## 1.2.1 - 20181204
 
 * Fixed GIMP 2.10 Windows support

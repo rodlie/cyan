@@ -80,6 +80,8 @@ win32 : CLIB = Cyan1
 LIBS += -L$${top_builddir}/build -l$${CLIB}
 QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
 
+RESOURCES += $${top_srcdir}/docs/docs2.qrc
+
 # icons
 RESOURCES += $${top_srcdir}/share/icons_bundle.qrc
 #RESOURCES += $${top_srcdir}/share/icons.qrc

@@ -57,21 +57,29 @@ void Editor::aboutCyan()
                  .arg(version));
     about.append(QString("<h4>%1</h4>")
                  .arg(tr("Simple general-purpose image editor")));
-    about.append(QString("<p>%1</p>")
-                 .arg(tr("Copyright &copy; 2018, 2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
+    about.append(QString("<p>%1<br>%2</p>")
+                 .arg(tr("Copyright &copy; 2016-2018 Ole-André Rodlie, INRIA. All rights reserved."))
+                 .arg(tr("Copyright &copy; 2018-2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("Cyan is distributed under the %1 license.")
                       .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
                                    "CeCILL version 2.1</a>"))));
     more.append(QString("<p>Cyan includes ICC color profiles from <a href=\"http://www.colormanagement.org/en/download.html\">basICColor GmbH</a>, licensed under a <a href=\"https://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> license.</p>"));
 
-    more.append(QString("<p>Cyan includes icons from <a href=\"http://www.fatcow.com\">FatCow</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">Creative Commons Attribution 3.0</a> license.<br>Copyright &copy; 2009-2014 FatCow Web Hosting. All rights reserved.</p>"));
-    more.append(QString("<p>Cyan includes components from Qt4 Solutions, licensed under a <a href=\"https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html\">LGPL version 2.1</a> license with <a href=\"https://github.com/rodlie/cyan/blob/master/docs/LGPL_EXCEPTION.txt\">exceptions</a>.<br>Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.</p>"));
+    more.append(QString("<p>Cyan includes icons from <a href=\"http://www.fatcow.com\">FatCow</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">Creative Commons Attribution 3.0</a> license. Copyright &copy; 2009-2014 FatCow Web Hosting. All rights reserved.</p>"));
+    more.append(QString("<p>Cyan includes components from Qt4 Solutions, licensed under a <a href=\"https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html\">LGPL version 2.1</a> license with <a href=\"https://github.com/rodlie/cyan/blob/master/docs/LGPL_EXCEPTION.txt\">exceptions</a>. Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.</p>"));
     more.append(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
                         "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
+
+    QFile changeLogFile(":/docs/ChangeLog.md");
+    if (changeLogFile.open(QIODevice::ReadOnly|QIODevice::Text)) {
+        box.setDetailedText(changeLogFile.readAll());
+        changeLogFile.close();
+    }
+
     box.setText(about);
     box.setInformativeText(more);
-    box.setStyleSheet("QLabel { min-width: 400px; }");
+    box.setStyleSheet("QLabel { min-width: 450px; }");
     box.exec();
 }
 
