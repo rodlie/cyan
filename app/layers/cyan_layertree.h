@@ -38,7 +38,7 @@
 #include <QMdiSubWindow>
 #include <QKeyEvent>
 
-#include "cyan_view.h"
+#include "CyanView.h"
 #include "cyan_layertreeitem.h"
 
 class LayerTree : public QTreeWidget

@@ -1,13 +1,7 @@
-# Cyan 
 #
-# <https://cyan.fxarena.net>
-# <http://prepress.sf.net>
-# <https://github.com/rodlie/cyan>
-# <https://sourceforge.net/projects/prepress>
+# Copyright Ole-André Rodlie, FxArena DA.
 #
-# Copyright Ole-André Rodlie.
-#
-# ole.andre.rodlie@gmail.com
+# ole.andre.rodlie@gmail.com / support@fxarena.net
 #
 # This software is governed by the CeCILL license under French law and
 # abiding by the rules of distribution of free software. You can use,
@@ -35,39 +29,13 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
+include($${top_srcdir}/share/common.pri)
+
 TARGET = Cyan
-VERSION = 20190828
-
 TEMPLATE = app
-QT += core gui concurrent widgets
-
-CONFIG += c++11
-CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
-
-QMAKE_TARGET_COMPANY = "FxArena DA"
-QMAKE_TARGET_PRODUCT = "Cyan"
-QMAKE_TARGET_DESCRIPTION = "Cyan"
-QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, FxArena DA. All rights reserved."
-
-DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
-DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
-
-# common
-SOURCES += \
-    $${top_srcdir}/common/cyan_common.cpp \
-    $${top_srcdir}/common/cyan_view.cpp \
-    $${top_srcdir}/common/cyan_colorconvert.cpp
-HEADERS += \
-    $${top_srcdir}/common/cyan_common.h \
-    $${top_srcdir}/common/cyan_view.h \
-    $${top_srcdir}/common/cyan_colorconvert.h
-INCLUDEPATH += $${top_srcdir}/common
-
 
 SOURCES += \
-    $${top_srcdir}/app/layers/cyan_layeritem.cpp \
+    $${top_srcdir}/app/cyan_common.cpp \
     $${top_srcdir}/app/layers/cyan_layertree.cpp \
     $${top_srcdir}/app/layers/cyan_layertreeitem.cpp \
     $${top_srcdir}/app/layers/cyan_layerwidget.cpp \
@@ -87,9 +55,8 @@ SOURCES += \
     $${top_srcdir}/app/layers.cpp \
     $${top_srcdir}/app/tabs.cpp \
     $${top_srcdir}/app/mdi.cpp
-
 HEADERS += \
-    $${top_srcdir}/app/layers/cyan_layeritem.h \
+    $${top_srcdir}/app/cyan_common.h \
     $${top_srcdir}/app/layers/cyan_layertree.h \
     $${top_srcdir}/app/layers/cyan_layertreeitem.h \
     $${top_srcdir}/app/layers/cyan_layerwidget.h \
@@ -101,32 +68,17 @@ HEADERS += \
     $${top_srcdir}/app/dialogs/convertdialog.h \
     $${top_srcdir}/app/editor.h \
     $${top_srcdir}/app/mdi.h
-
 INCLUDEPATH += \
     $${top_srcdir}/app/layers \
     $${top_srcdir}/app/widgets \
     $${top_srcdir}/app/dialogs \
-    $${top_srcdir}/app/ \
-    $${top_srcdir}/solutions
+    $${top_srcdir}/app/
 
-# qtsolutions
-CQTS = CyanQtSolutions
-#win32 : CQTS = CyanQtSolutions1
-LIBS += -L$${top_builddir}/build -l$${CQTS}
+# lib
+CLIB = Cyan
+win32 : CLIB = Cyan1
+LIBS += -L$${top_builddir}/build -l$${CLIB}
 QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
-
-# imageformat
-CIM = CyanImageFormat
-#win32 : CIM = CyanImageFormat1
-LIBS += -L$${top_builddir}/build -l$${CIM}
-QMAKE_RPATHDIR += $ORIGIN/../lib$${LIBSUFFIX}
-INCLUDEPATH += $${top_srcdir}/format
-
-# include common
-include($${top_srcdir}/share/common.pri)
-
-# include magick
-include($${top_srcdir}/share/magick.pri)
 
 # icons
 RESOURCES += $${top_srcdir}/share/icons_bundle.qrc
@@ -138,7 +90,7 @@ RESOURCES += $${top_srcdir}/share/icons_bundle.qrc
 # add win32 rc icon
 win32 : RC_ICONS += $${top_srcdir}/share/icons/cyan.ico
 
-# use fontconfig (+splash) on mingw
+# use fontconfig on mingw
 win32-g++ {
     DEFINES+= USE_FC
     RESOURCES += $${top_srcdir}/share/splash.qrc

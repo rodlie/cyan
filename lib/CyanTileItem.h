@@ -1,3 +1,6 @@
+/*
+#
+# Cyan Library <https://cyan.fxarena.net>
 #
 # Copyright Ole-André Rodlie, FxArena DA.
 #
@@ -29,55 +32,40 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
+*/
 
-# custom magick features
-CONFIG(custom_magick): DEFINES += CUSTOM_MAGICK
+#ifndef CYANTILEITEM_H
+#define CYANTILEITEM_H
 
-# Use ImageMagick-Windows on msvc
-win32-msvc {
-    # path to your "VisualMagick" build
-    # follow the instructions on https://github.com/ImageMagick/ImageMagick-Windows to build it
-    # DO NOT USE PRECOMPILED BINARIES FROM IMAGEMAGICK, ENABLE ZERO-CONF IN CONFIGURE.EXE !!!
-    isEmpty(MAGICK_WINDOWS_PATH) : MAGICK_WINDOWS_PATH = $${top_srcdir}/ImageMagick-Windows
+#include "CyanGlobal.h"
 
-    INCLUDEPATH += \
-        $${MAGICK_WINDOWS_PATH}/ImageMagick/Magick++/lib \
-        $${MAGICK_WINDOWS_PATH}/ImageMagick \
-        $${MAGICK_WINDOWS_PATH}/lcms/include
+#include <QObject>
+#include <QGraphicsRectItem>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
 
-    LIBS += \
-        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/lib \
-        -L$${MAGICK_WINDOWS_PATH}/VisualMagick/bin
+class CYANSHARED_EXPORT CyanTileItem: public QObject, public QGraphicsRectItem
 
-    CONFIG(release, debug|release) {
-        LIBS += \
-            -lCORE_RL_lcms_ \
-            -lCORE_RL_MagickCore_ \
-            -lCORE_RL_MagickWand_ \
-            -lCORE_RL_Magick++_
-    }
+{
+  Q_OBJECT
 
-    CONFIG(debug, debug|release) {
-        LIBS += \
-            -lCORE_DB_lcms_ \
-            -lCORE_DB_MagickCore_ \
-            -lCORE_DB_MagickWand_ \
-            -lCORE_DB_Magick++_
-    }
-}
+public:
 
-# Use pkg-config on anything else
-!win32-msvc {
-    QT_CONFIG -= no-pkg-config
-    CONFIG += link_pkgconfig
+    CyanTileItem(QGraphicsItem *parent = nullptr,
+                 QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem());
+    QMap<int, bool> layers;
 
-    # optional pkg-config name for Magick++, default is Magick++-7.Q16HDRI
-    isEmpty(MAGICK) : MAGICK = Magick++-7.Q16HDRI
-    PKGCONFIG += $${MAGICK} lcms2
+private:
 
-    # get static 3rdparty depends
-    LIBS += `pkg-config --libs --static $${MAGICK}`
+    QGraphicsPixmapItem *_pixmap;
 
-    # fontconfig is needed on mingw
-    win32-g++ : PKGCONFIG += fontconfig
-}
+public slots:
+
+    void setPixmapItem(QGraphicsPixmapItem *pixmapItem);
+    QGraphicsPixmapItem* getPixmapItem();
+    void setPixmap(const QPixmap &pixmap);
+    void setPixmap(int id,
+                   const QPixmap &pixmap);
+};
+
+#endif // CYANTILEITEM_H

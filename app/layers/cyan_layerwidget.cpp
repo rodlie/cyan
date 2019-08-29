@@ -39,7 +39,7 @@
 #include <QPixmap>
 
 #include "CyanImageFormat.h"
-#include "cyan_view.h"
+#include "CyanView.h"
 
 CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     QWidget(parent)

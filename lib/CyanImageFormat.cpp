@@ -1,6 +1,6 @@
 /*
 #
-# Cyan Image Format
+# Cyan Library <https://cyan.fxarena.net>
 #
 # Copyright Ole-André Rodlie, FxArena DA.
 #

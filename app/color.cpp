@@ -37,7 +37,7 @@
 #include <QApplication>
 
 #include "convertdialog.h"
-#include "cyan_colorconvert.h"
+#include "CyanColorConvert.h"
 
 void Editor::populateColorProfileMenu(QMenu *menu,
                                       Magick::ColorspaceType colorspace)

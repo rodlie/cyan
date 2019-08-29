@@ -34,7 +34,7 @@
 
 #include <QMessageBox>
 
-#include "cyan_colorconvert.h"
+#include "CyanColorConvert.h"
 
 void Editor::handleLayerCompChanged(Magick::CompositeOperator composite, int id)
 {

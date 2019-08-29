@@ -1,7 +1,5 @@
 #
-# Cyan Common Pri
-#
-# Copyright 2018, 2019 Ole-André Rodlie, FxArena DA.
+# Copyright Ole-André Rodlie, FxArena DA.
 #
 # ole.andre.rodlie@gmail.com / support@fxarena.net
 #
@@ -32,9 +30,22 @@
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
 
+VERSION = 1.9.0
+VERSION_TYPE = Alpha
+
+QMAKE_TARGET_COMPANY = "FxArena DA"
+QMAKE_TARGET_PRODUCT = "Cyan"
+QMAKE_TARGET_DESCRIPTION = "Cyan"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, FxArena DA. All rights reserved."
+
+QT = core gui widgets concurrent
+
 CONFIG += c++11
 CONFIG(release, debug|release): DEFINES += QT_NO_DEBUG_OUTPUT
 
+DEFINES += CYAN_VERSION=\"\\\"$${VERSION}\\\"\"
+DEFINES += CYAN_VERSION_TYPE=\"\\\"$${VERSION_TYPE}\\\"\"
+DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
@@ -76,3 +87,7 @@ unix:!mac {
     isEmpty(ICCDIR) : ICCDIR = $$PREFIX/share/color/icc
     isEmpty(APPDIR) : APPDIR = $$PREFIX/share/applications
 }
+
+INCLUDEPATH += $${top_srcdir}/lib
+
+include($${top_srcdir}/share/magick.pri)

@@ -52,9 +52,10 @@
 #include <QSplitter>
 
 #include "CyanImageFormat.h"
+#include "CyanView.h"
 
 #include "cyan_common.h"
-#include "cyan_view.h"
+
 #include "mdi.h"
 #include "qtcolorpicker.h"
 #include "qtcolortriangle.h"

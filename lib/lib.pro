@@ -1,6 +1,3 @@
-/*
-#
-# Cyan Image Format
 #
 # Copyright Ole-André Rodlie, FxArena DA.
 #
@@ -32,17 +29,18 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
-*/
 
-#ifndef FORMAT_GLOBAL_H
-#define FORMAT_GLOBAL_H
+include($${top_srcdir}/share/common.pri)
 
-#include <QtCore/qglobal.h>
+TARGET = Cyan
+TEMPLATE = lib
 
-#if defined(FORMAT_LIBRARY)
-#  define FORMATSHARED_EXPORT Q_DECL_EXPORT
-#else
-#  define FORMATSHARED_EXPORT Q_DECL_IMPORT
-#endif
+DEFINES += CYAN_LIBRARY
+DEFINES += CYAN_IMAGE_FORMAT_VERSION=\"\\\"$${VERSION}\\\"\"
 
-#endif // FORMAT_GLOBAL_H
+SOURCES += CyanImageFormat.cpp CyanTileItem.cpp CyanLayerItem.cpp CyanView.cpp CyanColorConvert.cpp
+HEADERS += CyanImageFormat.h CyanTileItem.h CyanLayerItem.h CyanView.h CyanColorConvert.h CyanGlobal.h
+
+# Components taken from Qt4 Solutions a long time ago, maintained here
+SOURCES += qtcolorpicker.cpp qtcolortriangle.cpp qtwindowlistmenu.cpp
+HEADERS += qtcolorpicker.h qtcolortriangle.h qtwindowlistmenu.h

@@ -1,5 +1,6 @@
+/*
 #
-# Cyan Image Format
+# Cyan Library <https://cyan.fxarena.net>
 #
 # Copyright Ole-André Rodlie, FxArena DA.
 #
@@ -31,17 +32,42 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL and CeCILL-C licenses and that you accept its terms.
 #
+*/
 
-QT = core gui widgets
-TARGET = CyanImageFormat
-VERSION = 1.0.0
-TEMPLATE = lib
+#include "CyanTileItem.h"
 
-DEFINES += FORMAT_LIBRARY
-DEFINES += CYAN_IMAGE_FORMAT_VERSION=\"\\\"$${VERSION}\\\"\"
+#include <QPointF>
+#include <QPen>
 
-SOURCES += CyanImageFormat.cpp CyanTileItem.cpp
-HEADERS += CyanImageFormat.h CyanTileItem.h CyanImageFormatGlobal.h
+CyanTileItem::CyanTileItem(QGraphicsItem *parent, QGraphicsPixmapItem *pixmapItem)
+    : QGraphicsRectItem(parent)
+    , _pixmap(pixmapItem)
+{
+    QPen newPen(Qt::transparent);
+    newPen.setWidth(0);
+    setPen(newPen);
+}
 
-include($${top_srcdir}/share/common.pri)
-include($${top_srcdir}/share/magick.pri)
+void CyanTileItem::setPixmapItem(QGraphicsPixmapItem *pixmapItem)
+{
+    if (!pixmapItem) { return; }
+    _pixmap = pixmapItem;
+}
+
+QGraphicsPixmapItem *CyanTileItem::getPixmapItem()
+{
+    if (!_pixmap) { return new QGraphicsPixmapItem(); }
+    else { return _pixmap; }
+}
+
+void CyanTileItem::setPixmap(const QPixmap &pixmap)
+{
+    if (!_pixmap) { return; }
+    _pixmap->setPixmap(pixmap);
+}
+
+void CyanTileItem::setPixmap(int id, const QPixmap &pixmap)
+{
+    if (!_pixmap || this->data(0).toInt() != id) { return; }
+    setPixmap(pixmap);
+}

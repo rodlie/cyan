@@ -53,7 +53,7 @@
 
 #include "newmediadialog.h"
 #include "convertdialog.h"
-#include "cyan_colorconvert.h"
+#include "CyanColorConvert.h"
 
 #ifdef WITH_FFMPEG
 #include "videodialog.h"

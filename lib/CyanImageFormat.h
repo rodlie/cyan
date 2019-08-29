@@ -1,6 +1,6 @@
 /*
 #
-# Cyan Image Format
+# Cyan Library <https://cyan.fxarena.net>
 #
 # Copyright Ole-André Rodlie, FxArena DA.
 #
@@ -37,7 +37,7 @@
 #ifndef CYANIMAGEFORMAT_H
 #define CYANIMAGEFORMAT_H
 
-#include "CyanImageFormatGlobal.h"
+#include "CyanGlobal.h"
 #include "CyanTileItem.h"
 
 #include <QString>
@@ -66,7 +66,7 @@
 #define CYAN_LAYER_TEXT_ALIGN "cyan-layer-text-align"
 #define CYAN_LAYER_TEXT_ROTATE "cyan-layer-text-rotate"
 
-class FORMATSHARED_EXPORT CyanImageFormat
+class CYANSHARED_EXPORT CyanImageFormat
 {
 public:
     enum CyanTextAlign

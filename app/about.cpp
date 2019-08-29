@@ -43,31 +43,35 @@ void Editor::aboutCyan()
     QString version;
 #ifdef CYAN_GIT
     QString git = CYAN_GIT;
-    if (git.isEmpty()) { version = CYAN_VERSION; }
+    if (git.isEmpty()) { version = QString("%1 %2").arg(CYAN_VERSION).arg(CYAN_VERSION_TYPE); }
     else {
         version = QString("%1 (<a href=\"https://github.com/rodlie/cyan/commit/%2\">%2</a>)")
-                  .arg(CYAN_VERSION)
+                  .arg(QString("%1 %2").arg(CYAN_VERSION).arg(CYAN_VERSION_TYPE))
                   .arg(git);
     }
 #else
     version = CYAN_VERSION;
 #endif
-    QString about;
-    about.append(QString("<h2>Cyan %1 Alpha</h2>")
+    QString about, more;
+    about.append(QString("<h2>Cyan %1</h2>")
                  .arg(version));
+    about.append(QString("<h4>%1</h4>")
+                 .arg(tr("Simple general-purpose image editor")));
     about.append(QString("<p>%1</p>")
-                 .arg(tr("Simple general-purpose image editor. Cyan is currently under early development and have many bugs and missing features.")));
-    about.append(QString("<p>%1</p>")
-                 .arg(tr("&copy;2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
+                 .arg(tr("Copyright &copy; 2018, 2019 Ole-André Rodlie, FxArena DA. All rights reserved.")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("Cyan is distributed under the %1 license.")
                       .arg(QString("<a href=\"http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html\">"
-                                   "CeCILL v2.1</a>"))));
+                                   "CeCILL version 2.1</a>"))));
+    more.append(QString("<p>Cyan includes ICC color profiles from <a href=\"http://www.colormanagement.org/en/download.html\">basICColor GmbH</a>, licensed under a <a href=\"https://creativecommons.org/licenses/by-nd/3.0/\">Creative Commons Attribution-No Derivative Works 3.0</a> license.</p>"));
 
+    more.append(QString("<p>Cyan includes icons from <a href=\"http://www.fatcow.com\">FatCow</a>, licensed under a <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">Creative Commons Attribution 3.0</a> license.<br>Copyright &copy; 2009-2014 FatCow Web Hosting. All rights reserved.</p>"));
+    more.append(QString("<p>Cyan includes components from Qt4 Solutions, licensed under a <a href=\"https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html\">LGPL version 2.1</a> license with <a href=\"https://github.com/rodlie/cyan/blob/master/docs/LGPL_EXCEPTION.txt\">exceptions</a>.<br>Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies). All rights reserved.</p>"));
+    more.append(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
+                        "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
     box.setText(about);
-    box.setInformativeText(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
-                                   "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
-    box.setStyleSheet("QLabel { min-width: 350px; }");
+    box.setInformativeText(more);
+    box.setStyleSheet("QLabel { min-width: 400px; }");
     box.exec();
 }
 
