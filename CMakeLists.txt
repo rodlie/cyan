@@ -118,12 +118,6 @@ if(COMPILER_MSVC)
     add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
-#if(MINGW OR APPLE)
-#    find_package(OpenMP)
-#endif()
-#if(MINGW)
-#    find_package(Threads)
-#endif()
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -185,6 +179,14 @@ if(WIN32)
 #                   @ONLY)
 endif()
 
+if(MINGW OR APPLE)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
+        ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf
+        @ONLY
+    )
+endif()
+
 add_executable(
     ${PROJECT_NAME}
     ${SOURCES_APP}
@@ -226,9 +228,80 @@ target_link_libraries(
     ${LCMS2_LDFLAGS}
 )
 
-#if(MINGW)
-#    target_link_libraries(${PROJECT_NAME} Threads::Threads)
-#endif()
+if(MINGW)
+    set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
+    set(QT_ROOT "${MINGW_ROOT}/qt5" CACHE STRING "Qt root dir")
+    set(
+        DLLS
+        ${MINGW_ROOT}/bin/libbz2.dll
+        ${MINGW_ROOT}/bin/libHalf-12.dll
+        ${MINGW_ROOT}/bin/libjpeg-9.dll
+        ${MINGW_ROOT}/bin/libpangowin32-1.0-0.dll
+        ${MINGW_ROOT}/bin/libwinpthread-1.dll
+        ${MINGW_ROOT}/bin/libcairo-2.dll
+        ${MINGW_ROOT}/bin/libharfbuzz-0.dll
+        ${MINGW_ROOT}/bin/liblcms2-2.dll
+        ${MINGW_ROOT}/bin/libpcre16-0.dll
+        ${MINGW_ROOT}/bin/libexpat-1.dll
+        ${MINGW_ROOT}/bin/libiconv-2.dll
+        ${MINGW_ROOT}/bin/liblzma-5.dll
+        ${MINGW_ROOT}/bin/libpcre-1.dll
+        ${MINGW_ROOT}/bin/libffi-6.dll
+        ${MINGW_ROOT}/bin/libIex-2_2-12.dll
+        ${MINGW_ROOT}/bin/libMagick++-7.Q16HDRI-Cyan-4.dll
+        ${MINGW_ROOT}/bin/libpcre2-16-0.dll
+        ${MINGW_ROOT}/bin/libfontconfig-1.dll
+        ${MINGW_ROOT}/bin/libIexMath-2_2-12.dll
+        ${MINGW_ROOT}/bin/libMagickCore-7.Q16HDRI-Cyan-6.dll
+        ${MINGW_ROOT}/bin/libpixman-1-0.dll
+        ${MINGW_ROOT}/bin/libfreetype-6.dll
+        ${MINGW_ROOT}/bin/libIlmImf-2_2-22.dll
+        ${MINGW_ROOT}/bin/libMagickWand-7.Q16HDRI-Cyan-6.dll
+        ${MINGW_ROOT}/bin/libpng16-16.dll
+        ${MINGW_ROOT}/bin/zlib1.dll
+        ${MINGW_ROOT}/bin/libgcc_s_seh-1.dll
+        ${MINGW_ROOT}/bin/libIlmImfUtil-2_2-22.dll
+        ${MINGW_ROOT}/bin/libopenjp2.dll
+        ${MINGW_ROOT}/bin/libstdc++-6.dll
+        ${MINGW_ROOT}/bin/libglib-2.0-0.dll
+        ${MINGW_ROOT}/bin/libIlmThread-2_2-12.dll
+        ${MINGW_ROOT}/bin/libpango-1.0-0.dll
+        ${MINGW_ROOT}/bin/libtiff-5.dll
+        ${MINGW_ROOT}/bin/libgobject-2.0-0.dll
+        ${MINGW_ROOT}/bin/libImath-2_2-12.dll
+        ${MINGW_ROOT}/bin/libpangocairo-1.0-0.dll
+        ${MINGW_ROOT}/bin/libwebp-7.dll
+        ${MINGW_ROOT}/bin/libgomp-1.dll
+        ${MINGW_ROOT}/bin/libintl-8.dll
+        ${MINGW_ROOT}/bin/libpangoft2-1.0-0.dll
+        ${MINGW_ROOT}/bin/libwebpmux-3.dll
+        )
+    set(
+        QT_DLLS
+        ${QT_ROOT}/bin/Qt5Concurrent.dll
+        ${QT_ROOT}/bin/Qt5Core.dll
+        ${QT_ROOT}/bin/Qt5Gui.dll
+        ${QT_ROOT}/bin/Qt5Widgets.dll
+        )
+    set(
+        QT_PLATFORM
+        ${QT_ROOT}/bin/plugins/platforms/qwindows.dll
+        )
+    add_custom_command(
+        TARGET
+        ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${DLLS}
+        ${CMAKE_CURRENT_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${QT_DLLS}
+        ${CMAKE_CURRENT_BINARY_DIR}/
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${QT_PLATFORM}
+        ${CMAKE_CURRENT_BINARY_DIR}/platforms
+    )
+endif()
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
