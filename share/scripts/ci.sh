@@ -106,6 +106,7 @@ if [ "${SETUP}" = 1 ]; then
       --with-zstd=no
       make -j2
       make install
+      tree install
     #fi
     #echo "Extracting linux64 sdk ..."
     #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
@@ -130,6 +131,7 @@ if [ "${OS}" = "Linux" ]; then
     mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
     make -j2
+    ls *
     #make install
     #tree pkg
   #elif [ "${UBUNTU}" = "xenial" ]; then
