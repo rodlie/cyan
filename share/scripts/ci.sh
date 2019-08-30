@@ -38,22 +38,22 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev
     sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
     #libfontconfig1-dev
-    if [ "${UBUNTU}" = "xenial" ]; then
-      sudo apt-get install p7zip-full zip wine
-      echo "==> Extracting win64 sdk ..."
-      mkdir -p ${MXE}
-      wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download && mv download download.tar.xz
-      tar xf download.tar.xz -C ${MXE}/
-      rm -f download.tar.xz
-      wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download && mv download download.tar.xz
-      tar xf download.tar.xz -C ${MXE}/
-      rm -f download.tar.xz
-      wget https://sourceforge.net/projects/prepress/files/sdk/inno6.tar.xz/download && mv download download.tar.xz
-      tar xf download.tar.xz -C ${MXE}/
-      rm -f download.tar.xz
-      ls $MXE
-    fi
-    if [ "${UBUNTU}" = "bionic" ]; then
+    #if [ "${UBUNTU}" = "xenial" ]; then
+    #  sudo apt-get install p7zip-full zip wine
+    #  echo "==> Extracting win64 sdk ..."
+    #  mkdir -p ${MXE}
+    #  wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download && mv download download.tar.xz
+    #  tar xf download.tar.xz -C ${MXE}/
+    #  rm -f download.tar.xz
+    #  wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download && mv download download.tar.xz
+    #  tar xf download.tar.xz -C ${MXE}/
+    #  rm -f download.tar.xz
+    #  wget https://sourceforge.net/projects/prepress/files/sdk/inno6.tar.xz/download && mv download download.tar.xz
+    #  tar xf download.tar.xz -C ${MXE}/
+    #  rm -f download.tar.xz
+    #  ls $MXE
+    #fi
+    #if [ "${UBUNTU}" = "bionic" ]; then
       echo "==> Building ImageMagick ..."
       cd ${CWD}
       git clone https://github.com/ImageMagick/ImageMagick
@@ -106,18 +106,18 @@ if [ "${SETUP}" = 1 ]; then
       --with-zstd=no
       make -j2
       make install
-    fi
+    #fi
     #echo "Extracting linux64 sdk ..."
     #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     #tar xf download.tar.xz -C /opt
     #rm -f download.tar.xz
-  elif [ "${OS}" = "Darwin" ]; then
-    curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
-    tar xf download.tar.xz -C /opt
-    rm -f download.tar.xz
-    curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226-mac11.tar.xz/download --output download.tar.xz
-    tar xf download.tar.xz -C /opt
-    rm -f download.tar.xz
+  #elif [ "${OS}" = "Darwin" ]; then
+  #  curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
+  #  tar xf download.tar.xz -C /opt
+  #  rm -f download.tar.xz
+  #  curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226-mac11.tar.xz/download --output download.tar.xz
+  #  tar xf download.tar.xz -C /opt
+  #  rm -f download.tar.xz
   fi
 fi
 
@@ -125,19 +125,19 @@ if [ "${OS}" = "Linux" ]; then
   #export PATH="${SDK}/bin:/usr/bin:/bin"
   #export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
 
-  if [ "${UBUNTU}" = "bionic" ]; then
-    echo "==> Building for Ubuntu Bionic ..."
+  #if [ "${UBUNTU}" = "bionic" ]; then
+    #echo "==> Building for Ubuntu Bionic ..."
     mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
     make -j2
     #make install
     #tree pkg
-  elif [ "${UBUNTU}" = "xenial" ]; then
-    echo "==> Building for Windows x64 on Ubuntu Xenial ..."
-    cd ${CWD}
-    sh share/scripts/build-win64.sh
-    tree build*
-  fi
+  #elif [ "${UBUNTU}" = "xenial" ]; then
+  #  echo "==> Building for Windows x64 on Ubuntu Xenial ..."
+  #  cd ${CWD}
+  #  sh share/scripts/build-win64.sh
+  #  tree build*
+  #fi
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
 #  qmake PREFIX=/usr ..
@@ -178,14 +178,14 @@ if [ "${OS}" = "Linux" ]; then
   ##make test
   #${STRIP} -s build/Cyan.exe
   #mv build/Cyan.exe .
-elif [ "${OS}" = "Darwin" ]; then
-  echo "===> Building mac64 ..."
-  PKG_CONFIG=${SDK}/bin/pkg-config
-  PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
-  PATH=${SDK}/bin:/usr/bin:/bin
-  mkdir -p ${CWD}/mac64 && cd ${CWD}/mac64
-  qmake GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
-  make
+#elif [ "${OS}" = "Darwin" ]; then
+  #echo "===> Building mac64 ..."
+  #PKG_CONFIG=${SDK}/bin/pkg-config
+  #PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+  #PATH=${SDK}/bin:/usr/bin:/bin
+  #mkdir -p ${CWD}/mac64 && cd ${CWD}/mac64
+  #qmake GIT=${COMMIT} CONFIG+=release CONFIG+=staticlib CONFIG+=deploy ..
+  #make
   #make test
   #MP=/opt/local/lib/libomp/libomp.dylib
   #cp ${MP} build/Cyan.app/Contents/MacOS/

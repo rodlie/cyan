@@ -3,12 +3,12 @@ language: cpp
 compiler: g++
 matrix:
   include:
-    - os: linux
-      dist: xenial
+#    - os: linux
+#      dist: xenial
     - os: linux
       dist: bionic
-    - os: osx
-      osx_image: xcode8
+#    - os: osx
+#      osx_image: xcode8
 
 script:
   - sh share/scripts/ci.sh
