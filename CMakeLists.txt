@@ -99,7 +99,7 @@ set(
 )
 set(
     RESOURCES
-    share/icons_bundle.qrc
+    share/icons.qrc
     share/splash.qrc
     docs/docs2.qrc
 )
@@ -331,7 +331,49 @@ if(UNIX AND NOT APPLE)
     #endif()
     install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
     #install(TARGETS ${PROJECT_NAME}Api DESTINATION ${LIB_INSTALL_DIR})
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
+    #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/128x128
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/160x160
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/16x16/apps/${PROJECT_NAME}.png
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/16x16/apps)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/192x192
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/20x20
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/24x24
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/256x256
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/32x32/apps/${PROJECT_NAME}.png
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/36x36
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/48x48
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/512x512
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/64x64
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/72x72
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/96x96
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
     #install(FILES ${HEADERS_API} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
     #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/Cyan DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
     install(

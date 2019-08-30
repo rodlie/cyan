@@ -58,7 +58,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     compositeLabel->setText(tr("Mode"));
     compositeLabel->setSizePolicy(QSizePolicy::Minimum,
                                   QSizePolicy::Minimum);
-    compositeIconLabel->setPixmap(QIcon::fromTheme("images_flickr")
+    compositeIconLabel->setPixmap(QIcon::fromTheme("images")
                                   .pixmap(16, 16));
     compositeIconLabel->setMinimumSize(QSize(16, 16));
     compositeIconLabel->setMaximumSize(QSize(16, 16));
@@ -217,7 +217,7 @@ void CyanLayerWidget::populateCompositeBox()
     value - ??? https://docs.gimp.org/en/gimp-concepts-layer-modes.html
     */
 
-    QIcon icon = QIcon::fromTheme(QString("images_flickr"));
+    QIcon icon = QIcon::fromTheme(QString("images"));
 
     layerCompositeBox->addItem(icon,
                                CyanImageFormat::compositeModes()[Magick::OverCompositeOp].first,

@@ -55,7 +55,8 @@ LayerTree::LayerTree(QWidget *parent) :
     moveDownLayerAct = new QAction(tr("Move down"), this);
     duplicateLayerAct = new QAction(tr("Duplicate"), this);
 
-    newImageLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newImageLayerAct->setIcon(QIcon::fromTheme("layer",
+                                               QIcon::fromTheme("document-new")));
     removeLayerAct->setIcon(QIcon::fromTheme("edit-delete"));
     moveUpLayerAct->setIcon(QIcon::fromTheme("go-up"));
     moveDownLayerAct->setIcon(QIcon::fromTheme("go-down"));

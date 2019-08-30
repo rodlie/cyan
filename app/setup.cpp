@@ -30,7 +30,9 @@ void Editor::setupStyle()
 {
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
-    QIcon::setThemeName("Cyan");
+    if (QIcon::themeName().isEmpty()) {
+        QIcon::setThemeName("hicolor");
+    }
 
     // set colors
     QPalette palette;
@@ -464,7 +466,7 @@ void Editor::setupColorManagement()
     connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
     connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
-   // QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
+   // QIcon colorsIcon = QIcon::fromTheme("colors");
 
 /*    ColorRGB *colorRGB = new ColorRGB(this);
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorRGB, SLOT(setColor(QColor)));
@@ -595,8 +597,10 @@ void Editor::setupIcons()
     setWindowIcon(QIcon::fromTheme("Cyan"));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
-    newLayerAct->setIcon(QIcon::fromTheme("document-new"));
-    newTextLayerAct->setIcon(QIcon::fromTheme("document-new"));
+    newLayerAct->setIcon(QIcon::fromTheme("layer",
+                                          QIcon::fromTheme("document-new")));
+    newTextLayerAct->setIcon(QIcon::fromTheme("font",
+                                              QIcon::fromTheme("document-new")));
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
@@ -609,8 +613,8 @@ void Editor::setupIcons()
     viewMoveAct->setIcon(QIcon::fromTheme("transform_move"));
     viewDrawAct->setIcon(QIcon::fromTheme("paintbrush"));
 
-    QIcon colorsIcon = QIcon::fromTheme("smartart_change_color_gallery");
-    QIcon colorWheelIcon = QIcon::fromTheme("color_wheel");
+    QIcon colorsIcon = QIcon::fromTheme("colors");
+    QIcon colorWheelIcon = QIcon::fromTheme("color-wheel");
 
     convertRGBAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     convertCMYKAct->setIcon(QIcon::fromTheme("convert_gray_to_color"));
@@ -620,7 +624,7 @@ void Editor::setupIcons()
     colorProfileRGBMenu->setIcon(colorWheelIcon);
     colorProfileCMYKMenu->setIcon(colorWheelIcon);
     colorProfileGRAYMenu->setIcon(colorWheelIcon);
-    colorIntentMenu->setIcon(QIcon::fromTheme("monitor_window_flow"));
+    colorIntentMenu->setIcon(QIcon::fromTheme("video-display"));
     blackPointAct->setIcon(colorWheelIcon);
 
     aboutQtAct->setIcon(QIcon::fromTheme("help-about"));

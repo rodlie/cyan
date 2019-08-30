@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Cyan
-GenericName=Cyan
+GenericName=Cyan Image Editor
 Comment=Cyan Image Editor
 Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
 Exec=Cyan %U

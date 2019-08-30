@@ -32,7 +32,7 @@ void Editor::populateColorProfileMenu(QMenu *menu,
     while (i.hasNext()) {
         i.next();
         QAction *action = new QAction(menu);
-        action->setIcon(QIcon::fromTheme("color_wheel"));
+        action->setIcon(QIcon::fromTheme("color-wheel"));
         action->setText(i.key());
         action->setData(i.value());
         action->setCheckable(true);
@@ -250,7 +250,7 @@ Magick::Blob Editor::selectedDefaultColorProfileData(QMenu *menu)
 
 void Editor::populateColorIntentMenu()
 {
-    QIcon intentIcon = QIcon::fromTheme("monitor_window_flow");
+    QIcon intentIcon = QIcon::fromTheme("video-display");
     QAction *action1 = new QAction(colorIntentMenu);
     action1->setText(tr("Undefined"));
     action1->setData(CyanCommon::UndefinedRenderingIntent);

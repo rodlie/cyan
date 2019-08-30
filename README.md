@@ -11,7 +11,7 @@
 
 ***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
 
-![screenshot](docs/images/screenshot-1.9.0.png)
+![screenshot](docs/images/screenshot.png)
 
 Cyan v2 aims to be a simple general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
