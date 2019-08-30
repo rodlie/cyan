@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CWD=`pwd`
-TMP="$CWD/build-win64"
+BUILD="$CWD/build-win64"
 MXE=/opt/Cyan-mxe
 TOOLCHAIN=x86_64-w64-mingw32.shared
 CMAKE=${TOOLCHAIN}-cmake
@@ -11,9 +11,9 @@ BIN="$MXE/usr/$TOOLCHAIN/bin"
 MAGICK=Magick++-7.Q16HDRI
 INNO="$MXE/inno6/ISCC.exe"
 
-rm -rf "$TMP" || true
-mkdir -p "$TMP" || exit 1
-cd "$TMP" || exit 1
+rm -rf "$BUILD" || true
+mkdir -p "$BUILD" || exit 1
+cd "$BUILD" || exit 1
 
 export PATH="$MXE/usr/bin:$PATH"
 export PKG_CONFIG_PATH="$MXE/usr/$TOOLCHAIN/lib/pkgconfig"

@@ -51,6 +51,7 @@ if [ "${SETUP}" = 1 ]; then
       wget https://sourceforge.net/projects/prepress/files/sdk/inno6.tar.xz/download && mv download download.tar.xz
       tar xf download.tar.xz -C ${MXE}/
       rm -f download.tar.xz
+      ls $MXE
     fi
     if [ "${UBUNTU}" = "bionic" ]; then
       echo "==> Building ImageMagick ..."
