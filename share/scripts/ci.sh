@@ -34,16 +34,10 @@ if [ "${SETUP}" = 1 ]; then
   if [ "${OS}" = "Linux" ]; then
     echo "==> Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
-    if [ "${UBUNTU}" = "trusty" ]; then
-      sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
-    fi
     sudo apt-get update
     sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev
-    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev
+    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
     #libfontconfig1-dev
-    if [ "${UBUNTU}" != "trusty" ]; then
-      sudo apt-get install libopenjp2-7-dev
-    fi
     if [ "${UBUNTU}" = "xenial" ]; then
       sudo apt-get install p7zip-full zip wine
       echo "==> Extracting win64 sdk ..."
@@ -55,58 +49,60 @@ if [ "${SETUP}" = 1 ]; then
       tar xf download.tar.xz -C ${MXE}/
       rm -f download.tar.xz
     fi
-    echo "==> Building ImageMagick ..."
-    cd ${CWD}
-    git clone https://github.com/ImageMagick/ImageMagick
-    cd ImageMagick
-    git checkout 7.0.8-29
-    ./configure --prefix=`pwd`/install --disable-static --enable-shared \
-    --enable-zero-configuration \
-    --enable-hdri \
-    --enable-largefile \
-    --disable-deprecated \
-    --disable-pipes \
-    --disable-docs \
-    --disable-legacy-support \
-    --with-package-release-name=Cyan \
-    --with-utilities=no \
-    --with-quantum-depth=16 \
-    --with-bzlib=yes \
-    --with-autotrace=no \
-    --with-djvu=no \
-    --with-dps=no \
-    --with-fftw=no \
-    --with-flif=no \
-    --with-fpx=no \
-    --with-fontconfig=no \
-    --with-freetype=no \
-    --with-gslib=no \
-    --with-gvc=no \
-    --with-heic=no \
-    --with-jbig=no \
-    --with-jpeg=yes \
-    --with-lcms=yes \
-    --with-lqr=no \
-    --with-ltdl=no \
-    --with-lzma=yes \
-    --with-magick-plus-plus=yes \
-    --with-openexr=yes \
-    --with-openjp2=yes \
-    --with-pango=yes \
-    --with-librsvg=no \
-    --with-perl=no \
-    --with-png=yes \
-    --with-raqm=no \
-    --with-raw=no \
-    --with-tiff=yes \
-    --with-webp=yes \
-    --with-wmf=no \
-    --with-x=no \
-    --with-xml=no \
-    --with-zlib=yes \
-    --with-zstd=no
-    make -j2
-    make install
+    if [ "${UBUNTU}" = "bionic" ]; then
+      echo "==> Building ImageMagick ..."
+      cd ${CWD}
+      git clone https://github.com/ImageMagick/ImageMagick
+      cd ImageMagick
+      git checkout 7.0.8-29
+      ./configure --prefix=`pwd`/install --disable-static --enable-shared \
+      --enable-zero-configuration \
+      --enable-hdri \
+      --enable-largefile \
+      --disable-deprecated \
+      --disable-pipes \
+      --disable-docs \
+      --disable-legacy-support \
+      --with-package-release-name=Cyan \
+      --with-utilities=no \
+      --with-quantum-depth=16 \
+      --with-bzlib=yes \
+      --with-autotrace=no \
+      --with-djvu=no \
+      --with-dps=no \
+      --with-fftw=no \
+      --with-flif=no \
+      --with-fpx=no \
+      --with-fontconfig=no \
+      --with-freetype=no \
+      --with-gslib=no \
+      --with-gvc=no \
+      --with-heic=no \
+      --with-jbig=no \
+      --with-jpeg=yes \
+      --with-lcms=yes \
+      --with-lqr=no \
+      --with-ltdl=no \
+      --with-lzma=yes \
+      --with-magick-plus-plus=yes \
+      --with-openexr=yes \
+      --with-openjp2=yes \
+      --with-pango=yes \
+      --with-librsvg=no \
+      --with-perl=no \
+      --with-png=yes \
+      --with-raqm=no \
+      --with-raw=no \
+      --with-tiff=yes \
+      --with-webp=yes \
+      --with-wmf=no \
+      --with-x=no \
+      --with-xml=no \
+      --with-zlib=yes \
+      --with-zstd=no
+      make -j2
+      make install
+    fi
     #echo "Extracting linux64 sdk ..."
     #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     #tar xf download.tar.xz -C /opt
@@ -125,14 +121,14 @@ if [ "${OS}" = "Linux" ]; then
   #export PATH="${SDK}/bin:/usr/bin:/bin"
   #export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
 
-  echo "==> Building regular CI ..."
-  mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
-  export PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig"
-  GIT=${COMMIT} cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
-  make -j2
-  make install
-  tree pkg
-
+  if [ "${UBUNTU}" = "bionic" ]; then
+    echo "==> Building regular CI ..."
+    mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
+    GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
+    make -j2
+    #make install
+    #tree pkg
+  fi
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
 #  qmake PREFIX=/usr ..
