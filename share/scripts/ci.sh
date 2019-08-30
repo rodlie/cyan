@@ -39,14 +39,10 @@ if [ "${SETUP}" = 1 ]; then
     fi
     sudo apt-get update
     sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev
-    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev
+    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
     #libfontconfig1-dev
-    if [ "${UBUNTU}" = "bionic" ]; then
-      sudo apt-get install libopenjp2-7-dev
-    fi
     if [ "${UBUNTU}" = "xenial" ]; then
       sudo apt-get install p7zip-full zip wine
-      sudo apt-get install libopenjpeg-dev
       echo "==> Extracting win64 sdk ..."
       mkdir -p ${MXE}
       wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download && mv download download.tar.xz
@@ -61,7 +57,7 @@ if [ "${SETUP}" = 1 ]; then
     git clone https://github.com/ImageMagick/ImageMagick
     cd ImageMagick
     git checkout 7.0.8-34
-    ./configure --prefix=`pwd`/install --enable-static --disable-shared \
+    CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=`pwd`/install --enable-static --disable-shared \
     --enable-zero-configuration \
     --enable-hdri \
     --enable-largefile \
