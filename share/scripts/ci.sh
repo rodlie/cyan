@@ -39,8 +39,11 @@ if [ "${SETUP}" = 1 ]; then
     fi
     sudo apt-get update
     sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev
-    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
+    sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev
     #libfontconfig1-dev
+    if [ "${UBUNTU}" != "trusty" ]; then
+      sudo apt-get install libopenjp2-7-dev
+    fi
     if [ "${UBUNTU}" = "xenial" ]; then
       sudo apt-get install p7zip-full zip wine
       echo "==> Extracting win64 sdk ..."
@@ -56,8 +59,8 @@ if [ "${SETUP}" = 1 ]; then
     cd ${CWD}
     git clone https://github.com/ImageMagick/ImageMagick
     cd ImageMagick
-    git checkout 7.0.8-34
-    CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --prefix=`pwd`/install --enable-static --disable-shared \
+    git checkout 7.0.8-29
+    ./configure --prefix=`pwd`/install --disable-static --enable-shared \
     --enable-zero-configuration \
     --enable-hdri \
     --enable-largefile \
