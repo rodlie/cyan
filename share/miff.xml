@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="image/miff">
+    <comment>Magick Image File Format</comment>
+    <glob pattern="*.miff" />
+  </mime-type>
+</mime-info>

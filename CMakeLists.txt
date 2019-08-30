@@ -334,7 +334,22 @@ if(UNIX AND NOT APPLE)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
     #install(FILES ${HEADERS_API} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
     #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/Cyan DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/miff.xml
+        DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages)
+    install(
+        FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.desktop
+        DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(
+        FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc
+        DESTINATION
+        ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/profiles)
     install(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/COPYING

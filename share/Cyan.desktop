@@ -8,3 +8,4 @@ Icon=Cyan
 StartupNotify=false
 Terminal=false
 Type=Application
+MimeType=image/miff;
