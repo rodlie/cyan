@@ -9,7 +9,9 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/rodlie/cyan)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/rodlie/cyan?include_prereleases)
 
-***Currently under early development and is not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
+***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
+
+![screenshot](docs/images/screenshot-1.9.0.png)
 
 Cyan v2 aims to be a simple general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
