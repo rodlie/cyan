@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
 #ifdef USE_FC
-    QSplashScreen splash(QIcon(":/splash.png").pixmap(500,333), Qt::SplashScreen);
+    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333), Qt::SplashScreen);
     splash.setStyleSheet("font-weight:bold;");
     splash.show();
 #endif

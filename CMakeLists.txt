@@ -34,8 +34,7 @@ set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 
 set(
     HEADERS_API
-    lib/CyanWidgetApi.h
-)
+    lib/CyanWidgetApi.h)
 set(
     SOURCES_LIB
     lib/CyanImageFormat.cpp
@@ -45,8 +44,7 @@ set(
     lib/CyanColorConvert.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
-    lib/qtwindowlistmenu.cpp
-)
+    lib/qtwindowlistmenu.cpp)
 set(
     HEADERS_LIB
     lib/CyanImageFormat.h
@@ -57,8 +55,7 @@ set(
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
-    lib/qtwindowlistmenu.h
-)
+    lib/qtwindowlistmenu.h)
 set(
     SOURCES_APP
     app/cyan_common.cpp
@@ -80,8 +77,7 @@ set(
     app/messages.cpp
     app/layers.cpp
     app/tabs.cpp
-    app/mdi.cpp
-)
+    app/mdi.cpp)
 set(
     HEADERS_APP
     app/cyan_common.h
@@ -95,14 +91,14 @@ set(
     app/dialogs/newmediadialog.h
     app/dialogs/convertdialog.h
     app/editor.h
-    app/mdi.h
-)
+    app/mdi.h)
 set(
     RESOURCES
     share/icons.qrc
-    share/splash.qrc
-    docs/docs2.qrc
-)
+    docs/docs2.qrc)
+if(MINGW OR APPLE)
+    set(RESOURCES ${RESOURCES} share/splash.qrc)
+endif()
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
@@ -192,27 +188,23 @@ add_executable(
     ${HEADERS_LIB}
     ${HEADERS_APP}
     ${HEADERS_API}
-    ${RESOURCES}
-)
+    ${RESOURCES})
 #add_library(
 #    ${PROJECT_NAME}Api
 #    SHARED
 #    ${SOURCES_LIB}
 #    ${HEADERS_LIB}
-#    ${HEADERS_API}
-#)
+#    ${HEADERS_API})
 #set_target_properties(
 #    ${PROJECT_NAME}Api
 #    PROPERTIES
 #    VERSION
-#    ${PROJECT_VERSION}
-#)
+#    ${PROJECT_VERSION})
 #set_target_properties(
 #    ${PROJECT_NAME}Api
 #    PROPERTIES
 #    SOVERSION
-#    ${PROJECT_VERSION_MAJOR}
-#)
+#    ${PROJECT_VERSION_MAJOR})
 target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
 #target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
@@ -225,8 +217,7 @@ target_link_libraries(
     ${MAGICK_LIBRARIES}
     ${LCMS2_LIBRARIES}
     ${MAGICK_LDFLAGS}
-    ${LCMS2_LDFLAGS}
-)
+    ${LCMS2_LDFLAGS})
 if(MINGW OR APPLE)
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
@@ -239,8 +230,7 @@ endif()
 #    ${MAGICK_LIBRARIES}
 #    ${LCMS2_LIBRARIES}
 #    ${MAGICK_LDFLAGS}
-#    ${LCMS2_LDFLAGS}
-#)
+#    ${LCMS2_LDFLAGS})
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
@@ -288,15 +278,13 @@ if(MINGW)
         ${MINGW_ROOT}/bin/libgomp-1.dll
         ${MINGW_ROOT}/bin/libintl-8.dll
         ${MINGW_ROOT}/bin/libpangoft2-1.0-0.dll
-        ${MINGW_ROOT}/bin/libwebpmux-3.dll
-        )
+        ${MINGW_ROOT}/bin/libwebpmux-3.dll)
     set(
         QT_DLLS
         ${QT_ROOT}/bin/Qt5Concurrent.dll
         ${QT_ROOT}/bin/Qt5Core.dll
         ${QT_ROOT}/bin/Qt5Gui.dll
-        ${QT_ROOT}/bin/Qt5Widgets.dll
-        )
+        ${QT_ROOT}/bin/Qt5Widgets.dll)
     add_custom_command(
         TARGET
         ${PROJECT_NAME}
@@ -306,8 +294,7 @@ if(MINGW)
         ${CMAKE_CURRENT_BINARY_DIR}/
         COMMAND ${CMAKE_COMMAND} -E copy
         ${QT_DLLS}
-        ${CMAKE_CURRENT_BINARY_DIR}/
-    )
+        ${CMAKE_CURRENT_BINARY_DIR}/)
     configure_file(${QT_ROOT}/plugins/platforms/qwindows.dll ${CMAKE_CURRENT_BINARY_DIR}/platforms/qwindows.dll COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/docs/COPYING COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico COPYONLY)
