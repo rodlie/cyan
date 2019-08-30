@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(Cyan VERSION 1.9.0)
+project(Cyan VERSION 1.99.0)
 set(PROJECT_VERSION_TYPE "Alpha")
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
@@ -113,13 +113,6 @@ add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 add_definitions(-DCYAN_LIBRARY)
 
-if(MINGW)
-    add_definitions(-DUSE_FC)
-endif()
-if(COMPILER_MSVC)
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
-
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -128,7 +121,12 @@ find_package(Qt5Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
-pkg_search_module(FONTCONF REQUIRED fontconfig)
+
+if(MINGW OR APPLE)
+    add_definitions(-DUSE_FC)
+    pkg_search_module(FONTCONF REQUIRED fontconfig)
+    include_directories(${FONTCONF_INCLUDE_DIRS})
+endif()
 
 include_directories(
     app
@@ -138,7 +136,6 @@ include_directories(
     lib
     ${MAGICK_INCLUDE_DIRS}
     ${LCMS2_INCLUDE_DIRS}
-    ${FONTCONF_INCLUDE_DIRS}
 )
 
 add_compile_options(-Wall -Wextra)
@@ -174,8 +171,7 @@ if(WIN32)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.rc.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
-        @ONLY
-    )
+        @ONLY)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.iss.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.iss
@@ -186,8 +182,7 @@ if(MINGW OR APPLE)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
         ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf
-        @ONLY
-    )
+        @ONLY)
 endif()
 
 add_executable(
@@ -217,8 +212,10 @@ target_link_libraries(
     ${LCMS2_LIBRARIES}
     ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS}
-    ${FONTCONF_LDFLAGS}
 )
+if(MINGW OR APPLE)
+    target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
+endif()
 target_link_libraries(
     ${PROJECT_NAME}Api
     Qt5::Core
