@@ -48,6 +48,9 @@ if [ "${SETUP}" = 1 ]; then
       wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download && mv download download.tar.xz
       tar xf download.tar.xz -C ${MXE}/
       rm -f download.tar.xz
+      wget https://sourceforge.net/projects/prepress/files/sdk/inno6.tar.xz/download && mv download download.tar.xz
+      tar xf download.tar.xz -C ${MXE}/
+      rm -f download.tar.xz
     fi
     if [ "${UBUNTU}" = "bionic" ]; then
       echo "==> Building ImageMagick ..."
@@ -122,12 +125,17 @@ if [ "${OS}" = "Linux" ]; then
   #export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
 
   if [ "${UBUNTU}" = "bionic" ]; then
-    echo "==> Building regular CI ..."
+    echo "==> Building for Ubuntu Bionic ..."
     mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
     make -j2
     #make install
     #tree pkg
+  elif [ "${UBUNTU}" = "xenial" ]; then
+    echo "==> Building for Windows x64 on Ubuntu Xenial ..."
+    cd ${CWD}
+    sh share/scripts/build-win64.sh
+    tree build*
   fi
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
