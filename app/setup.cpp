@@ -592,7 +592,7 @@ void Editor::setupConnections()
 
 void Editor::setupIcons()
 {
-    setWindowIcon(QIcon::fromTheme("cyan"));
+    setWindowIcon(QIcon::fromTheme("Cyan"));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("document-new"));

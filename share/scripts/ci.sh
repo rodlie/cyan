@@ -129,11 +129,11 @@ if [ "${OS}" = "Linux" ]; then
   #if [ "${UBUNTU}" = "bionic" ]; then
     #echo "==> Building for Ubuntu Bionic ..."
     mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
-    GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=`pwd`/pkg "$CWD"
+    GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/usr "$CWD"
     make -j2
     ls *
-    #make install
-    #tree pkg
+    make DESTDIR=`pwd`/pkg install
+    tree pkg
   #elif [ "${UBUNTU}" = "xenial" ]; then
   #  echo "==> Building for Windows x64 on Ubuntu Xenial ..."
   #  cd ${CWD}

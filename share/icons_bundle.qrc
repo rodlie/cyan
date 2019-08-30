@@ -12,8 +12,8 @@
         <file>icons/Cyan/32x32/actions/paintbrush.png</file>
         <file>icons/Cyan/16x16/actions/smartart_change_color_gallery.png</file>
         <file>icons/Cyan/32x32/actions/smartart_change_color_gallery.png</file>
-        <file>icons/Cyan/16x16/apps/cyan.png</file>
-        <file>icons/Cyan/32x32/apps/cyan.png</file>
+        <file>icons/Cyan/16x16/apps/Cyan.png</file>
+        <file>icons/Cyan/32x32/apps/Cyan.png</file>
         <file>icons/Cyan/16x16/actions/color_wheel.png</file>
         <file>icons/Cyan/32x32/actions/color_wheel.png</file>
         <file>icons/Cyan/16x16/actions/convert_color_to_gray.png</file>
@@ -30,7 +30,7 @@
         <file>icons/Cyan/16x16/actions/images_flickr.png</file>
         <file>icons/Cyan/16x16/actions/layers.png</file>
         <file>icons/Cyan/32x32/actions/layers.png</file>
-        <file>icons/hicolor/128x128/apps/cyan.png</file>
+        <file>icons/hicolor/128x128/apps/Cyan.png</file>
         <file>icons/Cyan/16x16/actions/font.png</file>
         <file>icons/Cyan/32x32/actions/font.png</file>
         <file>icons/Cyan/index.theme</file>

@@ -111,7 +111,7 @@ add_definitions(-DCYAN_VERSION_MINOR="${PROJECT_VERSION_MINOR}")
 add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
 add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
-add_definitions(-DCYAN_LIBRARY)
+#add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
@@ -188,22 +188,36 @@ endif()
 add_executable(
     ${PROJECT_NAME}
     ${SOURCES_APP}
+    ${SOURCES_LIB}
+    ${HEADERS_LIB}
     ${HEADERS_APP}
     ${HEADERS_API}
     ${RESOURCES}
 )
-add_library(
-    ${PROJECT_NAME}Api
-    SHARED
-    ${SOURCES_LIB}
-    ${HEADERS_LIB}
-    ${HEADERS_API}
-)
+#add_library(
+#    ${PROJECT_NAME}Api
+#    SHARED
+#    ${SOURCES_LIB}
+#    ${HEADERS_LIB}
+#    ${HEADERS_API}
+#)
+#set_target_properties(
+#    ${PROJECT_NAME}Api
+#    PROPERTIES
+#    VERSION
+#    ${PROJECT_VERSION}
+#)
+#set_target_properties(
+#    ${PROJECT_NAME}Api
+#    PROPERTIES
+#    SOVERSION
+#    ${PROJECT_VERSION_MAJOR}
+#)
 target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
-target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
+#target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
-    ${PROJECT_NAME}Api
+#    ${PROJECT_NAME}Api
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -216,17 +230,17 @@ target_link_libraries(
 if(MINGW OR APPLE)
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
-target_link_libraries(
-    ${PROJECT_NAME}Api
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-    Qt5::Concurrent
-    ${MAGICK_LIBRARIES}
-    ${LCMS2_LIBRARIES}
-    ${MAGICK_LDFLAGS}
-    ${LCMS2_LDFLAGS}
-)
+#target_link_libraries(
+#    ${PROJECT_NAME}Api
+#    Qt5::Core
+#    Qt5::Gui
+#    Qt5::Widgets
+#    Qt5::Concurrent
+#    ${MAGICK_LIBRARIES}
+#    ${LCMS2_LIBRARIES}
+#    ${MAGICK_LDFLAGS}
+#    ${LCMS2_LDFLAGS}
+#)
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
@@ -299,20 +313,39 @@ if(MINGW)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/docs/README.md COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md ${CMAKE_CURRENT_BINARY_DIR}/docs/ChangeLog.md COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Icons.txt COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ICC.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/ICC.txt COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/FatCow.txt COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/basICColor.txt COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/rgb.icc COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/cmyk.icc COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/gray.icc COPYONLY)
 endif()
 
+
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
+    #if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    #    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+    #else()
+    #    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+    #endif()
     install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    install(DIRECTORY ${RESOURCE_FOLDER}/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
-    install(FILES ${RESOURCE_FOLDER}/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
-    install(FILES LICENSE DESTINATION ${CMAKE_INSTALL_DOCDIR}-${PROJECT_VERSION})
+    #install(TARGETS ${PROJECT_NAME}Api DESTINATION ${LIB_INSTALL_DIR})
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
+    #install(FILES ${HEADERS_API} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+    #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/Cyan DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(
+        FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/COPYING
+        ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
+        DESTINATION
+        ${CMAKE_INSTALL_DOCDIR}-${PROJECT_VERSION})
 endif()
 
 #enable_testing()

@@ -3,8 +3,8 @@
         <file>icons/patron.png</file>
         <file>icons/liberapay.png</file>
         <file>icons/lcms_logo.png</file>
-        <file>icons/Cyan/16x16/apps/cyan.png</file>
-        <file>icons/Cyan/32x32/apps/cyan.png</file>
-        <file>icons/hicolor/128x128/apps/cyan.png</file>
+        <file>icons/Cyan/16x16/apps/Cyan.png</file>
+        <file>icons/Cyan/32x32/apps/Cyan.png</file>
+        <file>icons/hicolor/128x128/apps/Cyan.png</file>
     </qresource>
 </RCC>

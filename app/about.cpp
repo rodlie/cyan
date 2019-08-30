@@ -23,7 +23,7 @@ void Editor::aboutCyan()
     QMessageBox box(this);
     box.setWindowTitle(tr("About Cyan"));
 
-    box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/cyan.png")));
+    box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/Cyan.png")));
 
     QString version;
 #ifdef CYAN_GIT
