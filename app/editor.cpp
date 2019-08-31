@@ -99,7 +99,7 @@ Editor::Editor(QWidget *parent)
     , brushDock(nullptr)
     , textDock(nullptr)
     , colorDock(nullptr)
-    , colorTriangle(nullptr)
+    //, colorTriangle(nullptr)
     , colorPicker(nullptr)
     //, textButton(nullptr)
     , convertButton(nullptr)
@@ -116,11 +116,9 @@ Editor::Editor(QWidget *parent)
 
     // setup UI and load settings
     setupUI();
-    loadSettings();
-
-    // plugins handler
     pluginHandler = new CyanPlugins(this);
     initPlugins(pluginHandler->scan());
+    loadSettings();
 }
 
 // save settings on quit
@@ -149,8 +147,8 @@ void Editor::initPlugins(QList<QPluginLoader *> plugins)
         CyanWidgetPlugin *widgetPlugin = qobject_cast<CyanWidgetPlugin*>(plugin);
         if (widgetPlugin) {
             initWidgetPlugin(widgetPlugin);
-            connect(this,
-                    SIGNAL(currentColorChanged(QColor)),
+            connect(colorPicker,
+                    SIGNAL(colorChanged(QColor)),
                     plugin,
                     SLOT(setCurrentColor(QColor)));
             connect(plugin,
@@ -172,10 +170,10 @@ void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
     case CyanWidgetPlugin::CyanWidgetPluginBottomPosition:
     case CyanWidgetPlugin::CyanWidgetPluginTopPosition:
     case CyanWidgetPlugin::CyanWidgetPluginRightPosition:
-        rightSplitter->addWidget(plugin->getWidget());
+        rightSplitter->addWidget(plugin->getWidget(this));
         break;
     default:
-        leftSplitter->addWidget(plugin->getWidget());
+        leftSplitter->addWidget(plugin->getWidget(this));
         break;
     }
     plugin->setCurrentColor(colorPicker->currentColor());
@@ -371,7 +369,9 @@ void Editor::saveProject(const QString &filename)
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     qDebug() << "save project" << filename;
 
-    if (CyanImageFormat::writeCanvas(getCurrentCanvas()->getCanvasProject(), filename)) {
+    if (CyanImageFormat::writeCanvas(getCurrentCanvas()->getCanvasProject(),
+                                     filename,
+                                     MagickCore::ZipCompression)) {
         // TODO, verify project!
     } else {
         QMessageBox::warning(this,

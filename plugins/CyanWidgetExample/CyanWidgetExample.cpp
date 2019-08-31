@@ -31,7 +31,6 @@ CyanWidgetExample::CyanWidgetExample(): QObject ()
 CyanWidgetExample::~CyanWidgetExample()
 {
     qDebug() << "==> Example Plugin unload" << uuid() << version();
-    _widget->deleteLater();
 }
 
 const QString CyanWidgetExample::uuid() const
@@ -67,9 +66,9 @@ void CyanWidgetExample::setCurrentColor(const QColor &color)
                            .arg(color.blue()));
 }
 
-QWidget *CyanWidgetExample::getWidget()
+QWidget *CyanWidgetExample::getWidget(QWidget *parent)
 {
-    _widget = new QWidget();
+    _widget = new QWidget(parent);
     _widget->setMinimumSize(QSize(200,200));
     QLabel *label = new QLabel(_widget);
     label->setText(tr("Cyan Widget Example Plugin"));

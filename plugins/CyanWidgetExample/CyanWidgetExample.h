@@ -37,7 +37,7 @@ public:
 
 public slots:
     void setCurrentColor(const QColor &color);
-    QWidget* getWidget();
+    QWidget* getWidget(QWidget* parent);
 
 private slots:
 

@@ -62,7 +62,7 @@ public:
 
 public slots:
     virtual void setCurrentColor(const QColor &color) = 0;
-    virtual QWidget* getWidget() = 0;
+    virtual QWidget* getWidget(QWidget *parent) = 0;
 
 signals:
     void statusMessage(const QString &text, int timeout);

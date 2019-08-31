@@ -40,11 +40,10 @@
 #include "CyanView.h"
 #include "CyanPluginLoader.h"
 
-#include "cyan_common.h"
+#include "cyan_common.h" // TODO replace
 
 #include "mdi.h"
 #include "qtcolorpicker.h"
-#include "qtcolortriangle.h"
 #include "cyan_layerwidget.h"
 #include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
@@ -119,7 +118,7 @@ private:
     QDockWidget *textDock;
     QDockWidget *colorDock;
 
-    QtColorTriangle *colorTriangle;
+    //QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
     //QToolButton *textButton;
@@ -140,7 +139,6 @@ signals:
     void statusMessage(const QString &message);
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);
-    void currentColorChanged(const QColor &color);
 
 public slots:
 

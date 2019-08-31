@@ -459,5 +459,4 @@ void Editor::handleColorChanged(const QColor &color)
         if (!view) { continue; }
         view->setBrushColor(color);
     }
-    emit currentColorChanged(color);
 }

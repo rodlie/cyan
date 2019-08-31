@@ -181,11 +181,11 @@ void Editor::setupUI()
     textWidget->setHidden(true);
 
 
-    QWidget *colorWidget = new QWidget(this);
+    /*QWidget *colorWidget = new QWidget(this);
     colorWidget->setContentsMargins(0,0,0,0);
     QVBoxLayout *colorWidgetLayout = new QVBoxLayout(colorWidget);
     colorWidgetLayout->setContentsMargins(0,0,0,0);
-    colorWidgetLayout->setSpacing(0);
+    colorWidgetLayout->setSpacing(0);*/
     //colorWidget->setStyleSheet("background:green;");
 
     /*ColorRGB *colorRGB = new ColorRGB(this);
@@ -196,13 +196,13 @@ void Editor::setupUI()
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorCMYK, SLOT(setColor(QColor)));
     connect(colorCMYK, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));*/
 
-    colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    ColorHSV *colorHSV = new ColorHSV(this);
+    //ColorHSV *colorHSV = new ColorHSV(this);
     //colorHSV->setStyleSheet("background: red;");
-    colorHSV->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
-    connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
+    //colorHSV->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    //connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
+    //connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
     /*QToolBox *colorsBox = new QToolBox(this);
     colorsBox->addItem(colorHSV, QString("HSV"));
@@ -217,8 +217,8 @@ void Editor::setupUI()
     colorsTab->addTab(colorRGB, QString("RGB"));
     colorsTab->addTab(colorCMYK, QString("CMYK"));*/
 
-    colorWidgetLayout->addWidget(colorTriangle);
-    colorWidgetLayout->addWidget(colorHSV);
+    //colorWidgetLayout->addWidget(colorTriangle);
+   // colorWidgetLayout->addWidget(colorHSV);
 
     /*colorDock = new QDockWidget(this);
     colorDock->setWindowTitle(tr("Color"));
@@ -239,7 +239,7 @@ void Editor::setupUI()
     setCentralWidget(mainSplitter);
 
     rightSplitter->addWidget(layersWidget);
-    rightSplitter->addWidget(colorWidget);
+   // rightSplitter->addWidget(colorWidget);
 
 }
 
@@ -459,14 +459,14 @@ void Editor::setupColorManagement()
     colorPopup->setAutoShow(true);
     colorPopup->setAutoHide(true);*/
 
-    colorTriangle = new QtColorTriangle(this);
-    colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //colorTriangle = new QtColorTriangle(this);
+    //colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     //colorPopupLayout->addWidget(colorTriangle);
-    colorTriangle->setMinimumSize(QSize(175, 175));
+    //colorTriangle->setMinimumSize(QSize(175, 175));
 
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorPicker, SLOT(setCurrentColor(QColor)));
+    //connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorPicker, SLOT(setCurrentColor(QColor)));
     connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
-    connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
+    //connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
 
    // QIcon colorsIcon = QIcon::fromTheme("colors");
 
@@ -482,7 +482,7 @@ void Editor::setupColorManagement()
     connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
     connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));*/
 
-    colorTriangle->setColor(QColor(Qt::black));
+    //colorTriangle->setColor(QColor(Qt::black));
 
     /*colorPopupLayout->addWidget(colorHSV);
     colorPopupLayout->addWidget(colorRGB);

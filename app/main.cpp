@@ -20,15 +20,12 @@
 #include <QApplication>
 #include <QSplashScreen>
 
-#ifdef USE_FC
 #include <fontconfig/fontconfig.h>
-#endif
 
 int main(int argc, char *argv[])
 {
-#ifdef USE_FC
+    // always force fontconfig in pango
     qputenv("PANGOCAIRO_BACKEND", "fc");
-#endif
 
     QApplication a(argc, argv);
     QApplication::setApplicationName(QString("Cyan"));
@@ -36,11 +33,11 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
-#ifdef USE_FC
-    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333), Qt::SplashScreen);
+    // splash
+    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333),
+                         Qt::SplashScreen);
     splash.setStyleSheet("font-weight:bold;");
     splash.show();
-#endif
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
@@ -56,22 +53,19 @@ int main(int argc, char *argv[])
 #endif
 #endif
 
-#ifdef USE_FC
     // setup fontconfig
-    splash.showMessage(QObject::tr("Scanning font cache, this might take a while ..."), Qt::AlignBottom|Qt::AlignLeft, Qt::white);
+    splash.showMessage(QObject::tr("Loading fonts, this might take a while ..."),
+                       Qt::AlignBottom|Qt::AlignLeft, Qt::white);
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
         FcConfigDestroy(config);
     }
-#endif
 
+    // editor
     Editor w;
     w.show();
-
-#ifdef USE_FC
     splash.finish(&w);
-#endif
 
     return a.exec();
 }

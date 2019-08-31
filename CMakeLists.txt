@@ -32,6 +32,8 @@ set(PROJECT_VERSION_TYPE "Devel" CACHE STRING "Version type")
 set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059" CACHE STRING "Windows Installer ID")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
+option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
+option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" ON)
 
 set(
     HEADERS_API
@@ -95,12 +97,7 @@ set(
     app/dialogs/convertdialog.h
     app/editor.h
     app/mdi.h)
-set(
-    RESOURCES
-    share/icons.qrc)
-if(MINGW OR APPLE)
-    set(RESOURCES ${RESOURCES} share/splash.qrc)
-endif()
+set(RESOURCES share/icons.qrc)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
@@ -121,11 +118,11 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
 
-if(MINGW OR APPLE)
-    add_definitions(-DUSE_FC)
+#if(MINGW OR APPLE)
+#    add_definitions(-DUSE_FC)
     pkg_search_module(FONTCONF REQUIRED fontconfig)
     include_directories(${FONTCONF_INCLUDE_DIRS})
-endif()
+#endif()
 
 include_directories(
     app
@@ -237,9 +234,9 @@ target_link_libraries(
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
 endif()
-if(MINGW OR APPLE)
+#if(MINGW OR APPLE)
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
-endif()
+#endif()
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
@@ -402,8 +399,15 @@ if(UNIX AND NOT APPLE)
 endif()
 
 
-# Include Cyan Widget Example Plugin
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanWidgetExample)
+# Include Cyan Color Triangle Widget
+if(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
+endif()
+
+# Include Cyan Widget Example Widget
+if(BUILD_WIDGET_PLUGIN_EXAMPLE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanWidgetExample)
+endif()
 
 #enable_testing()
 #set(TEST_SOURCES src/tst_cyan.cpp src/FXX.cpp res/tests.qrc)
