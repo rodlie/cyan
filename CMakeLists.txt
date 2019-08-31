@@ -106,7 +106,7 @@ add_definitions(-DCYAN_VERSION_MINOR="${PROJECT_VERSION_MINOR}")
 add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
 add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
-#add_definitions(-DCYAN_LIBRARY)
+add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
