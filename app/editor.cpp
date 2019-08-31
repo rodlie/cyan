@@ -52,6 +52,7 @@
 
 Editor::Editor(QWidget *parent)
     : QMainWindow(parent)
+    , pluginHandler(nullptr)
     , mdi(nullptr)
     , mainToolBar(nullptr)
     , mainMenu(nullptr)
@@ -116,6 +117,14 @@ Editor::Editor(QWidget *parent)
     // setup UI and load settings
     setupUI();
     loadSettings();
+
+    // plugins handler
+    pluginHandler = new CyanPlugins(this);
+    initPlugins(pluginHandler->scan());
+
+
+
+
     //QTimer::singleShot(10, this, SLOT(loadSettings()));
 
     /*qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
@@ -144,6 +153,47 @@ View *Editor::getCurrentCanvas()
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return nullptr; }
     return view;
+}
+
+void Editor::initPlugins(QList<QPluginLoader *> plugins)
+{
+    // TODO get order from settings!
+    for (int i=0;i<plugins.size();++i) {
+        QObject *plugin = plugins.at(i)->instance();
+        if (!plugin) { continue; }
+        CyanWidgetPlugin *widgetPlugin = qobject_cast<CyanWidgetPlugin*>(plugin);
+        if (widgetPlugin) {
+            initWidgetPlugin(widgetPlugin);
+            connect(this,
+                    SIGNAL(currentColorChanged(QColor)),
+                    plugin,
+                    SLOT(setCurrentColor(QColor)));
+            connect(plugin,
+                    SIGNAL(currentColorChanged(QColor)),
+                    colorPicker,
+                    SLOT(setCurrentColor(QColor)));
+        }
+    }
+}
+
+void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
+{
+    if (!plugin) { return; }
+    qDebug() << "==> Loaded new Widget Plugin:" << plugin->uuid() << plugin->version() << plugin->title() << plugin->desc();
+    int pos = plugin->position();
+    // TODO add settings override!
+    // TODO add top bottom container!
+    switch (pos) {
+    case CyanWidgetPlugin::CyanWidgetPluginBottomPosition:
+    case CyanWidgetPlugin::CyanWidgetPluginTopPosition:
+    case CyanWidgetPlugin::CyanWidgetPluginRightPosition:
+        rightSplitter->addWidget(plugin->getWidget());
+        break;
+    default:
+        leftSplitter->addWidget(plugin->getWidget());
+        break;
+    }
+    plugin->setCurrentColor(colorPicker->currentColor());
 }
 
 // save global settings

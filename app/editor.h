@@ -38,6 +38,7 @@
 
 #include "CyanImageFormat.h"
 #include "CyanView.h"
+#include "CyanPluginLoader.h"
 
 #include "cyan_common.h"
 
@@ -59,7 +60,7 @@ public:
     ~Editor();
 
 private:
-
+    CyanPlugins *pluginHandler;
     CyanCommon common;
     Mdi *mdi;
 
@@ -140,12 +141,17 @@ signals:
     void statusMessage(const QString &message);
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);
+    void currentColorChanged(const QColor &color);
 
 public slots:
 
     View* getCurrentCanvas();
 
 private slots:
+
+    // plugins
+    void initPlugins(QList<QPluginLoader*> plugins);
+    void initWidgetPlugin(CyanWidgetPlugin* plugin);
 
     // setup
     void setupStyle();

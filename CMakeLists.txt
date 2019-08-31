@@ -43,6 +43,7 @@ set(
     lib/CyanLayerItem.cpp
     lib/CyanView.cpp
     lib/CyanColorConvert.cpp
+    lib/CyanPluginLoader.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp)
@@ -53,6 +54,7 @@ set(
     lib/CyanLayerItem.h
     lib/CyanView.h
     lib/CyanColorConvert.h
+    lib/CyanPluginLoader.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
@@ -398,6 +400,10 @@ if(UNIX AND NOT APPLE)
         DESTINATION
         ${CMAKE_INSTALL_DOCDIR}-${PROJECT_VERSION})
 endif()
+
+
+# Include Cyan Widget Example Plugin
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanWidgetExample)
 
 #enable_testing()
 #set(TEST_SOURCES src/tst_cyan.cpp src/FXX.cpp res/tests.qrc)
