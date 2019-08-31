@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>icc/cmyk.icc</file>
-        <file>icc/gray.icc</file>
-        <file>icc/rgb.icc</file>
-    </qresource>
-</RCC>
