@@ -55,7 +55,8 @@ void Editor::setupStyle()
 
     // stylesheet
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
-                          "QToolBar { border-color: none; }"));
+                          "QToolBar { border-color: none; }"
+                          "QToolButton::menu-indicator { image: none; }"));
 }
 
 void Editor::setupUI()
@@ -78,26 +79,41 @@ void Editor::setupUI()
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(colorMenu);
-    mainMenu->addMenu(layerMenu);
+    //mainMenu->addMenu(layerMenu);
     mainMenu->addMenu(optMenu);
     windowsMenu->attachToMdiArea(mdi);
     mainMenu->addMenu(windowsMenu);
     mainMenu->addMenu(helpMenu);
 
-    mainToolBar->addAction(newImageAct);
-    mainToolBar->addAction(openImageAct);
+    mainToolBar->addWidget(newButton);
+    mainToolBar->addWidget(openButton);
     mainToolBar->addWidget(saveButton);
     mainToolBar->addSeparator();
-    mainToolBar->addAction(viewMoveAct);
-    mainToolBar->addAction(viewDrawAct);
+    mainToolBar->addWidget(moveButton);
+    mainToolBar->addWidget(zoomButton);
+
+    moveButton->addAction(viewMoveAct);
+    moveButton->addAction(viewDrawAct);
+    //mainToolBar->addAction(viewMoveAct);
+    //mainToolBar->addAction(viewDrawAct);
     //mainToolBar->addWidget(textButton);
     //mainToolBar->addWidget(layerButton);
+    mainToolBar->addSeparator();
     mainToolBar->addWidget(convertButton);
     mainToolBar->addSeparator();
-    mainToolBar->addWidget(colorPicker);
+    //mainToolBar->addWidget(colorPicker);
+
+    colorPicker->hide();
 
 
+    newButton->addAction(newImageAct);
+    newButton->addAction(newLayerAct);
 
+    openButton->addAction(openImageAct);
+    openButton->addAction(openLayerAct);
+
+    zoomButton->addAction(viewZoom100Act);
+    zoomButton->addAction(viewZoomFitAct);
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(newLayerAct);
@@ -107,6 +123,8 @@ void Editor::setupUI()
     fileMenu->addSeparator();
     fileMenu->addAction(saveProjectAct);
     fileMenu->addAction(saveProjectAsAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(openLayerAct);
     fileMenu->addAction(saveImageAct);
     fileMenu->addAction(saveLayerAct);
     fileMenu->addSeparator();
@@ -140,6 +158,7 @@ void Editor::setupUI()
     colorMenu->addAction(blackPointAct);
 
     viewMoveAct->setChecked(true);
+    moveButton->setDefaultAction(viewMoveAct);
 
     populateColorProfileMenu(colorProfileRGBMenu,
                              Magick::sRGBColorspace);
@@ -229,6 +248,10 @@ void Editor::setupUI()
                   colorDock);*/
 
 
+
+    //layerMenu->setDisabled(true);
+    optMenu->setDisabled(true);
+
     mainSplitter->setOrientation(Qt::Horizontal);
     leftSplitter->setOrientation(Qt::Vertical);
     rightSplitter->setOrientation(Qt::Vertical);
@@ -266,8 +289,8 @@ void Editor::setupMenus()
     colorMenu = new QMenu(this);
     colorMenu->setTitle(tr("Colors"));
 
-    layerMenu = new QMenu(this);
-    layerMenu->setTitle(tr("Layers"));
+    //layerMenu = new QMenu(this);
+    //layerMenu->setTitle(tr("Layers"));
 
     windowsMenu = new QtWindowListMenu(this);
 
@@ -347,19 +370,19 @@ void Editor::setupActions()
 {
 
     newImageAct = new QAction(this);
-    newImageAct->setText(tr("New"));
+    newImageAct->setText(tr("New image"));
 
     openImageAct = new QAction(this);
     openImageAct->setText(tr("Open"));
 
     saveImageAct = new QAction(this);
-    saveImageAct->setText(tr("Save image"));
+    saveImageAct->setText(tr("Export image"));
 
     saveProjectAct = new QAction(this);
-    saveProjectAct->setText(tr("Save project"));
+    saveProjectAct->setText(tr("Save"));
 
     saveProjectAsAct = new QAction(this);
-    saveProjectAsAct->setText(tr("Save project as ..."));
+    saveProjectAsAct->setText(tr("Save as ..."));
     saveProjectAsAct->setDisabled(true);
 
     newLayerAct = new QAction(this);
@@ -367,11 +390,13 @@ void Editor::setupActions()
 
     newTextLayerAct = new QAction(this);
     newTextLayerAct->setText(tr("New text layer"));
+    newTextLayerAct->setDisabled(true);
 
     openLayerAct = new QAction(this);
+    openLayerAct->setText(tr("Import image"));
 
     saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Save layer as ..."));
+    saveLayerAct->setText(tr("Export layer"));
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -418,17 +443,32 @@ void Editor::setupActions()
     blackPointAct = new QAction(this);
     blackPointAct->setText(tr("Black point compensation"));
     blackPointAct->setCheckable(true);
+
+    viewZoom100Act = new QAction(this);
+    viewZoom100Act->setText(tr("Zoom to actual size"));
+
+    viewZoomFitAct = new QAction(this);
+    viewZoomFitAct->setText(tr("Zoom to fit"));
 }
 
 void Editor::setupButtons()
 {
-    /*newButton = new QToolButton(this);
+    newButton = new QToolButton(this);
    // newButton->setIconSize(QSize(32, 32));
-    newButton->setMenu(newMenu);
+    //newButton->setMenu(newMenu);
     newButton->setPopupMode(QToolButton::InstantPopup);
     newButton->setText(tr("New"));
     newButton->setToolTip(tr("New"));
-    //newButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);*/
+    newButton->setIcon(QIcon::fromTheme("document-new"));
+    newButton->setArrowType(Qt::NoArrow);
+
+    openButton = new QToolButton(this);
+   // openButton->setIconSize(QSize(32, 32));
+    //openButton->setMenu(newMenu);
+    openButton->setPopupMode(QToolButton::InstantPopup);
+    openButton->setText(tr("Open"));
+    openButton->setToolTip(tr("Open"));
+    openButton->setIcon(QIcon::fromTheme("document-open"));
 
     saveButton = new QToolButton(this);
     //saveButton->setIconSize(QSize(32, 32));
@@ -436,8 +476,28 @@ void Editor::setupButtons()
     saveButton->setPopupMode(QToolButton::InstantPopup);
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save"));
+
     //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
+    moveButton = new QToolButton(this);
+    moveButton->setCheckable(false);
+    //moveButton->setIconSize(QSize(32, 32));
+    //moveButton->setMenu(saveMenu);
+    moveButton->setPopupMode(QToolButton::InstantPopup);
+    moveButton->setText(tr("View"));
+    moveButton->setToolTip(tr("View"));
+    moveButton->setIcon(QIcon::fromTheme("transform_move"));
+    //moveButton->setDefaultAction(viewMoveAct);
+    //moveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+    zoomButton = new QToolButton(this);
+    //zoomButton->setIconSize(QSize(32, 32));
+    //zoomButton->setMenu(saveMenu);
+    zoomButton->setPopupMode(QToolButton::InstantPopup);
+    zoomButton->setText(tr("View"));
+    zoomButton->setToolTip(tr("View"));
+    zoomButton->setIcon(QIcon::fromTheme("zoom"));
+    //viewButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     convertButton = new QToolButton(this);
     convertButton->setMenu(colorMenu);
@@ -606,9 +666,9 @@ void Editor::setupIcons()
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
-    saveImageAct->setIcon(QIcon::fromTheme("document-save"));
+    saveImageAct->setIcon(QIcon::fromTheme("document-new"));
     saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
-    saveLayerAct->setIcon(QIcon::fromTheme("document-save"));
+    saveLayerAct->setIcon(QIcon::fromTheme("layer"));
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 

@@ -62,6 +62,11 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
         default:;
         }
     }
+    if (viewMoveAct->isChecked()) {
+        moveButton->setDefaultAction(viewMoveAct);
+    } else if (viewDrawAct->isChecked()) {
+        moveButton->setDefaultAction(viewDrawAct);
+    }
     if (!getCurrentCanvas()) { return; }
     getCurrentCanvas()->setInteractiveMode(mode);
 }
@@ -71,6 +76,7 @@ void Editor::handleSetMoveMode(bool triggered)
     qDebug() << "set move mode" << triggered;
     if (!triggered) {
         viewMoveAct->setChecked(true);
+        moveButton->setDefaultAction(viewMoveAct);
         return;
     }
     handleSwitchMoveTool(View::IteractiveMoveMode);
@@ -80,6 +86,7 @@ void Editor::handleSetDrawMode(bool triggered)
 {
     if (!triggered) {
         viewDrawAct->setChecked(true);
+        moveButton->setDefaultAction(viewDrawAct);
         return;
     }
     handleSwitchMoveTool(View::InteractiveDrawMode);

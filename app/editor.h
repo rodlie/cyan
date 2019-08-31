@@ -81,6 +81,8 @@ private:
 
     QAction *viewMoveAct;
     QAction *viewDrawAct;
+    QAction *viewZoom100Act;
+    QAction *viewZoomFitAct;
 
     QAction *aboutCyanAct;
     QAction *aboutImageMagickAct;
@@ -103,11 +105,14 @@ private:
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
     QMenu *colorIntentMenu;
-    QMenu *layerMenu;
+    //QMenu *layerMenu;
     QtWindowListMenu *windowsMenu;
 
-    //QToolButton *newButton;
+    QToolButton *newButton;
+    QToolButton *openButton;
     QToolButton *saveButton;
+    QToolButton *moveButton;
+    QToolButton *zoomButton;
     CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;
 

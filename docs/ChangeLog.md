@@ -1,4 +1,9 @@
-## 1.99.0 DEV - TBA
+## 1.99.1 DEV - TBA
+
+* UI clean up
+* Very basic support for widget plugins
+
+## 1.99.0 DEV - 20190828
 
 * Re-license to LGPL v2.1
 * Complete re-write from ground up, now an image editor (well, it's a start)

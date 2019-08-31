@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(Cyan VERSION 1.99.0)
+project(Cyan VERSION 1.99.1)
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
@@ -33,7 +33,7 @@ set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059" CACHE STRING "Windows In
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
-option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" ON)
+option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 
 set(
     HEADERS_API
