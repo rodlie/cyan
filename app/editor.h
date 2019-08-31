@@ -48,7 +48,6 @@
 #include "cyan_layerwidget.h"
 #include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
-//#include "ctkPopupWidget.h"
 
 class Editor : public QMainWindow
 {

@@ -121,28 +121,13 @@ Editor::Editor(QWidget *parent)
     // plugins handler
     pluginHandler = new CyanPlugins(this);
     initPlugins(pluginHandler->scan());
-
-
-
-
-    //QTimer::singleShot(10, this, SLOT(loadSettings()));
-
-    /*qDebug() << "color profile path" << CyanCommon::getColorProfilesPath();
-    qDebug() << "rgb color profiles" << CyanCommon::getColorProfiles(Magick::sRGBColorspace);
-    qDebug() << "cmyk color profiles" << CyanCommon::getColorProfiles(Magick::CMYKColorspace);
-    qDebug() << "gray color profiles" << CyanCommon::getColorProfiles(Magick::GRAYColorspace);
-    qDebug() << "quantum depth" << CyanCommon::supportedQuantumDepth();
-    qDebug() << "read formats" << CyanCommon::supportedReadFormats();
-    qDebug() << "write formats" << CyanCommon::supportedWriteFormats();
-    qDebug() << "rgb profile" << selectedDefaultColorProfile(colorProfileRGBMenu);
-    qDebug() << "cmyk profile" << selectedDefaultColorProfile(colorProfileCMYKMenu);
-    qDebug() << "gray profile" << selectedDefaultColorProfile(colorProfileGRAYMenu);*/
 }
 
 // save settings on quit
 Editor::~Editor()
 {
     saveSettings();
+    pluginHandler->removePlugins();
 }
 
 // get current active canvas
