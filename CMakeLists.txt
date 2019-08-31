@@ -16,7 +16,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(Cyan VERSION 1.99.0)
-set(PROJECT_VERSION_TYPE "Alpha")
+set(PROJECT_VERSION_TYPE "Devel")
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
@@ -94,8 +94,7 @@ set(
     app/mdi.h)
 set(
     RESOURCES
-    share/icons.qrc
-    docs/docs2.qrc)
+    share/icons.qrc)
 if(MINGW OR APPLE)
     set(RESOURCES ${RESOURCES} share/splash.qrc)
 endif()
