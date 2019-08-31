@@ -387,16 +387,18 @@ void Editor::setupActions()
     viewDrawAct->setChecked(false);
 
     aboutCyanAct = new QAction(this);
-    aboutCyanAct->setText(tr("About Cyan"));
+    aboutCyanAct->setText(QString("%1 %2")
+                          .arg(tr("About"))
+                          .arg(qApp->applicationName()));
 
     aboutImageMagickAct = new QAction(this);
-    aboutImageMagickAct->setText(tr("About ImageMagick"));
+    aboutImageMagickAct->setText(QString("%1 ImageMagick").arg(tr("About")));
 
     aboutLcmsAct = new QAction(this);
-    aboutLcmsAct->setText(tr("About Little CMS"));
+    aboutLcmsAct->setText(QString("%1 Little CMS").arg(tr("About")));
 
     aboutQtAct = new QAction(this);
-    aboutQtAct->setText(tr("About Qt"));
+    aboutQtAct->setText(QString("%1 Qt").arg(tr("About")));
 
     convertRGBAct = new QAction(this);
     convertRGBAct->setText(tr("Convert to RGB"));
@@ -441,7 +443,7 @@ void Editor::setupButtons()
     convertButton->setMenu(colorMenu);
     convertButton->setPopupMode(QToolButton::InstantPopup);
     convertButton->setText(tr("Colors"));
-    convertButton->setToolTip(tr("Color Convert"));
+    convertButton->setToolTip(tr("Color convert"));
 
 }
 
@@ -594,7 +596,7 @@ void Editor::setupConnections()
 
 void Editor::setupIcons()
 {
-    setWindowIcon(QIcon::fromTheme("Cyan"));
+    setWindowIcon(QIcon::fromTheme(qApp->applicationName()));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("layer",

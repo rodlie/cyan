@@ -270,10 +270,12 @@ void Editor::loadSettings()
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
 
-    emit statusMessage(tr("Engine disk cache limit: %1 GB")
-                       .arg(CyanCommon::getDiskResource()));
-    emit statusMessage(tr("Engine memory limit: %1 GB")
-                       .arg(CyanCommon::getMemoryResource()));
+    emit statusMessage(QString("%2: %1 GB")
+                       .arg(CyanCommon::getDiskResource())
+                       .arg(tr("Engine disk cache limit")));
+    emit statusMessage(QString("%2: %1 GB")
+                       .arg(CyanCommon::getMemoryResource())
+                       .arg(tr("Engine memory limit")));
 
     // setup color profiles
     setDefaultColorProfiles(colorProfileRGBMenu);
@@ -338,7 +340,7 @@ void Editor::saveProject(const QString &filename)
         // TODO, verify project!
     } else {
         QMessageBox::warning(this,
-                             tr("Cyan Error"),
+                             tr("Save error"),
                              tr("Failed to save the project!"));
     }
 }
@@ -353,13 +355,13 @@ void Editor::loadImage(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
     if (CyanImageFormat::isValidCanvas(filename)) { // cyan project
-        emit statusMessage(tr("Loading canvas %1").arg(filename));
+        emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading canvas")));
         loadProject(filename);
         emit statusMessage(tr("Done"));
     } else { // regular image
         // TODO
         qDebug() << "HAS LAYERS?" << CyanImageFormat::hasLayers(filename);
-        emit statusMessage(tr("Loading image %1").arg(filename));
+        emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading image")));
         readImage(filename);
         emit statusMessage(tr("Done"));
     }
@@ -412,7 +414,7 @@ void Editor::readImage(Magick::Blob blob,
                 defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
             }
             ConvertDialog *dialog = new ConvertDialog(this,
-                                                      tr("Assign Color Profile"),
+                                                      tr("Assign color profile"),
                                                       defPro,
                                                       image.colorSpace());
             int ret = dialog->exec();
@@ -620,7 +622,8 @@ void Editor::saveProjectDialog()
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save Project"),
                                                     loadSettingsLastSaveDir(),
-                                                    tr("Project Files (*.miff)"));
+                                                    QString("%1 (*.miff)")
+                                                    .arg(tr("Project Files")));
     if (!filename.endsWith(".miff",
                            Qt::CaseInsensitive)) { filename.append(".miff"); }
 
@@ -641,8 +644,9 @@ void Editor::saveImageDialog()
                                                     QString("%1/%2")
                                                     .arg(loadSettingsLastSaveDir())
                                                     .arg(getCurrentCanvas()->getCanvasProject().label),
-                                                    tr("Image files (%1)")
-                                                    .arg(CyanImageFormat::supportedWriteFormats()));
+                                                    QString("%2 (%1)")
+                                                    .arg(CyanImageFormat::supportedWriteFormats())
+                                                    .arg(tr("Image files")));
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().isEmpty()) {
@@ -679,8 +683,9 @@ void Editor::saveLayerDialog()
                                                     QString("%1/%2")
                                                     .arg(loadSettingsLastSaveDir())
                                                     .arg(label),
-                                                    tr("Image files (%1)")
-                                                    .arg(CyanImageFormat::supportedWriteFormats()));
+                                                    QString("%2 (%1)")
+                                                    .arg(CyanImageFormat::supportedWriteFormats())
+                                                    .arg(tr("Image files")));
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().isEmpty()) {
@@ -702,8 +707,9 @@ void Editor::loadImageDialog()
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open Media"),
                                                     loadSettingsLastOpenDir(),
-                                                    tr("Media Files (%1)")
-                                                    .arg(CyanImageFormat::supportedReadFormats()));
+                                                    QString("%2 (%1)")
+                                                    .arg(CyanImageFormat::supportedReadFormats())
+                                                    .arg(tr("Media files")));
     if (filename.isEmpty()) { return; }
 
     QFileInfo fileInfo(filename);
@@ -742,7 +748,7 @@ void Editor::newLayerDialog(bool isText)
 {
     if (!getCurrentCanvas()) { return; }
     NewMediaDialog *dialog = new NewMediaDialog(this,
-                                                tr(isText?"New Text Layer":"New Layer"),
+                                                tr(isText?"New text layer":"New layer"),
                                                 CyanCommon::newLayerDialogType,
                                                 getCurrentCanvas()->getCanvas().colorSpace(),
                                                 getCurrentCanvas()->getCanvasProject().profile,

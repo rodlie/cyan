@@ -23,7 +23,7 @@ void Editor::handleError(const QString &message)
     qWarning() << "error" << message;
     mainStatusBar->showMessage(message, 6000);
     QMessageBox::warning(this,
-                         tr("Cyan Error"),
+                         tr("Error"),
                          message);
 }
 
