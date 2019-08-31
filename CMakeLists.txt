@@ -16,7 +16,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(Cyan VERSION 1.99.0)
-set(PROJECT_VERSION_TYPE "Devel")
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
@@ -29,8 +28,10 @@ set(COMPANY "FxArena DA")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie, FxArena DA. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 set(WEBSITE "https://cyan.fxarena.net")
-set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059")
+set(PROJECT_VERSION_TYPE "Devel" CACHE STRING "Version type")
+set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059" CACHE STRING "Windows Installer ID")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
+option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 
 set(
     HEADERS_API
@@ -105,6 +106,7 @@ add_definitions(-DCYAN_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}")
 add_definitions(-DCYAN_VERSION_MINOR="${PROJECT_VERSION_MINOR}")
 add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
 add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
+add_definitions(-DCYAN_WEBSITE="${WEBSITE}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 add_definitions(-DCYAN_LIBRARY)
 
@@ -176,39 +178,52 @@ endif()
 if(MINGW OR APPLE)
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-        ${CMAKE_CURRENT_BINARY_DIR}/fonts.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
         @ONLY)
+endif()
+
+if(BUILD_LIBRARY)
+    add_library(
+        ${PROJECT_NAME}Api
+        SHARED
+        ${SOURCES_LIB}
+        ${HEADERS_LIB}
+        ${HEADERS_API})
+    set_target_properties(
+        ${PROJECT_NAME}Api
+        PROPERTIES
+        VERSION
+        ${PROJECT_VERSION})
+    set_target_properties(
+        ${PROJECT_NAME}Api
+        PROPERTIES
+        SOVERSION
+        ${PROJECT_VERSION_MAJOR})
+    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
+    target_link_libraries(
+        ${PROJECT_NAME}Api
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Widgets
+        Qt5::Concurrent
+        ${MAGICK_LIBRARIES}
+        ${LCMS2_LIBRARIES}
+        ${MAGICK_LDFLAGS}
+        ${LCMS2_LDFLAGS})
+else()
+    set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
+    set(HEADERS_APP ${HEADERS_APP} ${HEADERS_LIB})
 endif()
 
 add_executable(
     ${PROJECT_NAME}
     ${SOURCES_APP}
-    ${SOURCES_LIB}
-    ${HEADERS_LIB}
     ${HEADERS_APP}
     ${HEADERS_API}
     ${RESOURCES})
-#add_library(
-#    ${PROJECT_NAME}Api
-#    SHARED
-#    ${SOURCES_LIB}
-#    ${HEADERS_LIB}
-#    ${HEADERS_API})
-#set_target_properties(
-#    ${PROJECT_NAME}Api
-#    PROPERTIES
-#    VERSION
-#    ${PROJECT_VERSION})
-#set_target_properties(
-#    ${PROJECT_NAME}Api
-#    PROPERTIES
-#    SOVERSION
-#    ${PROJECT_VERSION_MAJOR})
 target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
-#target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
-#    ${PROJECT_NAME}Api
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -217,23 +232,16 @@ target_link_libraries(
     ${LCMS2_LIBRARIES}
     ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS})
+if(BUILD_LIBRARY)
+    target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
+endif()
 if(MINGW OR APPLE)
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
-#target_link_libraries(
-#    ${PROJECT_NAME}Api
-#    Qt5::Core
-#    Qt5::Gui
-#    Qt5::Widgets
-#    Qt5::Concurrent
-#    ${MAGICK_LIBRARIES}
-#    ${LCMS2_LIBRARIES}
-#    ${MAGICK_LDFLAGS}
-#    ${LCMS2_LDFLAGS})
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
-    set(QT_ROOT "${MINGW_ROOT}/qt5" CACHE STRING "Qt root dir")
+    set(QT_ROOT "${MINGW_ROOT}/qt5" CACHE STRING "MINGW/MXE Qt root dir")
     set(
         DLLS
         ${MINGW_ROOT}/bin/libbz2.dll
@@ -310,14 +318,15 @@ endif()
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
-    #if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    #    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
-    #else()
-    #    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
-    #endif()
+    if(BUILD_LIBRARY)
+        if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+            set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+        else()
+            set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+        endif()
+        install(TARGETS ${PROJECT_NAME}Api DESTINATION ${LIB_INSTALL_DIR})
+    endif()
     install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
-    #install(TARGETS ${PROJECT_NAME}Api DESTINATION ${LIB_INSTALL_DIR})
-    #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
     install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/128x128
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
@@ -361,7 +370,6 @@ if(UNIX AND NOT APPLE)
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/96x96
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
     #install(FILES ${HEADERS_API} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
-    #install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/Cyan DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons)
     install(
         FILES ${CMAKE_CURRENT_SOURCE_DIR}/share/miff.xml
         DESTINATION
