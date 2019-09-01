@@ -67,10 +67,10 @@ set(
     app/layers/cyan_layertree.cpp
     app/layers/cyan_layertreeitem.cpp
     app/layers/cyan_layerwidget.cpp
-    app/widgets/cyan_textwidget.cpp
-    app/widgets/colorrgb.cpp
-    app/widgets/colorcmyk.cpp
-    app/widgets/colorhsv.cpp
+    #app/widgets/cyan_textwidget.cpp
+    #app/widgets/colorrgb.cpp
+    #app/widgets/colorcmyk.cpp
+    #app/widgets/colorhsv.cpp
     app/dialogs/newmediadialog.cpp
     app/dialogs/convertdialog.cpp
     app/main.cpp
@@ -89,10 +89,10 @@ set(
     app/layers/cyan_layertree.h
     app/layers/cyan_layertreeitem.h
     app/layers/cyan_layerwidget.h
-    app/widgets/cyan_textwidget.h
-    app/widgets/colorrgb.h
-    app/widgets/colorcmyk.h
-    app/widgets/colorhsv.h
+    #app/widgets/cyan_textwidget.h
+    #app/widgets/colorrgb.h
+    #app/widgets/colorcmyk.h
+    #app/widgets/colorhsv.h
     app/dialogs/newmediadialog.h
     app/dialogs/convertdialog.h
     app/editor.h

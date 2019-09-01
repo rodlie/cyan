@@ -55,7 +55,7 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     CyanImageFormat::CyanLayer layer = getCurrentCanvas()->getLayer(id);
     if (!layer.image.isValid()) { return; }
 
-    if (layer.isText) {
+    /*if (layer.isText) {
         textWidget->setEnabled(true);
         textWidget->setText(layer.html);
         textWidget->setTextAlign(layer.textAlign);
@@ -65,7 +65,7 @@ void Editor::handleLayerTreeSelectedLayer(int id)
         textWidget->setText(QString());
         textWidget->setTextAlign(0);
         textWidget->setTextRotate(0);
-    }
+    }*/
 }
 
 void Editor::handleLayerVisibility(int id,
@@ -201,11 +201,11 @@ void Editor::handleDuplicateLayer(int id)
 void Editor::handleCurrentLayerTextChanged()
 {
     qDebug() << "handle current layer text changed";
-    if (!getCurrentCanvas()) { return; }
+    /*if (!getCurrentCanvas()) { return; }
     CyanLayerTreeItem *layerItem = layersWidget->getCurrentLayer();
     if (!layerItem) { return; }
     getCurrentCanvas()->setLayerText(layerItem->getLayerID(),
                                      textWidget->getText(),
                                      textWidget->getTextAlign(),
-                                     textWidget->getTextRotate());
+                                     textWidget->getTextRotate());*/
 }

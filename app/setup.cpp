@@ -192,7 +192,7 @@ void Editor::setupUI()
     addDockWidget(Qt::RightDockWidgetArea,
                   brushDock);
 
-    textWidget->setHidden(true);
+    //textWidget->setHidden(true);
 
     optMenu->setDisabled(true);
 
@@ -285,8 +285,8 @@ void Editor::setupWidgets()
     layersWidget = new CyanLayerWidget(this);
 
     // text (disabled for now)
-    textWidget = new CyanTextWidget(this);
-    textWidget->setDisabled(true);
+    //textWidget = new CyanTextWidget(this);
+    //textWidget->setDisabled(true);
 
     // add zoom % in status bar
     currentZoomStatusLabel = new QLabel(this);
@@ -531,10 +531,10 @@ void Editor::setupConnections()
             this,
             SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
 
-    connect(textWidget,
+    /*connect(textWidget,
             SIGNAL(textChanged()),
             this,
-            SLOT(handleCurrentLayerTextChanged()));
+            SLOT(handleCurrentLayerTextChanged()));*/
 
     //connect(layerButton, SIGNAL(toggled(bool)), layerPopup, SLOT(pinPopup(bool)));
     //connect(textButton, SIGNAL(toggled(bool)), textPopup, SLOT(pinPopup(bool)));

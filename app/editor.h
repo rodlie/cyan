@@ -48,7 +48,7 @@
 #include "mdi.h"
 #include "qtcolorpicker.h"
 #include "cyan_layerwidget.h"
-#include "cyan_textwidget.h"
+//#include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
 
 class Editor : public QMainWindow
@@ -119,7 +119,7 @@ private:
     CyanLayerWidget *layersWidget;
     QDockWidget *layersDock;
 
-    CyanTextWidget *textWidget;
+    //CyanTextWidget *textWidget;
 
     QSlider *brushSize;
     QDockWidget *brushDock;
