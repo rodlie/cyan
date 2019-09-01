@@ -457,7 +457,7 @@ void Editor::setupConnections()
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
     connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
 
-    connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(close()));
+    connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(checkTabsOnClose()));
 
     connect(viewMoveAct, SIGNAL(triggered(bool)), this, SLOT(handleSetMoveMode(bool)));
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));

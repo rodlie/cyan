@@ -975,6 +975,33 @@ void Editor::handleCanvasStatus()
     saveProjectAct->setEnabled(view->isDirty());
 }
 
+void Editor::checkTabsOnClose()
+{
+    if (hasDirtyProjects()) {
+        int ret = QMessageBox::question(this,
+                                        tr("Unsaved projects"),
+                                        tr("You have unsaved project open, are you sure you want to quit?"),
+                                        QMessageBox::Yes|QMessageBox::No,
+                                        QMessageBox::No);
+        if (ret == QMessageBox::No) { return; }
+    }
+    qApp->quit();
+}
+
+bool Editor::hasDirtyProjects()
+{
+    bool isDirty = false;
+    for (int i = 0; i < mdi->subWindowList().size(); ++i) {
+        if (isDirty) { break; }
+        QMdiSubWindow *tab = mdi->subWindowList().at(i);
+        if (!tab) { continue; }
+        View *view = qobject_cast<View*>(tab->widget());
+        if (!view) { continue; }
+        if (view->isDirty()) { isDirty = true; }
+    }
+    return isDirty;
+}
+
 
 /*void Editor::handleSetDragMode(bool triggered)
 {
@@ -1088,6 +1115,19 @@ void Editor::resizeEvent(QResizeEvent *e)
 {
     QMainWindow::resizeEvent(e);
     if (viewZoomFitAct->isChecked()) { setCurrentZoom(); }
+}
+
+void Editor::closeEvent(QCloseEvent *e)
+{
+    if (hasDirtyProjects()) {
+        int ret = QMessageBox::question(this,
+                                        tr("Unsaved projects"),
+                                        tr("You have unsaved project open, are you sure you want to quit?"),
+                                        QMessageBox::Yes|QMessageBox::No,
+                                        QMessageBox::No);
+        if (ret == QMessageBox::No) { e->ignore(); }
+        else { e->accept(); }
+    } else { e->accept(); }
 }
 
 

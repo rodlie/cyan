@@ -1,6 +1,7 @@
 # Cyan Changes
 ## 1.99.1 DEV - TBA
 
+* confirm quit if we have unsaved projects open
 * UI zoom support
   * Indicate zoom level
   * Add toolbar action for zoom 100%

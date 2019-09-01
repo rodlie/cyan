@@ -37,6 +37,7 @@
 #include <QSplitter>
 #include <QLabel>
 #include <QResizeEvent>
+#include <QCloseEvent>
 
 #include "CyanImageFormat.h"
 #include "CyanView.h"
@@ -302,6 +303,9 @@ private slots:
 
     void handleCanvasStatus();
 
+    void checkTabsOnClose();
+    bool hasDirtyProjects();
+
 
     // TODO
     void handleOpenImages(const QList<QUrl> &urls);
@@ -309,6 +313,7 @@ private slots:
 
 protected:
     void resizeEvent(QResizeEvent *e) override;
+    void closeEvent(QCloseEvent *e) override;
 };
 
 #endif // EDITOR_H
