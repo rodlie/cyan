@@ -29,6 +29,7 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     view->setLayersFromCanvas(canvas);
     view->setFit(viewZoomFitAct->isChecked());
     view->setBrushColor(colorPicker->currentColor());
+    view->setDirty(false);
 
     tab->setWidget(view);
     tab->showMaximized();
@@ -108,6 +109,7 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
     handleBrushSize();
     viewZoomFitAct->setChecked(view->isFit());
     setCurrentZoom();
+    handleCanvasStatus();
 }
 
 void Editor::updateTabTitle(View *view)

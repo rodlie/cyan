@@ -380,6 +380,8 @@ void Editor::saveProject(const QString &filename)
                                      filename,
                                      MagickCore::ZipCompression)) {
         // TODO, verify project!
+        getCurrentCanvas()->setDirty(false);
+        handleCanvasStatus();
     } else {
         QMessageBox::warning(this,
                              tr("Save error"),
@@ -856,6 +858,7 @@ void Editor::connectView(View *view)
     connect(view, SIGNAL(openLayers(QList<QUrl>)), this, SLOT(handleOpenLayers(QList<QUrl>)));
     connect(view, SIGNAL(zoomChanged()), this, SLOT(handleZoomChanged()));
     connect(view, SIGNAL(myFit(bool)), this, SLOT(handleZoomFitChanged(bool)));
+    connect(view, SIGNAL(canvasStatusChanged()), this, SLOT(handleCanvasStatus()));
 
     connect(layersWidget,
             SIGNAL(moveLayerEvent(QKeyEvent*)),
@@ -954,9 +957,22 @@ void Editor::handleZoomFitChanged(bool fit)
 void Editor::setCurrentZoom()
 {
     View *view = getCurrentCanvas();
-    if (!view) { return; }
+    if (!view) {
+        currentZoomStatusLabel->setText("100%");
+        return;
+    }
     int value = view->getZoomValue()*100;
     currentZoomStatusLabel->setText(QString("%1%").arg(value));
+}
+
+void Editor::handleCanvasStatus()
+{
+    View *view = getCurrentCanvas();
+    if (!view) {
+        saveProjectAct->setEnabled(false);
+        return;
+    }
+    saveProjectAct->setEnabled(view->isDirty());
 }
 
 

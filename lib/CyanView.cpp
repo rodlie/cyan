@@ -379,8 +379,11 @@ void View::addLayer(Magick::Image image,
     layer->setMovable(!_drawing);
     layer->setZValue(LAYER_Z);
 
+
     emit addedLayer(id);
     emit updatedLayers();
+
+    handleCanvasChanged();
 
     if (updateView) { refreshTiles(); }
 }
@@ -430,6 +433,7 @@ void View::addLayer(int id,
     emit addedLayer(id);
     emit updatedLayers();
 
+    handleCanvasChanged();
     if (updateView) { /*handleLayerOverTiles(layer);*/ refreshTiles(); }
 }
 
@@ -475,6 +479,7 @@ void View::duplicateLayer(int id)
                         _canvas.layers[dupID].position.height());
     }
 
+    handleCanvasChanged();
     emit updatedLayers();
     refreshTiles();
 }
@@ -516,6 +521,7 @@ int View::getLastLayerOrder()
 void View::clearLayers()
 {
     _canvas.layers.clear();
+    handleCanvasChanged();
     emit updatedLayers();
 }
 
@@ -543,6 +549,7 @@ void View::setLayerVisibility(int layer,
         _canvas.layers[layer].visible = layerIsVisible;
         handleLayerOverTiles(layer);
     }
+    handleCanvasChanged();
 }
 
 bool View::getLayerVisibility(int layer)
@@ -563,6 +570,7 @@ void View::setLayerLock(int layer, bool layerIsLocked)
         qDebug() << "SET LAYER LOCK" << layer << layerIsLocked;
         item->setLock(layerIsLocked);
     }
+    handleCanvasChanged();
 }
 
 bool View::getLayerLock(int layer)
@@ -580,6 +588,7 @@ void View::setLayerComposite(int layer,
         _canvas.layers[layer].composite = composite;
         handleLayerOverTiles(layer);
     }
+    handleCanvasChanged();
 }
 
 Magick::CompositeOperator View::getLayerComposite(int layer)
@@ -645,6 +654,7 @@ void View::moveLayerItemDown(int id)
 
     qDebug() << "RESTACK ITEMS (move layer down) ...";
     layerOver->stackBefore(layerUnder);
+    handleCanvasChanged();
 }
 
 void View::moveLayerItemUp(int id)
@@ -657,6 +667,7 @@ void View::moveLayerItemUp(int id)
 
     qDebug() << "RESTACK ITEMS (move layer up) ...";
     layerOver->stackBefore(layerUnder);
+    handleCanvasChanged();
 }
 
 int View::getLayerItemIndex(int id)
@@ -818,6 +829,7 @@ void View::updateCanvas(CyanImageFormat::CyanCanvas canvas)
 void View::setLayerOrder(int layer, int order)
 {
     _canvas.layers[layer].order = order;
+    handleCanvasChanged();
     emit updatedLayers();
     refreshTiles();
 }
@@ -831,6 +843,7 @@ void View::setLayerOffset(int layer,
                           QSize offset)
 {
     _canvas.layers[layer].position = offset;
+    handleCanvasChanged();
 }
 
 QString View::getLayerName(int layer)
@@ -842,6 +855,7 @@ void View::setLayerName(int layer,
                         QString name)
 {
     _canvas.layers[layer].label = name;
+    handleCanvasChanged();
 }
 
 double View::getLayerOpacity(int layer)
@@ -855,6 +869,7 @@ void View::setLayerOpacity(int layer,
 {
     _canvas.layers[layer].opacity = value;
     if (update) { handleLayerOverTiles(layer); }
+    handleCanvasChanged();
 }
 
 void View::removeLayer(int layer)
@@ -872,6 +887,7 @@ void View::removeLayer(int layer)
         }
     }
     _canvas.layers.remove(layer);
+    handleCanvasChanged();
     emit updatedLayers();
     emit statusMessage(tr("Removed layer %1 from canvas")
                        .arg(layer));
@@ -910,6 +926,9 @@ void View::setupCanvas(int width,
     // copy canvas
     _canvas.image = _image;
 
+    // set dirty
+    _canvas.dirty = true;
+
     // set timestamp
     //_canvas.timestamp = CyanCommon::timestamp();
 
@@ -945,6 +964,7 @@ const QString View::getCanvasID()
 void View::refreshTiles()
 {
     qDebug() << "REFRESH TILES";
+
     QMapIterator<int, CyanImageFormat::CyanTile> tiles(_canvas.tiles);
     while (tiles.hasNext()) {
         tiles.next();
@@ -1006,12 +1026,24 @@ void View::setLayerText(int id,
 
     _canvas.layers[id].html = text;
     _canvas.layers[id].image = CyanImageFormat::renderText(_canvas.layers[id]);
+    handleCanvasChanged();
     if (update) { handleLayerOverTiles(id); }
 }
 
 qreal View::getZoomValue()
 {
     return transform().m11();
+}
+
+bool View::isDirty()
+{
+    return _canvas.dirty;
+}
+
+void View::setDirty(bool dirty)
+{
+    _canvas.dirty = dirty;
+    emit canvasStatusChanged();
 }
 
 // TODO
@@ -1033,6 +1065,8 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _scene->setSceneRect(0, 0, _image.columns(), _image.rows());
     _rect->setRect(_scene->sceneRect());
     _canvas.image = _image;
+
+    _canvas.dirty = true; // dirty
 
     // save color profile
     _canvas.profile = image.iccColorProfile();
@@ -1133,6 +1167,7 @@ void View::handleLayerMoved(QPointF pos,
     handleLayerMoving(pos,
                       id,
                       true);
+    handleCanvasChanged();
 }
 
 void View::handleLayerSelected(int id)
@@ -1478,6 +1513,13 @@ void View::moveSelectedLayer(MoveLayer gravity, int skip)
         handleLayerOverTiles(item);
     }
 
+}
+
+void View::handleCanvasChanged()
+{
+    // canvas changed
+    if (!_canvas.dirty) { _canvas.dirty = true; }
+    emit canvasStatusChanged();
 }
 
 void View::setLockLayers(bool lock)

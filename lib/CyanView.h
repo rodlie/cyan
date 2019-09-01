@@ -120,6 +120,8 @@ signals:
     void openImages(QList<QUrl> urls);
     void openLayers(QList<QUrl> urls);
 
+    void canvasStatusChanged();
+
 public slots:
 
     void doZoom(double scaleX,
@@ -237,6 +239,9 @@ public slots:
 
     qreal getZoomValue();
 
+    bool isDirty();
+    void setDirty(bool dirty);
+
 private slots:
 
     void handleLayerMoving(QPointF pos,
@@ -272,6 +277,8 @@ private slots:
 
     void moveSelectedLayer(MoveLayer gravity,
                            int skip = 1);
+
+    void handleCanvasChanged();
 
 protected:
 

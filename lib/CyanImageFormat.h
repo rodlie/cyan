@@ -116,6 +116,7 @@ public:
         QSize tileSize;
         CyanBrush brush;
         Magick::Blob profile;
+        bool dirty = true;
     };
     struct QPairSortFirst
     {

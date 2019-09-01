@@ -31,6 +31,7 @@ void Editor::setupStyle()
     // style app
     qApp->setStyle(QStyleFactory::create("fusion"));
     if (QIcon::themeName().isEmpty()) {
+        // we include fallback hicolor icons
         QIcon::setThemeName("hicolor");
     }
 
@@ -53,7 +54,7 @@ void Editor::setupStyle()
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
     qApp->setPalette(palette);
 
-    // stylesheet
+    // stylesheet (override various stuff in Qt)
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
                           "QToolBar { border-color: none; }"
                           "QToolButton::menu-indicator { image: none; }"));
@@ -67,7 +68,7 @@ void Editor::setupUI()
     setupToolbars();
     setupActions();
     setupButtons();
-    setupColorManagement();
+    //setupColorManagement();
     setupConnections();
     setupIcons();
     setupShortcuts();
@@ -191,65 +192,8 @@ void Editor::setupUI()
     addDockWidget(Qt::RightDockWidgetArea,
                   brushDock);
 
-  /*  textDock = new QDockWidget(this);
-    textDock->setWindowTitle(tr("Text"));
-    textDock->setObjectName(QString("textDock"));
-    textDock->setWidget(textWidget);
-    addDockWidget(Qt::LeftDockWidgetArea,
-                  textDock);*/
     textWidget->setHidden(true);
 
-
-    /*QWidget *colorWidget = new QWidget(this);
-    colorWidget->setContentsMargins(0,0,0,0);
-    QVBoxLayout *colorWidgetLayout = new QVBoxLayout(colorWidget);
-    colorWidgetLayout->setContentsMargins(0,0,0,0);
-    colorWidgetLayout->setSpacing(0);*/
-    //colorWidget->setStyleSheet("background:green;");
-
-    /*ColorRGB *colorRGB = new ColorRGB(this);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorRGB, SLOT(setColor(QColor)));
-    connect(colorRGB, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
-
-    ColorCMYK *colorCMYK = new ColorCMYK(this);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorCMYK, SLOT(setColor(QColor)));
-    connect(colorCMYK, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));*/
-
-    //colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    //ColorHSV *colorHSV = new ColorHSV(this);
-    //colorHSV->setStyleSheet("background: red;");
-    //colorHSV->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    //connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
-    //connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
-
-    /*QToolBox *colorsBox = new QToolBox(this);
-    colorsBox->addItem(colorHSV, QString("HSV"));
-    colorsBox->addItem(colorRGB, QString("RGB"));
-    colorsBox->addItem(colorCMYK, QString("CMYK"));*/
-/*
-    QTabWidget *colorsTab = new QTabWidget(this);
-    colorsTab->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    //colorsTab->setMaximumHeight(120);
-    //colorsTab->setTabPosition(QTabWidget::South);
-    colorsTab->addTab(colorHSV, QString("HSV"));
-    colorsTab->addTab(colorRGB, QString("RGB"));
-    colorsTab->addTab(colorCMYK, QString("CMYK"));*/
-
-    //colorWidgetLayout->addWidget(colorTriangle);
-   // colorWidgetLayout->addWidget(colorHSV);
-
-    /*colorDock = new QDockWidget(this);
-    colorDock->setWindowTitle(tr("Color"));
-    colorDock->setObjectName(QString("colorDock"));
-    //colorDock->setWidget(colorWidget);
-    colorDock->setContentsMargins(0,0,0,0);
-    addDockWidget(Qt::RightDockWidgetArea,
-                  colorDock);*/
-
-
-
-    //layerMenu->setDisabled(true);
     optMenu->setDisabled(true);
 
     mainSplitter->setOrientation(Qt::Horizontal);
@@ -262,8 +206,6 @@ void Editor::setupUI()
     setCentralWidget(mainSplitter);
 
     rightSplitter->addWidget(layersWidget);
-   // rightSplitter->addWidget(colorWidget);
-
 }
 
 void Editor::setupMenus()
@@ -280,17 +222,11 @@ void Editor::setupMenus()
     helpMenu = new QMenu(this);
     helpMenu->setTitle(tr("Help"));
 
-    //newMenu = new QMenu(this);
-    //newMenu->setTitle(tr("New"));
-
     saveMenu = new QMenu(this);
     saveMenu->setTitle(tr("Save"));
 
     colorMenu = new QMenu(this);
     colorMenu->setTitle(tr("Colors"));
-
-    //layerMenu = new QMenu(this);
-    //layerMenu->setTitle(tr("Layers"));
 
     windowsMenu = new QtWindowListMenu(this);
 
@@ -315,7 +251,6 @@ void Editor::setupToolbars()
     mainToolBar = new QToolBar(this);
     mainToolBar->setObjectName(QString("mainToolBar"));
     mainToolBar->setWindowTitle(tr("Main"));
-    //mainToolBar->setAllowedAreas(Qt::TopToolBarArea);
     mainToolBar->setMovable(false);
 
     addToolBar(Qt::LeftToolBarArea,
@@ -325,6 +260,8 @@ void Editor::setupToolbars()
 void Editor::setupWidgets()
 {
 
+    // the main splitters
+    // TODO! add top and bottom
     mainSplitter = new QSplitter(this);
     mainSplitter->setObjectName(QString("mainSplitter"));
     leftSplitter = new QSplitter(this);
@@ -334,11 +271,11 @@ void Editor::setupWidgets()
 
     mdi = new Mdi(this);
     mdi->setBackground(QBrush(QColor(20, 20, 20)));
-    //mdi->setViewMode(QMdiArea::TabbedView);
 
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));
 
+    // remove this!
     brushSize = new QSlider(this);
     brushSize->setRange(1,256);
     brushSize->setValue(20);
@@ -346,32 +283,23 @@ void Editor::setupWidgets()
 
     // layer
     layersWidget = new CyanLayerWidget(this);
-    /*layersDock = new QDockWidget(this);
-    layersDock->setObjectName(QString("layersDock"));
-    layersDock->setWindowTitle(tr("Layers"));
-    layersDock->setWidget(layersWidget);
-    addDockWidget(Qt::RightDockWidgetArea, layersDock);*/
 
-    // text
-    /*textButton = new QToolButton(this);
-    textButton->setText(tr("Text"));
-    textButton->setToolTip(tr("Text"));
-    textButton->setIcon(QIcon::fromTheme("font"));
-    textButton->setCheckable(true);*/
-
-    //textPopup = new ctkPopupWidget(textButton);
-    //QVBoxLayout *textPopupLayout = new QVBoxLayout(textPopup);
+    // text (disabled for now)
     textWidget = new CyanTextWidget(this);
     textWidget->setDisabled(true);
 
+    // add zoom % in status bar
     currentZoomStatusLabel = new QLabel(this);
     currentZoomStatusLabel->setText(QString("100%"));
     currentZoomStatusIcon = new QLabel(this);
     currentZoomStatusIcon->setPixmap(QIcon::fromTheme("zoom").pixmap(QSize(16, 16)));
-
-
     mainStatusBar->addPermanentWidget(currentZoomStatusLabel);
     mainStatusBar->addPermanentWidget(currentZoomStatusIcon);
+
+    colorPicker = new QtColorPicker(this, -1, true, false);
+    colorPicker->setIconSize(QSize(24,24));
+    colorPicker->setStandardColors();
+    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
 }
 
 
@@ -389,6 +317,7 @@ void Editor::setupActions()
 
     saveProjectAct = new QAction(this);
     saveProjectAct->setText(tr("Save"));
+    saveProjectAct->setDisabled(true);
 
     saveProjectAsAct = new QAction(this);
     saveProjectAsAct->setText(tr("Save as ..."));
@@ -464,8 +393,6 @@ void Editor::setupActions()
 void Editor::setupButtons()
 {
     newButton = new QToolButton(this);
-   // newButton->setIconSize(QSize(32, 32));
-    //newButton->setMenu(newMenu);
     newButton->setPopupMode(QToolButton::InstantPopup);
     newButton->setText(tr("New"));
     newButton->setToolTip(tr("New"));
@@ -473,93 +400,38 @@ void Editor::setupButtons()
     newButton->setArrowType(Qt::NoArrow);
 
     openButton = new QToolButton(this);
-   // openButton->setIconSize(QSize(32, 32));
-    //openButton->setMenu(newMenu);
     openButton->setPopupMode(QToolButton::InstantPopup);
     openButton->setText(tr("Open"));
     openButton->setToolTip(tr("Open"));
     openButton->setIcon(QIcon::fromTheme("document-open"));
 
     saveButton = new QToolButton(this);
-    //saveButton->setIconSize(QSize(32, 32));
     saveButton->setMenu(saveMenu);
     saveButton->setPopupMode(QToolButton::InstantPopup);
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save"));
 
-    //saveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-
     moveButton = new QToolButton(this);
     moveButton->setCheckable(false);
-    //moveButton->setIconSize(QSize(32, 32));
-    //moveButton->setMenu(saveMenu);
     moveButton->setPopupMode(QToolButton::InstantPopup);
     moveButton->setText(tr("View"));
     moveButton->setToolTip(tr("View"));
     moveButton->setIcon(QIcon::fromTheme("transform_move"));
-    //moveButton->setDefaultAction(viewMoveAct);
-    //moveButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     zoomButton = new QToolButton(this);
-    //zoomButton->setIconSize(QSize(32, 32));
-    //zoomButton->setMenu(saveMenu);
     zoomButton->setPopupMode(QToolButton::InstantPopup);
-    zoomButton->setText(tr("View"));
-    zoomButton->setToolTip(tr("View"));
+    zoomButton->setText(tr("Zoom"));
+    zoomButton->setToolTip(tr("Zoom"));
     zoomButton->setIcon(QIcon::fromTheme("zoom"));
-    //viewButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
     convertButton = new QToolButton(this);
     convertButton->setMenu(colorMenu);
     convertButton->setPopupMode(QToolButton::InstantPopup);
     convertButton->setText(tr("Colors"));
     convertButton->setToolTip(tr("Color convert"));
-
 }
 
-void Editor::setupColorManagement()
-{
-    colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(24,24));
-    colorPicker->setStandardColors();
 
-    /*colorPopup = new ctkPopupWidget(colorPicker);
-    QVBoxLayout *colorPopupLayout = new QVBoxLayout(colorPopup);
-
-    colorPopup->setAutoShow(true);
-    colorPopup->setAutoHide(true);*/
-
-    //colorTriangle = new QtColorTriangle(this);
-    //colorTriangle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //colorPopupLayout->addWidget(colorTriangle);
-    //colorTriangle->setMinimumSize(QSize(175, 175));
-
-    //connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorPicker, SLOT(setCurrentColor(QColor)));
-    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
-    //connect(colorPicker, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
-
-   // QIcon colorsIcon = QIcon::fromTheme("colors");
-
-/*    ColorRGB *colorRGB = new ColorRGB(this);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorRGB, SLOT(setColor(QColor)));
-    connect(colorRGB, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
-
-    ColorCMYK *colorCMYK = new ColorCMYK(this);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorCMYK, SLOT(setColor(QColor)));
-    connect(colorCMYK, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));
-
-    ColorHSV *colorHSV = new ColorHSV(this);
-    connect(colorTriangle, SIGNAL(colorChanged(QColor)), colorHSV, SLOT(setColor(QColor)));
-    connect(colorHSV, SIGNAL(colorChanged(QColor)), colorTriangle, SLOT(setColor(QColor)));*/
-
-    //colorTriangle->setColor(QColor(Qt::black));
-
-    /*colorPopupLayout->addWidget(colorHSV);
-    colorPopupLayout->addWidget(colorRGB);
-    colorPopupLayout->addWidget(colorCMYK);*/
-
-
-}
 
 void Editor::setupConnections()
 {

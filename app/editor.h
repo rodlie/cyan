@@ -167,7 +167,7 @@ private slots:
     void setupWidgets();
     void setupActions();
     void setupButtons();
-    void setupColorManagement();
+    //void setupColorManagement();
     void setupConnections();
     void setupIcons();
     void setupShortcuts();
@@ -298,6 +298,9 @@ private slots:
 
     /*void newTabFromLayer(View *parentView,
                          int layerID);*/
+
+
+    void handleCanvasStatus();
 
 
     // TODO
