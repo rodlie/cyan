@@ -1,21 +1,14 @@
 # Cyan 2.0
 
 [![GitHub license](https://img.shields.io/github/license/rodlie/cyan)](https://github.com/rodlie/cyan/blob/master/COPYING)
-![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) 
-![GitHub Releases](https://img.shields.io/github/downloads/rodlie/cyan/latest/total.svg)
 ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan)
 ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan)
-[![GitHub issues](https://img.shields.io/github/issues/rodlie/cyan)](https://github.com/rodlie/cyan/issues)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg)
-[![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases)
-[![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
-![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg)
 
 ![screenshot](docs/images/screenshot.png)
 
-Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org). Note that we started from scratch with version 2.0, so development will take time.
+Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
-***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
+***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2). You can track development in our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
 
 ## Features
 
