@@ -37,8 +37,14 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get update
     sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev libfontconfig1-dev
     sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
-    sudo apt-get install p7zip-full zip wine
+    sudo apt-get install p7zip-full zip
     #sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
+
+    if [ "${UBUNTU}" = "xenial" ]; then
+        sudo apt-get install wine
+    elif [ "${UBUNTU}" = "bionic" ]; then
+        sudo apt-get install wine-stable
+    fi
 
     #if [ "${UBUNTU}" = "xenial" ]; then
     #  sudo apt-get install p7zip-full zip wine
