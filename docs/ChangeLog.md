@@ -1,19 +1,19 @@
 # Cyan Changes
 ## 1.99.1 DEV - TBA
 
-* confirm quit if we have unsaved projects open
+* Confirm quit if we have unsaved projects open
 * UI zoom support
   * Indicate zoom level
   * Add toolbar action for zoom 100%
   * Add toolbar action for zoom to fit
   * zoom tool button
 * UI clean up
-  * Fix several issues with the toolbar and different size widgets
+  * Fix several issues
   * Removed "bloat"
   * Merged view tools into one tool button
 * Very basic support for widget plugins
   * Needs more work
-* macOS support has currently been dropped due to missing hardware and lack of interest, binaries for Windows 7/8/10 and Ubuntu Bionic will be available
+* macOS support has been dropped due to missing hardware and lack of interest
 
 ## 1.99.0 DEV - N/A
 * Re-license to LGPL v2.1
