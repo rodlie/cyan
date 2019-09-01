@@ -24,20 +24,22 @@ fi
 
 OS=`uname -s`
 CWD=`pwd`
-MXE=/opt/Cyan-mxe
-SDK=/opt/${OS}2
+#MXE=/opt/Cyan-mxe
+#SDK=/opt/${OS}2
 DEPLOY=/opt/deploy
 COMMIT=${COMMIT:-${TRAVIS_COMMIT}}
 UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME=/!d;s/UBUNTU_CODENAME=//'`
 
 if [ "${SETUP}" = 1 ]; then
   if [ "${OS}" = "Linux" ]; then
-    echo "==> Setup ubuntu ..."
+    echo "==> Setup Ubuntu ${UBUNTU} ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
-    sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev
+    sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev libfontconfig1-dev
     sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
-    #libfontconfig1-dev
+    sudo apt-get install p7zip-full zip wine
+    #sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
+
     #if [ "${UBUNTU}" = "xenial" ]; then
     #  sudo apt-get install p7zip-full zip wine
     #  echo "==> Extracting win64 sdk ..."
@@ -53,61 +55,7 @@ if [ "${SETUP}" = 1 ]; then
     #  rm -f download.tar.xz
     #  ls $MXE
     #fi
-    #if [ "${UBUNTU}" = "bionic" ]; then
-      echo "==> Building ImageMagick ..."
-      cd ${CWD}
-      git clone https://github.com/ImageMagick/ImageMagick
-      cd ImageMagick
-      git checkout 7.0.8-29
-      ./configure --prefix=`pwd`/install --disable-static --enable-shared \
-      --enable-zero-configuration \
-      --enable-hdri \
-      --enable-largefile \
-      --disable-deprecated \
-      --disable-pipes \
-      --disable-docs \
-      --disable-legacy-support \
-      --with-package-release-name=Cyan \
-      --with-utilities=no \
-      --with-quantum-depth=16 \
-      --with-bzlib=yes \
-      --with-autotrace=no \
-      --with-djvu=no \
-      --with-dps=no \
-      --with-fftw=no \
-      --with-flif=no \
-      --with-fpx=no \
-      --with-fontconfig=no \
-      --with-freetype=no \
-      --with-gslib=no \
-      --with-gvc=no \
-      --with-heic=no \
-      --with-jbig=no \
-      --with-jpeg=yes \
-      --with-lcms=yes \
-      --with-lqr=no \
-      --with-ltdl=no \
-      --with-lzma=yes \
-      --with-magick-plus-plus=yes \
-      --with-openexr=yes \
-      --with-openjp2=yes \
-      --with-pango=yes \
-      --with-librsvg=no \
-      --with-perl=no \
-      --with-png=yes \
-      --with-raqm=no \
-      --with-raw=no \
-      --with-tiff=yes \
-      --with-webp=yes \
-      --with-wmf=no \
-      --with-x=no \
-      --with-xml=no \
-      --with-zlib=yes \
-      --with-zstd=no
-      make -j2
-      make install
-      tree install
-    #fi
+
     #echo "Extracting linux64 sdk ..."
     #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
     #tar xf download.tar.xz -C /opt
@@ -128,12 +76,17 @@ if [ "${OS}" = "Linux" ]; then
 
   #if [ "${UBUNTU}" = "bionic" ]; then
     #echo "==> Building for Ubuntu Bionic ..."
+
+    cd "$CWD"
+    sh share/scripts/build-magick.sh
     mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/usr "$CWD"
     make -j2
     ls *
     make DESTDIR=`pwd`/pkg install
     tree pkg
+
+
   #elif [ "${UBUNTU}" = "xenial" ]; then
   #  echo "==> Building for Windows x64 on Ubuntu Xenial ..."
   #  cd ${CWD}

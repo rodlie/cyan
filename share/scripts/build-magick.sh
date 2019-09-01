@@ -36,7 +36,7 @@ git clone https://github.com/ImageMagick/ImageMagick || exit 1
 cd ImageMagick || exit 1
 git checkout $MAGICK || exit 1
 
-CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure \
+CXXFLAGS="-fPIC" ./configure \
   --prefix=`pwd`/install \
   ${BUILD_TYPE} \
   --enable-zero-configuration \
