@@ -35,60 +35,26 @@ if [ "${SETUP}" = 1 ]; then
     echo "==> Setup Ubuntu ${UBUNTU} ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
-    sudo apt-get install cmake pkg-config xz-utils tree dpkg qtbase5-dev libfontconfig1-dev
+    sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree dpkg qtbase5-dev libfontconfig1-dev
     sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
-    sudo apt-get install p7zip-full zip
+    # MXE
     #sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
 
+    # Windows installer
     if [ "${UBUNTU}" = "xenial" ]; then
         sudo apt-get install wine
     elif [ "${UBUNTU}" = "bionic" ]; then
         sudo apt-get install wine-stable
     fi
-
-    #if [ "${UBUNTU}" = "xenial" ]; then
-    #  sudo apt-get install p7zip-full zip wine
-    #  echo "==> Extracting win64 sdk ..."
-    #  mkdir -p ${MXE}
-    #  wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download && mv download download.tar.xz
-    #  tar xf download.tar.xz -C ${MXE}/
-    #  rm -f download.tar.xz
-    #  wget https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download && mv download download.tar.xz
-    #  tar xf download.tar.xz -C ${MXE}/
-    #  rm -f download.tar.xz
-    #  wget https://sourceforge.net/projects/prepress/files/sdk/inno6.tar.xz/download && mv download download.tar.xz
-    #  tar xf download.tar.xz -C ${MXE}/
-    #  rm -f download.tar.xz
-    #  ls $MXE
-    #fi
-
-    #echo "Extracting linux64 sdk ..."
-    #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20190104-linux64.tar.xz/download && mv download download.tar.xz
-    #tar xf download.tar.xz -C /opt
-    #rm -f download.tar.xz
-  #elif [ "${OS}" = "Darwin" ]; then
-  #  curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
-  #  tar xf download.tar.xz -C /opt
-  #  rm -f download.tar.xz
-  #  curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-20181226-mac11.tar.xz/download --output download.tar.xz
-  #  tar xf download.tar.xz -C /opt
-  #  rm -f download.tar.xz
   fi
 fi
 
 if [ "${OS}" = "Linux" ]; then
-  #export PATH="${SDK}/bin:/usr/bin:/bin"
-  #export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
-
-  #if [ "${UBUNTU}" = "bionic" ]; then
-    #echo "==> Building for Ubuntu Bionic ..."
-
     cd "$CWD"
-    sh share/scripts/build-magick.sh
-    mkdir -p "$CWD/build-ci" && cd "$CWD/build-ci"
+    STATIC=1 sh share/scripts/build-magick.sh
+    mkdir -p "$CWD/build-${UBUNTU}" && cd "$CWD/build-${UBUNTU}"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/usr "$CWD"
     make -j2
-    ls *
     make DESTDIR=`pwd`/pkg install
     tree pkg
 
