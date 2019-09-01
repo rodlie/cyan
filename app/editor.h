@@ -35,6 +35,8 @@
 #include <QTreeWidgetItem>
 #include <QToolButton>
 #include <QSplitter>
+#include <QLabel>
+#include <QResizeEvent>
 
 #include "CyanImageFormat.h"
 #include "CyanView.h"
@@ -133,6 +135,8 @@ private:
     //ctkPopupWidget *layerPopup;
     //ctkPopupWidget *colorPopup;
 
+    QLabel *currentZoomStatusIcon;
+    QLabel *currentZoomStatusLabel;
 
     QSplitter *mainSplitter;
     QSplitter *rightSplitter;
@@ -280,10 +284,17 @@ private slots:
 
 
 
+    void handleZoom100ActionTriggered();
+    void handleZoomFitActionTriggered(bool triggered);
+
+
     void connectView(View *view);
     void setViewTool(View *view);
     void handleViewClosed();
 
+    void handleZoomChanged();
+    void handleZoomFitChanged(bool fit);
+    void setCurrentZoom();
 
     /*void newTabFromLayer(View *parentView,
                          int layerID);*/
@@ -292,6 +303,9 @@ private slots:
     // TODO
     void handleOpenImages(const QList<QUrl> &urls);
     void handleOpenLayers(const QList<QUrl> &urls);
+
+protected:
+    void resizeEvent(QResizeEvent *e) override;
 };
 
 #endif // EDITOR_H

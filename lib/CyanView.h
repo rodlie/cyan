@@ -86,6 +86,7 @@ private:
 
 signals:
 
+    void zoomChanged();
     void resetZoom();
     void myZoom(double scaleX,
                 double scaleY);
@@ -124,6 +125,7 @@ public slots:
     void doZoom(double scaleX,
                 double scaleY);
     void setFit(bool value);
+    bool isFit();
     void resetImageZoom();
 
     void setLayer(Magick::Image image,
@@ -232,6 +234,8 @@ public slots:
                       int align = 0,
                       int rotate = 0,
                       bool update = true);
+
+    qreal getZoomValue();
 
 private slots:
 

@@ -363,6 +363,15 @@ void Editor::setupWidgets()
     //QVBoxLayout *textPopupLayout = new QVBoxLayout(textPopup);
     textWidget = new CyanTextWidget(this);
     textWidget->setDisabled(true);
+
+    currentZoomStatusLabel = new QLabel(this);
+    currentZoomStatusLabel->setText(QString("100%"));
+    currentZoomStatusIcon = new QLabel(this);
+    currentZoomStatusIcon->setPixmap(QIcon::fromTheme("zoom").pixmap(QSize(16, 16)));
+
+
+    mainStatusBar->addPermanentWidget(currentZoomStatusLabel);
+    mainStatusBar->addPermanentWidget(currentZoomStatusIcon);
 }
 
 
@@ -449,6 +458,7 @@ void Editor::setupActions()
 
     viewZoomFitAct = new QAction(this);
     viewZoomFitAct->setText(tr("Zoom to fit"));
+    viewZoomFitAct->setCheckable(true);
 }
 
 void Editor::setupButtons()
@@ -554,6 +564,11 @@ void Editor::setupColorManagement()
 void Editor::setupConnections()
 {
 
+
+
+    connect(viewZoom100Act, SIGNAL(triggered(bool)), this, SLOT(handleZoom100ActionTriggered()));
+    connect(viewZoomFitAct, SIGNAL(triggered(bool)), this, SLOT(handleZoomFitActionTriggered(bool)));
+
     //connect(&common, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     //connect(&common, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
 
@@ -657,6 +672,10 @@ void Editor::setupConnections()
 void Editor::setupIcons()
 {
     setWindowIcon(QIcon::fromTheme(qApp->applicationName()));
+
+
+    viewZoom100Act->setIcon(QIcon::fromTheme("zoom-original"));
+    viewZoomFitAct->setIcon(QIcon::fromTheme("zoom-fit-best"));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     newLayerAct->setIcon(QIcon::fromTheme("layer",

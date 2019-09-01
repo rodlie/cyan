@@ -95,8 +95,10 @@ void View::wheelEvent(QWheelEvent* event) {
             setBrushStroke(value);
         } else { // zoom in
             fit = false;
+            emit myFit(false);
             scale(scaleFactor, scaleFactor);
             emit myZoom(scaleFactor, scaleFactor);
+            emit zoomChanged();
         }
     } else { // down
         if (_drawing && (event->buttons() & Qt::RightButton)) {
@@ -105,8 +107,11 @@ void View::wheelEvent(QWheelEvent* event) {
             if (value<0) { value = 1; }
             setBrushStroke(value);
         } else { // zoom out
+            fit = false;
+            emit myFit(false);
             scale(1.0 / scaleFactor, 1.0 / scaleFactor);
             emit myZoom(1.0 / scaleFactor, 1.0 / scaleFactor);
+            emit zoomChanged();
         }
     }
 }
@@ -286,25 +291,38 @@ void View::doZoom(double scaleX,
 {
     scale(scaleX,
           scaleY);
+    emit zoomChanged();
 }
 
 void View::setFit(bool value)
 {
     if (!scene()) { return; }
     fit = value;
-    fitInView(0,
-              0,
-              scene()->width(),
-              scene()->height(),
-              Qt::KeepAspectRatio);
+    if (fit) {
+        fitInView(0,
+                  0,
+                  scene()->width(),
+                  scene()->height(),
+                  Qt::KeepAspectRatio);
+        emit zoomChanged();
+    } else {
+        resetImageZoom();
+    }
+}
+
+bool View::isFit()
+{
+    return fit;
 }
 
 void View::resetImageZoom()
 {
     fit = false;
+    emit myFit(false);
     QMatrix matrix;
     matrix.scale(1.0, 1.0);
     setMatrix(matrix);
+    emit zoomChanged();
 }
 
 void View::setLayer(Magick::Image image,
@@ -989,6 +1007,11 @@ void View::setLayerText(int id,
     _canvas.layers[id].html = text;
     _canvas.layers[id].image = CyanImageFormat::renderText(_canvas.layers[id]);
     if (update) { handleLayerOverTiles(id); }
+}
+
+qreal View::getZoomValue()
+{
+    return transform().m11();
 }
 
 // TODO

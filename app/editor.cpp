@@ -108,6 +108,8 @@ Editor::Editor(QWidget *parent)
     , colorPicker(nullptr)
     //, textButton(nullptr)
     , convertButton(nullptr)
+    , currentZoomStatusIcon(nullptr)
+    , currentZoomStatusLabel(nullptr)
     , mainSplitter(nullptr)
     , rightSplitter(nullptr)
     , leftSplitter(nullptr)
@@ -808,6 +810,23 @@ void Editor::newTextLayerDialog()
     newLayerDialog(true /* isText */);
 }
 
+void Editor::handleZoom100ActionTriggered()
+{
+    View *view = qobject_cast<View*>(getCurrentCanvas());
+    if (!view) { return; }
+    view->resetImageZoom();
+    if (view->isFit()) { view->setFit(false); }
+    if (viewZoomFitAct->isChecked()) { viewZoomFitAct->setChecked(false); }
+}
+
+void Editor::handleZoomFitActionTriggered(bool triggered)
+{
+    Q_UNUSED(triggered)
+    View *view = qobject_cast<View*>(getCurrentCanvas());
+    if (!view) { return; }
+    view->setFit(viewZoomFitAct->isChecked());
+}
+
 /*void Editor::handleNewImage(Magick::Image image)
 {
     if (image.columns()>0 &&
@@ -835,6 +854,8 @@ void Editor::connectView(View *view)
     connect(view, SIGNAL(updatedBrushStroke(int)), this, SLOT(handleUpdateBrushSize(int)));
     connect(view, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
     connect(view, SIGNAL(openLayers(QList<QUrl>)), this, SLOT(handleOpenLayers(QList<QUrl>)));
+    connect(view, SIGNAL(zoomChanged()), this, SLOT(handleZoomChanged()));
+    connect(view, SIGNAL(myFit(bool)), this, SLOT(handleZoomFitChanged(bool)));
 
     connect(layersWidget,
             SIGNAL(moveLayerEvent(QKeyEvent*)),
@@ -908,6 +929,34 @@ void Editor::handleViewClosed()
     qDebug() << "view closed";
     layersWidget->clearTree();
     layersWidget->handleTabActivated(mdi->currentSubWindow());
+}
+
+void Editor::handleZoomChanged()
+{
+    qDebug() << "zoom changed";
+    View *view = qobject_cast<View*>(sender());
+    if (!view) { return; }
+    if (view != getCurrentCanvas()) { return; }
+    setCurrentZoom();
+}
+
+void Editor::handleZoomFitChanged(bool fit)
+{
+    Q_UNUSED(fit)
+    View *view = qobject_cast<View*>(sender());
+    if (!view) { return; }
+    if (view != getCurrentCanvas()) { return; }
+    if (viewZoomFitAct->isChecked() == view->isFit()) { return; }
+    viewZoomFitAct->setChecked(view->isFit());
+    setCurrentZoom();
+}
+
+void Editor::setCurrentZoom()
+{
+    View *view = getCurrentCanvas();
+    if (!view) { return; }
+    int value = view->getZoomValue()*100;
+    currentZoomStatusLabel->setText(QString("%1%").arg(value));
 }
 
 
@@ -1017,6 +1066,12 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
     // workaround issues with dialogs
     update();
     view->scene()->update();
+}
+
+void Editor::resizeEvent(QResizeEvent *e)
+{
+    QMainWindow::resizeEvent(e);
+    if (viewZoomFitAct->isChecked()) { setCurrentZoom(); }
 }
 
 

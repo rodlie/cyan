@@ -27,7 +27,7 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
 
     view->setCanvasSpecsFromImage(canvas.image);
     view->setLayersFromCanvas(canvas);
-    //view->setFit(true);
+    view->setFit(viewZoomFitAct->isChecked());
     view->setBrushColor(colorPicker->currentColor());
 
     tab->setWidget(view);
@@ -44,6 +44,7 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     setViewTool(view);
     updateTabTitle(view);
     handleTabActivated(tab);
+    setCurrentZoom();
 }
 
 void Editor::newTab(Magick::Image image, QSize geo)
@@ -68,7 +69,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
     }
     if (geo.width()>0) { view->addLayer(view->getCanvas()); }
     else { view->addLayer(image); }
-    //view->setFit(true);
+    view->setFit(viewZoomFitAct->isChecked());
     view->setBrushColor(colorPicker->currentColor());
 
     tab->setWidget(view);
@@ -85,6 +86,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
     setViewTool(view);
     updateTabTitle(view);
     handleTabActivated(tab);
+    setCurrentZoom();
     //return view;
 }
 
@@ -104,6 +106,8 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
     }*/
     updateTabTitle();
     handleBrushSize();
+    viewZoomFitAct->setChecked(view->isFit());
+    setCurrentZoom();
 }
 
 void Editor::updateTabTitle(View *view)
