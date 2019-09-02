@@ -59,13 +59,14 @@ if [ "${SETUP}" = 1 ]; then
   fi
 fi
 
-VERSION="cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'"
+VERSION=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
 
 if [ "${OS}" = "Linux" ]; then
     echo "==> Building package for Ubuntu ${UBUNTU} ..."
     cd "$CWD"
     MKJOBS=2 sh share/scripts/build-magick.sh
-    mkdir -p "$CWD/build-${UBUNTU}" && cd "$CWD/build-${UBUNTU}"
+    BUILD_DIR="$CWD/build-$UBUNTU"
+    mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
     GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" \
     cmake \
     -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
@@ -76,14 +77,14 @@ if [ "${OS}" = "Linux" ]; then
     if [ ! -d "pkg/usr/lib64" ]; then
         mkdir -p pkg/usr/lib64
     fi
-    cp -av "${CWD}"/ImageMagick/install/lib/*Cyan* pkg/usr/lib64/
+    cp -av "$CWD/ImageMagick/install/lib/"*Cyan* pkg/usr/lib64/
     strip -s pkg/usr/lib64/* pkg/usr/bin/*
     tree -lah pkg
 
-    DEB="$CWD/build-${UBUNTU}/pkg"
-    mv $DEB/usr/share/doc/Cyan-$VERSION $DEB/usr/share/doc/cyan-$VERSION
-    echo > $DEB/usr/share/doc/cyan-$VERSION/changelog.Debian.gz
-    echo > $DEB/usr/share/doc/cyan-$VERSION/copyright
+    DEB="${BUILD_DIR}/pkg"
+    mv "$DEB/usr/share/doc/Cyan-$VERSION" "$DEB/usr/share/doc/cyan-$VERSION"
+    echo > "$DEB/usr/share/doc/cyan-$VERSION/changelog.Debian.gz"
+    echo > "$DEB/usr/share/doc/cyan-$VERSION/copyright"
     mkdir -p "$DEB/DEBIAN"
 
     CONTROL=$DEB/DEBIAN/control
@@ -99,9 +100,9 @@ if [ "${OS}" = "Linux" ]; then
     echo "Description: Cyan Image Editor" >> $CONTROL
     echo "Installed-Size: $DEB_SIZE" >> $CONTROL
 
-    sudo chown root:root -R $DEB
-    sudo dpkg-deb -b $DEB
-    cp $CWD/build-${UBUNTU}/deb.deb $CWD/build-${UBUNTU}/cyan_${VERSION}-1${UBUNTU}_amd64.deb
+    sudo chown root:root -R "$DEB"
+    sudo dpkg-deb -b "$DEB"
+    cp "${BUILD_DIR}/deb.deb" "${BUILD_DIR}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
 
   #if [ "${UBUNTU}" = "xenial" ]; then
   #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
