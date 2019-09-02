@@ -41,7 +41,7 @@ if [ "${SETUP}" = 1 ]; then
 
     # Windows installer
     if [ "${UBUNTU}" = "bionic" ]; then
-        sudo apt-get install wine-stable
+        sudo apt-get install wine-stable wine32
         # MXE (if we need to rebuild)
         #sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
     fi
