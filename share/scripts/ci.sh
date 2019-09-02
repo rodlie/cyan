@@ -74,6 +74,9 @@ if [ "${OS}" = "Linux" ]; then
     "$CWD"
     make -j2
     make DESTDIR=`pwd`/pkg install
+    if [ ! -d "pkg/usr/lib64" ]; then
+        mkdir -p pkg/usr/lib64
+    fi
     cp -av "${CWD}"/ImageMagick/install/lib/*Cyan* pkg/usr/lib64/
     strip -s pkg/usr/lib*/* pkg/usr/lib*/*/* pkg/usr/bin/*
     tree -lah pkg
