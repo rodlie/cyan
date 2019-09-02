@@ -24,9 +24,9 @@ fi
 
 OS=`uname -s`
 CWD=`pwd`
-MXE=/opt/Cyan-mxe
+MXE=${MXE:-/opt/Cyan-mxe}
 #SDK=/opt/${OS}2
-DEPLOY=/opt/deploy
+DEPLOY=${DEPLOY:-/opt/deploy}
 COMMIT=${COMMIT:-${TRAVIS_COMMIT}}
 UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME=/!d;s/UBUNTU_CODENAME=//'`
 VERSION=""
@@ -59,7 +59,11 @@ if [ "${SETUP}" = 1 ]; then
   fi
 fi
 
+TAG=`date "+%Y%m%d%H%M"`
 VERSION=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
+if [ ! -d "$DEPLOY" ]; then
+    mkdir -p "$DEPLOY"
+fi
 
 if [ "${OS}" = "Linux" ]; then
     echo "==> Building package for Ubuntu ${UBUNTU} ..."
@@ -102,7 +106,10 @@ if [ "${OS}" = "Linux" ]; then
 
     sudo chown root:root -R "$DEB"
     sudo dpkg-deb -b "$DEB"
-    cp "${BUILD_DIR}/pkg.deb" "${BUILD_DIR}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
+    cp "${BUILD_DIR}/pkg.deb" "${DEPLOY}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
+
+
+    tree -lah "$DEPLOY"
 
   #if [ "${UBUNTU}" = "xenial" ]; then
   #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
