@@ -19,12 +19,12 @@ set -e
 SETUP=${SETUP:-1}
 
 if [ "${SETUP}" = 1 ]; then
-  sudo chmod 777 /opt
+    sudo chmod 777 /opt
 fi
 
 OS=`uname -s`
 CWD=`pwd`
-#MXE=/opt/Cyan-mxe
+MXE=/opt/Cyan-mxe
 #SDK=/opt/${OS}2
 DEPLOY=/opt/deploy
 COMMIT=${COMMIT:-${TRAVIS_COMMIT}}
@@ -46,6 +46,19 @@ if [ "${SETUP}" = 1 ]; then
     elif [ "${UBUNTU}" = "bionic" ]; then
         sudo apt-get install wine-stable
     fi
+
+    # Windows SDK
+    if [ "${UBUNTU}" = "xenial" ]; then
+        echo "==> Extracting Windows x64 SDK ..."
+        mkdir -p "${MXE}"
+        wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download
+        tar xf download.tar.xz -C "${MXE}/"
+        rm -f download.tar.xz
+        wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download
+        tar xf download.tar.xz -C "${MXE}/"
+        rm -f download.tar.xz
+        ls "$MXE"
+    fi
   fi
 fi
 
@@ -61,16 +74,18 @@ if [ "${OS}" = "Linux" ]; then
     "$CWD"
     make -j2
     make DESTDIR=`pwd`/pkg install
-    cp -av "${CWD}/ImageMagick/install/lib/*Cyan*" pkg/usr/lib64/
-    tree pkg
+    cp -av ImageMagick/install/lib/*Cyan* pkg/usr/lib64/
+    strip -s pkg/usr/lib*/* pkg/usr/lib*/*/* pkg/usr/bin/*
+    tree -lah ImageMagick/install/lib
+    tree -lah pkg
 
 
-  if [ "${UBUNTU}" = "xenial" ]; then
-    echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
-    cd "${CWD}"
-    MKJOBS=2 sh share/scripts/build-win64.sh
-    tree build-win64
-  fi
+  #if [ "${UBUNTU}" = "xenial" ]; then
+  #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+  #  cd "${CWD}"
+  #  MKJOBS=2 sh share/scripts/build-win64.sh
+  #  tree build-win64
+  #fi
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
 #  qmake PREFIX=/usr ..
