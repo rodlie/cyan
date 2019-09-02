@@ -94,9 +94,14 @@ void Editor::newTab(Magick::Image image, QSize geo)
 void Editor::handleTabActivated(QMdiSubWindow *tab)
 {
     qDebug() << "handle tab activated";
+
+    setActionsDisabled(true);
+
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
+
+    setActionsDisabled(false);
 
     /*if (viewDragAct->isChecked()) {
         view->setDragMode(QGraphicsView::ScrollHandDrag);

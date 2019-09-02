@@ -98,12 +98,12 @@ Editor::Editor(QWidget *parent)
     , moveButton(nullptr)
     , zoomButton(nullptr)
     , layersWidget(nullptr)
-    , layersDock(nullptr)
+    //, layersDock(nullptr)
     //, textWidget(nullptr)
     , brushSize(nullptr)
     , brushDock(nullptr)
-    , textDock(nullptr)
-    , colorDock(nullptr)
+    //, textDock(nullptr)
+    //, colorDock(nullptr)
     //, colorTriangle(nullptr)
     , colorPicker(nullptr)
     //, textButton(nullptr)
@@ -969,10 +969,13 @@ void Editor::handleCanvasStatus()
 {
     View *view = getCurrentCanvas();
     if (!view) {
-        saveProjectAct->setEnabled(false);
+        //saveProjectAct->setEnabled(false);
+        setActionsDisabled(true);
         return;
     }
-    saveProjectAct->setEnabled(view->isDirty());
+    setActionsDisabled(false);
+    setProjectSaveDisabled(!view->isDirty());
+    //saveProjectAct->setEnabled(view->isDirty());
 }
 
 void Editor::checkTabsOnClose()
@@ -1000,6 +1003,29 @@ bool Editor::hasDirtyProjects()
         if (view->isDirty()) { isDirty = true; }
     }
     return isDirty;
+}
+
+void Editor::setActionsDisabled(bool disabled)
+{
+    saveImageAct->setDisabled(disabled);
+    saveProjectAsAct->setDisabled(disabled);
+    newLayerAct->setDisabled(disabled);
+    openLayerAct->setDisabled(disabled);
+    moveButton->setDisabled(disabled);
+    zoomButton->setDisabled(disabled);
+    saveButton->setDisabled(disabled);
+    layersWidget->setDisabled(disabled);
+}
+
+void Editor::setProjectSaveDisabled(bool disabled)
+{
+    if (!saveButton->isEnabled() && !disabled) {
+        saveButton->setEnabled(true);
+    }
+    if (!saveProjectAsAct->isEnabled() && !disabled) {
+        saveProjectAsAct->setEnabled(true);
+    }
+    saveProjectAct->setDisabled(disabled);
 }
 
 

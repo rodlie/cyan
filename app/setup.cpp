@@ -158,6 +158,10 @@ void Editor::setupUI()
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
 
+
+
+
+
     viewMoveAct->setChecked(true);
     moveButton->setDefaultAction(viewMoveAct);
 
@@ -168,6 +172,8 @@ void Editor::setupUI()
     populateColorProfileMenu(colorProfileGRAYMenu,
                              Magick::GRAYColorspace);
     populateColorIntentMenu();
+
+        setActionsDisabled(true);
 
     QLabel *brushSizeLabel = new QLabel(this);
     brushSizeLabel->setPixmap(QIcon(":/icons/brushsize.png")
@@ -305,36 +311,39 @@ void Editor::setupWidgets()
 
 void Editor::setupActions()
 {
-
     newImageAct = new QAction(this);
-    newImageAct->setText(tr("New image"));
+    newImageAct->setText(tr("New project"));
 
     openImageAct = new QAction(this);
-    openImageAct->setText(tr("Open"));
+    openImageAct->setText(tr("Open image/project"));
 
     saveImageAct = new QAction(this);
     saveImageAct->setText(tr("Export image"));
+    saveImageAct->setDisabled(true);
 
     saveProjectAct = new QAction(this);
-    saveProjectAct->setText(tr("Save"));
+    saveProjectAct->setText(tr("Save project"));
     saveProjectAct->setDisabled(true);
 
     saveProjectAsAct = new QAction(this);
-    saveProjectAsAct->setText(tr("Save as ..."));
+    saveProjectAsAct->setText(tr("Save project as ..."));
     saveProjectAsAct->setDisabled(true);
 
     newLayerAct = new QAction(this);
-    newLayerAct->setText(tr("New layer"));
+    newLayerAct->setText(tr("New image layer"));
+    newLayerAct->setDisabled(true);
 
     newTextLayerAct = new QAction(this);
     newTextLayerAct->setText(tr("New text layer"));
     newTextLayerAct->setDisabled(true);
 
     openLayerAct = new QAction(this);
-    openLayerAct->setText(tr("Import image"));
+    openLayerAct->setText(tr("Import image as layer"));
+    openLayerAct->setDisabled(true);
 
     saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Export layer"));
+    saveLayerAct->setText(tr("Export layer to image"));
+    saveLayerAct->setDisabled(true);
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -397,7 +406,6 @@ void Editor::setupButtons()
     newButton->setText(tr("New"));
     newButton->setToolTip(tr("New"));
     newButton->setIcon(QIcon::fromTheme("document-new"));
-    newButton->setArrowType(Qt::NoArrow);
 
     openButton = new QToolButton(this);
     openButton->setPopupMode(QToolButton::InstantPopup);
@@ -412,7 +420,6 @@ void Editor::setupButtons()
     saveButton->setToolTip(tr("Save"));
 
     moveButton = new QToolButton(this);
-    moveButton->setCheckable(false);
     moveButton->setPopupMode(QToolButton::InstantPopup);
     moveButton->setText(tr("View"));
     moveButton->setToolTip(tr("View"));
@@ -430,8 +437,6 @@ void Editor::setupButtons()
     convertButton->setText(tr("Colors"));
     convertButton->setToolTip(tr("Color convert"));
 }
-
-
 
 void Editor::setupConnections()
 {

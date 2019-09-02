@@ -117,14 +117,14 @@ private:
     QToolButton *moveButton;
     QToolButton *zoomButton;
     CyanLayerWidget *layersWidget;
-    QDockWidget *layersDock;
+   // QDockWidget *layersDock;
 
     //CyanTextWidget *textWidget;
 
     QSlider *brushSize;
     QDockWidget *brushDock;
-    QDockWidget *textDock;
-    QDockWidget *colorDock;
+    //QDockWidget *textDock;
+    //QDockWidget *colorDock;
 
     //QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
@@ -305,6 +305,9 @@ private slots:
 
     void checkTabsOnClose();
     bool hasDirtyProjects();
+
+    void setActionsDisabled(bool disabled);
+    void setProjectSaveDisabled(bool disabled);
 
 
     // TODO

@@ -132,7 +132,7 @@ void Editor::handleRemoveLayer(int id)
     if (!getCurrentCanvas() || id<0) { return; }
     int ret = QMessageBox::question(this,
                                     tr("Remove layer"),
-                                    QString("%1 %1?")
+                                    QString("%2 %1?")
                                     .arg(id)
                                     .arg(tr("Are you sure you want to remove layer")));
     if (ret != QMessageBox::Yes) { return; }
