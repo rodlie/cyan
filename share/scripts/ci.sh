@@ -29,6 +29,7 @@ MXE=/opt/Cyan-mxe
 DEPLOY=/opt/deploy
 COMMIT=${COMMIT:-${TRAVIS_COMMIT}}
 UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME=/!d;s/UBUNTU_CODENAME=//'`
+VERSION=""
 
 if [ "${SETUP}" = 1 ]; then
   if [ "${OS}" = "Linux" ]; then
@@ -62,6 +63,8 @@ if [ "${SETUP}" = 1 ]; then
   fi
 fi
 
+VERSION="cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'"
+
 if [ "${OS}" = "Linux" ]; then
     echo "==> Building package for Ubuntu ${UBUNTU} ..."
     cd "$CWD"
@@ -78,7 +81,7 @@ if [ "${OS}" = "Linux" ]; then
         mkdir -p pkg/usr/lib64
     fi
     cp -av "${CWD}"/ImageMagick/install/lib/*Cyan* pkg/usr/lib64/
-    strip -s pkg/usr/lib*/* pkg/usr/lib*/*/* pkg/usr/bin/*
+    strip -s pkg/usr/lib64/* pkg/usr/bin/*
     tree -lah pkg
 
 
