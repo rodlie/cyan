@@ -49,13 +49,13 @@ if [ "${SETUP}" = 1 ]; then
     fi
 
     # Windows SDK
-    #if [ "${UBUNTU}" = "xenial" ]; then
-    #    echo "==> Extracting Windows x64 SDK ..."
-    #    mkdir -p "${MXE}"
-    #    wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-mxe-xenial-20190902.tar.xz/download
-    #    tar xf download.tar.xz -C "${MXE}/"
-    #    rm -f download.tar.xz
-    #fi
+    if [ "${UBUNTU}" = "xenial" ]; then
+        echo "==> Extracting Windows x64 SDK ..."
+        mkdir -p "${MXE}"
+        wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-mxe-xenial-20190902.tar.xz/download
+        tar xf download.tar.xz -C "${MXE}/"
+        rm -f download.tar.xz
+    fi
   fi
 fi
 
@@ -108,15 +108,14 @@ if [ "${OS}" = "Linux" ]; then
     sudo dpkg-deb -b "$DEB"
     cp "${BUILD_DIR}/pkg.deb" "${DEPLOY}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
 
+    if [ "${UBUNTU}" = "xenial" ]; then
+        echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+        cd "${CWD}"
+        MKJOBS=2 sh share/scripts/build-win64.sh
+        cp build-win64/deploy/* "${DEPLOY}/"
+    fi
 
     tree -lah "$DEPLOY"
-
-  #if [ "${UBUNTU}" = "xenial" ]; then
-  #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
-  #  cd "${CWD}"
-  #  MKJOBS=2 sh share/scripts/build-win64.sh
-  #  tree build-win64
-  #fi
 
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1

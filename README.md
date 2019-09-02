@@ -44,7 +44,7 @@ This program is free software; you can redistribute it and/or modify it under th
 
 ### Requirements
 
- * Qt5 *(Core/Gui/Widgets/Concurrent) 5.6+*
+ * Qt5 *(Widgets/Concurrent) 5.5+*
  * Little CMS 2
  * ImageMagick *(Magick++) 7.0.8+*
  * fontconfig

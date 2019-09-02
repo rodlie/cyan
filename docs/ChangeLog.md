@@ -18,9 +18,11 @@ This document will be updated when noteworthy changes are done in Cyan.
   * Merged view tools into one tool button
 * Very basic support for widget plugins
   * Needs more work!
-  * Includes a example plugin
+  * Includes an example plugin (optional)
   * Color triangle as plugin (optional)
-* macOS support has been dropped due to missing hardware and lack of interest
+* macOS support (binary) has been dropped due to missing hardware and lack of interest
+* Universal Linux binary has been dropped
+  * Packages for Ubuntu will be available for each release
 
 ## 1.99.0
 

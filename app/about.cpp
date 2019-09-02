@@ -48,18 +48,6 @@ void Editor::aboutCyan()
                  .arg(tr("All rights reserved")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.")));
-    more.append(QString("<p>%1 <b>Qt Solutions</b>.<br>Copyright &copy; 2009 Nokia Corporation %2.<br>%3.</p>")
-                .arg(tr("This program includes components from"))
-                .arg(tr("and/or its subsidiary(-ies)"))
-                .arg(tr("All rights reserved")));
-    more.append(QString("<p>%1 <b><a href=\"http://www.colormanagement.org/en/download.html\">basICColor GmbH</a></b>.<br>%2 <a href=\"https://creativecommons.org/licenses/by-nd/3.0/\">CC Attribution-No Derivative Works 3.0</a>.</p>")
-                .arg(tr("This program includes color profiles from"))
-                .arg(tr("Licensed under")));
-    more.append(QString("<p>%1 <b><a href=\"http://www.fatcow.com\">FatCow Web Hosting</a></b>.<br>%2 <a href=\"http://creativecommons.org/licenses/by/3.0/us/\">CC Attribution 3.0 US</a>.</p>")
-                .arg(tr("This program includes icons from"))
-                .arg(tr("Licensed under")));
-    more.append(QString("<p><a href=\"https://cyan.fxarena.net\">https://cyan.fxarena.net</a>"
-                        "<br><a href=\"https://github.com/rodlie/cyan\">https://github.com/rodlie/cyan</a></p>"));
     more.append(QString("<p><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a></p>"));
 
     box.setText(about);
