@@ -50,21 +50,27 @@ if [ "${SETUP}" = 1 ]; then
 fi
 
 if [ "${OS}" = "Linux" ]; then
+    echo "==> Building package for Ubuntu ${UBUNTU} ..."
     cd "$CWD"
-    STATIC=1 sh share/scripts/build-magick.sh
+    MKJOBS=2 sh share/scripts/build-magick.sh
     mkdir -p "$CWD/build-${UBUNTU}" && cd "$CWD/build-${UBUNTU}"
-    GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/usr "$CWD"
+    GIT=${COMMIT} PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" \
+    cmake \
+    -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    "$CWD"
     make -j2
     make DESTDIR=`pwd`/pkg install
+    cp -av "${CWD}/ImageMagick/install/lib/*Cyan*" pkg/usr/lib64/
     tree pkg
 
 
-  #elif [ "${UBUNTU}" = "xenial" ]; then
-  #  echo "==> Building for Windows x64 on Ubuntu Xenial ..."
-  #  cd ${CWD}
-  #  sh share/scripts/build-win64.sh
-  #  tree build*
-  #fi
+  if [ "${UBUNTU}" = "xenial" ]; then
+    echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+    cd "${CWD}"
+    MKJOBS=2 sh share/scripts/build-win64.sh
+    tree build-win64
+  fi
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
 #  qmake PREFIX=/usr ..
