@@ -49,17 +49,13 @@ if [ "${SETUP}" = 1 ]; then
     fi
 
     # Windows SDK
-    if [ "${UBUNTU}" = "xenial" ]; then
-        echo "==> Extracting Windows x64 SDK ..."
-        mkdir -p "${MXE}"
-        wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-core-20190829.tar.xz/download
-        tar xf download.tar.xz -C "${MXE}/"
-        rm -f download.tar.xz
-        wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-MinGW-Xenial64-pkg-20190829.tar.xz/download
-        tar xf download.tar.xz -C "${MXE}/"
-        rm -f download.tar.xz
-        ls "$MXE"
-    fi
+    #if [ "${UBUNTU}" = "xenial" ]; then
+    #    echo "==> Extracting Windows x64 SDK ..."
+    #    mkdir -p "${MXE}"
+    #    wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-mxe-xenial-20190902.tar.xz/download
+    #    tar xf download.tar.xz -C "${MXE}/"
+    #    rm -f download.tar.xz
+    #fi
   fi
 fi
 
@@ -84,13 +80,35 @@ if [ "${OS}" = "Linux" ]; then
     strip -s pkg/usr/lib64/* pkg/usr/bin/*
     tree -lah pkg
 
+    DEB="$CWD/build-${UBUNTU}/pkg"
+    mv $DEB/usr/share/doc/Cyan-$VERSION $DEB/usr/share/doc/cyan-$VERSION
+    echo > $DEB/usr/share/doc/cyan-$VERSION/changelog.Debian.gz
+    echo > $DEB/usr/share/doc/cyan-$VERSION/copyright
+    mkdir -p "$DEB/DEBIAN"
 
-  if [ "${UBUNTU}" = "xenial" ]; then
-    echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
-    cd "${CWD}"
-    MKJOBS=2 sh share/scripts/build-win64.sh
-    tree build-win64
-  fi
+    CONTROL=$DEB/DEBIAN/control
+    DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
+    echo "Package: cyan" > $CONTROL
+    echo "Version: $VERSION" >> $CONTROL
+    echo "Section: X11" >> $CONTROL
+    echo "Priority: optional" >> $CONTROL
+    echo "Maintainer: FxArena DA <support@fxarena.net>" >> $CONTROL
+    echo "Standards-Version: 3.9.6" >> $CONTROL
+    echo "Homepage: https://cyan.fxarena.net" >> $CONTROL
+    echo "Architecture: amd64" >> $CONTROL
+    echo "Description: Cyan Image Editor" >> $CONTROL
+    echo "Installed-Size: $DEB_SIZE" >> $CONTROL
+
+    sudo chown root:root -R $DEB
+    sudo dpkg-deb -b $DEB
+    cp $CWD/build-${UBUNTU}/deb.deb $CWD/build-${UBUNTU}/cyan_${VERSION}-1${UBUNTU}_amd64.deb
+
+  #if [ "${UBUNTU}" = "xenial" ]; then
+  #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+  #  cd "${CWD}"
+  #  MKJOBS=2 sh share/scripts/build-win64.sh
+  #  tree build-win64
+  #fi
 
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
