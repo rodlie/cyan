@@ -1015,6 +1015,11 @@ void Editor::setActionsDisabled(bool disabled)
     zoomButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
     layersWidget->setDisabled(disabled);
+    convertCMYKAct->setDisabled(disabled);
+    convertGRAYAct->setDisabled(disabled);
+    convertRGBAct->setDisabled(disabled);
+    convertAssignAct->setDisabled(disabled);
+    convertExtractAct->setDisabled(disabled);
 }
 
 void Editor::setProjectSaveDisabled(bool disabled)

@@ -823,6 +823,7 @@ void View::updateCanvas(CyanImageFormat::CyanCanvas canvas)
 {
     _image = canvas.image;
     _canvas = canvas;
+    handleCanvasChanged();
     refreshTiles();
 }
 
