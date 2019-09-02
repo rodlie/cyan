@@ -82,7 +82,8 @@ set(
     app/messages.cpp
     app/layers.cpp
     app/tabs.cpp
-    app/mdi.cpp)
+    app/mdi.cpp
+    app/mdisubwindow.cpp)
 set(
     HEADERS_APP
     app/cyan_common.h
@@ -96,7 +97,8 @@ set(
     app/dialogs/newmediadialog.h
     app/dialogs/convertdialog.h
     app/editor.h
-    app/mdi.h)
+    app/mdi.h
+    app/mdisubwindow.h)
 set(RESOURCES share/icons.qrc)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")

@@ -24,7 +24,7 @@
 #include <QPluginLoader>
 #include <QApplication>
 #include <QToolButton>
-#include <QMdiSubWindow>
+//#include <QMdiSubWindow>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>

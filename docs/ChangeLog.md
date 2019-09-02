@@ -6,6 +6,7 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 **Release date : TBA**
 
+* Confirm close project (tab/subwindow) if unsaved changes
 * Confirm quit if we have unsaved projects open
 * UI zoom support
   * Indicate zoom level

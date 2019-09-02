@@ -19,7 +19,7 @@
 void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
 {
     qDebug() << "new tab from canvas/project";
-    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
+    /*Q*/MdiSubWindow *tab = new /*Q*/MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);
@@ -57,7 +57,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
         return new View(this);
     }*/
 
-    QMdiSubWindow *tab = new QMdiSubWindow(mdi);
+    /*Q*/MdiSubWindow *tab = new /*Q*/MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);

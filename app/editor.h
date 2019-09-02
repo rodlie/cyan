@@ -26,7 +26,7 @@
 #include <QActionGroup>
 #include <QMdiArea>
 #include <QDockWidget>
-#include <QMdiSubWindow>
+//#include <QMdiSubWindow>
 #include <QComboBox>
 #include <QStatusBar>
 #include <QSlider>
@@ -42,6 +42,7 @@
 #include "CyanImageFormat.h"
 #include "CyanView.h"
 #include "CyanPluginLoader.h"
+#include "mdisubwindow.h"
 
 #include "cyan_common.h" // TODO replace
 
