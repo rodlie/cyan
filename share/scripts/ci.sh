@@ -102,7 +102,7 @@ if [ "${OS}" = "Linux" ]; then
 
     sudo chown root:root -R "$DEB"
     sudo dpkg-deb -b "$DEB"
-    cp "${BUILD_DIR}/deb.deb" "${BUILD_DIR}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
+    cp "${BUILD_DIR}/pkg.deb" "${BUILD_DIR}/cyan_${VERSION}-1${UBUNTU}_amd64.deb"
 
   #if [ "${UBUNTU}" = "xenial" ]; then
   #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
