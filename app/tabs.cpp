@@ -96,6 +96,7 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
     qDebug() << "handle tab activated";
 
     setActionsDisabled(true);
+    setProjectSaveDisabled(true);
 
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());

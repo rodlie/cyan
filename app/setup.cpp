@@ -342,7 +342,7 @@ void Editor::setupActions()
     openLayerAct->setDisabled(true);
 
     saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Export layer to image"));
+    saveLayerAct->setText(tr("Export layer"));
     saveLayerAct->setDisabled(true);
 
     quitAct = new QAction(this);
