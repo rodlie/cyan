@@ -85,12 +85,13 @@ if [ "${OS}" = "Linux" ]; then
     tree -lah pkg
 
 
-  #if [ "${UBUNTU}" = "xenial" ]; then
-  #  echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
-  #  cd "${CWD}"
-  #  MKJOBS=2 sh share/scripts/build-win64.sh
-  #  tree build-win64
-  #fi
+  if [ "${UBUNTU}" = "xenial" ]; then
+    echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+    cd "${CWD}"
+    MKJOBS=2 sh share/scripts/build-win64.sh
+    tree build-win64
+  fi
+
 #  mkdir -p $CWD/ci1
 #  cd $CWD/ci1
 #  qmake PREFIX=/usr ..
