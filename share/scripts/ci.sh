@@ -59,60 +59,17 @@ if [ ! -d "$DEPLOY" ]; then
 fi
 
 if [ "${OS}" = "Linux" ]; then
-    echo "==> Building package for Ubuntu ${UBUNTU} ..."
-    cd "$CWD"
-    MKJOBS=2 sh share/scripts/build-magick.sh
-    BUILD_DIR="$CWD/build-$UBUNTU"
-    mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
-    PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" \
-    cmake \
-    -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    "$CWD"
-    make -j2
-    make DESTDIR=`pwd`/pkg install
-    if [ ! -d "pkg/usr/lib64" ]; then
-        mkdir -p pkg/usr/lib64
-    fi
-    cp -av "$CWD/ImageMagick/install/lib/"*Cyan* pkg/usr/lib64/
-    strip -s pkg/usr/lib64/* pkg/usr/bin/*
-
-    DEB="${BUILD_DIR}/pkg"
-    mv "$DEB/usr/share/doc/Cyan-$VERSION" "$DEB/usr/share/doc/cyan-$VERSION"
-    echo > "$DEB/usr/share/doc/cyan-$VERSION/changelog.Debian.gz"
-    echo > "$DEB/usr/share/doc/cyan-$VERSION/copyright"
-    mkdir -p "$DEB/DEBIAN"
-
-    CONTROL=$DEB/DEBIAN/control
-    DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
-    echo "Package: cyan" > $CONTROL
-    echo "Version: $VERSION" >> $CONTROL
-    echo "Section: X11" >> $CONTROL
-    echo "Priority: optional" >> $CONTROL
-    echo "Maintainer: FxArena DA <support@fxarena.net>" >> $CONTROL
-    echo "Standards-Version: 3.9.6" >> $CONTROL
-    echo "Homepage: https://cyan.fxarena.net" >> $CONTROL
-    echo "Architecture: amd64" >> $CONTROL
-    echo "Description: Cyan Image Editor" >> $CONTROL
-    echo "Installed-Size: $DEB_SIZE" >> $CONTROL
-
-    sudo chown root:root -R "$DEB"
-    sudo dpkg-deb -b "$DEB"
-    cp "${BUILD_DIR}/pkg.deb" "${DEPLOY}/cyan_${VERSION}_${UBUNTU}_amd64.deb"
-    echo "==> Ubuntu package content:"
-    tree -lah "$DEB"
-
+    cd "${CWD}"
+    MKJOBS=2 sh share/scripts/build-ubuntu.sh
     if [ "${UBUNTU}" = "bionic" ]; then
         echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
         cd "${CWD}"
         MKJOBS=2 sh share/scripts/build-win64.sh
-        cp build-win64/deploy/* "${DEPLOY}/"
-        echo "==> Win64 content:"
-        tree -lah "${CWD}/build-win64"
     fi
 
+    cp "${CWD}/"*.exe "$CWD/"*.deb "${DEPLOY}/"
     echo "==> Deploy result:"
-    tree -lah "$DEPLOY"
+    tree -lah "${DEPLOY}"
 fi
 
 #if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then
