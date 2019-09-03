@@ -24,7 +24,7 @@
 # MXE_TC : MXE toolchain
 
 CWD=`pwd`
-MKJOBS=${MKJOBS:-2}
+MKJOBS=${MKJOBS:-4}
 MAGICK=${MAGICK:-Magick++-7.Q16HDRI}
 BUILD_DIR=${BUILD_DIR:-"${CWD}/build-win64"}
 MXE=${MXE:-/opt/Cyan-mxe}
@@ -63,3 +63,5 @@ $CMAKE \
 make -j${MKJOBS} || exit 1
 ${STRIP} -s *.exe *.dll */*.dll
 wine ${INNO} Cyan.iss
+cp "${BUILD_DIR}/deploy/"* "${CWD}/"
+

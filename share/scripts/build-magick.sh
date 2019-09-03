@@ -29,7 +29,7 @@ echo "==> Building ImageMagick $MAGICK ..."
 CWD=`pwd`
 if [ -d "$CWD/ImageMagick" ]; then
   echo "ImageMagick exists!"
-  exit 1
+  exit 0
 fi
 
 git clone https://github.com/ImageMagick/ImageMagick || exit 1
