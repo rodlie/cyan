@@ -36,24 +36,36 @@ LayerTree::LayerTree(QWidget *parent) :
   , moveDownLayerAct(nullptr)
   , duplicateLayerAct(nullptr)
 {
-    setHeaderLabels(QStringList() << QString("#") << QString() << QString() << QString());
+    setStyleSheet( // check state icons
+                "QTreeView::indicator:first:checked { image: url(:/icons/hicolor/32x32/actions/eye.png); }"
+                "QTreeView::indicator:first:unchecked{background: red;}"
+                "QTreeView::indicator:middle:checked{ image: url(:/icons/hicolor/32x32/actions/emblem-readonly.png); }"
+                "QTreeView::indicator:middle:unchecked{background: blue;}"
+                "QTreeView::indicator:last:checked{background: cyan;}"
+                "QTreeView::indicator:last:unchecked{background: magenta;}"
+                "QTreeView::item:selected { background-color: rgb(33, 33, 33); }"
+                );
+    /*setHeaderLabels(QStringList() << QString() << QString() << QString() << QString());
     headerItem()->setIcon(3, QIcon::fromTheme("layers"));
     headerItem()->setIcon(2, QIcon::fromTheme("emblem-readonly"));
     headerItem()->setIcon(1, QIcon::fromTheme("eye"));
     headerItem()->setToolTip(1, tr("Layer visibility"));
-    headerItem()->setToolTip(2, tr("Layer locked"));
+    headerItem()->setToolTip(2, tr("Layer locked"));*/
+    //setColumnWidth();
+    setColumnCount(4);
+    setHeaderHidden(true);
     //setColumnWidth(0, 16);
     setColumnHidden(0, true);
-    setColumnWidth(1, 16);
-    setColumnWidth(2, 16);
-    setIconSize(QSize(32, 32));
+    setColumnWidth(1, 24);
+    setColumnWidth(2, 24);
+    setIconSize(QSize(24, 24));
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    newImageLayerAct = new QAction(tr("New"), this);
-    removeLayerAct = new QAction(tr("Remove"), this);
+    newImageLayerAct = new QAction(tr("New layer"), this);
+    removeLayerAct = new QAction(tr("Remove layer"), this);
     moveUpLayerAct = new QAction(tr("Move up"), this);
     moveDownLayerAct = new QAction(tr("Move down"), this);
-    duplicateLayerAct = new QAction(tr("Duplicate"), this);
+    duplicateLayerAct = new QAction(tr("Duplicate layer"), this);
 
     newImageLayerAct->setIcon(QIcon::fromTheme("layer",
                                                QIcon::fromTheme("document-new")));
@@ -164,7 +176,7 @@ void LayerTree::populateTree(View *view)
             layer.quiet(true);
             layer.depth(8);
             //layer.alpha(false);
-            layer.scale(Magick::Geometry(32, 32));
+            layer.scale(Magick::Geometry(24, 24));
             size_t offX = 0;
             size_t offY = 0;
             if (layer.columns()<thumb.columns()) {
@@ -186,7 +198,7 @@ void LayerTree::populateTree(View *view)
         thumb.write(&pix);
         QPixmap pixmap = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
                                                                                       static_cast<int>(pix.length())));
-        item->setIconSize(QSize(32, 32));
+        item->setIconSize(QSize(24, 24));
         item->setIcon(3, QIcon(pixmap));
         item->setText(0, QString::number(layers.value().order));
         item->setText(3, layers.value().label);
@@ -198,6 +210,7 @@ void LayerTree::populateTree(View *view)
         item->setVisibility(layers.value().visible);
         item->setCheckState(1, layers.value().visible?Qt::Checked:Qt::Unchecked);
         item->setCheckState(2, layers.value().locked?Qt::Checked:Qt::Unchecked);
+        //item->setCheckState(3, Qt::Unchecked);
         item->setLayerOrder(layers.value().order);
 
         addTopLevelItem(item);

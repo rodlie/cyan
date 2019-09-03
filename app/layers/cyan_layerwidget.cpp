@@ -41,11 +41,11 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     QWidget *opacityWidget = new QWidget(this);
     QHBoxLayout *opacityLayout = new QHBoxLayout(opacityWidget);
 
-    QLabel *compositeLabel = new QLabel(this);
+    //QLabel *compositeLabel = new QLabel(this);
     QLabel *compositeIconLabel = new QLabel(this);
     layerCompositeBox = new QComboBox(this);
 
-    QLabel *opacityLabel = new QLabel(this);
+    //QLabel *opacityLabel = new QLabel(this);
     QLabel *opacityIconLabel = new QLabel(this);
     layerOpacitySlider = new QSlider(this);
     layerOpacitySpin = new QDoubleSpinBox(this);
@@ -55,34 +55,36 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     layerCompositeBox->setSizePolicy(QSizePolicy::Expanding,
                                      QSizePolicy::Fixed);
 
-    compositeLabel->setText(tr("Mode"));
+    /*compositeLabel->setText(tr("Mode"));
     compositeLabel->setSizePolicy(QSizePolicy::Minimum,
-                                  QSizePolicy::Minimum);
+                                  QSizePolicy::Minimum);*/
     compositeIconLabel->setPixmap(QIcon::fromTheme("images")
                                   .pixmap(16, 16));
     compositeIconLabel->setMinimumSize(QSize(16, 16));
     compositeIconLabel->setMaximumSize(QSize(16, 16));
+    compositeIconLabel->setToolTip(tr("Layer composite mode"));
 
-    opacityLabel->setText(tr("Opacity"));
+    /*opacityLabel->setText(tr("Opacity"));
     opacityLabel->setSizePolicy(QSizePolicy::Minimum,
-                                QSizePolicy::Minimum);
+                                QSizePolicy::Minimum);*/
     opacityIconLabel->setPixmap(QIcon::fromTheme("layer")
                                 .pixmap(16, 16));
     opacityIconLabel->setMinimumSize(QSize(16, 16));
     opacityIconLabel->setMaximumSize(QSize(16, 16));
+    opacityIconLabel->setToolTip(tr("Layer opacity"));
 
     layerOpacitySlider->setOrientation(Qt::Horizontal);
     layerOpacitySlider->setRange(0, 100);
     layerOpacitySpin->setRange(0, 100);
 
     compositeLayout->addWidget(compositeIconLabel);
-    compositeLayout->addWidget(compositeLabel);
+    //compositeLayout->addWidget(compositeLabel);
     compositeLayout->addWidget(layerCompositeBox);
     compositeLayout->setContentsMargins(0, 0, 0, 0);
     //compositeLayout->setSpacing(0);
 
     opacityLayout->addWidget(opacityIconLabel);
-    opacityLayout->addWidget(opacityLabel);
+    //opacityLayout->addWidget(opacityLabel);
     opacityLayout->addWidget(layerOpacitySlider);
     opacityLayout->addWidget(layerOpacitySpin);
     opacityLayout->setContentsMargins(0, 0, 0, 0);

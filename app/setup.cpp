@@ -198,6 +198,8 @@ void Editor::setupUI()
     addDockWidget(Qt::RightDockWidgetArea,
                   brushDock);
 
+    brushDock->setDisabled(true);
+    brushDock->setHidden(true);
     //textWidget->setHidden(true);
 
     optMenu->setDisabled(true);
