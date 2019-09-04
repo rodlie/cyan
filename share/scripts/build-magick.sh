@@ -14,28 +14,37 @@
 # Lesser General Public License for more details.
 #
 
+CWD=`pwd`
 MAGICK=${MAGICK:-7.0.8-29}
 MKJOBS=${MKJOBS:-2}
 STATIC=${STATIC:-0}
 QUANTUM=${QUANTUM:-16}
+REBUILD=${REBUILD:-0}
 
 if [ "$STATIC" = 1 ]; then
-  BUILD_TYPE="--enable-static --disable-shared"
+    BUILD_TYPE="--enable-static --disable-shared"
 else
-  BUILD_TYPE="--disable-static --enable-shared"
+    BUILD_TYPE="--disable-static --enable-shared"
 fi
 
-echo "==> Building ImageMagick $MAGICK ..."
+echo "==> Building ImageMagick MAGICK=${MAGICK} QUANTUM=${QUANTUM} MKJOBS=${MKJOBS} STATIC=${STATIC} REBUILD=${REBUILD} ..."
 CWD=`pwd`
-if [ -d "$CWD/ImageMagick" ]; then
-  echo "ImageMagick exists!"
-  exit 0
+if [ ! -d "${CWD}/ImageMagick" ]; then
+    git clone https://github.com/ImageMagick/ImageMagick || exit 1
+    cd ImageMagick || exit 1
+    git checkout $MAGICK || exit 1
 fi
 
-git clone https://github.com/ImageMagick/ImageMagick || exit 1
-cd ImageMagick || exit 1
-git checkout $MAGICK || exit 1
+if [ -d "$CWD/ImageMagick/install" ] && [ "${REBUILD}" = 0 ]; then
+    echo "==> ImageMagick already installed, skipping!"
+    exit 0
+fi
 
+if [ -d "${CWD}/ImageMagick/install" ]; then
+    rm -rf "${CWD}/ImageMagick/install" || exit 1
+fi
+
+cd "${CWD}/ImageMagick" || exit 1
 CXXFLAGS="-fPIC" ./configure \
   --prefix=`pwd`/install \
   ${BUILD_TYPE} \
