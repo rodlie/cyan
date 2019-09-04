@@ -47,6 +47,16 @@ void CyanLayerItemDelegate::paint(QPainter * painter,
                  index);
 }
 
+QWidget *CyanLayerItemDelegate::createEditor(QWidget *parent,
+                                             const QStyleOptionViewItem &option,
+                                             const QModelIndex &index) const
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+    return nullptr;
+}
+
 QSize CyanLayerItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
