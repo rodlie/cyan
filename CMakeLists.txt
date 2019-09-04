@@ -145,7 +145,7 @@ endif()
 
 if(APPLE)
     set(ICON_FILE ${RESOURCE_FOLDER}/icons/${PROJECT_NAME}.icns)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+    #set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
     set_source_files_properties(${PROJECT_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
@@ -202,16 +202,16 @@ if(BUILD_LIBRARY)
         PROPERTIES
         SOVERSION
         ${PROJECT_VERSION_MAJOR})
-    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
+    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_STATIC_CFLAGS})
     target_link_libraries(
         ${PROJECT_NAME}Api
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
         Qt5::Concurrent
-        ${MAGICK_LIBRARIES}
+        ${MAGICK_STATIC_LIBRARIES}
         ${LCMS2_LIBRARIES}
-        ${MAGICK_LDFLAGS}
+        ${MAGICK_STATIC_LDFLAGS}
         ${LCMS2_LDFLAGS})
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
@@ -224,16 +224,16 @@ add_executable(
     ${HEADERS_APP}
     ${HEADERS_API}
     ${RESOURCES})
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_LIBRARIES}
+    ${MAGICK_STATIC_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${MAGICK_LDFLAGS}
+    ${MAGICK_STATIC_LDFLAGS}
     ${LCMS2_LDFLAGS})
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
