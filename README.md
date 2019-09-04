@@ -8,7 +8,7 @@
 
 Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
-***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2). You can track development in our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
+***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2). You can track development on our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
 
 ## Features
 

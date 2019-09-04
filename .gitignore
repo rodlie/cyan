@@ -8,7 +8,6 @@ CMakeLists.txt.user*
 *.pro.user*
 *~
 build
-build-*
 Makefile*
 .directory
 *.stash
