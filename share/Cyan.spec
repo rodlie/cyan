@@ -6,8 +6,13 @@ Summary: Cyan Image Editor
 License: LGPL-2.1
 URL: https://cyan.fxarena.net
 Source0: %{name}-%{version}.tar.xz
+
+%if 0%{?fedora_version}
+BuildRequires: gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake
+%endif
+%if 0%{?centos_version}
 BuildRequires: gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
-#Requires:
+%endif
 
 %description
 Cyan Image Editor
