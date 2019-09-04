@@ -43,6 +43,7 @@ set(
     lib/CyanImageFormat.cpp
     lib/CyanTileItem.cpp
     lib/CyanLayerItem.cpp
+    lib/CyanLayerItemDelegate.cpp
     lib/CyanView.cpp
     lib/CyanColorConvert.cpp
     lib/CyanPluginLoader.cpp
@@ -54,6 +55,7 @@ set(
     lib/CyanImageFormat.h
     lib/CyanTileItem.h
     lib/CyanLayerItem.h
+    lib/CyanLayerItemDelegate.h
     lib/CyanView.h
     lib/CyanColorConvert.h
     lib/CyanPluginLoader.h

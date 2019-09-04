@@ -25,6 +25,7 @@
 #include <QMenu>
 
 #include "CyanImageFormat.h"
+#include "CyanLayerItemDelegate.h"
 
 LayerTree::LayerTree(QWidget *parent) :
     QTreeWidget(parent)
@@ -36,30 +37,16 @@ LayerTree::LayerTree(QWidget *parent) :
   , moveDownLayerAct(nullptr)
   , duplicateLayerAct(nullptr)
 {
-    setStyleSheet( // check state icons
-                "QTreeView::indicator:first:checked { image: url(:/icons/hicolor/32x32/actions/eye.png); }"
-                "QTreeView::indicator:first:unchecked{background: red;}"
-                "QTreeView::indicator:middle:checked{ image: url(:/icons/hicolor/32x32/actions/emblem-readonly.png); }"
-                "QTreeView::indicator:middle:unchecked{background: blue;}"
-                "QTreeView::indicator:last:checked{background: cyan;}"
-                "QTreeView::indicator:last:unchecked{background: magenta;}"
-                "QTreeView::item:selected { background-color: rgb(33, 33, 33); }"
-                );
-    /*setHeaderLabels(QStringList() << QString() << QString() << QString() << QString());
-    headerItem()->setIcon(3, QIcon::fromTheme("layers"));
-    headerItem()->setIcon(2, QIcon::fromTheme("emblem-readonly"));
-    headerItem()->setIcon(1, QIcon::fromTheme("eye"));
-    headerItem()->setToolTip(1, tr("Layer visibility"));
-    headerItem()->setToolTip(2, tr("Layer locked"));*/
-    //setColumnWidth();
+    setStyleSheet("QTreeView::item:selected { background-color: rgb(33, 33, 33); }");
     setColumnCount(4);
     setHeaderHidden(true);
-    //setColumnWidth(0, 16);
     setColumnHidden(0, true);
     setColumnWidth(1, 24);
     setColumnWidth(2, 24);
     setIconSize(QSize(24, 24));
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setItemDelegateForColumn(1, new CyanLayerItemDelegate(this));
+    setItemDelegateForColumn(2, new CyanLayerItemDelegate(this));
 
     newImageLayerAct = new QAction(tr("New layer"), this);
     removeLayerAct = new QAction(tr("Remove layer"), this);
@@ -210,9 +197,7 @@ void LayerTree::populateTree(View *view)
         item->setVisibility(layers.value().visible);
         item->setCheckState(1, layers.value().visible?Qt::Checked:Qt::Unchecked);
         item->setCheckState(2, layers.value().locked?Qt::Checked:Qt::Unchecked);
-        //item->setCheckState(3, Qt::Unchecked);
         item->setLayerOrder(layers.value().order);
-
         addTopLevelItem(item);
         blockSignals(false);
     }
