@@ -49,21 +49,21 @@ This program is free software; you can redistribute it and/or modify it under th
  * ImageMagick *(Magick++) 7.0.8+*
  * fontconfig
 
-### RHEL/CentOS 7
+### RHEL/CentOS/Fedora
 
-On RHEL/CentOS you will need to install the following packages:
+On RHEL/CentOS/Fedora you will need to install the following packages:
 
 ```
 sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel
 ```
 
-CMake 3.x is needed to build Cyan, install from EPEL:
+CMake 3.x is needed on RHEL/CentOS 7, install from EPEL:
 ```
 sudo yum install epel-release
 sudo yum install cmake3
 ```
 
-***Remember to replace ``cmake`` with ``cmake3`` when running the build command further down.***
+***Remember to replace ``cmake`` with ``cmake3`` on RHEL/CentOS when running the build command further down.***
 
 ### Ubuntu Xenial/Bionic
 

@@ -20,6 +20,7 @@ MKJOBS=${MKJOBS:-2}
 STATIC=${STATIC:-0}
 QUANTUM=${QUANTUM:-16}
 REBUILD=${REBUILD:-0}
+NOBUILD=${NOBUILD:-0}
 
 if [ "$STATIC" = 1 ]; then
     BUILD_TYPE="--enable-static --disable-shared"
@@ -33,6 +34,11 @@ if [ ! -d "${CWD}/ImageMagick" ]; then
     git clone https://github.com/ImageMagick/ImageMagick || exit 1
     cd ImageMagick || exit 1
     git checkout $MAGICK || exit 1
+fi
+
+if [ "${NOBUILD}" = 1 ]; then
+    echo "==> ImageMagick source-only, skipping!"
+    exit 0
 fi
 
 if [ -d "$CWD/ImageMagick/install" ] && [ "${REBUILD}" = 0 ]; then
