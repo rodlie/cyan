@@ -1,7 +1,6 @@
 # Cyan 2.0
 
 [![GitHub license](https://img.shields.io/github/license/rodlie/cyan)](https://github.com/rodlie/cyan/blob/master/COPYING)
-[![Linuc Downloads](https://img.shields.io/badge/Linux-Packages-success)](https://software.opensuse.org//download.html?project=home%3Arodlie&package=Cyan)
 ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan)
 ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan)
 
