@@ -15,11 +15,11 @@
     <div class="wrapper">
       <header>
         {% if site.logo %}
-          <img src="{{site.logo | relative_url}}" alt="Logo" />
+          <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" /></a>
         {% endif %}
 
         <!-- <a target="_blank" href="https://sourceforge.net/projects/prepress/files/latest/download"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a> -->
-        <a target="_blank" href="https://github.com/rodlie/cyan/releases/latest"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a>
+        <!-- <a target="_blank" href="https://github.com/rodlie/cyan/releases/latest"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a> -->
                 
         {% if site.show_downloads %}
         <ul class="downloads">
@@ -30,9 +30,9 @@
         {% endif %}
 
         <ul class="downloads">
-          <li><a href="/">HOME</a></li>
-          <li><a href="/Downloads">DOWNLOADS</a></li>
-          <li><a href="/ChangeLog">CHANGES</a></li>
+          <li><a href="/"><strong>About</strong></a></li>
+          <li><a href="/Downloads"><strong>Downloads</strong></a></li>
+          <li><a href="/ChangeLog"><strong>Changes</strong></a></li>
         </ul>
       </header>
       <section>
