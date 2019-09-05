@@ -22,8 +22,10 @@
 # BUILD_DIR : Build output
 # MXE : MXE directory
 # MXE_TC : MXE toolchain
+# SNAPSHOT : 
 
 CWD=`pwd`
+SNAPSHOT=${SNAPSHOT:-0}
 MKJOBS=${MKJOBS:-4}
 MAGICK=${MAGICK:-Magick++-7.Q16HDRI}
 BUILD_DIR=${BUILD_DIR:-"${CWD}/build-win64"}
@@ -55,6 +57,9 @@ cd "${BUILD_DIR}" || exit 1
 
 export PATH="${MXE}/usr/bin:${PATH}"
 export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
+if [ "${SNAPSHOT}" = 1 ]; then
+    export CYAN_VERSION=`sh ${CWD}/share/scripts/gitversion.sh`
+fi
 $CMAKE \
     -DCMAKE_BUILD_TYPE=Release \
     -DMINGW_ROOT="${MXE}/usr/${MXE_TC}" \
@@ -62,6 +67,12 @@ $CMAKE \
     -DMAGICK_PKG_CONFIG=${MAGICK} "${CWD}" || exit 1
 make -j${MKJOBS} || exit 1
 ${STRIP} -s *.exe *.dll */*.dll
-wine ${INNO} Cyan.iss
+if [ "${SNAPSHOT}" = 1 ]; then
+    VERSION_ORIG=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
+    cat Cyan.iss | sed 's#'${VERSION_ORIG}'#'${CYAN_VERSION}'#g' > snapshot.iss
+    wine ${INNO} snapshot.iss
+else
+    wine ${INNO} Cyan.iss
+fi
 cp "${BUILD_DIR}/deploy/"* "${CWD}/"
 
