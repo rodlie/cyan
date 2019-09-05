@@ -15,7 +15,7 @@
 #
 */
 
-#include "cyan_layerwidget.h"
+#include "CyanLayerWidget.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

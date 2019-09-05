@@ -51,6 +51,11 @@ set(
     lib/CyanView.cpp
     lib/CyanColorConvert.cpp
     lib/CyanPluginLoader.cpp
+    lib/CyanMdi.cpp
+    lib/CyanMdiWindow.cpp
+    lib/CyanLayerWidget.cpp
+    lib/CyanLayerTree.cpp
+    lib/CyanLayerTreeItem.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp)
@@ -63,6 +68,11 @@ set(
     lib/CyanView.h
     lib/CyanColorConvert.h
     lib/CyanPluginLoader.h
+    lib/CyanMdi.h
+    lib/CyanMdiWindow.h
+    lib/CyanLayerWidget.h
+    lib/CyanLayerTree.h
+    lib/CyanLayerTreeItem.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
@@ -70,9 +80,6 @@ set(
 set(
     SOURCES_APP
     app/cyan_common.cpp
-    app/layers/cyan_layertree.cpp
-    app/layers/cyan_layertreeitem.cpp
-    app/layers/cyan_layerwidget.cpp
     #app/widgets/cyan_textwidget.cpp
     #app/widgets/colorrgb.cpp
     #app/widgets/colorcmyk.cpp
@@ -80,6 +87,7 @@ set(
     app/dialogs/newmediadialog.cpp
     app/dialogs/convertdialog.cpp
     app/main.cpp
+    #app/converter.cpp
     app/editor.cpp
     app/about.cpp
     app/setup.cpp
@@ -87,24 +95,18 @@ set(
     app/viewtool.cpp
     app/messages.cpp
     app/layers.cpp
-    app/tabs.cpp
-    app/mdi.cpp
-    app/mdisubwindow.cpp)
+    app/tabs.cpp)
 set(
     HEADERS_APP
     app/cyan_common.h
-    app/layers/cyan_layertree.h
-    app/layers/cyan_layertreeitem.h
-    app/layers/cyan_layerwidget.h
     #app/widgets/cyan_textwidget.h
     #app/widgets/colorrgb.h
     #app/widgets/colorcmyk.h
     #app/widgets/colorhsv.h
     app/dialogs/newmediadialog.h
     app/dialogs/convertdialog.h
-    app/editor.h
-    app/mdi.h
-    app/mdisubwindow.h)
+    #app/converter.h
+    app/editor.h)
 set(RESOURCES share/icons.qrc)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")

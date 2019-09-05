@@ -24,7 +24,7 @@
 #include <QKeyEvent>
 
 #include "CyanView.h"
-#include "cyan_layertreeitem.h"
+#include "CyanLayerTreeItem.h"
 
 class LayerTree : public QTreeWidget
 {

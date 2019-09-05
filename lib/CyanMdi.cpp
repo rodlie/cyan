@@ -15,7 +15,7 @@
 #
 */
 
-#include "mdi.h"
+#include "CyanMdi.h"
 
 #include <QMimeData>
 

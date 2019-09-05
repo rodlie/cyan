@@ -15,7 +15,7 @@
 #
 */
 
-#include "cyan_layertree.h"
+#include "CyanLayerTree.h"
 
 #include <QDebug>
 #include <QLayout>

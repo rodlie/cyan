@@ -42,13 +42,14 @@
 #include "CyanImageFormat.h"
 #include "CyanView.h"
 #include "CyanPluginLoader.h"
-#include "mdisubwindow.h"
+#include "CyanMdi.h"
+#include "CyanMdiWindow.h"
+#include "CyanLayerWidget.h"
 
 #include "cyan_common.h" // TODO replace
 
-#include "mdi.h"
 #include "qtcolorpicker.h"
-#include "cyan_layerwidget.h"
+
 //#include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
 

@@ -15,7 +15,7 @@
 #
 */
 
-#include "mdisubwindow.h"
+#include "CyanMdiWindow.h"
 #include <QDebug>
 #include <QMessageBox>
 

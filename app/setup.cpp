@@ -21,10 +21,12 @@
 #include <QDir>
 #include <QToolBox>
 
+#include "CyanLayerWidget.h"
+
 #include "colorrgb.h"
 #include "colorcmyk.h"
 #include "colorhsv.h"
-#include "cyan_layerwidget.h"
+
 
 void Editor::setupStyle()
 {

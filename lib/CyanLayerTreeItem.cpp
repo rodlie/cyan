@@ -15,7 +15,7 @@
 #
 */
 
-#include "cyan_layertreeitem.h"
+#include "CyanLayerTreeItem.h"
 
 CyanLayerTreeItem::CyanLayerTreeItem(QTreeWidget *parent) :
     QTreeWidgetItem(parent)
