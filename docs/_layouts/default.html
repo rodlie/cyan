@@ -15,25 +15,24 @@
     <div class="wrapper">
       <header>
         {% if site.logo %}
-          <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" /></a>
+          <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" align="middle" /></a>
         {% endif %}
 
         <!-- <a target="_blank" href="https://sourceforge.net/projects/prepress/files/latest/download"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a> -->
         <!-- <a target="_blank" href="https://github.com/rodlie/cyan/releases/latest"><img alt="Download Cyan" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a> -->
                 
-        {% if site.show_downloads %}
-        <ul class="downloads">
-          <li><a href="{{ site.github.zip_url }}">Download <strong>ZIP File</strong></a></li>
-          <li><a href="{{ site.github.tar_url }}">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
-        </ul>
-        {% endif %}
-
         <ul class="downloads">
           <li><a href="/Downloads">Available <strong>Downloads</strong></a></li>
           <li><a href="/ChangeLog">Development <strong>ChangeLog</strong></a></li>
           <li><a target="_blank" href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
         </ul>
+        {% if site.show_downloads %}
+        <ul class="downloads">
+          <li><a href="{{ site.github.windows_url }}">Download for <strong>Windows</strong></a></li>
+          <li><a href="{{ site.github.linux_url }}">Download for <strong>Linux</strong></a></li>
+          <li><a href="{{ site.github.macos_url }}">Download for <strong>macOS</strong></a></li>
+        </ul>
+        {% endif %}
       </header>
       <section>
 
@@ -41,6 +40,8 @@
 
       </section>
       <footer>
+        <p>Copyright &copy; Ole-André Rodlie, FxArena DA. All rights reserved.</p>
+        <p>Cyan is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version</p>
       </footer>
     </div>
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
