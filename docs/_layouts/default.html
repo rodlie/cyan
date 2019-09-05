@@ -14,9 +14,8 @@
   <body>
     <div class="wrapper">
       <header>
-        {% if site.logo %}
-        <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" align="middle" /></a><br />
-        {% endif %}
+        <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" align="middle" /></a>
+        <p>&nbsp;</p>
         <ul class="downloads">
           <li><a href="{{ site.github.windows_url }}">Download for <strong>Windows</strong></a></li>
           <li><a href="{{ site.github.linux_url }}">Download for <strong>Linux</strong></a></li>
