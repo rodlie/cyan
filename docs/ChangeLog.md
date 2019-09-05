@@ -1,5 +1,7 @@
 # Changes
 
+[![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
+
 This document will be updated when noteworthy changes are done in Cyan.
 
 ## 1.99.1
