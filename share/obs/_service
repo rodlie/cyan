@@ -4,12 +4,12 @@
         <param name="url">git://github.com/rodlie/cyan.git</param>
         <param name="versionformat">@PARENT_TAG@.@TAG_OFFSET@</param>
         <param name="revision">master</param>
-        <!-- <param name="extract">share/cyan.spec</param> -->
         <param name="filename">cyan</param>
+        <param name="extract">share/obs/cyan.spec</param>
     </service>
-        <service name="extract_file">
-        <parm name="archive">*.tar</param>
-        <param name="files">share/obs/*.spec</param>
+    <service name="extract_file">
+        <param name="archive">*.tar</param>
+        <param name="files">*/obs/*.spec</param>
     </service>
     <service name="recompress">
         <param name="file">*.tar</param>
