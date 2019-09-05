@@ -14,8 +14,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" align="middle" /></a>
-        <p>&nbsp;</p>
+        <p style="align: center;"><a href="/"><img src="{{site.logo | relative_url}}" alt="Logo" /></a></p>
         <ul class="downloads">
           <li><a href="{{ site.github.windows_url }}">Download for <strong>Windows</strong></a></li>
           <li><a href="{{ site.github.linux_url }}">Download for <strong>Linux</strong></a></li>
@@ -30,7 +29,7 @@
       {{ content }}
 
       </section>
-      <footer></footer>
+      <footer>&nbsp;</footer>
     </div>
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
     {% if site.google_analytics %}
