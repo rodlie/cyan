@@ -4,8 +4,6 @@
 ![GitHub Releases](https://img.shields.io/github/downloads/rodlie/cyan/latest/total.svg)
 [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases)
 
-# Release
-
 Latest stable Cyan release:
  * [![Download for Windows](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_windows.png)](https://github.com/rodlie/cyan/releases/latest) **Microsoft Windows 7/8/10 x64**
  * [![Download for Mac](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_mac.png)](https://github.com/rodlie/cyan/releases/latest) **Apple Mac OS X 10.10-10.14**
