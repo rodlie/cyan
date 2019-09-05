@@ -12,13 +12,17 @@ Latest stable release for supported platforms.
 
 ## Snapshots (master)
 
-[Linux](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan) snapshots are built from the master branch on every commit. Contains experimental features and probably many bugs, use at own risk.
+[Linux](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan) snapshots are built from the master branch on every commit, [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/) snapshots are updated when needed. The master branch is not stable and contains experimental features and probably many bugs, use at own risk.
+
+### [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/)
+
+Snapshots for Windows can be found on [SourceForge](https://sourceforge.net/projects/prepress/files/snapshots/win64/).
 
 ### [CentOS 7](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/CentOS_7)
 
 ```
 cd /etc/yum.repos.d/
-sudo wget https://download.opensuse.org/repositories/home:/rodlie:cyan-master/CentOS_7/home:rodlie.repo
+sudo wget https://download.opensuse.org/repositories/home:rodlie:cyan-master/CentOS_7/home:rodlie:cyan-master.repo
 sudo yum install cyan
 ```
 
@@ -39,6 +43,6 @@ sudo dnf install cyan
 ### [Fedora RawHide](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_Rawhide)
 
 ```
-sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/rodlie:cyan-master/Fedora_Rawhide/home:rodlie.repo
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_Rawhide/home:rodlie:cyan-master.repo
 sudo dnf install cyan
 ```
