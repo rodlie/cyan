@@ -30,10 +30,14 @@
 # knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "videodialog.h"
+#include "CyanFFmpegOpenDialog.h"
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+
+#ifdef WITH_FFMPEG
+#include "CyanFFmpeg.h"
+#endif
 
 videoDialog::videoDialog(QWidget *parent,
                          int max,
@@ -168,8 +172,9 @@ void videoDialog::handleSlider(int pos)
         _spin->setValue(pos);
         _spin->blockSignals(false);
     }
+#ifdef WITH_FFMPEG
     try {
-        Magick::Image image = CyanCommon::getVideoFrame(_filename,
+        Magick::Image image = CyanFFmpeg::getVideoFrame(_filename,
                                                     pos);
         if (image.isValid()) {
             Magick::Blob buffer;
@@ -183,6 +188,7 @@ void videoDialog::handleSlider(int pos)
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+#endif
 }
 
 void videoDialog::handleSpin(int pos)

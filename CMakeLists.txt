@@ -61,6 +61,7 @@ set(
     lib/CyanSliderHSV.cpp
     lib/CyanSliderRGB.cpp
     lib/CyanFFmpeg.cpp
+    lib/CyanFFmpegOpenDialog.cpp
     lib/CyanNewMediaDialog.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
@@ -84,6 +85,7 @@ set(
     lib/CyanSliderHSV.h
     lib/CyanSliderRGB.h
     lib/CyanFFmpeg.h
+    lib/CyanFFmpegOpenDialog.h
     lib/CyanNewMediaDialog.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
@@ -137,6 +139,16 @@ find_package(Qt5Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
+
+pkg_search_module(AVUTIL OPTIONAL libavutil)
+pkg_search_module(AVDEVICE OPTIONAL libavdevice)
+pkg_search_module(SWSCALE OPTIONAL libswscale)
+pkg_search_module(AVFORMAT OPTIONAL libavformat)
+pkg_search_module(AVCODEC OPTIONAL libavcodec)
+
+if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCODEC_FOUND)
+    add_definitions(-DWITH_FFMPEG -D__STDC_CONSTANT_MACROS)
+endif()
 
 #if(MINGW OR APPLE)
 #    add_definitions(-DUSE_FC)
@@ -229,6 +241,15 @@ if(BUILD_LIBRARY)
         ${LCMS2_LIBRARIES}
         ${MAGICK_STATIC_LDFLAGS}
         ${LCMS2_LDFLAGS})
+    if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND  AND AVCODEC_FOUND)
+        target_link_libraries(
+            ${PROJECT_NAME}Api
+            ${AVUTIL_LIBRARIES}
+            ${AVDEVICE_LIBRARIES}
+            ${SWSCALE_LIBRARIES}
+            ${AVFORMAT_LIBRARIES}
+            ${AVCODEC_LIBRARIES})
+    endif()
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
     set(HEADERS_APP ${HEADERS_APP} ${HEADERS_LIB})
@@ -251,6 +272,15 @@ target_link_libraries(
     ${LCMS2_LIBRARIES}
     ${MAGICK_STATIC_LDFLAGS}
     ${LCMS2_LDFLAGS})
+if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCODEC_FOUND)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        ${AVUTIL_LIBRARIES}
+        ${AVDEVICE_LIBRARIES}
+        ${SWSCALE_LIBRARIES}
+        ${AVFORMAT_LIBRARIES}
+        ${AVCODEC_LIBRARIES})
+endif()
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
 endif()

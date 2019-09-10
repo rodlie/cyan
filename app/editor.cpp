@@ -41,7 +41,8 @@
 #include "CyanColorConvert.h"
 
 #ifdef WITH_FFMPEG
-#include "videodialog.h"
+#include "CyanFFmpegOpenDialog.h"
+#include "CyanFFmpeg.h"
 #endif
 
 #ifdef Q_OS_MAC
@@ -572,7 +573,7 @@ void Editor::writeLayer(const QString &filename,
 void Editor::readAudio(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
-    QByteArray coverart = common.getEmbeddedCoverArt(filename);
+    QByteArray coverart = CyanFFmpeg::getEmbeddedCoverArt(filename);
     if (coverart.size()==0) { return; }
     qDebug() << "found image in audio!";
     try {
@@ -588,7 +589,7 @@ void Editor::readAudio(const QString &filename)
 void Editor::readVideo(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
-    int maxFrame = common.getVideoMaxFrames(filename);
+    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
     if (maxFrame==0) { return; }
 
     videoDialog *dialog = new videoDialog(this,
@@ -615,7 +616,7 @@ void Editor::readVideo(const QString &filename, int frame)
 {
     if (filename.isEmpty() || frame<0) { return; }
     try {
-        Magick::Image image = CyanCommon::getVideoFrame(filename, frame);
+        Magick::Image image = CyanFFmpeg::getVideoFrame(filename, frame);
         Magick::Blob blob;
         image.write(&blob);
         if (blob.length()>0) { readImage(blob, filename); }
@@ -628,14 +629,14 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename)
 {
     Magick::Image result;
     if (filename.isEmpty()) { return result; }
-    int maxFrame = common.getVideoMaxFrames(filename);
+    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
     if (maxFrame==0) { return result; }
     videoDialog *dialog = new videoDialog(this,
                                           maxFrame,
                                           filename);
     int ret = dialog->exec();
     if (ret == QDialog::Accepted) {
-        result = CyanCommon::getVideoFrame(filename,
+        result = CyanFFmpeg::getVideoFrame(filename,
                                        dialog->getFrame());
     }
     QTimer::singleShot(100,
@@ -649,11 +650,11 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
 {
     Magick::Image result;
     if (filename.isEmpty()) { return result; }
-    int maxFrame = common.getVideoMaxFrames(filename);
+    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
     if (maxFrame==0) { return result; }
     if (frame>maxFrame) { frame = maxFrame; }
     if (frame<0) { frame = 0; }
-    result = CyanCommon::getVideoFrame(filename,
+    result = CyanFFmpeg::getVideoFrame(filename,
                                    frame);
     return result;
 }
@@ -1103,7 +1104,7 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
         try {
 #ifdef WITH_FFMPEG
             if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-                QByteArray coverart = common.getEmbeddedCoverArt(filename);
+                QByteArray coverart = CyanFFmpeg::getEmbeddedCoverArt(filename);
                 if (coverart.size()==0) { continue; }
                 image.read(Magick::Blob(coverart.data(),
                                         static_cast<size_t>(coverart.size())));

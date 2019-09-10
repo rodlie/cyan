@@ -26,6 +26,8 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 #include <Magick++.h>
+#include <QByteArray>
+#include <QString>
 
 class CyanFFmpeg
 {

@@ -22,6 +22,14 @@
 
 #include <fontconfig/fontconfig.h>
 
+#ifdef WITH_FFMPEG
+extern "C" {
+#include <libavutil/avutil.h>
+#include <libavcodec/avcodec.h>
+#include <libavdevice/avdevice.h>
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     // always force fontconfig in pango

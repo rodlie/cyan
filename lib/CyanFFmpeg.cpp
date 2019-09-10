@@ -16,6 +16,7 @@
 */
 
 #include "CyanFFmpeg.h"
+#include <QDebug>
 
 #ifdef WITH_FFMPEG
 QByteArray CyanFFmpeg::getEmbeddedCoverArt(const QString &filename)
