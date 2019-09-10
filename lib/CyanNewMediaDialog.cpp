@@ -15,7 +15,7 @@
 #
 */
 
-#include "newmediadialog.h"
+#include "CyanNewMediaDialog.h"
 
 #include <QIcon>
 #include <QHBoxLayout>
@@ -24,6 +24,8 @@
 #include <QMapIterator>
 #include <QDebug>
 #include <QSettings>
+
+#include "CyanImageFormat.h"
 
 NewMediaDialog::NewMediaDialog(QWidget *parent,
                                QString title,
@@ -46,7 +48,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _forcedProfile(profile)
 {
     setWindowTitle(title);
-    setWindowIcon(_type==CyanCommon::newImageDialogType?QIcon(":/icons/image.png"):QIcon(":/icons/layer.png"));
+    setWindowIcon(_type==CyanCommon::newImageDialogType?QIcon::fromTheme("document-new"):QIcon::fromTheme("layer"));
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -59,6 +61,11 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _profile = new QComboBox(this);
     _depth8 = new QRadioButton(this);
     _depth16 = new QRadioButton(this);
+    _depth32 = new QRadioButton(this);
+    _depth64 = new QRadioButton(this);
+
+    _ok->setIcon(QIcon::fromTheme("document-new"));
+    _cancel->setIcon(QIcon::fromTheme("process-stop"));
 
     QWidget *buttonWidget = new QWidget(this);
     QHBoxLayout *buttonLayout = new QHBoxLayout(buttonWidget);
@@ -67,7 +74,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     QHBoxLayout *sizeLayout = new QHBoxLayout(sizeWidget);
 
     QWidget *depthWidget = new QWidget(this);
-    QHBoxLayout *depthLayout = new QHBoxLayout(depthWidget);
+    QVBoxLayout *depthLayout = new QVBoxLayout(depthWidget);
 
     _width->setRange(1, 10000);
     _height->setRange(1, 10000);
@@ -81,23 +88,49 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     }
 
     _depth8->setText(tr("8-bit"));
-    _depth8->setChecked(true);
     _depth16->setText(tr("16-bit"));
+    _depth32->setText(tr("32-bit"));
+    _depth64->setText(tr("64-bit"));
 
     _label->setPlaceholderText(title);
 
     _ok->setText(tr("New"));
     _cancel->setText(tr("Cancel"));
 
-    _select->addItem(tr("RGB"), 0);
-    _select->addItem(tr("CMYK"), 1);
-    _select->addItem(tr("GRAY"), 2);
+    QIcon colorsIcon = QIcon::fromTheme("colors");
+
+    _select->addItem(colorsIcon, tr("RGB"), 0);
+    _select->addItem(colorsIcon, tr("CMYK"), 1);
+    _select->addItem(colorsIcon, tr("GRAY"), 2);
 
     sizeLayout->addWidget(_width);
     sizeLayout->addWidget(_height);
 
     depthLayout->addWidget(_depth8);
     depthLayout->addWidget(_depth16);
+    depthLayout->addWidget(_depth32);
+    depthLayout->addWidget(_depth64);
+
+    _depth8->setDisabled(true);
+    _depth16->setDisabled(true);
+    _depth32->setDisabled(true);
+    _depth64->setDisabled(true);
+
+    int depth = CyanImageFormat::supportedQuantumDepth();
+    qDebug() << "DEPTH?" << depth;
+    if (depth >= 8) {
+        _depth8->setDisabled(false);
+        _depth8->setChecked(true);
+    }
+    if (depth >= 16) {
+        _depth16->setDisabled(false);
+    }
+    if (depth >= 32) {
+        _depth32->setDisabled(false);
+    }
+    if (depth == 64) {
+        _depth64->setDisabled(false);
+    }
 
     buttonLayout->addWidget(_ok);
     buttonLayout->addWidget(_cancel);
@@ -156,9 +189,24 @@ void NewMediaDialog::handleOk()
             break;
         }
     }
-    createImage(QSize(_width->value(), _height->value()),
+    int depth = 0;
+    if (_depth8->isChecked()) {
+        depth = 8;
+    } else if (_depth16->isChecked()) {
+        depth = 16;
+    } else if (_depth32->isChecked()) {
+        depth = 32;
+    } else if (_depth64->isChecked()) {
+        depth = 64;
+    }
+    if (depth > CyanImageFormat::supportedQuantumDepth()) {
+        qWarning() << "requested depth higher than supported by IM!";
+        depth = CyanImageFormat::supportedQuantumDepth();
+    }
+    createImage(QSize(_width->value(),
+                      _height->value()),
                 type,
-                _depth8->isChecked()?8:16);
+                depth);
 
     QDialog::accept();
 }
@@ -211,10 +259,12 @@ void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)
     }
     settings.endGroup();
 
+    QIcon colorWheelIcon = QIcon::fromTheme("color-wheel");
     QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(colorspace));
     while (i.hasNext()) {
         i.next();
-        _profile->addItem(i.key(),
+        _profile->addItem(colorWheelIcon,
+                          i.key(),
                           i.value());
     }
     int index = _profile->findData(filename);

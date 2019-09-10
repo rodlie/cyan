@@ -36,7 +36,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 
-#include "newmediadialog.h"
+#include "CyanNewMediaDialog.h"
 #include "convertdialog.h"
 #include "CyanColorConvert.h"
 

@@ -60,6 +60,8 @@ set(
     lib/CyanSliderCMYK.cpp
     lib/CyanSliderHSV.cpp
     lib/CyanSliderRGB.cpp
+    lib/CyanFFmpeg.cpp
+    lib/CyanNewMediaDialog.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp)
@@ -81,6 +83,8 @@ set(
     lib/CyanSliderCMYK.h
     lib/CyanSliderHSV.h
     lib/CyanSliderRGB.h
+    lib/CyanFFmpeg.h
+    lib/CyanNewMediaDialog.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
@@ -92,7 +96,7 @@ set(
     #app/widgets/colorrgb.cpp
     #app/widgets/colorcmyk.cpp
     #app/widgets/colorhsv.cpp
-    app/dialogs/newmediadialog.cpp
+    #app/dialogs/newmediadialog.cpp
     app/dialogs/convertdialog.cpp
     app/main.cpp
     #app/converter.cpp
@@ -111,7 +115,7 @@ set(
     #app/widgets/colorrgb.h
     #app/widgets/colorcmyk.h
     #app/widgets/colorhsv.h
-    app/dialogs/newmediadialog.h
+    #app/dialogs/newmediadialog.h
     app/dialogs/convertdialog.h
     #app/converter.h
     app/editor.h)

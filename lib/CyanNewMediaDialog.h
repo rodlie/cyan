@@ -62,6 +62,8 @@ private:
     QComboBox *_profile;
     QRadioButton *_depth8;
     QRadioButton *_depth16;
+    QRadioButton *_depth32;
+    QRadioButton *_depth64;
     Magick::Blob _forcedProfile;
 
 private slots:
