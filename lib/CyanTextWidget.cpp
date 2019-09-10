@@ -15,7 +15,7 @@
 #
 */
 
-#include "cyan_textwidget.h"
+#include "CyanTextWidget.h"
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QPushButton>

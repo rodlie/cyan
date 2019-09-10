@@ -56,6 +56,10 @@ set(
     lib/CyanLayerWidget.cpp
     lib/CyanLayerTree.cpp
     lib/CyanLayerTreeItem.cpp
+    lib/CyanTextWidget.cpp
+    lib/CyanSliderCMYK.cpp
+    lib/CyanSliderHSV.cpp
+    lib/CyanSliderRGB.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp)
@@ -73,6 +77,10 @@ set(
     lib/CyanLayerWidget.h
     lib/CyanLayerTree.h
     lib/CyanLayerTreeItem.h
+    lib/CyanTextWidget.h
+    lib/CyanSliderCMYK.h
+    lib/CyanSliderHSV.h
+    lib/CyanSliderRGB.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h

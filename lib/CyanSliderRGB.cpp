@@ -15,12 +15,12 @@
 #
 */
 
-#include "colorrgb.h"
+#include "CyanSliderRGB.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 
-ColorRGB::ColorRGB(QWidget *parent) : QWidget(parent)
+CyanSliderRGB::CyanSliderRGB(QWidget *parent) : QWidget(parent)
   , spinR(nullptr)
   , spinG(nullptr)
   , spinB(nullptr)
@@ -130,7 +130,7 @@ ColorRGB::ColorRGB(QWidget *parent) : QWidget(parent)
             spinB, SLOT(setValue(int)));
 }
 
-const QColor ColorRGB::getColor()
+const QColor CyanSliderRGB::getColor()
 {
     QColor color;
     color.setRed(spinR->value());
@@ -139,14 +139,14 @@ const QColor ColorRGB::getColor()
     return color;
 }
 
-void ColorRGB::setColor(const QColor &color)
+void CyanSliderRGB::setColor(const QColor &color)
 {
     setR(color.red());
     setG(color.green());
     setB(color.blue());
 }
 
-void ColorRGB::setR(int r)
+void CyanSliderRGB::setR(int r)
 {
     spinR->blockSignals(true);
     slideR->blockSignals(true);
@@ -156,7 +156,7 @@ void ColorRGB::setR(int r)
     slideR->blockSignals(false);
 }
 
-void ColorRGB::setG(int g)
+void CyanSliderRGB::setG(int g)
 {
     spinG->blockSignals(true);
     slideG->blockSignals(true);
@@ -166,7 +166,7 @@ void ColorRGB::setG(int g)
     slideG->blockSignals(false);
 }
 
-void ColorRGB::setB(int b)
+void CyanSliderRGB::setB(int b)
 {
     spinB->blockSignals(true);
     slideB->blockSignals(true);
@@ -176,7 +176,7 @@ void ColorRGB::setB(int b)
     slideB->blockSignals(false);
 }
 
-void ColorRGB::handleColorRChanged(int value)
+void CyanSliderRGB::handleColorRChanged(int value)
 {
     setR(value);
     QColor color;
@@ -186,7 +186,7 @@ void ColorRGB::handleColorRChanged(int value)
     emit colorChanged(color);
 }
 
-void ColorRGB::handleColorGChanged(int value)
+void CyanSliderRGB::handleColorGChanged(int value)
 {
     setG(value);
     QColor color;
@@ -196,7 +196,7 @@ void ColorRGB::handleColorGChanged(int value)
     emit colorChanged(color);
 }
 
-void ColorRGB::handleColorBChanged(int value)
+void CyanSliderRGB::handleColorBChanged(int value)
 {
     setB(value);
     QColor color;

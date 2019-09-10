@@ -15,12 +15,12 @@
 #
 */
 
-#include "colorcmyk.h"
+#include "CyanSliderCMYK.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 
-ColorCMYK::ColorCMYK(QWidget *parent) :
+CyanSliderCMYK::CyanSliderCMYK(QWidget *parent) :
     QWidget(parent)
   , spinC(nullptr)
   , spinM(nullptr)
@@ -159,7 +159,7 @@ ColorCMYK::ColorCMYK(QWidget *parent) :
             spinK, SLOT(setValue(int)));
 }
 
-const QColor ColorCMYK::getColor()
+const QColor CyanSliderCMYK::getColor()
 {
     QColor color;
     color.setCmyk(spinC->value(),
@@ -169,7 +169,7 @@ const QColor ColorCMYK::getColor()
     return color;
 }
 
-void ColorCMYK::setColor(const QColor &color)
+void CyanSliderCMYK::setColor(const QColor &color)
 {
     setC(color.cyan());
     setM(color.magenta());
@@ -177,7 +177,7 @@ void ColorCMYK::setColor(const QColor &color)
     setK(color.black());
 }
 
-void ColorCMYK::setC(int c)
+void CyanSliderCMYK::setC(int c)
 {
     spinC->blockSignals(true);
     slideC->blockSignals(true);
@@ -187,7 +187,7 @@ void ColorCMYK::setC(int c)
     slideC->blockSignals(false);
 }
 
-void ColorCMYK::setM(int m)
+void CyanSliderCMYK::setM(int m)
 {
     spinM->blockSignals(true);
     slideM->blockSignals(true);
@@ -197,7 +197,7 @@ void ColorCMYK::setM(int m)
     slideM->blockSignals(false);
 }
 
-void ColorCMYK::setY(int y)
+void CyanSliderCMYK::setY(int y)
 {
     spinY->blockSignals(true);
     slideY->blockSignals(true);
@@ -207,7 +207,7 @@ void ColorCMYK::setY(int y)
     slideY->blockSignals(false);
 }
 
-void ColorCMYK::setK(int k)
+void CyanSliderCMYK::setK(int k)
 {
     spinK->blockSignals(true);
     slideK->blockSignals(true);
@@ -217,7 +217,7 @@ void ColorCMYK::setK(int k)
     slideK->blockSignals(false);
 }
 
-void ColorCMYK::handleColorCChanged(int value)
+void CyanSliderCMYK::handleColorCChanged(int value)
 {
     setC(value);
     QColor color;
@@ -228,7 +228,7 @@ void ColorCMYK::handleColorCChanged(int value)
     emit colorChanged(color);
 }
 
-void ColorCMYK::handleColorMChanged(int value)
+void CyanSliderCMYK::handleColorMChanged(int value)
 {
     setM(value);
     QColor color;
@@ -239,7 +239,7 @@ void ColorCMYK::handleColorMChanged(int value)
     emit colorChanged(color);
 }
 
-void ColorCMYK::handleColorYChanged(int value)
+void CyanSliderCMYK::handleColorYChanged(int value)
 {
     setY(value);
     QColor color;
@@ -250,7 +250,7 @@ void ColorCMYK::handleColorYChanged(int value)
     emit colorChanged(color);
 }
 
-void ColorCMYK::handleColorKChanged(int value)
+void CyanSliderCMYK::handleColorKChanged(int value)
 {
     setK(value);
     QColor color;

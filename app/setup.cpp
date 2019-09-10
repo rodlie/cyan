@@ -23,9 +23,9 @@
 
 #include "CyanLayerWidget.h"
 
-#include "colorrgb.h"
-#include "colorcmyk.h"
-#include "colorhsv.h"
+#include "CyanSliderRGB.h"
+#include "CyanSliderCMYK.h"
+#include "CyanSliderHSV.h"
 
 
 void Editor::setupStyle()

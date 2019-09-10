@@ -15,21 +15,21 @@
 #
 */
 
-#ifndef COLORCMYK_H
-#define COLORCMYK_H
+#ifndef COLORHSV_H
+#define COLORHSV_H
 
 #include <QWidget>
 #include <QColor>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QSlider>
 
-class ColorCMYK : public QWidget
+class CyanSliderHSV : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    explicit ColorCMYK(QWidget *parent = nullptr);
+    explicit CyanSliderHSV(QWidget *parent = nullptr);
 
 signals:
 
@@ -42,26 +42,26 @@ public slots:
 
 private:
 
-    QSpinBox *spinC;
-    QSpinBox *spinM;
-    QSpinBox *spinY;
-    QSpinBox *spinK;
+    QDoubleSpinBox *spinH;
+    QDoubleSpinBox *spinS;
+    QDoubleSpinBox *spinV;
 
-    QSlider *slideC;
-    QSlider *slideM;
-    QSlider *slideY;
-    QSlider *slideK;
+    QSlider *slideH;
+    QSlider *slideS;
+    QSlider *slideV;
 
 private slots:
 
-    void setC(int c);
-    void setM(int m);
-    void setY(int y);
-    void setK(int k);
-    void handleColorCChanged(int value);
-    void handleColorMChanged(int value);
-    void handleColorYChanged(int value);
-    void handleColorKChanged(int value);
+    void setH(qreal h);
+    void setS(qreal s);
+    void setV(qreal v);
+    void handleColorHChanged(double value);
+    void handleColorSChanged(double value);
+    void handleColorVChanged(double value);
+
+    void handleSliderHMoved(int value);
+    void handleSliderSMoved(int value);
+    void handleSliderVMoved(int value);
 };
 
-#endif // COLORRGB_H
+#endif // COLORHSV_H

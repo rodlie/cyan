@@ -23,13 +23,13 @@
 #include <QSpinBox>
 #include <QSlider>
 
-class ColorRGB : public QWidget
+class CyanSliderRGB : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    explicit ColorRGB(QWidget *parent = nullptr);
+    explicit CyanSliderRGB(QWidget *parent = nullptr);
 
 signals:
 

@@ -15,12 +15,12 @@
 #
 */
 
-#include "colorhsv.h"
+#include "CyanSliderHSV.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
 
-ColorHSV::ColorHSV(QWidget *parent) : QWidget(parent)
+CyanSliderHSV::CyanSliderHSV(QWidget *parent) : QWidget(parent)
   , spinH(nullptr)
   , spinS(nullptr)
   , spinV(nullptr)
@@ -138,7 +138,7 @@ ColorHSV::ColorHSV(QWidget *parent) : QWidget(parent)
             this, SLOT(handleSliderVMoved(int)));
 }
 
-const QColor ColorHSV::getColor()
+const QColor CyanSliderHSV::getColor()
 {
     QColor color;
     color.setHsvF(spinH->value(),
@@ -147,14 +147,14 @@ const QColor ColorHSV::getColor()
     return color;
 }
 
-void ColorHSV::setColor(const QColor &color)
+void CyanSliderHSV::setColor(const QColor &color)
 {
     setH(color.hsvHueF());
     setS(color.hsvSaturationF());
     setV(color.valueF());
 }
 
-void ColorHSV::setH(qreal h)
+void CyanSliderHSV::setH(qreal h)
 {
     spinH->blockSignals(true);
     slideH->blockSignals(true);
@@ -165,7 +165,7 @@ void ColorHSV::setH(qreal h)
     slideH->blockSignals(false);
 }
 
-void ColorHSV::setS(qreal s)
+void CyanSliderHSV::setS(qreal s)
 {
     spinS->blockSignals(true);
     slideS->blockSignals(true);
@@ -176,7 +176,7 @@ void ColorHSV::setS(qreal s)
     slideS->blockSignals(false);
 }
 
-void ColorHSV::setV(qreal v)
+void CyanSliderHSV::setV(qreal v)
 {
     spinV->blockSignals(true);
     slideV->blockSignals(true);
@@ -187,7 +187,7 @@ void ColorHSV::setV(qreal v)
     slideV->blockSignals(false);
 }
 
-void ColorHSV::handleColorHChanged(double value)
+void CyanSliderHSV::handleColorHChanged(double value)
 {
     QColor color;
     color.setHsvF(value,
@@ -196,7 +196,7 @@ void ColorHSV::handleColorHChanged(double value)
     emit colorChanged(color);
 }
 
-void ColorHSV::handleColorSChanged(double value)
+void CyanSliderHSV::handleColorSChanged(double value)
 {
     QColor color;
     color.setHsvF(spinH->value(),
@@ -205,7 +205,7 @@ void ColorHSV::handleColorSChanged(double value)
     emit colorChanged(color);
 }
 
-void ColorHSV::handleColorVChanged(double value)
+void CyanSliderHSV::handleColorVChanged(double value)
 {
     QColor color;
     color.setHsvF(spinH->value(),
@@ -214,19 +214,19 @@ void ColorHSV::handleColorVChanged(double value)
     emit colorChanged(color);
 }
 
-void ColorHSV::handleSliderHMoved(int value)
+void CyanSliderHSV::handleSliderHMoved(int value)
 {
     double newValue = static_cast<qreal>(value)/1000;
     spinH->setValue(newValue);
 }
 
-void ColorHSV::handleSliderSMoved(int value)
+void CyanSliderHSV::handleSliderSMoved(int value)
 {
     double newValue = static_cast<qreal>(value)/1000;
     spinS->setValue(newValue);
 }
 
-void ColorHSV::handleSliderVMoved(int value)
+void CyanSliderHSV::handleSliderVMoved(int value)
 {
     double newValue = static_cast<qreal>(value)/1000;
     spinV->setValue(newValue);
