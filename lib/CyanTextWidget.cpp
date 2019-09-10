@@ -219,6 +219,7 @@ void CyanTextWidget::colorChanged(const QColor &c)
 
 void CyanTextWidget::alignmentChanged(Qt::Alignment a)
 {
+    Q_UNUSED(a)
     /*if (a & Qt::AlignLeft)
         actionAlignLeft->setChecked(true);
     else if (a & Qt::AlignHCenter)

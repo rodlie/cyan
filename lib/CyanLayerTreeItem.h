@@ -24,7 +24,9 @@
 
 #include <Magick++.h>
 
-class CyanLayerTreeItem : public QTreeWidget, public QTreeWidgetItem
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanLayerTreeItem : public QTreeWidget, public QTreeWidgetItem
 {
     Q_OBJECT
 

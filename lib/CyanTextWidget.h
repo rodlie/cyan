@@ -26,7 +26,9 @@
 #include <QFontComboBox>
 #include <QSlider>
 
-class CyanTextWidget : public QWidget
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanTextWidget : public QWidget
 {
     Q_OBJECT
 

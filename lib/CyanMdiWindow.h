@@ -23,7 +23,9 @@
 #include <QMdiSubWindow>
 #include <QCloseEvent>
 
-class MdiSubWindow : public QMdiSubWindow
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT MdiSubWindow : public QMdiSubWindow
 {
     Q_OBJECT
 

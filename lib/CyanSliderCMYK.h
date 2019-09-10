@@ -23,7 +23,9 @@
 #include <QSpinBox>
 #include <QSlider>
 
-class CyanSliderCMYK : public QWidget
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanSliderCMYK : public QWidget
 {
     Q_OBJECT
 

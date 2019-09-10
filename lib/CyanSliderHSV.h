@@ -23,7 +23,9 @@
 #include <QDoubleSpinBox>
 #include <QSlider>
 
-class CyanSliderHSV : public QWidget
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanSliderHSV : public QWidget
 {
     Q_OBJECT
 

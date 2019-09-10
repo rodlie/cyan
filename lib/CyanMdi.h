@@ -27,7 +27,9 @@
 #include <QDropEvent>
 #include <QUrl>
 
-class Mdi : public QMdiArea
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT Mdi : public QMdiArea
 {
     Q_OBJECT
 

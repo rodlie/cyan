@@ -25,7 +25,9 @@
 #include <QRect>
 #include <QSize>
 
-class CyanLayerItemDelegate : public QStyledItemDelegate
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanLayerItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 

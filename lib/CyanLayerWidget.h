@@ -28,7 +28,9 @@
 
 #include "CyanLayerTree.h"
 
-class CyanLayerWidget : public QWidget
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanLayerWidget : public QWidget
 {
     Q_OBJECT
 

@@ -25,7 +25,9 @@
 
 #include "CyanWidgetApi.h"
 
-class CyanPlugins : public QObject
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanPlugins : public QObject
 {
     Q_OBJECT
 

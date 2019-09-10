@@ -26,7 +26,9 @@
 #include "CyanView.h"
 #include "CyanLayerTreeItem.h"
 
-class LayerTree : public QTreeWidget
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT LayerTree : public QTreeWidget
 {
     Q_OBJECT
 
