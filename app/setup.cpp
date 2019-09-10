@@ -23,11 +23,6 @@
 
 #include "CyanLayerWidget.h"
 
-#include "CyanSliderRGB.h"
-#include "CyanSliderCMYK.h"
-#include "CyanSliderHSV.h"
-
-
 void Editor::setupStyle()
 {
     // style app
@@ -67,26 +62,22 @@ void Editor::setupUI()
     setupStyle();
     setupWidgets();
     setupMenus();
-    setupToolbars();
     setupActions();
-    setupButtons();
-    //setupColorManagement();
     setupConnections();
     setupIcons();
     setupShortcuts();
     setupOptions();
 
-    //setCentralWidget(mdi);
     setStatusBar(mainStatusBar);
     setMenuBar(mainMenu);
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(colorMenu);
-    //mainMenu->addMenu(layerMenu);
     mainMenu->addMenu(optMenu);
-    windowsMenu->attachToMdiArea(mdi);
     mainMenu->addMenu(windowsMenu);
     mainMenu->addMenu(helpMenu);
+
+    windowsMenu->attachToMdiArea(mdi);
 
     mainToolBar->addWidget(newButton);
     mainToolBar->addWidget(openButton);
@@ -94,20 +85,13 @@ void Editor::setupUI()
     mainToolBar->addSeparator();
     mainToolBar->addWidget(moveButton);
     mainToolBar->addWidget(zoomButton);
-
-    moveButton->addAction(viewMoveAct);
-    moveButton->addAction(viewDrawAct);
-    //mainToolBar->addAction(viewMoveAct);
-    //mainToolBar->addAction(viewDrawAct);
-    //mainToolBar->addWidget(textButton);
-    //mainToolBar->addWidget(layerButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(convertButton);
     mainToolBar->addSeparator();
-    //mainToolBar->addWidget(colorPicker);
+    mainToolBar->addWidget(colorPicker);
 
-    colorPicker->hide();
-
+    moveButton->addAction(viewMoveAct);
+    moveButton->addAction(viewDrawAct);
 
     newButton->addAction(newImageAct);
     newButton->addAction(newLayerAct);
@@ -138,9 +122,6 @@ void Editor::setupUI()
     helpMenu->addAction(aboutLcmsAct);
     helpMenu->addAction(aboutQtAct);
 
-    //newMenu->addAction(newImageAct);
-    //newMenu->addAction(newLayerAct);
-
     saveMenu->addAction(saveProjectAct);
     saveMenu->addAction(saveProjectAsAct);
     saveMenu->addAction(saveImageAct);
@@ -160,10 +141,6 @@ void Editor::setupUI()
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
 
-
-
-
-
     viewMoveAct->setChecked(true);
     moveButton->setDefaultAction(viewMoveAct);
 
@@ -175,35 +152,7 @@ void Editor::setupUI()
                              Magick::GRAYColorspace);
     populateColorIntentMenu();
 
-        setActionsDisabled(true);
-
-    QLabel *brushSizeLabel = new QLabel(this);
-    brushSizeLabel->setPixmap(QIcon(":/icons/brushsize.png")
-                              .pixmap(24, 24));
-
-
-    QWidget *brushWidget = new QWidget(this);
-    QVBoxLayout *brushLayout = new QVBoxLayout(brushWidget);
-
-    QWidget *brushSizeWidget = new QWidget(this);
-    QHBoxLayout *brushSizeLayout = new QHBoxLayout(brushSizeWidget);
-
-    brushSizeLayout->addWidget(brushSizeLabel);
-    brushSizeLayout->addWidget(brushSize);
-    brushLayout->addWidget(brushSizeWidget);
-    brushLayout->addStretch();
-
-    brushDock = new QDockWidget(this);
-    brushDock->setWindowTitle(tr("Brush"));
-    brushDock->setObjectName(QString("brushDock"));
-    brushDock->setWidget(brushWidget);
-    addDockWidget(Qt::RightDockWidgetArea,
-                  brushDock);
-
-    brushDock->setDisabled(true);
-    brushDock->setHidden(true);
-    //textWidget->setHidden(true);
-
+    setActionsDisabled(true);
     optMenu->setDisabled(true);
 
     mainSplitter->setOrientation(Qt::Horizontal);
@@ -212,10 +161,8 @@ void Editor::setupUI()
     mainSplitter->addWidget(leftSplitter);
     mainSplitter->addWidget(mdi);
     mainSplitter->addWidget(rightSplitter);
-
-    setCentralWidget(mainSplitter);
-
     rightSplitter->addWidget(layersWidget);
+    setCentralWidget(mainSplitter);
 }
 
 void Editor::setupMenus()
@@ -256,17 +203,6 @@ void Editor::setupMenus()
     colorIntentMenu->setTitle(tr("Rendering Intent"));
 }
 
-void Editor::setupToolbars()
-{
-    mainToolBar = new QToolBar(this);
-    mainToolBar->setObjectName(QString("mainToolBar"));
-    mainToolBar->setWindowTitle(tr("Main"));
-    mainToolBar->setMovable(false);
-
-    addToolBar(Qt::LeftToolBarArea,
-               mainToolBar);
-}
-
 void Editor::setupWidgets()
 {
 
@@ -279,24 +215,16 @@ void Editor::setupWidgets()
     rightSplitter = new QSplitter(this);
     rightSplitter->setObjectName(QString("rightSplitter"));
 
+    // MDI
     mdi = new Mdi(this);
     mdi->setBackground(QBrush(QColor(20, 20, 20)));
 
+    // status bar
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));
 
-    // remove this!
-    brushSize = new QSlider(this);
-    brushSize->setRange(1,256);
-    brushSize->setValue(20);
-    brushSize->setOrientation(Qt::Vertical);
-
-    // layer
+    // layer widget
     layersWidget = new CyanLayerWidget(this);
-
-    // text (disabled for now)
-    //textWidget = new CyanTextWidget(this);
-    //textWidget->setDisabled(true);
 
     // add zoom % in status bar
     currentZoomStatusLabel = new QLabel(this);
@@ -306,10 +234,50 @@ void Editor::setupWidgets()
     mainStatusBar->addPermanentWidget(currentZoomStatusLabel);
     mainStatusBar->addPermanentWidget(currentZoomStatusIcon);
 
+    // main color picker
     colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(24,24));
+    colorPicker->setIconSize(QSize(24, 24));
     colorPicker->setStandardColors();
-    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
+
+    // toolbar
+    mainToolBar = new QToolBar(this);
+    mainToolBar->setObjectName(QString("mainToolBar"));
+    mainToolBar->setWindowTitle(tr("Main"));
+    mainToolBar->setMovable(false);
+    addToolBar(Qt::LeftToolBarArea, mainToolBar);
+
+    // toolbuttons
+    newButton = new QToolButton(this);
+    newButton->setPopupMode(QToolButton::InstantPopup);
+    newButton->setText(tr("New"));
+    newButton->setToolTip(tr("New"));
+
+    openButton = new QToolButton(this);
+    openButton->setPopupMode(QToolButton::InstantPopup);
+    openButton->setText(tr("Open"));
+    openButton->setToolTip(tr("Open"));
+
+    saveButton = new QToolButton(this);
+    saveButton->setMenu(saveMenu);
+    saveButton->setPopupMode(QToolButton::InstantPopup);
+    saveButton->setText(tr("Save"));
+    saveButton->setToolTip(tr("Save"));
+
+    moveButton = new QToolButton(this);
+    moveButton->setPopupMode(QToolButton::InstantPopup);
+    moveButton->setText(tr("View"));
+    moveButton->setToolTip(tr("View"));
+
+    zoomButton = new QToolButton(this);
+    zoomButton->setPopupMode(QToolButton::InstantPopup);
+    zoomButton->setText(tr("Zoom"));
+    zoomButton->setToolTip(tr("Zoom"));
+
+    convertButton = new QToolButton(this);
+    convertButton->setMenu(colorMenu);
+    convertButton->setPopupMode(QToolButton::InstantPopup);
+    convertButton->setText(tr("Colors"));
+    convertButton->setToolTip(tr("Color convert"));
 }
 
 
@@ -403,49 +371,10 @@ void Editor::setupActions()
     viewZoomFitAct->setCheckable(true);
 }
 
-void Editor::setupButtons()
-{
-    newButton = new QToolButton(this);
-    newButton->setPopupMode(QToolButton::InstantPopup);
-    newButton->setText(tr("New"));
-    newButton->setToolTip(tr("New"));
-    newButton->setIcon(QIcon::fromTheme("document-new"));
-
-    openButton = new QToolButton(this);
-    openButton->setPopupMode(QToolButton::InstantPopup);
-    openButton->setText(tr("Open"));
-    openButton->setToolTip(tr("Open"));
-    openButton->setIcon(QIcon::fromTheme("document-open"));
-
-    saveButton = new QToolButton(this);
-    saveButton->setMenu(saveMenu);
-    saveButton->setPopupMode(QToolButton::InstantPopup);
-    saveButton->setText(tr("Save"));
-    saveButton->setToolTip(tr("Save"));
-
-    moveButton = new QToolButton(this);
-    moveButton->setPopupMode(QToolButton::InstantPopup);
-    moveButton->setText(tr("View"));
-    moveButton->setToolTip(tr("View"));
-    moveButton->setIcon(QIcon::fromTheme("transform_move"));
-
-    zoomButton = new QToolButton(this);
-    zoomButton->setPopupMode(QToolButton::InstantPopup);
-    zoomButton->setText(tr("Zoom"));
-    zoomButton->setToolTip(tr("Zoom"));
-    zoomButton->setIcon(QIcon::fromTheme("zoom"));
-
-    convertButton = new QToolButton(this);
-    convertButton->setMenu(colorMenu);
-    convertButton->setPopupMode(QToolButton::InstantPopup);
-    convertButton->setText(tr("Colors"));
-    convertButton->setToolTip(tr("Color convert"));
-}
-
 void Editor::setupConnections()
 {
 
-
+// clean up!
 
     connect(viewZoom100Act, SIGNAL(triggered(bool)), this, SLOT(handleZoom100ActionTriggered()));
     connect(viewZoomFitAct, SIGNAL(triggered(bool)), this, SLOT(handleZoomFitActionTriggered(bool)));
@@ -485,7 +414,7 @@ void Editor::setupConnections()
     connect(this, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     connect(this, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(mdi, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
+    //connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 
     connect(mdi,
             SIGNAL(subWindowActivated(QMdiSubWindow*)),
@@ -548,6 +477,8 @@ void Editor::setupConnections()
     //connect(layerButton, SIGNAL(toggled(bool)), layerPopup, SLOT(pinPopup(bool)));
     //connect(textButton, SIGNAL(toggled(bool)), textPopup, SLOT(pinPopup(bool)));
 
+        connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
+
 }
 
 void Editor::setupIcons()
@@ -589,12 +520,19 @@ void Editor::setupIcons()
     colorIntentMenu->setIcon(QIcon::fromTheme("video-display"));
     blackPointAct->setIcon(colorWheelIcon);
 
-    aboutQtAct->setIcon(QIcon::fromTheme("help-about"));
-    aboutLcmsAct->setIcon(QIcon::fromTheme("help-about"));
-    aboutImageMagickAct->setIcon(QIcon::fromTheme("help-about"));
-    aboutCyanAct->setIcon(QIcon::fromTheme("help-about"));
+    QIcon helpIcon = QIcon::fromTheme("help-about");
+
+    aboutQtAct->setIcon(helpIcon);
+    aboutLcmsAct->setIcon(helpIcon);
+    aboutImageMagickAct->setIcon(helpIcon);
+    aboutCyanAct->setIcon(helpIcon);
 
     convertButton->setIcon(colorsIcon);
+    newButton->setIcon(QIcon::fromTheme("document-new"));
+    openButton->setIcon(QIcon::fromTheme("document-open"));
+    moveButton->setIcon(QIcon::fromTheme("transform_move"));
+    zoomButton->setIcon(QIcon::fromTheme("zoom"));
+
 }
 
 void Editor::setupShortcuts()

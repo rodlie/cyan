@@ -119,24 +119,12 @@ private:
     QToolButton *moveButton;
     QToolButton *zoomButton;
     CyanLayerWidget *layersWidget;
-   // QDockWidget *layersDock;
 
-    //CyanTextWidget *textWidget;
-
-    QSlider *brushSize;
-    QDockWidget *brushDock;
-    //QDockWidget *textDock;
-    //QDockWidget *colorDock;
-
-    //QtColorTriangle *colorTriangle;
     QtColorPicker *colorPicker;
 
-    //QToolButton *textButton;
     QToolButton *convertButton;
 
-    //ctkPopupWidget *textPopup;
-    //ctkPopupWidget *layerPopup;
-    //ctkPopupWidget *colorPopup;
+
 
     QLabel *currentZoomStatusIcon;
     QLabel *currentZoomStatusLabel;
@@ -166,11 +154,8 @@ private slots:
     void setupStyle();
     void setupUI();
     void setupMenus();
-    void setupToolbars();
     void setupWidgets();
     void setupActions();
-    void setupButtons();
-    //void setupColorManagement();
     void setupConnections();
     void setupIcons();
     void setupShortcuts();

@@ -94,17 +94,19 @@ void Editor::handleSetDrawMode(bool triggered)
 
 void Editor::handleBrushSize()
 {
-    QList<QMdiSubWindow*> list = mdi->subWindowList();
+    /*QList<QMdiSubWindow*> list = mdi->subWindowList();
     for (int i=0;i<list.size();++i) {
         QMdiSubWindow *window = qobject_cast<QMdiSubWindow*>(list.at(i));
         if (!window) { return; }
         View *view = qobject_cast<View*>(window->widget());
         if (!view) { return; }
         view->setBrushStroke(brushSize->value());
-    }
+    }*/
 }
 
 void Editor::handleUpdateBrushSize(int stroke)
 {
-    brushSize->setValue(stroke);
+    Q_UNUSED(stroke)
+    qDebug() << "brush size changed" << stroke;
+    //brushSize->setValue(stroke);
 }
