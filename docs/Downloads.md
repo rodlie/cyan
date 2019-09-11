@@ -1,5 +1,7 @@
 # Downloads
 
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-04.png)
+
 ## Stable (1.2)
 
 Latest stable release for supported platforms.
@@ -12,7 +14,7 @@ Latest stable release for supported platforms.
 
 ## Snapshots (master)
 
-[Linux](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan) snapshots are built from the master branch on every commit, [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/) snapshots are updated when needed. The master branch is not stable and contains experimental features and probably many bugs, use at own risk.
+[Linux](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan) snapshots are built from the master branch on every public commit, [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/) snapshots are updated when needed. The master branch is not stable and contains experimental features and many bugs, use at own risk.
 
 ### [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/)
 

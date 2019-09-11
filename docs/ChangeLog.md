@@ -1,14 +1,16 @@
 # Changes
 
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-02.png)
+
 [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
 
 This document will be updated when noteworthy changes are done in Cyan.
 
 ## 1.99.1
 
-**Release date : TBA**
+**Release date : 20190913**
 
-First step on the road to version 2.0. **Not for end-users!**
+First step on the road to version 2.0. This is a development release, not for end-users.
 
 * Initial support for guides
 * Initial support for rulers
