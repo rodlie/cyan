@@ -26,6 +26,7 @@
 #include <QTransform>
 #include <QtConcurrent/QtConcurrent>
 #include <QTimer>
+#include <QGridLayout>
 
 View::View(QWidget* parent, bool setup) :
     QGraphicsView(parent)
@@ -37,14 +38,40 @@ View::View(QWidget* parent, bool setup) :
   , _moving(false)
   , _selectedLayer(0)
   , _supportsLayers(true)
+  , _hRuler(nullptr)
+  , _vRuler(nullptr)
+  , _showGuides(true)
 {
     // setup the basics
     setAcceptDrops(true);
-    setBackgroundBrush(QColor(30,30,30));
+    setBackgroundBrush(QColor(30, 30, 30));
     setMouseTracking(true);
 
+    // rulers
+    setViewportMargins(CYAN_RULER_SIZE,
+                       CYAN_RULER_SIZE,
+                       0,
+                       0);
+    QGridLayout* gridLayout = new QGridLayout(this);
+    gridLayout->setSpacing(0);
+    gridLayout->setMargin(0);
 
-    // TODO
+    _hRuler = new CyanRuler(CyanRuler::Horizontal,this);
+    _vRuler = new CyanRuler(CyanRuler::Vertical, this);
+
+    QWidget* container = new QWidget(this);
+    container->setBackgroundRole(QPalette::Window);
+    container->setFixedSize(CYAN_RULER_SIZE, CYAN_RULER_SIZE);
+    gridLayout->addWidget(container, 0, 0);
+    gridLayout->addWidget(_hRuler, 0, 1);
+    gridLayout->addWidget(_vRuler, 1, 0);
+    gridLayout->addWidget(viewport(), 1, 1);
+
+    setLayout(gridLayout);
+
+    connect(this, SIGNAL(zoomChanged()), this, SLOT(handleZoomChanged()));
+
+    // TODO REMOVE
     _parentLayer = 0;
     _parentCanvas = QString();
 
@@ -68,10 +95,12 @@ View::View(QWidget* parent, bool setup) :
     _scene->addItem(_brush);
 
     // connect zoom
-    connect(this, SIGNAL(resetZoom()),
-            this, SLOT(resetImageZoom()));
+    connect(this,
+            SIGNAL(resetZoom()),
+            this,
+            SLOT(resetImageZoom()));
 
-    // setup canvas
+    // setup canvas if needed
     if (setup) { setupCanvas(); }
 }
 
@@ -1047,6 +1076,29 @@ void View::setDirty(bool dirty)
     emit canvasStatusChanged();
 }
 
+void View::addGuide(bool isHorizontal)
+{
+    qDebug() << "add guide!";
+    int id = _canvas.guides.size();
+    _canvas.guides[id] = new CyanGuideItem(nullptr, isHorizontal);
+    _scene->addItem(_canvas.guides[id]);
+    if (isHorizontal) { _canvas.guides[id]->setRect(0,0,_scene->width(), 1); }
+    else { _canvas.guides[id]->setRect(0,0,1,_scene->height()); }
+    _canvas.guides[id]->setZValue(GUIDE_Z);
+    connect(_canvas.guides[id], SIGNAL(movedItem()), this, SLOT(handleGuideMoved()));
+    handleCanvasChanged();
+}
+
+void View::showGuides(bool visibility)
+{
+    qDebug() << "view show guides?" << visibility;
+    if (_showGuides == visibility) { return; }
+    _showGuides = visibility;
+    for (int i=0;i<_canvas.guides.size();++i) {
+        _canvas.guides[i]->setVisible(visibility);
+    }
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
@@ -1197,6 +1249,8 @@ void View::initTiles(int tiles)
     int height =static_cast<int>(_canvas.image.rows())/tiles;
     _canvas.tileSize = QSize(width, height);
 
+    qDebug() << "INIT TILES" << _canvas.tileSize << _canvas.image.columns() << _canvas.image.rows();
+
     // setup tiles
     _canvas.tiles = setupTiles(_canvas.image, tiles);
 }
@@ -1226,6 +1280,7 @@ QMap<int, CyanImageFormat::CyanTile> View::setupTiles(Magick::Image image,
     int width = static_cast<int>(image.columns())/tiles;
     int height = static_cast<int>(image.rows())/tiles;
 
+    qDebug() << "SETUP TILES" << width << height << tiles;
     int row = 0;
     int rowItems = 0;
     for (int i=0;i<(tiles*tiles);++i) {
@@ -1521,6 +1576,20 @@ void View::handleCanvasChanged()
     // canvas changed
     if (!_canvas.dirty) { _canvas.dirty = true; }
     emit canvasStatusChanged();
+}
+
+void View::handleZoomChanged()
+{
+    qreal zoom = getZoomValue();
+    qDebug() << "zoom" << zoom;
+    _hRuler->setRulerZoom(zoom);
+    _vRuler->setRulerZoom(zoom);
+}
+
+void View::handleGuideMoved()
+{
+    qDebug() << "handle guide moved";
+    handleCanvasChanged();
 }
 
 void View::setLockLayers(bool lock)

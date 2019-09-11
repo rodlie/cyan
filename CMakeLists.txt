@@ -63,6 +63,8 @@ set(
     lib/CyanFFmpeg.cpp
     lib/CyanFFmpegOpenDialog.cpp
     lib/CyanNewMediaDialog.cpp
+    lib/CyanRuler.cpp
+    lib/CyanGuideItem.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp)
@@ -87,6 +89,8 @@ set(
     lib/CyanFFmpeg.h
     lib/CyanFFmpegOpenDialog.h
     lib/CyanNewMediaDialog.h
+    lib/CyanRuler.h
+    lib/CyanGuideItem.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
@@ -169,6 +173,8 @@ include_directories(
 add_compile_options(-Wall -Wextra)
 if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
     add_definitions(-DQT_NO_DEBUG_OUTPUT)
+else()
+    add_definitions(-DSHOW_TILES)
 endif()
 
 if(APPLE)

@@ -20,6 +20,7 @@
 
 #include "CyanGlobal.h"
 #include "CyanTileItem.h"
+#include "CyanGuideItem.h"
 
 #include <QString>
 #include <QSize>
@@ -88,6 +89,10 @@ public:
     {
         CyanTileItem *rect;
     };
+    struct CyanGuide
+    {
+        CyanGuideItem *rect;
+    };
     struct CyanLayer
     {
         Magick::Image image;
@@ -117,6 +122,7 @@ public:
         CyanBrush brush;
         Magick::Blob profile;
         bool dirty = true;
+        QMap<int, CyanGuideItem*> guides;
     };
     struct QPairSortFirst
     {

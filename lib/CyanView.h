@@ -39,10 +39,12 @@
 #include "CyanImageFormat.h"
 //#include "cyan_layeritem.h"
 #include "CyanLayerItem.h"
+#include "CyanRuler.h"
 
 #define TILE_Z 6
 #define LAYER_Z 100
 #define BRUSH_Z 200
+#define GUIDE_Z 300
 
 class CYANSHARED_EXPORT View : public QGraphicsView
 {
@@ -83,6 +85,9 @@ private:
     int _selectedLayer;
     QFuture<void> future;
     bool _supportsLayers;
+    CyanRuler *_hRuler;
+    CyanRuler *_vRuler;
+    bool _showGuides;
 
 signals:
 
@@ -242,6 +247,9 @@ public slots:
     bool isDirty();
     void setDirty(bool dirty);
 
+    void addGuide(bool isHorizontal = false);
+    void showGuides(bool visibility);
+
 private slots:
 
     void handleLayerMoving(QPointF pos,
@@ -279,6 +287,9 @@ private slots:
                            int skip = 1);
 
     void handleCanvasChanged();
+
+    void handleZoomChanged();
+    void handleGuideMoved();
 
 protected:
 

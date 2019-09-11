@@ -8,24 +8,15 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 **Release date : TBA**
 
-* Confirm close project (tab/subwindow) if unsaved changes
-* Confirm quit if we have unsaved projects open
-* UI zoom support
-  * Indicate zoom level
-  * Add toolbar action for zoom 100%
-  * Add toolbar action for zoom to fit
-  * zoom tool button
+First step on the road to version 2.0. **Not for end-users!**
+
+* Initial support for guides
+* Initial support for rulers
+* Initial support for (widget) plugins
+* Initial support for zoom
+* Confirm close/quit if we have unsaved image(s)
 * UI clean up
-  * Fix several issues
-  * Removed "bloat"
-  * Merged view tools into one tool button
-* Very basic support for widget plugins
-  * Needs more work!
-  * Includes an example plugin (optional)
-  * Color triangle as plugin (optional)
-* macOS support (binary) has been dropped due to missing hardware and lack of interest
-* Universal Linux binary has been dropped
-  * Packages for Ubuntu will be available for each release
+* Bug fixes
 
 ## 1.99.0
 

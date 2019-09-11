@@ -81,6 +81,9 @@ Editor::Editor(QWidget *parent)
     , convertGRAYAct(nullptr)
     , convertAssignAct(nullptr)
     , convertExtractAct(nullptr)
+    , addGuideVAct(nullptr)
+    , addGuideHAct(nullptr)
+    , showGuidesAct(nullptr)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
@@ -92,6 +95,8 @@ Editor::Editor(QWidget *parent)
     , colorProfileGRAYMenu(nullptr)
     , colorIntentMenu(nullptr)
     //, layerMenu(nullptr)
+    , viewMenu(nullptr)
+    , guideMenu(nullptr)
     , windowsMenu(nullptr)
     , newButton(nullptr)
     , openButton(nullptr)
@@ -229,6 +234,11 @@ void Editor::saveSettings()
     settings.setValue(QString("blackpoint"),
                       blackPointAct->isChecked());
     settings.endGroup();
+
+    // view
+    settings.beginGroup("view");
+    settings.setValue("guides", showGuidesAct->isChecked());
+    settings.endGroup();
 }
 
 void Editor::saveSettingsLastOpenDir(const QString &dir)
@@ -332,6 +342,11 @@ void Editor::loadSettings()
     blackPointAct->setChecked(settings.value(QString("blackpoint"),
                                              true)
                               .toBool());
+    settings.endGroup();
+
+    // view
+    settings.beginGroup("view");
+    showGuidesAct->setChecked(settings.value("guides", true).toBool());
     settings.endGroup();
 
     // check if we have the required color profiles needed to do anything
@@ -1032,6 +1047,37 @@ void Editor::setProjectSaveDisabled(bool disabled)
         saveProjectAsAct->setEnabled(true);
     }
     saveProjectAct->setDisabled(disabled);
+}
+
+void Editor::handleAddGuideHAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    View *view = getCurrentCanvas();
+    if (!view) { return; }
+    qDebug() << "handle add guide action";
+    view->addGuide(true);
+}
+
+void Editor::handleAddGuideVAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    View *view = getCurrentCanvas();
+    if (!view) { return; }
+    qDebug() << "handle add guide action";
+    view->addGuide();
+}
+
+void Editor::handleShowGuidesAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    qDebug() << "show/hide guides!";
+    for (int i = 0; i < mdi->subWindowList().size(); ++i) {
+        QMdiSubWindow *tab = mdi->subWindowList().at(i);
+        if (!tab) { continue; }
+        View *view = qobject_cast<View*>(tab->widget());
+        if (!view) { continue; }
+        view->showGuides(showGuidesAct->isChecked());
+    }
 }
 
 

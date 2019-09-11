@@ -100,6 +100,10 @@ private:
     QAction *convertAssignAct;
     QAction *convertExtractAct;
 
+    QAction *addGuideVAct;
+    QAction *addGuideHAct;
+    QAction *showGuidesAct;
+
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
@@ -111,6 +115,8 @@ private:
     QMenu *colorProfileGRAYMenu;
     QMenu *colorIntentMenu;
     //QMenu *layerMenu;
+    QMenu *viewMenu;
+    QMenu *guideMenu;
     QtWindowListMenu *windowsMenu;
 
     QToolButton *newButton;
@@ -296,6 +302,11 @@ private slots:
     void setActionsDisabled(bool disabled);
     void setProjectSaveDisabled(bool disabled);
 
+
+    // guides
+    void handleAddGuideHAct(bool triggered);
+    void handleAddGuideVAct(bool triggered);
+    void handleShowGuidesAct(bool triggered);
 
     // TODO
     void handleOpenImages(const QList<QUrl> &urls);

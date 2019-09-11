@@ -73,6 +73,7 @@ void Editor::setupUI()
 
     mainMenu->addMenu(fileMenu);
     mainMenu->addMenu(colorMenu);
+    mainMenu->addMenu(viewMenu);
     mainMenu->addMenu(optMenu);
     mainMenu->addMenu(windowsMenu);
     mainMenu->addMenu(helpMenu);
@@ -141,6 +142,11 @@ void Editor::setupUI()
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
 
+    viewMenu->addMenu(guideMenu);
+    guideMenu->addAction(addGuideHAct);
+    guideMenu->addAction(addGuideVAct);
+    guideMenu->addAction(showGuidesAct);
+
     viewMoveAct->setChecked(true);
     moveButton->setDefaultAction(viewMoveAct);
 
@@ -184,6 +190,12 @@ void Editor::setupMenus()
 
     colorMenu = new QMenu(this);
     colorMenu->setTitle(tr("Colors"));
+
+    viewMenu = new QMenu(this);
+    viewMenu->setTitle(tr("View"));
+
+    guideMenu = new QMenu(this);
+    guideMenu->setTitle(tr("Guides"));
 
     windowsMenu = new QtWindowListMenu(this);
 
@@ -369,6 +381,16 @@ void Editor::setupActions()
     viewZoomFitAct = new QAction(this);
     viewZoomFitAct->setText(tr("Zoom to fit"));
     viewZoomFitAct->setCheckable(true);
+
+    addGuideHAct = new QAction(this);
+    addGuideHAct->setText(tr("Add horizontal line"));
+
+    addGuideVAct = new QAction(this);
+    addGuideVAct->setText(tr("Add vertical line"));
+
+    showGuidesAct = new QAction(this);
+    showGuidesAct->setText(tr("Show guides"));
+    showGuidesAct->setCheckable(true);
 }
 
 void Editor::setupConnections()
@@ -479,6 +501,10 @@ void Editor::setupConnections()
 
         connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
 
+
+        connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
+        connect(addGuideVAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideVAct(bool)));
+        connect(showGuidesAct, SIGNAL(triggered(bool)), this, SLOT(handleShowGuidesAct(bool)));
 }
 
 void Editor::setupIcons()
@@ -542,6 +568,9 @@ void Editor::setupShortcuts()
     newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
+
+    addGuideHAct->setShortcut(QKeySequence(tr("Ctrl+Shift+G")));
+    addGuideVAct->setShortcut(QKeySequence(tr("Ctrl+G")));
 }
 
 void Editor::setupOptions()
