@@ -13,7 +13,6 @@ This document will be updated when noteworthy changes are done in Cyan.
 First step on the road to version 2.0. This is a development release, not for end-users.
 
 * Initial support for guides
-* Initial support for rulers
 * Initial support for (widget) plugins
 * Initial support for zoom
 * Confirm close/quit if we have unsaved image(s)

@@ -6,11 +6,11 @@
 
 Latest stable release for supported platforms.
 
- [![Download for Windows](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_windows.png)](https://github.com/rodlie/cyan/releases/latest) *Microsoft Windows 7/8/10 x64*
+ [![Download for Windows](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_windows.png)](https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Windows.7z) *Microsoft Windows 7/8/10 x64*
  
- [![Download for Mac](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_mac.png)](https://github.com/rodlie/cyan/releases/latest) *Apple Mac OS X 10.10-10.14*
+ [![Download for Mac](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_mac.png)](https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Mac.dmg) *Apple Mac OS X 10.10-10.14*
  
- [![Download for Linux](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_linux.png)](https://github.com/rodlie/cyan/releases/latest) *GNU/Linux x86_64 (glibc 2.23+/libgcc 5.4+)*
+ [![Download for Linux](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_linux.png)](https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Linux.txz) *GNU/Linux x86_64 (glibc 2.23+/libgcc 5.4+)*
 
 ## Snapshots (master)
 
