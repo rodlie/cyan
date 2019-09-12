@@ -143,12 +143,12 @@ find_package(Qt5Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
-
 pkg_search_module(AVUTIL OPTIONAL libavutil)
 pkg_search_module(AVDEVICE OPTIONAL libavdevice)
 pkg_search_module(SWSCALE OPTIONAL libswscale)
 pkg_search_module(AVFORMAT OPTIONAL libavformat)
 pkg_search_module(AVCODEC OPTIONAL libavcodec)
+#pkg_search_module(LUA REQUIRED lua)
 
 if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCODEC_FOUND)
     add_definitions(-DWITH_FFMPEG -D__STDC_CONSTANT_MACROS)
@@ -168,6 +168,7 @@ include_directories(
     lib
     ${MAGICK_INCLUDE_DIRS}
     ${LCMS2_INCLUDE_DIRS}
+    #${LUA_INCLUDE_DIRS}
 )
 
 add_compile_options(-Wall -Wextra)
@@ -218,6 +219,17 @@ if(MINGW OR APPLE)
         ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
         @ONLY)
 endif()
+
+#add_library(
+#    ${PROJECT_NAME}LuaMagick
+#    SHARED
+#    ${CMAKE_CURRENT_SOURCE_DIR}/bindings/lua/src/imagick.c)
+#target_compile_options(${PROJECT_NAME}LuaMagick PRIVATE ${MAGICK_STATIC_CFLAGS})
+#target_link_libraries(
+#    ${PROJECT_NAME}LuaMagick
+#    ${MAGICK_STATIC_LIBRARIES}
+#    ${MAGICK_STATIC_LDFLAGS}
+#    ${LUA_LIBRARIES})
 
 if(BUILD_LIBRARY)
     add_library(

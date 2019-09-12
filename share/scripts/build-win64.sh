@@ -57,6 +57,8 @@ cd "${BUILD_DIR}" || exit 1
 
 export PATH="${MXE}/usr/bin:${PATH}"
 export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
+VERSION_ORIG=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
+ISS="Cyan,iss"
 if [ "${SNAPSHOT}" = 1 ]; then
     export CYAN_VERSION=`sh ${CWD}/share/scripts/gitversion.sh`
 fi
@@ -70,9 +72,19 @@ ${STRIP} -s *.exe *.dll */*.dll
 if [ "${SNAPSHOT}" = 1 ]; then
     VERSION_ORIG=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
     cat Cyan.iss | sed 's#'${VERSION_ORIG}'#'${CYAN_VERSION}'#g' > snapshot.iss
-    wine ${INNO} snapshot.iss
-else
-    wine ${INNO} Cyan.iss
+    ISS="snapshot.iss"
 fi
+if [ "${CYAN_VERSION}" = "" ]; then
+    export CYAN_VERSION="${VERSION_ORIG}"
+fi
+wine ${INNO} ${ISS}
+ZIP_PATH="Cyan-${CYAN_VERSION}-win64"
+mkdir -p "${ZIP_PATH}" || exit 1
+cp *.exe *.dll "${ZIP_PATH}/" || exit 1
+cp -a profiles docs platforms etc "${ZIP_PATH}/" || exit 1
+zip -9 -r ${ZIP_PATH}.zip "${ZIP_PATH}" || exit 1
+7za a -mx=9 ${ZIP_PATH}.7z "${ZIP_PATH}" || exit 1
+mv *.zip *.7z deploy/
+tree -lah deploy
 cp "${BUILD_DIR}/deploy/"* "${CWD}/"
 
