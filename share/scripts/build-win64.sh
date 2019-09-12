@@ -86,5 +86,5 @@ zip -9 -r ${ZIP_PATH}.zip "${ZIP_PATH}" || exit 1
 7za a -mx=9 ${ZIP_PATH}.7z "${ZIP_PATH}" || exit 1
 mv *.zip *.7z deploy/
 tree -lah deploy
-cp "${BUILD_DIR}/deploy/"* "${CWD}/"
+cp deploy/* "${CWD}/"
 

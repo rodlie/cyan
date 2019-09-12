@@ -65,7 +65,7 @@ if [ "${OS}" = "Linux" ]; then
         echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
         cd "${CWD}"
         MKJOBS=2 sh share/scripts/build-win64.sh
-	cp "${CWD}/"*.exe "${DEPLOY}/"
+	    cp *.exe *.zip *.7z "${DEPLOY}/"
     fi
 
     cp "$CWD/"*.deb "${DEPLOY}/"
