@@ -3,4 +3,4 @@
 	url = https://github.com/ImageMagick/ImageMagick
 [submodule "bindings/lua"]
 	path = bindings/lua
-	url = https://github.com/isage/lua-imagick
+	url = https://github.com/rodlie/lua-imagick
