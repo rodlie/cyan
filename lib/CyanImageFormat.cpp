@@ -372,11 +372,9 @@ bool CyanImageFormat::writeCanvas(CyanImageFormat::CyanCanvas canvas,
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
     // set cyan project version
-    try {
-        image.attribute(QString(CYAN_IMAGE_FORMAT).toStdString(),
-                        QString("%1").arg(CYAN_IMAGE_FORMAT_VERSION)
-                        .toStdString());
-    }
+    try { image.attribute(QString(CYAN_IMAGE_FORMAT).toStdString(),
+                          QString("%1").arg(CYAN_IMAGE_FORMAT_VERSION)
+                          .toStdString()); }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
 
@@ -389,6 +387,34 @@ bool CyanImageFormat::writeCanvas(CyanImageFormat::CyanCanvas canvas,
     try { image.profile("ICC", canvas.profile); }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
     catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    // add guides
+    QStringList vguides,hguides;
+    QMapIterator<int, CyanGuideItem*> i(canvas.guides);
+    while (i.hasNext()) {
+        i.next();
+        if (i.value()->isHorizontal()) {
+            hguides << QString("%1x%2")
+                       .arg(i.value()->pos().x())
+                       .arg(i.value()->pos().y());
+        } else {
+            vguides << QString("%1x%2")
+                       .arg(i.value()->pos().x())
+                       .arg(i.value()->pos().y());
+        }
+    }
+    if (vguides.size()>0) {
+        try { image.attribute(QString(CYAN_IMAGE_V_GUIDES).toStdString(),
+                              vguides.join(";").toStdString()); }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    }
+    if (hguides.size()>0) {
+        try { image.attribute(QString(CYAN_IMAGE_H_GUIDES).toStdString(),
+                              hguides.join(";").toStdString()); }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    }
 
     // add canvas as first image
     image.backgroundColor(Magick::ColorRGB(1, 1, 1)); // workaround issue in IM
@@ -553,9 +579,10 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
             // set label
             canvas.label = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LABEL).toStdString()));
 
-            //set profile
+            // set profile
             canvas.profile = canvas.image.iccColorProfile();
             continue;
+
         }
         double layer = QString::fromStdString(it->attribute(QString(CYAN_LAYER)
                                                             .toStdString())).toDouble();

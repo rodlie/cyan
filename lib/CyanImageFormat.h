@@ -31,6 +31,8 @@
 #include <Magick++.h>
 
 #define CYAN_IMAGE_FORMAT "cyan-image-format"
+#define CYAN_IMAGE_V_GUIDES "cyan-image-v_guides"
+#define CYAN_IMAGE_H_GUIDES "cyan-image-h_guides"
 
 #define CYAN_LAYER "cyan-layer"
 #define CYAN_LAYER_LABEL "cyan-layer-label"

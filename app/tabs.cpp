@@ -25,10 +25,42 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     View *view = new View(tab);
     connectView(view);
 
+    // get guides
+    QString vguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_V_GUIDES).toStdString()));
+    QString hguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_H_GUIDES).toStdString()));
+
+    // setup view
     view->setCanvasSpecsFromImage(canvas.image);
     view->setLayersFromCanvas(canvas);
     view->setFit(viewZoomFitAct->isChecked());
     view->setBrushColor(colorPicker->currentColor());
+
+    // add guides
+    if (!vguides.isEmpty()) {
+        QStringList splitGuides = vguides.split(";");
+        for (int i=0;i<splitGuides.size();++i) {
+            QString guide = splitGuides.at(i);
+            QStringList splitGuide = guide.split("x");
+            if (splitGuide.size()!=2) { continue; }
+            QString pX = splitGuide.at(0);
+            QString pY = splitGuide.at(1);
+            qDebug() << "has vguide" << pX << pY;
+            view->addGuide(false, QPointF(pX.toInt(),pY.toInt()));
+        }
+    }
+    if (!hguides.isEmpty()) {
+        QStringList splitGuides = hguides.split(";");
+        for (int i=0;i<splitGuides.size();++i) {
+            QString guide = splitGuides.at(i);
+            QStringList splitGuide = guide.split("x");
+            if (splitGuide.size()!=2) { continue; }
+            QString pX = splitGuide.at(0);
+            QString pY = splitGuide.at(1);
+            qDebug() << "has vguide" << pX << pY;
+            view->addGuide(true, QPointF(pX.toInt(),pY.toInt()));
+        }
+    }
+
     view->setDirty(false);
 
     tab->setWidget(view);

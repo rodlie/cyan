@@ -32,6 +32,11 @@ CyanGuideItem::CyanGuideItem(QGraphicsItem *parent,
     setPen(newPen);
 }
 
+bool CyanGuideItem::isHorizontal()
+{
+    return _isHoriz;
+}
+
 void CyanGuideItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mousePressEvent(event);

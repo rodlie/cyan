@@ -1076,7 +1076,7 @@ void View::setDirty(bool dirty)
     emit canvasStatusChanged();
 }
 
-void View::addGuide(bool isHorizontal)
+void View::addGuide(bool isHorizontal, QPointF pos)
 {
     qDebug() << "add guide!";
     int id = _canvas.guides.size();
@@ -1084,6 +1084,9 @@ void View::addGuide(bool isHorizontal)
     _scene->addItem(_canvas.guides[id]);
     if (isHorizontal) { _canvas.guides[id]->setRect(0,0,_scene->width(), 1); }
     else { _canvas.guides[id]->setRect(0,0,1,_scene->height()); }
+    if (pos.x() != 0 || pos.y() != 0) {
+        _canvas.guides[id]->setPos(pos);
+    }
     _canvas.guides[id]->setZValue(GUIDE_Z);
     connect(_canvas.guides[id], SIGNAL(movedItem()), this, SLOT(handleGuideMoved()));
     handleCanvasChanged();

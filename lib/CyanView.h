@@ -247,7 +247,8 @@ public slots:
     bool isDirty();
     void setDirty(bool dirty);
 
-    void addGuide(bool isHorizontal = false);
+    void addGuide(bool isHorizontal = false,
+                  QPointF pos = QPointF(0,0));
     void showGuides(bool visibility);
 
 private slots:

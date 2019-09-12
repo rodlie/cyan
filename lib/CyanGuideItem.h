@@ -34,6 +34,7 @@ class CYANSHARED_EXPORT CyanGuideItem : public QObject, public QGraphicsRectItem
 public:
     CyanGuideItem(QGraphicsItem *parent = nullptr,
                   bool isHorizontal = false);
+    bool isHorizontal();
 
 signals:
     void movedItem();
