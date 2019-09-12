@@ -38,8 +38,8 @@ View::View(QWidget* parent, bool setup) :
   , _moving(false)
   , _selectedLayer(0)
   , _supportsLayers(true)
-  , _hRuler(nullptr)
-  , _vRuler(nullptr)
+  //, _hRuler(nullptr)
+  //, _vRuler(nullptr)
   , _showGuides(true)
 {
     // setup the basics
@@ -48,7 +48,7 @@ View::View(QWidget* parent, bool setup) :
     setMouseTracking(true);
 
     // rulers
-    setViewportMargins(CYAN_RULER_SIZE,
+    /*setViewportMargins(CYAN_RULER_SIZE,
                        CYAN_RULER_SIZE,
                        0,
                        0);
@@ -69,7 +69,7 @@ View::View(QWidget* parent, bool setup) :
 
     setLayout(gridLayout);
 
-    connect(this, SIGNAL(zoomChanged()), this, SLOT(handleZoomChanged()));
+    connect(this, SIGNAL(zoomChanged()), this, SLOT(handleZoomChanged()));*/
 
     // TODO REMOVE
     _parentLayer = 0;
@@ -1580,10 +1580,10 @@ void View::handleCanvasChanged()
 
 void View::handleZoomChanged()
 {
-    qreal zoom = getZoomValue();
+    /*qreal zoom = getZoomValue();
     qDebug() << "zoom" << zoom;
     _hRuler->setRulerZoom(zoom);
-    _vRuler->setRulerZoom(zoom);
+    _vRuler->setRulerZoom(zoom);*/
 }
 
 void View::handleGuideMoved()

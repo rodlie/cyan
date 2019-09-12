@@ -39,7 +39,7 @@
 #include "CyanImageFormat.h"
 //#include "cyan_layeritem.h"
 #include "CyanLayerItem.h"
-#include "CyanRuler.h"
+//#include "CyanRuler.h"
 
 #define TILE_Z 6
 #define LAYER_Z 100
@@ -85,8 +85,8 @@ private:
     int _selectedLayer;
     QFuture<void> future;
     bool _supportsLayers;
-    CyanRuler *_hRuler;
-    CyanRuler *_vRuler;
+    //CyanRuler *_hRuler;
+    //CyanRuler *_vRuler;
     bool _showGuides;
 
 signals:

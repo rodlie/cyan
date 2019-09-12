@@ -63,7 +63,7 @@ set(
     lib/CyanFFmpeg.cpp
     lib/CyanFFmpegOpenDialog.cpp
     lib/CyanNewMediaDialog.cpp
-    lib/CyanRuler.cpp
+    #lib/CyanRuler.cpp
     lib/CyanGuideItem.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
@@ -89,7 +89,7 @@ set(
     lib/CyanFFmpeg.h
     lib/CyanFFmpegOpenDialog.h
     lib/CyanNewMediaDialog.h
-    lib/CyanRuler.h
+    #lib/CyanRuler.h
     lib/CyanGuideItem.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
