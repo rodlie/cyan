@@ -393,15 +393,12 @@ bool CyanImageFormat::writeCanvas(CyanImageFormat::CyanCanvas canvas,
     QMapIterator<int, CyanGuideItem*> i(canvas.guides);
     while (i.hasNext()) {
         i.next();
+        QString guide = QString("%1x%2")
+                .arg(i.value()->pos().x())
+                .arg(i.value()->pos().y());
         if (i.value()->isHorizontal()) {
-            hguides << QString("%1x%2")
-                       .arg(i.value()->pos().x())
-                       .arg(i.value()->pos().y());
-        } else {
-            vguides << QString("%1x%2")
-                       .arg(i.value()->pos().x())
-                       .arg(i.value()->pos().y());
-        }
+            hguides << guide;
+        } else { vguides << guide; }
     }
     if (vguides.size()>0) {
         try { image.attribute(QString(CYAN_IMAGE_V_GUIDES).toStdString(),

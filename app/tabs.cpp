@@ -18,16 +18,18 @@
 
 void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
 {
-    qDebug() << "new tab from canvas/project";
-    /*Q*/MdiSubWindow *tab = new /*Q*/MdiSubWindow(mdi);
+    qDebug() << "new tab from project";
+    MdiSubWindow *tab = new MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);
     connectView(view);
 
     // get guides
-    QString vguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_V_GUIDES).toStdString()));
-    QString hguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_H_GUIDES).toStdString()));
+    QString vguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_V_GUIDES)
+                                                                    .toStdString()));
+    QString hguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_H_GUIDES)
+                                                                    .toStdString()));
 
     // setup view
     view->setCanvasSpecsFromImage(canvas.image);
@@ -44,8 +46,9 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
             if (splitGuide.size()!=2) { continue; }
             QString pX = splitGuide.at(0);
             QString pY = splitGuide.at(1);
-            qDebug() << "has vguide" << pX << pY;
-            view->addGuide(false, QPointF(pX.toInt(),pY.toInt()));
+            view->addGuide(false,
+                           QPointF(pX.toInt(),
+                                   pY.toInt()));
         }
     }
     if (!hguides.isEmpty()) {
@@ -56,8 +59,9 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
             if (splitGuide.size()!=2) { continue; }
             QString pX = splitGuide.at(0);
             QString pY = splitGuide.at(1);
-            qDebug() << "has vguide" << pX << pY;
-            view->addGuide(true, QPointF(pX.toInt(),pY.toInt()));
+            view->addGuide(true,
+                           QPointF(pX.toInt(),
+                                   pY.toInt()));
         }
     }
 
