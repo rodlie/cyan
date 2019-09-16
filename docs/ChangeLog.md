@@ -8,7 +8,7 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 ## 1.99.1
 
-**Release date : 20190913**
+**Release date : 20190919**
 
 First step on the road to version 2.0. This is a development release, not for end-users.
 
@@ -18,6 +18,13 @@ First step on the road to version 2.0. This is a development release, not for en
 * Confirm close/quit if we have unsaved image(s)
 * UI clean up
 * Bug fixes
+
+## 1.2.2
+
+**Release date : 20190919**
+
+* Fixed GIMP 2.10 Linux/BSD support
+* Added support for ImageMagick v7
 
 ## 1.99.0
 
