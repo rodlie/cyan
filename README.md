@@ -15,6 +15,7 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 * Simple and lightweight
 * Multiple Document Interface
 * Supports RGB/CMYK/GRAY 8/16/32 bit images
+  * Depends on ImageMagick quantum depth
 * Supports ICC/ICM v2/v4 color profiles
 * Supports PNG, JPEG, TIFF, EXR, XCF, PSD, MIFF and many more
   * Support for SVG and similar will be added in the future
@@ -47,6 +48,10 @@ This program is free software; you can redistribute it and/or modify it under th
  * Qt5 *(Widgets/Concurrent) 5.5+*
  * Little CMS 2
  * ImageMagick *(Magick++) 7.0.8+*
+   * Minimum quantum depth of 16 is recommended
+   * HDRI required
+   * lcms2 required
+   * png/tiff/jpeg support as a minimum
  * fontconfig
 
 ### RHEL/CentOS/Fedora
@@ -54,13 +59,7 @@ This program is free software; you can redistribute it and/or modify it under th
 On RHEL/CentOS/Fedora you will need to install the following packages:
 
 ```
-sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel
-```
-
-CMake 3.x is needed on RHEL/CentOS 7, install from EPEL:
-```
-sudo yum install epel-release
-sudo yum install cmake3
+sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
 ```
 
 ***Remember to replace ``cmake`` with ``cmake3`` on RHEL/CentOS when running the build command further down.***
@@ -75,7 +74,7 @@ sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libfontcon
 
 ### Other distros
 
-If your system have an up-to-date installation of ImageMagick then you only need ``qtbase``, ``lcms2`` and ``fontconfig``.
+If your system has an up-to-date installation of ImageMagick v7 then you only need ``qtbase``, ``lcms2`` and ``fontconfig``.
 
 ### Build Cyan
 
@@ -83,6 +82,7 @@ Now you can build Cyan, this command will also build and link a static version o
 ```
 git clone https://github.com/rodlie/cyan
 cd cyan
+git submodule update --init
 MKJOBS=4 STATIC=1 sh share/scripts/build-magick.sh
 mkdir build && cd build
 PKG_CONFIG_PATH=`pwd`/../ImageMagick/install/lib/pkgconfig cmake -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI ..
