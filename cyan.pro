@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.2.1
+VERSION = 1.2.2
 
 SOURCES += \
     src/main.cpp \
@@ -62,7 +62,7 @@ CONFIG += c++11
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG += lcms2
-MAGICK_CONFIG = ImageMagick++
+MAGICK_CONFIG = Magick++
 !isEmpty(MAGICK): MAGICK_CONFIG = $${MAGICK}
 PKG_CONFIG_BIN = pkg-config
 !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}

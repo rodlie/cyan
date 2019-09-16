@@ -391,12 +391,18 @@ int FXX::readImageChannelCount(Magick::Image image)
 {
     int channels = 0;
     try {
+        bool hasAlpha = false;
+#if MagickLibVersion >= 0x700
+        hasAlpha = image.alpha();
+#else
+        hasAlpha = image.matte();
+#endif
         MagickCore::ImageInfo *imageInfo = image.imageInfo();
         if ((imageInfo->channel & Magick::RedChannel) != 0) channels++;
         if ((imageInfo->channel & Magick::GreenChannel) != 0) channels++;
         if ((imageInfo->channel & Magick::BlueChannel) != 0) channels++;
         if (((imageInfo->channel & Magick::OpacityChannel) != 0)
-           && (image.matte() != Magick::MagickFalse)) channels++;
+           && (hasAlpha)) channels++;
         if (((imageInfo->channel & Magick::IndexChannel) != 0)
            && (image.colorSpace() == Magick::CMYKColorspace)) channels++;
         //MagickCore::DestroyImageInfo(imageInfo);

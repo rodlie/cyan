@@ -1189,7 +1189,7 @@ void Cyan::bitDepthChanged(int index)
 void Cyan::gimpPlugin()
 {
     QStringList versions,folders;
-    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "2.11" << "2.12";
+    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "3.0";
     foreach (QString version, versions) {
         bool hasDir = false;
         QDir gimpDir;
@@ -1199,6 +1199,10 @@ void Cyan::gimpPlugin()
 #ifndef Q_OS_MAC
         gimpPath.append(QString(".gimp-%1").arg(version));
         if (gimpDir.exists(gimpPath)) { hasDir = true; }
+        if (!hasDir) {
+            gimpPath = QString("%1/.config/GIMP/%2").arg(QDir::homePath()).arg(version);
+            if (gimpDir.exists(gimpPath)) { hasDir = true; }
+        }
         if (!hasDir) {
             gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
             if (gimpDir.exists(gimpPath)) { hasDir = true; }
