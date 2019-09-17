@@ -16,11 +16,11 @@ Latest stable release for supported platforms.
 
 [Linux](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan) snapshots are built from the master branch on every public commit, [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/) snapshots are updated when needed. The master branch is not stable and contains experimental features and many bugs, use at own risk.
 
-### [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/)
+### [Windows](https://sourceforge.net/projects/prepress/files/snapshots/win64/) *(x64)*
 
 Snapshots for Windows can be found on [SourceForge](https://sourceforge.net/projects/prepress/files/snapshots/win64/).
 
-### [CentOS 7](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/CentOS_7)
+### [CentOS 7](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/CentOS_7) *(x86_64)*
 
 ```
 cd /etc/yum.repos.d/
@@ -28,21 +28,21 @@ sudo wget https://download.opensuse.org/repositories/home:rodlie:cyan-master/Cen
 sudo yum install cyan
 ```
 
-### [Fedora 29](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_29)
+### [Fedora 29](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_29) *(x86_64, ppc64le, i686, armv7hl, aarch64)*
 
 ```
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_29/home:rodlie:cyan-master.repo
 sudo dnf install cyan
 ```
 
-### [Fedora 30](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_30)
+### [Fedora 30](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_30) *(x86_64, ppc64le, i686, armv7hl, aarch64)*
 
 ```
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_30/home:rodlie:cyan-master.repo
 sudo dnf install cyan
 ```
 
-### [Fedora RawHide](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_Rawhide)
+### [Fedora RawHide](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_Rawhide) *(x86_64)*
 
 ```
 sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_Rawhide/home:rodlie:cyan-master.repo
