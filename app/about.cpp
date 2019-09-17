@@ -27,9 +27,10 @@ void Editor::aboutCyan()
     box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/Cyan.png")));
 
     QString about, more;
-    about.append(QString("<h2>%1 %2</h2>")
+    about.append(QString("<h2>%1 %2 %3</h2>")
                  .arg(qApp->applicationName())
-                 .arg(CYAN_VERSION));
+                 .arg(CYAN_VERSION)
+                 .arg(CYAN_VERSION_TYPE));
     about.append(QString("<h4>%1</h4>")
                  .arg(tr("Simple general-purpose image editor")));
     about.append(QString("Copyright &copy; 2018-2019 Ole-André Rodlie, FxArena DA.<br>%1.")
