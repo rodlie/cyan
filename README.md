@@ -52,14 +52,14 @@ This program is free software; you can redistribute it and/or modify it under th
    * HDRI required
    * lcms2 required
    * png/tiff/jpeg support as a minimum
- * fontconfig
+ * fontconfig *(Windows/macOS)*
 
 ### RHEL/CentOS/Fedora
 
 On RHEL/CentOS/Fedora you will need to install the following packages:
 
 ```
-sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
+sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel qt5-qtbase-devel cmake3
 ```
 
 ***Remember to replace ``cmake`` with ``cmake3`` on RHEL/CentOS when running the build command further down.***
@@ -69,12 +69,12 @@ sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-dev
 On Ubuntu you will need to install the following packages:
 
 ```
-sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libfontconfig1-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
+sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
 ```
 
 ### Other distros
 
-If your system has an up-to-date installation of ImageMagick v7 then you only need ``qtbase``, ``lcms2`` and ``fontconfig``.
+If your system has an up-to-date installation of ImageMagick v7 then you only need ``qtbase`` and  ``lcms2``.
 
 ### Build Cyan
 
