@@ -17,6 +17,7 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 * Supports RGB/CMYK/GRAY 8/16/32 bit images
   * Depends on ImageMagick quantum depth
 * Supports ICC/ICM v2/v4 color profiles
+* Supports reading video frames through FFmpeg
 * Supports PNG, JPEG, TIFF, EXR, XCF, PSD, MIFF and many more
   * Support for SVG and similar will be added in the future
 * Supports TIFF, EXR, XCF, MIFF and PSD image layers
@@ -53,6 +54,7 @@ This program is free software; you can redistribute it and/or modify it under th
    * lcms2 required
    * png/tiff/jpeg support as a minimum
  * fontconfig *(Windows/macOS)*
+ * ffmpeg *(optional)*
 
 ### RHEL/CentOS/Fedora
 

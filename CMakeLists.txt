@@ -356,7 +356,15 @@ if(MINGW)
         ${MINGW_ROOT}/bin/libgomp-1.dll
         ${MINGW_ROOT}/bin/libintl-8.dll
         ${MINGW_ROOT}/bin/libpangoft2-1.0-0.dll
-        ${MINGW_ROOT}/bin/libwebpmux-3.dll)
+        ${MINGW_ROOT}/bin/libwebpmux-3.dll
+        ${MINGW_ROOT}/bin/avcodec-58.dll
+        ${MINGW_ROOT}/bin/avdevice-58.dll
+        ${MINGW_ROOT}/bin/avformat-58.dll
+        ${MINGW_ROOT}/bin/avutil-56.dll
+        ${MINGW_ROOT}/bin/avfilter-7.dll
+        ${MINGW_ROOT}/bin/avresample-4.dll
+        ${MINGW_ROOT}/bin/swscale-5.dll
+        ${MINGW_ROOT}/bin/swresample-3.dll)
     set(
         QT_DLLS
         ${QT_ROOT}/bin/Qt5Concurrent.dll
