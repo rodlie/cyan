@@ -37,18 +37,18 @@ if [ "${SETUP}" = 1 ]; then
         sudo apt-get install cmake pkg-config p7zip-full zip xz-utils tree dpkg qtbase5-dev libfontconfig1-dev
         sudo apt-get install libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
         # Windows installer
-        if [ "${UBUNTU}" = "bionic" ]; then
-            sudo apt-get install wine-stable wine32
-            # sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
-        fi
+        #if [ "${UBUNTU}" = "bionic" ]; then
+        #    sudo apt-get install wine-stable wine32
+        #    # sudo apt-get install autoconf automake autopoint bash bison bzip2 flex g++ g++-multilib gettext git gperf intltool libc6-dev-i386 libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool-bin libxml-parser-perl lzip make openssl p7zip-full patch perl pkg-config python ruby sed unzip wget xz-utils
+        #fi
         # Windows SDK
-        if [ "${UBUNTU}" = "bionic" ]; then
-            echo "==> Extracting Windows x64 SDK for Ubuntu ${UBUNTU} ..."
-            mkdir -p "${MXE}"
-            wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-mxe-xenial-20190902.tar.xz/download
-            tar xf download.tar.xz -C "${MXE}/"
-            rm -f download.tar.xz
-        fi
+        #if [ "${UBUNTU}" = "bionic" ]; then
+        #    echo "==> Extracting Windows x64 SDK for Ubuntu ${UBUNTU} ..."
+        #    mkdir -p "${MXE}"
+        #    wget -O download.tar.xz https://sourceforge.net/projects/prepress/files/sdk/Cyan-mxe-xenial-20190902.tar.xz/download
+        #    tar xf download.tar.xz -C "${MXE}/"
+        #    rm -f download.tar.xz
+        #fi
     fi
 fi
 
@@ -61,16 +61,16 @@ fi
 if [ "${OS}" = "Linux" ]; then
     cd "${CWD}"
     MKJOBS=2 sh share/scripts/build-ubuntu.sh
-    if [ "${UBUNTU}" = "bionic" ]; then
-        echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
-        cd "${CWD}"
-        MKJOBS=2 sh share/scripts/build-win64.sh
-	    cp *.exe *.zip *.7z "${DEPLOY}/"
-    fi
+    #if [ "${UBUNTU}" = "bionic" ]; then
+    #    echo "==> Building for Windows x64 on Ubuntu ${UBUNTU} ..."
+    #    cd "${CWD}"
+    #    MKJOBS=2 sh share/scripts/build-win64.sh
+    #    cp *.exe *.zip *.7z "${DEPLOY}/"
+    #fi
 
-    cp "$CWD/"*.deb "${DEPLOY}/"
-    echo "==> Deploy result:"
-    tree -lah "${DEPLOY}"
+    #cp "$CWD/"*.deb "${DEPLOY}/"
+    #echo "==> Deploy result:"
+    #tree -lah "${DEPLOY}"
 fi
 
 #if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then

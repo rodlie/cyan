@@ -80,16 +80,17 @@ fi
 echo "Build installer ${ISS} ..."
 wine ${INNO} ${ISS} || exit 1
 ZIP_PATH="Cyan-${CYAN_VERSION}-win64"
-echo "Build archives ..."
+echo "Build archive (portable) ..."
 mkdir -p "${ZIP_PATH}" || exit 1
 cp *.exe *.dll "${ZIP_PATH}/" || exit 1
 cp -a profiles docs platforms etc "${ZIP_PATH}/" || exit 1
-zip -9 -r ${ZIP_PATH}.zip "${ZIP_PATH}" || exit 1
+#zip -9 -r ${ZIP_PATH}.zip "${ZIP_PATH}" || exit 1
 7za a -mx=9 ${ZIP_PATH}.7z "${ZIP_PATH}" || exit 1
 if [ ! -d "deploy" ]; then
     mkdir deploy || exit 1
 fi
-mv *.zip *.7z deploy/
+#mv *.zip *.7z deploy/
+mv *.7z deploy/
 tree -lah deploy
 cp deploy/* "${CWD}/"
 
