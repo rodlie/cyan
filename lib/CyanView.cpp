@@ -1082,8 +1082,8 @@ void View::addGuide(bool isHorizontal, QPointF pos)
     int id = _canvas.guides.size();
     _canvas.guides[id] = new CyanGuideItem(nullptr, isHorizontal);
     _scene->addItem(_canvas.guides[id]);
-    if (isHorizontal) { _canvas.guides[id]->setRect(0,0,_scene->width(), 1); }
-    else { _canvas.guides[id]->setRect(0,0,1,_scene->height()); }
+    if (isHorizontal) { _canvas.guides[id]->setRect(0,0,_scene->width(), 0); }
+    else { _canvas.guides[id]->setRect(0,0,0,_scene->height()); }
     if (pos.x() != 0 || pos.y() != 0) {
         _canvas.guides[id]->setPos(pos);
     }
