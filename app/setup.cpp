@@ -150,6 +150,10 @@ void Editor::setupUI()
     convertButton->setMenu(colorMenu);
 
     viewMenu->addMenu(guideMenu);
+    viewMenu->addSeparator();
+    viewMenu->addAction(viewZoom100Act);
+    viewMenu->addAction(viewZoomFitAct);
+
     guideMenu->addAction(addGuideHAct);
     guideMenu->addAction(addGuideVAct);
     guideMenu->addAction(showGuidesAct);
