@@ -43,8 +43,9 @@ void Editor::aboutCyan()
                  .arg(CYAN_VERSION_TYPE));
     about.append(QString("<h4>%1</h4>")
                  .arg(tr("Simple general-purpose image editor")));
-    about.append(QString("Copyright &copy; 2018-2019 Ole-André Rodlie, FxArena DA.<br>%1.")
-                 .arg(tr("All rights reserved")));
+    about.append(QString("%2 &copy; 2018-2019 Ole-André Rodlie, FxArena DA.<br>%1.")
+                 .arg(tr("All rights reserved"))
+                 .arg(tr("Copyright")));
     about.append(QString("<p>%1</p>")
                  .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.")));
     more.append(QString("<p><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a></p>"));
@@ -137,7 +138,9 @@ void Editor::aboutLcms()
                  .arg(tr("is an small-footprint color management engine, with special focus on accuracy and performance"))
                  .arg(tr("is distributed under the following"))
                  .arg(tr("license")));
-    about.append(QString("<p>Copyright &copy; 2018 Marti Maria Saguer.<br>%1.</p>").arg(tr("All rights reserved")));
+    about.append(QString("<p>%2 &copy; 2018 Marti Maria Saguer.<br>%1.</p>")
+                 .arg(tr("All rights reserved"))
+                 .arg(tr("Copyright")));
 
     box.setText(about);
     box.setStyleSheet("QLabel { min-width: 350px; }");
@@ -149,6 +152,7 @@ void Editor::aboutFFmpeg()
 {
     QMessageBox box(this);
     box.setWindowTitle(QString("%1 FFmpeg").arg(tr("About")));
+    box.setIconPixmap(QPixmap::fromImage(QImage(":/icons/ffmpeg_logo.png")));
 
     QString about;
     about.append(QString("<h3>FFmpeg</h3>"));
@@ -176,7 +180,7 @@ void Editor::aboutFFmpeg()
                  .arg((swscale_version() & 0xff)));
     about.append(QString("<p>%1</p>").arg(tr("FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.")));
     box.setText(about);
-    //box.setStyleSheet("QLabel { min-width: 350px; }");
+    box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }
 #endif
