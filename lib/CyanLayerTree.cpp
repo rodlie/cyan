@@ -252,27 +252,31 @@ void LayerTree::handleItemChanged(QTreeWidgetItem *item, int col)
 void LayerTree::handleContextMenu(const QPoint &pos)
 {
     QMenu *menu = new QMenu(this);
+    menu->addAction(newImageLayerAct);
 
     bool hasLayer = false;
-    int layerOrder = -1;
+    int layerOrder,firstLayer = -1;
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(currentItem());
     if (layer) {
         layerOrder = layer->getLayerOrder();
+        for (int i=0;i<topLevelItemCount();++i) {
+            CyanLayerTreeItem *item = dynamic_cast<CyanLayerTreeItem*>(topLevelItem(i));
+            if (!item || item==layer) { continue; }
+            int itemOrder = item->getLayerOrder();
+            if (itemOrder<layerOrder) { firstLayer = itemOrder; }
+        }
         hasLayer = true;
     }
-
-    menu->addAction(newImageLayerAct);
-
     if (hasLayer) {
+        qDebug() << "LAYER ORDER" << layerOrder << firstLayer << _maxLayersOrder;
         menu->addSeparator();
         menu->addAction(duplicateLayerAct);
-
         bool canMoveUp = layerOrder<_maxLayersOrder;
-        bool canMoveDown = layerOrder>0 && topLevelItemCount()>1;
+        bool canMoveDown = layerOrder>firstLayer && firstLayer>-1;
+        qDebug() << "MOVEUP?" << canMoveUp << "MOVEDOWN?" << canMoveDown;
         if (canMoveDown || canMoveUp) { menu->addSeparator(); }
         if (canMoveUp) { menu->addAction(moveUpLayerAct); }
         if (canMoveDown) { menu->addAction(moveDownLayerAct); }
-
         menu->addSeparator();
         menu->addAction(removeLayerAct);
     }
