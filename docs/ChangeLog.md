@@ -12,28 +12,23 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 First step on the road to version 2.0. This is a development release, not for end-users.
 
+* Initial support for video frame import
 * Initial support for guides
 * Initial support for (widget) plugins
 * Initial support for zoom
 * Confirm close/quit if we have unsaved image(s)
-* UI clean up
-* Bug fixes
+* Complete re-write from ground up, now an image editor (well, it's a start)
+  * The re-write started around the release of version 1.2 and continued until the end of 2018, then the project stalled until August 2019
+* Includes a bunch of bugs and missing features, enjoy :)
 
 ## 1.2.2
 
 **Release date : 20190919**
 
+Patch release to fix GIMP and build issues on Linux/BSD.
+
 * Fixed GIMP 2.10 Linux/BSD support
 * Added support for ImageMagick v7
-
-## 1.99.0
-
-**Release date: N/A (not tagged)**
-
-* Re-license to LGPL v2.1
-* Complete re-write from ground up, now an image editor (well, it's a start)
-  * The re-write started around the release of version 1.2 and continued until the end of 2018, then the project stalled until August 2019
-* Includes a bunch of bugs and missing features, enjoy :P
 
 ## 1.2.1
 
