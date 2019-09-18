@@ -1103,7 +1103,9 @@ void Editor::handleMagickMemoryAct(bool triggered)
     Q_UNUSED(triggered)
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
-    CyanCommon::setMemoryResource(action->data().toInt());
+    if (action->data().toInt()>=2) {
+        CyanCommon::setMemoryResource(action->data().toInt());
+    }
 }
 
 
