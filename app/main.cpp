@@ -58,10 +58,13 @@ int main(int argc, char *argv[])
 
     // setup ffmpeg
 #ifdef WITH_FFMPEG
+#ifdef LIBAVUTIL_VERSION_MAJOR
+#if (LIBAVUTIL_VERSION_MAJOR < 56)
     av_register_all();
     avdevice_register_all();
     avcodec_register_all();
-    //avformat_network_init();
+#endif
+#endif
 #ifdef QT_NO_DEBUG
     av_log_set_level(AV_LOG_QUIET);
 #endif
