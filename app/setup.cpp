@@ -128,6 +128,8 @@ void Editor::setupUI()
     saveMenu->addAction(saveImageAct);
     saveMenu->addAction(saveLayerAct);
 
+    saveButton->setMenu(saveMenu);
+
     colorMenu->addAction(convertRGBAct);
     colorMenu->addAction(convertCMYKAct);
     colorMenu->addAction(convertGRAYAct);
@@ -141,6 +143,8 @@ void Editor::setupUI()
     colorMenu->addSeparator();
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
+
+    convertButton->setMenu(colorMenu);
 
     viewMenu->addMenu(guideMenu);
     guideMenu->addAction(addGuideHAct);
@@ -250,6 +254,7 @@ void Editor::setupWidgets()
     colorPicker = new QtColorPicker(this, -1, true, false);
     colorPicker->setIconSize(QSize(24, 24));
     colorPicker->setStandardColors();
+    colorPicker->setHidden(true);
 
     // toolbar
     mainToolBar = new QToolBar(this);
