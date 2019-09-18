@@ -104,7 +104,9 @@ const QString CyanCommon::canvasWindowTitle(Magick::Image image)
                         .arg(profile);
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
 
     return result;
 }
@@ -120,7 +122,9 @@ void CyanCommon::setDiskResource(int gib)
         Magick::ResourceLimits::disk(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
 }
 
 int CyanCommon::getMemoryResource()
@@ -135,7 +139,9 @@ void CyanCommon::setMemoryResource(int gib)
         Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
 }
 
 void CyanCommon::setThreadResources(int thread)

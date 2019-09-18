@@ -20,7 +20,7 @@
 
 void Editor::handleError(const QString &message)
 {
-    qWarning() << "error" << message;
+    qDebug() << "error" << message;
     mainStatusBar->showMessage(message, 6000);
     QMessageBox::warning(this,
                          tr("Error"),
@@ -29,7 +29,7 @@ void Editor::handleError(const QString &message)
 
 void Editor::handleWarning(const QString &message)
 {
-    qWarning() << "warning" << message;
+    qDebug() << "warning" << message;
     mainStatusBar->showMessage(message);
     /*QMessageBox::warning(this,
                          tr("Cyan Warning"),

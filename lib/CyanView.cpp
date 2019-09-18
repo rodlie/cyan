@@ -790,7 +790,7 @@ void View::setLayerFromCanvas(CyanImageFormat::CyanCanvas canvas,
 void View::setLayersFromCanvas(CyanImageFormat::CyanCanvas canvas)
 {
     if (_canvas.layers.size()>0) {
-        qWarning() << "DONT SET LAYERS IF EXISTS!";
+        qDebug() << "DONT SET LAYERS IF EXISTS!";
         return;
     }
     _canvas.layers = canvas.layers;

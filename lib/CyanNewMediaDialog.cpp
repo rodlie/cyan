@@ -236,7 +236,9 @@ void NewMediaDialog::createImage(QSize geo,
                        selectedProfile());
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
 }
 
 void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)
@@ -306,7 +308,9 @@ Magick::Blob NewMediaDialog::selectedProfile()
             return profile;
         }
         catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Warning &warn_ ) {
+            qDebug() << warn_.what();
+        }
     }
     return Magick::Blob();
 }

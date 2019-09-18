@@ -50,11 +50,12 @@ This program is free software; you can redistribute it and/or modify it under th
  * Little CMS 2
  * ImageMagick *(Magick++) 7.0.8+*
    * Minimum quantum depth of 16 is recommended
+   * Zero configuration is recommended
    * HDRI required
    * lcms2 required
    * png/tiff/jpeg support as a minimum
  * fontconfig *(Windows/macOS)*
- * ffmpeg *(optional)*
+ * ffmpeg *3.x+ (optional)*
 
 ### RHEL/CentOS/Fedora
 
@@ -99,4 +100,39 @@ make -jX
 sudo make install
 ```
 
+## Packages
+
+Packages for various Linux distributions are available on each commit.
+
+![icon](https://software.opensuse.org/assets/download/centos-d3ecd22f69e867776122b371345d8ffe3e1419ed67aacbaba6f759f0ac38b982.png)
+
+### [CentOS 7](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/CentOS_7) *(x86_64)*
+
+```
+cd /etc/yum.repos.d/
+sudo wget https://download.opensuse.org/repositories/home:rodlie:cyan-master/CentOS_7/home:rodlie:cyan-master.repo
+sudo yum install cyan
+```
+![icon](https://software.opensuse.org/assets/download/fedora-e0120aaf2511d62ab5ef03690db25e039a362712f21ef43680865a10fb933903.png)
+
+### [Fedora 29](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_29) *(x86_64, ppc64le, i686, armv7hl, aarch64)*
+
+```
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_29/home:rodlie:cyan-master.repo
+sudo dnf install cyan
+```
+
+### [Fedora 30](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_30) *(x86_64, ppc64le, i686, armv7hl, aarch64)*
+
+```
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_30/home:rodlie:cyan-master.repo
+sudo dnf install cyan
+```
+
+### [Fedora RawHide](https://build.opensuse.org/package/binaries/home:rodlie:cyan-master/cyan/Fedora_Rawhide) *(x86_64)*
+
+```
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:rodlie:cyan-master/Fedora_Rawhide/home:rodlie:cyan-master.repo
+sudo dnf install cyan
+```
 

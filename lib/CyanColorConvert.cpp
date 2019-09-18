@@ -39,7 +39,9 @@ Magick::Image ColorConvert::convertColorspace(Magick::Image image,
             image.profile("ICC", output);
         }
         catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Warning &warn_ ) {
+            qDebug() << warn_.what();
+        }
     }
     return image;
 }
@@ -66,7 +68,9 @@ Magick::Image ColorConvert::convertColorspace(Magick::Image image,
         }
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return Magick::Image();
 }
 
@@ -90,7 +94,9 @@ Magick::Image ColorConvert::convertColorspace(Magick::Image image,
         }
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return Magick::Image();
 }
 
@@ -114,6 +120,8 @@ Magick::Image ColorConvert::convertColorspace(Magick::Image image,
         }
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return Magick::Image();
 }

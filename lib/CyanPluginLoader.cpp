@@ -31,13 +31,13 @@ void CyanPlugins::scanPluginsFolder(const QString &folder,
         QPluginLoader *loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = loader->instance();
         if (!plugin) {
-            qWarning() << "not a valid plugin object" << fileName;
+            qDebug() << "not a valid plugin object" << fileName;
             removePlugin(loader);
             continue;
         }
         CyanWidgetPlugin *cwp =qobject_cast<CyanWidgetPlugin*>(plugin);
         if (!cwp) {
-            qWarning() << "not a valid plugin widget" << fileName;
+            qDebug() << "not a valid plugin widget" << fileName;
             removePlugin(loader);
             continue;
         }

@@ -39,6 +39,7 @@ option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
+option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 
 set(
     HEADERS_API
@@ -178,7 +179,8 @@ include_directories(
 add_compile_options(-Wall -Wextra)
 if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
     add_definitions(-DQT_NO_DEBUG_OUTPUT)
-else()
+endif()
+if (${DEBUG_TILES})
     add_definitions(-DSHOW_TILES)
 endif()
 

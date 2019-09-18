@@ -238,7 +238,9 @@ Magick::Image CyanFFmpeg::getVideoFrame(const QString &filename,
                     result = image;
                 }
                 catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-                catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+                catch(Magick::Warning &warn_ ) {
+                    qDebug() << warn_.what();
+                }
 
                 av_packet_unref(&packet);
                 sws_freeContext(img_convert_ctx);

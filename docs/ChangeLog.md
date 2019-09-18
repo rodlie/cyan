@@ -21,11 +21,11 @@ First step on the road to version 2.0. This is a development release, not for en
   * The re-write started around the release of version 1.2 and continued until the end of 2018, then the project stalled until August 2019
 * Includes a bunch of bugs and missing features, enjoy :)
 
-## 1.2.2
+## 1.2.2-rc1
 
-**Release date : 20190919**
+**Release date : 20190915**
 
-Patch release to fix GIMP and build issues on Linux/BSD.
+Fix minor issues on Linux/BSD.
 
 * Fixed GIMP 2.10 Linux/BSD support
 * Added support for ImageMagick v7

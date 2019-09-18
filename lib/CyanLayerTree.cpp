@@ -156,7 +156,9 @@ void LayerTree::populateTree(View *view)
             thumb.alpha(false);
         }
         catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Warning &warn_ ) {
+            qDebug() << warn_.what();
+        }
 
         try {
             Magick::Image layer(layers.value().image);
@@ -178,7 +180,9 @@ void LayerTree::populateTree(View *view)
                             Magick::OverCompositeOp);
         }
         catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+        catch(Magick::Warning &warn_ ) {
+            qDebug() << warn_.what();
+        }
 
         thumb.magick("BMP");
         Magick::Blob pix;
