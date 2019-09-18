@@ -76,6 +76,9 @@ Editor::Editor(QWidget *parent)
     , aboutImageMagickAct(nullptr)
     , aboutLcmsAct(nullptr)
     , aboutQtAct(nullptr)
+#ifdef WITH_FFMPEG
+    , aboutFFmpegAct(nullptr)
+#endif
     , convertRGBAct(nullptr)
     , convertCMYKAct(nullptr)
     , convertGRAYAct(nullptr)

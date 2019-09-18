@@ -19,6 +19,16 @@
 #include <QMessageBox>
 #include <QApplication>
 
+#ifdef WITH_FFMPEG
+extern "C" {
+#include <libavutil/avutil.h>
+#include <libavcodec/avcodec.h>
+#include <libavdevice/avdevice.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+}
+#endif
+
 void Editor::aboutCyan()
 {
     QMessageBox box(this);
@@ -133,3 +143,40 @@ void Editor::aboutLcms()
     box.setStyleSheet("QLabel { min-width: 350px; }");
     box.exec();
 }
+
+#ifdef WITH_FFMPEG
+void Editor::aboutFFmpeg()
+{
+    QMessageBox box(this);
+    box.setWindowTitle(QString("%1 FFmpeg").arg(tr("About")));
+
+    QString about;
+    about.append(QString("<h3>FFmpeg</h3>"));
+    about.append(QString("<p><a href=\"https://ffmpeg.org\">FFmpeg</a> %1</p>")
+                 .arg(tr("is the leading multimedia framework, able to decode pretty much anything that humans and machines have created.")));
+    about.append(QString("<p><strong>libavformat:</strong> %1.%2.%3<br>")
+                 .arg((avformat_version() >> 16))
+                 .arg((avformat_version() >> 8 & 0xff))
+                 .arg((avformat_version() & 0xff)));
+    about.append(QString("<strong>libavdevice:</strong> %1.%2.%3<br>")
+                 .arg((avdevice_version() >> 16))
+                 .arg((avdevice_version() >> 8 & 0xff))
+                 .arg((avdevice_version() & 0xff)));
+    about.append(QString("<strong>libavcodec:</strong> %1.%2.%3<br>")
+                 .arg((avcodec_version() >> 16))
+                 .arg((avcodec_version() >> 8 & 0xff))
+                 .arg((avcodec_version() & 0xff)));
+    about.append(QString("<strong>libavutil:</strong> %1.%2.%3<br>")
+                 .arg((avutil_version() >> 16))
+                 .arg((avutil_version() >> 8 & 0xff))
+                 .arg((avutil_version() & 0xff)));
+    about.append(QString("<strong>libswscale:</strong> %1.%2.%3</p>")
+                 .arg((swscale_version() >> 16))
+                 .arg((swscale_version() >> 8 & 0xff))
+                 .arg((swscale_version() & 0xff)));
+    about.append(QString("<p>%1</p>").arg(tr("FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.")));
+    box.setText(about);
+    //box.setStyleSheet("QLabel { min-width: 350px; }");
+    box.exec();
+}
+#endif

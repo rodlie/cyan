@@ -121,6 +121,9 @@ void Editor::setupUI()
     helpMenu->addAction(aboutCyanAct);
     helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
+#ifdef WITH_FFMPEG
+    helpMenu->addAction(aboutFFmpegAct);
+#endif
     helpMenu->addAction(aboutQtAct);
 
     saveMenu->addAction(saveProjectAct);
@@ -361,6 +364,11 @@ void Editor::setupActions()
     aboutQtAct = new QAction(this);
     aboutQtAct->setText(QString("%1 Qt").arg(tr("About")));
 
+#ifdef WITH_FFMPEG
+    aboutFFmpegAct = new QAction(this);
+    aboutFFmpegAct->setText(QString("%1 FFmpeg").arg(tr("About")));
+#endif
+
     convertRGBAct = new QAction(this);
     convertRGBAct->setText(tr("Convert to RGB"));
 
@@ -431,6 +439,9 @@ void Editor::setupConnections()
     connect(aboutImageMagickAct, SIGNAL(triggered()), this, SLOT(aboutImageMagick()));
     connect(aboutLcmsAct, SIGNAL(triggered()), this, SLOT(aboutLcms()));
     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+#ifdef WITH_FFMPEG
+    connect(aboutFFmpegAct, SIGNAL(triggered()), this, SLOT(aboutFFmpeg()));
+#endif
 
     connect(convertRGBAct, SIGNAL(triggered()), this, SLOT(handleColorConvertRGB()));
     connect(convertCMYKAct, SIGNAL(triggered()), this, SLOT(handleColorConvertCMYK()));
@@ -557,6 +568,9 @@ void Editor::setupIcons()
     aboutLcmsAct->setIcon(helpIcon);
     aboutImageMagickAct->setIcon(helpIcon);
     aboutCyanAct->setIcon(helpIcon);
+#ifdef WITH_FFMPEG
+    aboutFFmpegAct->setIcon(helpIcon);
+#endif
 
     convertButton->setIcon(colorsIcon);
     newButton->setIcon(QIcon::fromTheme("document-new"));
