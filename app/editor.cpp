@@ -87,6 +87,7 @@ Editor::Editor(QWidget *parent)
     , addGuideVAct(nullptr)
     , addGuideHAct(nullptr)
     , showGuidesAct(nullptr)
+    , magickMemoryResourcesGroup(nullptr)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
@@ -100,6 +101,7 @@ Editor::Editor(QWidget *parent)
     //, layerMenu(nullptr)
     , viewMenu(nullptr)
     , guideMenu(nullptr)
+    , memoryMenu(nullptr)
     , windowsMenu(nullptr)
     , newButton(nullptr)
     , openButton(nullptr)
@@ -273,9 +275,22 @@ void Editor::loadSettings()
     settings.beginGroup("engine");
     CyanCommon::setDiskResource(settings
                             .value("disk_limit", 0).toInt());
-    CyanCommon::setMemoryResource(settings
-                              .value("memory_limit", 8).toInt());
+    int maxMem = settings.value("memory_limit", 4).toInt();
+    CyanCommon::setMemoryResource(maxMem);
     settings.endGroup();
+
+    QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
+    bool foundAct = false;
+    for (int i=0;i<memActions.size();++i) {
+        QAction *act = memActions.at(i);
+        if (!act) { continue; }
+        if (act->data().toInt()==maxMem) {
+            act->setChecked(true);
+            foundAct = true;
+            break;
+        }
+    }
+    if (!foundAct) { memoryMenu->setDisabled(true); }
 
     settings.beginGroup("gui");
     if (settings.value("editor_state").isValid()) {
@@ -1081,6 +1096,14 @@ void Editor::handleShowGuidesAct(bool triggered)
         if (!view) { continue; }
         view->showGuides(showGuidesAct->isChecked());
     }
+}
+
+void Editor::handleMagickMemoryAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    CyanCommon::setMemoryResource(action->data().toInt());
 }
 
 

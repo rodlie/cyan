@@ -107,6 +107,8 @@ private:
     QAction *addGuideHAct;
     QAction *showGuidesAct;
 
+    QActionGroup *magickMemoryResourcesGroup;
+
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
@@ -120,6 +122,7 @@ private:
     //QMenu *layerMenu;
     QMenu *viewMenu;
     QMenu *guideMenu;
+    QMenu *memoryMenu;
     QtWindowListMenu *windowsMenu;
 
     QToolButton *newButton;
@@ -313,6 +316,9 @@ private slots:
     void handleAddGuideHAct(bool triggered);
     void handleAddGuideVAct(bool triggered);
     void handleShowGuidesAct(bool triggered);
+
+    // magick resources
+    void handleMagickMemoryAct(bool triggered);
 
     // TODO
     void handleOpenImages(const QList<QUrl> &urls);

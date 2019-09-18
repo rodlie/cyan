@@ -170,8 +170,26 @@ void Editor::setupUI()
     populateColorIntentMenu();
 
     setActionsDisabled(true);
-    optMenu->setDisabled(true);
 
+
+
+    // magick memory resources
+    optMenu->addMenu(memoryMenu);
+    QStringList memActs;
+    memActs << "2" << "4" << "6" << "8" << "10" << "12" << "14" << "16" << "18" << "20" << "22" << "24";
+    for (int i=0;i<memActs.size();++i) {
+        QAction *act = new QAction(this);
+        act->setCheckable(true);
+        QString value = memActs.at(i);
+        act->setText(QString("%1 GB RAM").arg(value));
+        act->setToolTip(tr("Amount of RAM that can be used"));
+        act->setData(value.toInt());
+        connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
+        magickMemoryResourcesGroup->addAction(act);
+    }
+    memoryMenu->addActions(magickMemoryResourcesGroup->actions());
+
+    // splitters
     mainSplitter->setOrientation(Qt::Horizontal);
     leftSplitter->setOrientation(Qt::Vertical);
     rightSplitter->setOrientation(Qt::Vertical);
@@ -207,6 +225,9 @@ void Editor::setupMenus()
 
     guideMenu = new QMenu(this);
     guideMenu->setTitle(tr("Guides"));
+
+    memoryMenu = new QMenu(this);
+    memoryMenu->setTitle(tr("Memory"));
 
     windowsMenu = new QtWindowListMenu(this);
 
@@ -307,6 +328,8 @@ void Editor::setupWidgets()
 
 void Editor::setupActions()
 {
+    magickMemoryResourcesGroup = new QActionGroup(this);
+
     newImageAct = new QAction(this);
     newImageAct->setText(tr("New project"));
 
