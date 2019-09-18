@@ -142,14 +142,10 @@ CyanTextWidget::CyanTextWidget(QWidget *parent) :
     connect(textAlignBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleTextAlign(int)));
     connect(textRotateSlider, SIGNAL(valueChanged(int)), this ,SLOT(handleTextRotate(int)));
 
-    connect(fontBox,
-            QOverload<const QString &>::of(&QComboBox::activated),
-            this,
-            &CyanTextWidget::handleTextFamily);
-    connect(fontSizeBox,
-            QOverload<const QString &>::of(&QComboBox::activated),
-            this,
-            &CyanTextWidget::handleTextSize);
+
+
+    connect(fontBox, SIGNAL(activated(QString)), this, SLOT(handleTextFamily(QString)));
+    connect(fontSizeBox, SIGNAL(activated(QString)), this, SLOT(handleTextSize(QString)));
 
     setup();
 }

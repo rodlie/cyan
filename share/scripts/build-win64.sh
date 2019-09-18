@@ -66,6 +66,7 @@ $CMAKE \
     -DCMAKE_BUILD_TYPE=Release \
     -DMINGW_ROOT="${MXE}/usr/${MXE_TC}" \
     -DCMAKE_INSTALL_PREFIX=/ \
+    -DPROJECT_VERSION_TYPE="" \
     -DMAGICK_PKG_CONFIG=${MAGICK} "${CWD}" || exit 1
 make -j${MKJOBS} || exit 1
 ${STRIP} -s *.exe *.dll */*.dll
@@ -84,12 +85,10 @@ echo "Build archive (portable) ..."
 mkdir -p "${ZIP_PATH}" || exit 1
 cp *.exe *.dll "${ZIP_PATH}/" || exit 1
 cp -a profiles docs platforms etc "${ZIP_PATH}/" || exit 1
-#zip -9 -r ${ZIP_PATH}.zip "${ZIP_PATH}" || exit 1
 7za a -mx=9 ${ZIP_PATH}.7z "${ZIP_PATH}" || exit 1
 if [ ! -d "deploy" ]; then
     mkdir deploy || exit 1
 fi
-#mv *.zip *.7z deploy/
 mv *.7z deploy/
 tree -lah deploy
 cp deploy/* "${CWD}/"

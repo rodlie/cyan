@@ -30,6 +30,7 @@ mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" \
 cmake \
  -DCMAKE_BUILD_TYPE=Release \
+ -DPROJECT_VERSION_TYPE="" \
  -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
  -DCMAKE_INSTALL_PREFIX=/usr \
  "$CWD"
