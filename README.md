@@ -75,7 +75,7 @@ On Ubuntu you will need to install the following packages:
 sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
 ```
 
-* **Qt5 shipped with Ubuntu Bionic is buggy, not recommended!**
+* **Qt5 shipped with Ubuntu Bionic and beyond has issues, not recommended!**
 
 ### Other distros
 
