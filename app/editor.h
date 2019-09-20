@@ -77,10 +77,10 @@ private:
     QAction *saveImageAct;
     QAction *saveProjectAct;
     QAction *saveProjectAsAct;
-    QAction *newLayerAct;
-    QAction *newTextLayerAct;
-    QAction *openLayerAct;
-    QAction *saveLayerAct;
+    //QAction *newLayerAct;
+    //QAction *newTextLayerAct;
+    //QAction *openLayerAct;
+    //QAction *saveLayerAct;
     QAction *blackPointAct;
     QAction *quitAct;
 

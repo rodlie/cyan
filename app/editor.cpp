@@ -63,10 +63,10 @@ Editor::Editor(QWidget *parent)
     , saveImageAct(nullptr)
     , saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
-    , newLayerAct(nullptr)
-    , newTextLayerAct(nullptr)
-    , openLayerAct(nullptr)
-    , saveLayerAct(nullptr)
+    //, newLayerAct(nullptr)
+    //, newTextLayerAct(nullptr)
+    //, openLayerAct(nullptr)
+    //, saveLayerAct(nullptr)
     , quitAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
@@ -1043,8 +1043,8 @@ void Editor::setActionsDisabled(bool disabled)
 {
     saveImageAct->setDisabled(disabled);
     saveProjectAsAct->setDisabled(disabled);
-    newLayerAct->setDisabled(disabled);
-    openLayerAct->setDisabled(disabled);
+    //newLayerAct->setDisabled(disabled);
+    //openLayerAct->setDisabled(disabled);
     moveButton->setDisabled(disabled);
     zoomButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);

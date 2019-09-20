@@ -94,27 +94,27 @@ void Editor::setupUI()
     moveButton->addAction(viewMoveAct);
     moveButton->addAction(viewDrawAct);
 
-    newButton->addAction(newImageAct);
-    newButton->addAction(newLayerAct);
+    //newButton->addAction(newImageAct);
+    //newButton->addAction(newLayerAct);
 
     openButton->addAction(openImageAct);
-    openButton->addAction(openLayerAct);
+    //openButton->addAction(openLayerAct);
 
     zoomButton->addAction(viewZoom100Act);
     zoomButton->addAction(viewZoomFitAct);
 
     fileMenu->addAction(newImageAct);
-    fileMenu->addAction(newLayerAct);
-    fileMenu->addAction(newTextLayerAct);
-    fileMenu->addSeparator();
+    //fileMenu->addAction(newLayerAct);
+    //fileMenu->addAction(newTextLayerAct);
+    //fileMenu->addSeparator();
     fileMenu->addAction(openImageAct);
-    fileMenu->addSeparator();
     fileMenu->addAction(saveProjectAct);
+    fileMenu->addSeparator();
     fileMenu->addAction(saveProjectAsAct);
     fileMenu->addSeparator();
-    fileMenu->addAction(openLayerAct);
+    //fileMenu->addAction(openLayerAct);
     fileMenu->addAction(saveImageAct);
-    fileMenu->addAction(saveLayerAct);
+    //fileMenu->addAction(saveLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
@@ -129,7 +129,7 @@ void Editor::setupUI()
     saveMenu->addAction(saveProjectAct);
     saveMenu->addAction(saveProjectAsAct);
     saveMenu->addAction(saveImageAct);
-    saveMenu->addAction(saveLayerAct);
+    //saveMenu->addAction(saveLayerAct);
 
     saveButton->setMenu(saveMenu);
 
@@ -293,7 +293,7 @@ void Editor::setupWidgets()
 
     // toolbuttons
     newButton = new QToolButton(this);
-    newButton->setPopupMode(QToolButton::InstantPopup);
+    //newButton->setPopupMode(QToolButton::InstantPopup);
     newButton->setText(tr("New"));
     newButton->setToolTip(tr("New"));
 
@@ -331,10 +331,10 @@ void Editor::setupActions()
     magickMemoryResourcesGroup = new QActionGroup(this);
 
     newImageAct = new QAction(this);
-    newImageAct->setText(tr("New project"));
+    newImageAct->setText(tr("New"));
 
     openImageAct = new QAction(this);
-    openImageAct->setText(tr("Open image/project"));
+    openImageAct->setText(tr("Open"));
 
     saveImageAct = new QAction(this);
     saveImageAct->setText(tr("Export image"));
@@ -348,21 +348,21 @@ void Editor::setupActions()
     saveProjectAsAct->setText(tr("Save project as ..."));
     saveProjectAsAct->setDisabled(true);
 
-    newLayerAct = new QAction(this);
+    /*newLayerAct = new QAction(this);
     newLayerAct->setText(tr("New image layer"));
-    newLayerAct->setDisabled(true);
+    newLayerAct->setDisabled(true);*/
 
-    newTextLayerAct = new QAction(this);
+    /*newTextLayerAct = new QAction(this);
     newTextLayerAct->setText(tr("New text layer"));
-    newTextLayerAct->setDisabled(true);
+    newTextLayerAct->setDisabled(true);*/
 
-    openLayerAct = new QAction(this);
+    /*openLayerAct = new QAction(this);
     openLayerAct->setText(tr("Import image as layer"));
-    openLayerAct->setDisabled(true);
+    openLayerAct->setDisabled(true);*/
 
-    saveLayerAct = new QAction(this);
+    /*saveLayerAct = new QAction(this);
     saveLayerAct->setText(tr("Export layer"));
-    saveLayerAct->setDisabled(true);
+    saveLayerAct->setDisabled(true);*/
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -447,15 +447,15 @@ void Editor::setupConnections()
     connect(newImageAct, SIGNAL(triggered(bool)), this, SLOT(newImageDialog()));
 
 
-    connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
-    connect(newTextLayerAct, SIGNAL(triggered(bool)), this, SLOT(newTextLayerDialog()));
+    //connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
+    //connect(newTextLayerAct, SIGNAL(triggered(bool)), this, SLOT(newTextLayerDialog()));
 
 
 
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
-    connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
+    //connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
 
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(checkTabsOnClose()));
 
@@ -545,6 +545,8 @@ void Editor::setupConnections()
         connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
 
 
+        connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newImageDialog()));
+
         connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
         connect(addGuideVAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideVAct(bool)));
         connect(showGuidesAct, SIGNAL(triggered(bool)), this, SLOT(handleShowGuidesAct(bool)));
@@ -559,16 +561,16 @@ void Editor::setupIcons()
     viewZoomFitAct->setIcon(QIcon::fromTheme("zoom-fit-best"));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
-    newLayerAct->setIcon(QIcon::fromTheme("layer",
-                                          QIcon::fromTheme("document-new")));
-    newTextLayerAct->setIcon(QIcon::fromTheme("font",
-                                              QIcon::fromTheme("document-new")));
+    //newLayerAct->setIcon(QIcon::fromTheme("layer",
+      //                                    QIcon::fromTheme("document-new")));
+    //newTextLayerAct->setIcon(QIcon::fromTheme("font",
+      //                                        QIcon::fromTheme("document-new")));
 
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
     saveImageAct->setIcon(QIcon::fromTheme("document-new"));
     saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
-    saveLayerAct->setIcon(QIcon::fromTheme("layer"));
+    //saveLayerAct->setIcon(QIcon::fromTheme("layer"));
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
@@ -610,8 +612,8 @@ void Editor::setupIcons()
 void Editor::setupShortcuts()
 {
     newImageAct->setShortcut(QKeySequence(tr("Ctrl+N")));
-    newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
-    newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
+    //newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
+    //newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
 
