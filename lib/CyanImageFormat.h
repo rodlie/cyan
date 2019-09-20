@@ -125,6 +125,7 @@ public:
         Magick::Blob profile;
         bool dirty = true;
         QMap<int, CyanGuideItem*> guides;
+        QString filename;
     };
     struct QPairSortFirst
     {

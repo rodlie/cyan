@@ -41,11 +41,14 @@ CyanCommon::CyanCommon(QObject *parent): QObject (parent)
 
 const QString CyanCommon::canvasWindowTitle(Magick::Image image)
 {
-    // filename @ colorspace widthxheight dpixdpi bit
+    // image @ colorspace widthxheight dpixdpi bit
     QString label = QObject::tr("New image");
     if (!QString::fromStdString(image.label()).isEmpty()) {
         label = QString::fromStdString(image.label());
+    } else if (!QString::fromStdString(image.fileName()).isEmpty()) {
+        label = QString::fromStdString(image.fileName());
     }
+
     QString profile = CyanCommon::getProfileTag(image.iccColorProfile());
     if (profile.isEmpty()) { profile = "N/A"; }
     QString colorspace;

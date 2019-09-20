@@ -504,8 +504,8 @@ void Editor::readImage(Magick::Blob blob,
                 input.read(dialog->getProfile().toStdString());
                 input.write(&profile);
                 image = ColorConvert::convertColorspace(image,
-                                                  Magick::Blob(),
-                                                  profile);
+                                                        Magick::Blob(),
+                                                        profile);
                 if (image.columns()>0 &&
                     image.rows()>0 &&
                     image.iccColorProfile().length()>0)

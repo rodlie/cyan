@@ -550,6 +550,7 @@ bool CyanImageFormat::writeCanvas(CyanImageFormat::CyanCanvas canvas,
 CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
 {
     CyanCanvas canvas;
+    canvas.filename = filename;
 
     if (!isValidCanvas(filename)) { return canvas; }
 
@@ -575,6 +576,7 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
 
             // set label
             canvas.label = QString::fromStdString(it->attribute(QString(CYAN_LAYER_LABEL).toStdString()));
+            canvas.image.fileName(canvas.filename.toStdString());
 
             // set profile
             canvas.profile = canvas.image.iccColorProfile();
@@ -604,7 +606,7 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
 
             // get order
             int order = QString::fromStdString(it->attribute(QString(CYAN_LAYER_ORDER)
-                                                                  .toStdString())).toInt();
+                                                             .toStdString())).toInt();
 
             // get position
             int offX = QString::fromStdString(it->attribute(QString(CYAN_LAYER_X)
@@ -661,6 +663,7 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
 CyanImageFormat::CyanCanvas CyanImageFormat::readImage(const QString &filename)
 {
     CyanCanvas canvas;
+    canvas.filename = filename;
     try {
         Magick::Image image;
         image.quiet(false);
