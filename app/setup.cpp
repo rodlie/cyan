@@ -87,9 +87,9 @@ void Editor::setupUI()
     mainToolBar->addSeparator();
     mainToolBar->addWidget(interactButton);
     //mainToolBar->addWidget(zoomButton);
-    mainToolBar->addSeparator();
+  //  mainToolBar->addSeparator();
     //mainToolBar->addWidget(convertButton);
-    mainToolBar->addSeparator();
+   // mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
     interactButton->addAction(viewMoveAct);

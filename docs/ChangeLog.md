@@ -12,7 +12,7 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 Cyan 2.0 Alpha 2. This is a development release, not for end-users.
 
-* No noteworthy changes yet
+* UI clean up
 
 ## 1.99.1
 
