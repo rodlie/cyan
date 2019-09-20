@@ -6,6 +6,14 @@
 
 This document will be updated when noteworthy changes are done in Cyan.
 
+## 1.99.2
+
+**Release date : TBA**
+
+Cyan 2.0 Alpha 2. This is a development release, not for end-users.
+
+* No noteworthy changes yet
+
 ## 1.99.1
 
 **Release date : 20190919**
