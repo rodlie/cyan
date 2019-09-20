@@ -123,18 +123,19 @@ private:
     QMenu *viewMenu;
     QMenu *guideMenu;
     QMenu *memoryMenu;
+    QMenu *editMenu;
     QtWindowListMenu *windowsMenu;
 
     QToolButton *newButton;
     QToolButton *openButton;
     QToolButton *saveButton;
-    QToolButton *moveButton;
-    QToolButton *zoomButton;
+    QToolButton *interactButton;
+    //QToolButton *zoomButton;
     CyanLayerWidget *layersWidget;
 
     QtColorPicker *colorPicker;
 
-    QToolButton *convertButton;
+    //QToolButton *convertButton;
 
 
 

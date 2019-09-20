@@ -72,6 +72,7 @@ void Editor::setupUI()
     setMenuBar(mainMenu);
 
     mainMenu->addMenu(fileMenu);
+    mainMenu->addMenu(editMenu);
     mainMenu->addMenu(colorMenu);
     mainMenu->addMenu(viewMenu);
     mainMenu->addMenu(optMenu);
@@ -84,24 +85,25 @@ void Editor::setupUI()
     mainToolBar->addWidget(openButton);
     mainToolBar->addWidget(saveButton);
     mainToolBar->addSeparator();
-    mainToolBar->addWidget(moveButton);
-    mainToolBar->addWidget(zoomButton);
+    mainToolBar->addWidget(interactButton);
+    //mainToolBar->addWidget(zoomButton);
     mainToolBar->addSeparator();
-    mainToolBar->addWidget(convertButton);
+    //mainToolBar->addWidget(convertButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
-    moveButton->addAction(viewMoveAct);
-    moveButton->addAction(viewDrawAct);
+    interactButton->addAction(viewMoveAct);
+    interactButton->addAction(viewDrawAct);
+    viewDrawAct->setDisabled(true);
 
     //newButton->addAction(newImageAct);
     //newButton->addAction(newLayerAct);
 
-    openButton->addAction(openImageAct);
+    //openButton->addAction(openImageAct);
     //openButton->addAction(openLayerAct);
 
-    zoomButton->addAction(viewZoom100Act);
-    zoomButton->addAction(viewZoomFitAct);
+    //zoomButton->addAction(viewZoom100Act);
+    //zoomButton->addAction(viewZoomFitAct);
 
     fileMenu->addAction(newImageAct);
     //fileMenu->addAction(newLayerAct);
@@ -147,7 +149,7 @@ void Editor::setupUI()
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
 
-    convertButton->setMenu(colorMenu);
+    //convertButton->setMenu(colorMenu);
 
     viewMenu->addMenu(guideMenu);
     viewMenu->addSeparator();
@@ -159,7 +161,7 @@ void Editor::setupUI()
     guideMenu->addAction(showGuidesAct);
 
     viewMoveAct->setChecked(true);
-    moveButton->setDefaultAction(viewMoveAct);
+    interactButton->setDefaultAction(viewMoveAct);
 
     populateColorProfileMenu(colorProfileRGBMenu,
                              Magick::sRGBColorspace);
@@ -228,6 +230,9 @@ void Editor::setupMenus()
 
     memoryMenu = new QMenu(this);
     memoryMenu->setTitle(tr("Memory"));
+
+    editMenu = new QMenu(this);
+    editMenu->setTitle(tr("Edit"));
 
     windowsMenu = new QtWindowListMenu(this);
 
@@ -298,7 +303,7 @@ void Editor::setupWidgets()
     newButton->setToolTip(tr("New"));
 
     openButton = new QToolButton(this);
-    openButton->setPopupMode(QToolButton::InstantPopup);
+    //openButton->setPopupMode(QToolButton::InstantPopup);
     openButton->setText(tr("Open"));
     openButton->setToolTip(tr("Open"));
 
@@ -308,21 +313,21 @@ void Editor::setupWidgets()
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save"));
 
-    moveButton = new QToolButton(this);
-    moveButton->setPopupMode(QToolButton::InstantPopup);
-    moveButton->setText(tr("View"));
-    moveButton->setToolTip(tr("View"));
+    interactButton = new QToolButton(this);
+    interactButton->setPopupMode(QToolButton::InstantPopup);
+    interactButton->setText(tr("Tool"));
+    interactButton->setToolTip(tr("Tool"));
 
-    zoomButton = new QToolButton(this);
+    /*zoomButton = new QToolButton(this);
     zoomButton->setPopupMode(QToolButton::InstantPopup);
     zoomButton->setText(tr("Zoom"));
-    zoomButton->setToolTip(tr("Zoom"));
+    zoomButton->setToolTip(tr("Zoom"));*/
 
-    convertButton = new QToolButton(this);
+    /*convertButton = new QToolButton(this);
     convertButton->setMenu(colorMenu);
     convertButton->setPopupMode(QToolButton::InstantPopup);
     convertButton->setText(tr("Colors"));
-    convertButton->setToolTip(tr("Color convert"));
+    convertButton->setToolTip(tr("Color convert"));*/
 }
 
 
@@ -453,6 +458,7 @@ void Editor::setupConnections()
 
 
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
+    connect(openButton, SIGNAL(clicked(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
     //connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
@@ -601,11 +607,11 @@ void Editor::setupIcons()
     aboutFFmpegAct->setIcon(helpIcon);
 #endif
 
-    convertButton->setIcon(colorsIcon);
+    //convertButton->setIcon(colorsIcon);
     newButton->setIcon(QIcon::fromTheme("document-new"));
     openButton->setIcon(QIcon::fromTheme("document-open"));
-    moveButton->setIcon(QIcon::fromTheme("transform_move"));
-    zoomButton->setIcon(QIcon::fromTheme("zoom"));
+    interactButton->setIcon(QIcon::fromTheme("transform_move"));
+    //zoomButton->setIcon(QIcon::fromTheme("zoom"));
 
 }
 
@@ -616,6 +622,9 @@ void Editor::setupShortcuts()
     //newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
+
+    viewZoom100Act->setShortcut(QKeySequence(tr("Ctrl+1")));
+    viewZoomFitAct->setShortcut(QKeySequence(tr("Ctrl+2")));
 
     addGuideHAct->setShortcut(QKeySequence(tr("Ctrl+Shift+G")));
     addGuideVAct->setShortcut(QKeySequence(tr("Ctrl+G")));

@@ -102,12 +102,13 @@ Editor::Editor(QWidget *parent)
     , viewMenu(nullptr)
     , guideMenu(nullptr)
     , memoryMenu(nullptr)
+    , editMenu(nullptr)
     , windowsMenu(nullptr)
     , newButton(nullptr)
     , openButton(nullptr)
     , saveButton(nullptr)
-    , moveButton(nullptr)
-    , zoomButton(nullptr)
+    , interactButton(nullptr)
+    //, zoomButton(nullptr)
     , layersWidget(nullptr)
     //, layersDock(nullptr)
     //, textWidget(nullptr)
@@ -118,7 +119,7 @@ Editor::Editor(QWidget *parent)
     //, colorTriangle(nullptr)
     , colorPicker(nullptr)
     //, textButton(nullptr)
-    , convertButton(nullptr)
+    //, convertButton(nullptr)
     , currentZoomStatusIcon(nullptr)
     , currentZoomStatusLabel(nullptr)
     , mainSplitter(nullptr)
@@ -1045,8 +1046,8 @@ void Editor::setActionsDisabled(bool disabled)
     saveProjectAsAct->setDisabled(disabled);
     //newLayerAct->setDisabled(disabled);
     //openLayerAct->setDisabled(disabled);
-    moveButton->setDisabled(disabled);
-    zoomButton->setDisabled(disabled);
+    interactButton->setDisabled(disabled);
+    //zoomButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
     layersWidget->setDisabled(disabled);
     convertCMYKAct->setDisabled(disabled);
