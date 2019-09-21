@@ -89,7 +89,7 @@ void Editor::setupUI()
     //mainToolBar->addWidget(zoomButton);
   //  mainToolBar->addSeparator();
     //mainToolBar->addWidget(convertButton);
-   // mainToolBar->addSeparator();
+    mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
     interactButton->addAction(viewMoveAct);
@@ -285,9 +285,8 @@ void Editor::setupWidgets()
 
     // main color picker
     colorPicker = new QtColorPicker(this, -1, true, false);
-    colorPicker->setIconSize(QSize(24, 24));
+    //colorPicker->setIconSize(QSize(24, 24));
     colorPicker->setStandardColors();
-    colorPicker->setHidden(true);
 
     // toolbar
     mainToolBar = new QToolBar(this);
@@ -415,6 +414,7 @@ void Editor::setupActions()
 
     convertExtractAct = new QAction(this);
     convertExtractAct->setText(tr("Extract color profile"));
+    convertExtractAct->setVisible(false);
 
     blackPointAct = new QAction(this);
     blackPointAct->setText(tr("Black point compensation"));

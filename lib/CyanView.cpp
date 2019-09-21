@@ -171,8 +171,8 @@ void View::mousePressEvent(QMouseEvent *event)
                         _brush->rect().height());
         if (event->buttons() & Qt::LeftButton) {
             // draw over tile at POS
-            //handleBrushOverTile(pos);
-            QtConcurrent::run(this, &View::handleBrushOverTile, pos, true);
+            handleBrushOverTile(pos);
+            //QtConcurrent::run(this, &View::handleBrushOverTile, pos, true);
         }
     }
     //else if ((event->buttons() & Qt::LeftButton) && (event->buttons() & Qt::RightButton)) { emit resetZoom(); }
@@ -248,6 +248,7 @@ void View::mouseMoveEvent(QMouseEvent *event)
         if (event->buttons() & Qt::LeftButton) {
             // draw over tile at POS
             handleBrushOverTile(pos);
+            //QtConcurrent::run(this, &View::handleBrushOverTile, pos, true);
         }
     }
     /*else if (event->buttons() & Qt::RightButton) {
@@ -1430,8 +1431,7 @@ void View::handleTileStatus()
     }
 }
 
-void View::handleBrushOverTile(QPointF pos,
-                               bool draw)
+void View::handleBrushOverTile(QPointF pos, bool draw)
 {
     if (_scene->items().size()==0) { return; }
     QList<QGraphicsItem*> items = _scene->collidingItems(_brush);
@@ -1455,18 +1455,23 @@ void View::handleBrushOverTile(QPointF pos,
 
             if (_canvas.layers[id].image.colorSpace() == Magick::CMYKColorspace) {
                 // TODO! : need im workaround for this to work
-                _canvas.layers[id].image.strokeColor(Magick::ColorRGB(_canvas.brush.color.cyanF(),
+                /*_canvas.layers[id].image.strokeColor(Magick::ColorRGB(_canvas.brush.color.cyanF(),
                                                                       _canvas.brush.color.magentaF(),
-                                                                      _canvas.brush.color.yellowF()));
+                                                                      _canvas.brush.color.yellowF()));*/
+                qWarning() << "DRAW ON CMYK NOT SUPPORTED";
             } else {
                 _canvas.layers[id].image.strokeColor(Magick::ColorRGB(_canvas.brush.color.redF(),
                                                                       _canvas.brush.color.greenF(),
                                                                       _canvas.brush.color.blueF()));
             }
-            _canvas.layers[id].image.draw(Magick::DrawableLine(epos.x()-1,
-                                                               epos.y()-1,
-                                                               epos.x(),
-                                                               epos.y()));
+            try {
+                _canvas.layers[id].image.draw(Magick::DrawableLine(epos.x()-1,
+                                                                   epos.y()-1,
+                                                                   epos.x(),
+                                                                   epos.y()));
+            }
+            catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+            catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
         }
 
         CyanTileItem *item = dynamic_cast<CyanTileItem*>(items.at(i));
@@ -1503,18 +1508,21 @@ void View::renderTile(int tile,
 
     // comp tile and write pixmap
     Magick::Image tmp = CyanImageFormat::compLayers(canvas, layers, crop);
-    tmp.quiet(true);
-    tmp.magick("BMP");
     Magick::Blob preview;
-    tmp.write(&preview);
+    tmp.quiet(true);
+    try {
+        tmp.magick("BMP");
+        tmp.write(&preview);
+    }
+    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
+    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 
     // update tile pixmap
     if (preview.length()>0) {
         QPixmap pix = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(preview.data())),
                                                           static_cast<int>(preview.length())));
         if (pix.isNull()) { return; }
-        emit updateTilePixmap(tile,
-                              pix);
+        emit updateTilePixmap(tile, pix);
     }
 }
 
