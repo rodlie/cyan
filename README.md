@@ -30,6 +30,25 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 
 ***Everything is subject to change during development of v2.***
 
+## Keyboard/Mouse shortcuts
+
+| Shortcut           | Action                             |
+| ------------------ | ---------------------------------- |
+| Ctrl + N           | New                                |
+| Ctrl + O           | Open                               |
+| Ctrl + Q           | Quit                               |
+| Ctrl + F4/W        | Close                              |
+| Ctrl + 1           | Zoom 100%                          |
+| Ctrl + 2           | Zoom to fit                        |
+| Ctrl + Tab         | Switch image                       |
+| Ctrl + G           | Add vertical guide                 |
+| Ctrl + Shift + G   | Add horizontal guide               |
+| Arrows (+Shift)    | Move selected layer                |
+| Mouse wheel        | Zoom                               |
+| Third mouse        | Switch interactive tool            |
+| Left mouse         | Drag (if move tool selected)       |
+| Left mouse + Wheel | Brush size (if draw tool selected) |
+
 ## FAQ
 
 ...

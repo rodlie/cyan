@@ -178,7 +178,10 @@ void Editor::setupUI()
     // magick memory resources
     optMenu->addMenu(memoryMenu);
     QStringList memActs;
-    memActs << "2" << "4" << "6" << "8" << "10" << "12" << "14" << "16" << "18" << "20" << "22" << "24";
+    memActs << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10";
+    memActs << "11" << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20";
+    memActs << "21" << "22" << "23" << "24" << "25" << "26" << "27" << "28" << "29" << "30";
+    memActs << "31" << "32";
     for (int i=0;i<memActs.size();++i) {
         QAction *act = new QAction(this);
         act->setCheckable(true);
@@ -229,7 +232,7 @@ void Editor::setupMenus()
     guideMenu->setTitle(tr("Guides"));
 
     memoryMenu = new QMenu(this);
-    memoryMenu->setTitle(tr("Memory"));
+    memoryMenu->setTitle(tr("ImageMagick memory limit"));
 
     editMenu = new QMenu(this);
     editMenu->setTitle(tr("Edit"));
