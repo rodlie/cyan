@@ -171,7 +171,8 @@ void View::mousePressEvent(QMouseEvent *event)
                         _brush->rect().height());
         if (event->buttons() & Qt::LeftButton) {
             // draw over tile at POS
-            handleBrushOverTile(pos);
+            //handleBrushOverTile(pos);
+            QtConcurrent::run(this, &View::handleBrushOverTile, pos, true);
         }
     }
     //else if ((event->buttons() & Qt::LeftButton) && (event->buttons() & Qt::RightButton)) { emit resetZoom(); }
@@ -1432,6 +1433,7 @@ void View::handleTileStatus()
 void View::handleBrushOverTile(QPointF pos,
                                bool draw)
 {
+    if (_scene->items().size()==0) { return; }
     QList<QGraphicsItem*> items = _scene->collidingItems(_brush);
     bool foundLayer = false;
     for (int i=0;i<items.size();++i) {
