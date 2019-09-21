@@ -94,7 +94,7 @@ void Editor::setupUI()
 
     interactButton->addAction(viewMoveAct);
     interactButton->addAction(viewDrawAct);
-    viewDrawAct->setDisabled(true);
+    //viewDrawAct->setDisabled(true);
 
     //newButton->addAction(newImageAct);
     //newButton->addAction(newLayerAct);
