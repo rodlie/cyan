@@ -88,6 +88,7 @@ private:
     //CyanRuler *_hRuler;
     //CyanRuler *_vRuler;
     bool _showGuides;
+    View::InteractiveMode _mode;
 
 signals:
 
@@ -216,6 +217,7 @@ public slots:
     void setDrawMode(bool draw);
     void setInteractiveMode(View::InteractiveMode mode,
                             bool enable = true);
+    View::InteractiveMode getInteractiveMode();
 
     void setBrushStroke(int stroke);
     void setBrushColor(const QColor &color);

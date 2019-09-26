@@ -41,6 +41,7 @@ View::View(QWidget* parent, bool setup) :
   //, _hRuler(nullptr)
   //, _vRuler(nullptr)
   , _showGuides(true)
+  , _mode(View::IteractiveMoveMode)
 {
     // setup the basics
     setAcceptDrops(true);
@@ -1151,6 +1152,7 @@ void View::setDrawMode(bool draw)
     emit setDraw(draw);
     _drawing = draw;
     _brush->setVisible(draw);
+    //_mode = View::InteractiveDrawMode;
     QPoint cursor = mapFromGlobal(QCursor::pos());
     QPointF pos = mapToScene(cursor);
     _brush->setRect(pos.x()-(_brush->rect().width()/2),
@@ -1164,6 +1166,7 @@ void View::setInteractiveMode(View::InteractiveMode mode, bool enable)
 {
     Q_UNUSED(enable)
     qDebug() << "set interactive mode" << mode << enable;
+    _mode = mode;
     switch(mode) {
     case View::InteractiveMode::IteractiveMoveMode:
         setDragMode(QGraphicsView::NoDrag);
@@ -1188,6 +1191,11 @@ void View::setInteractiveMode(View::InteractiveMode mode, bool enable)
         break;
     default:;
     }
+}
+
+View::InteractiveMode View::getInteractiveMode()
+{
+    return _mode;
 }
 
 void View::setBrushStroke(int stroke)

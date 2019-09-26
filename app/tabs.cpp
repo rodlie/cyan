@@ -140,13 +140,7 @@ void Editor::handleTabActivated(QMdiSubWindow *tab)
 
     setActionsDisabled(false);
 
-    /*if (viewDragAct->isChecked()) {
-        view->setDragMode(QGraphicsView::ScrollHandDrag);
-        view->setInteractive(false);
-    } else {
-        view->setDragMode(QGraphicsView::NoDrag);
-        view->setInteractive(true);
-    }*/
+    handleSwitchMoveTool(view->getInteractiveMode());
     updateTabTitle();
     handleBrushSize();
     viewZoomFitAct->setChecked(view->isFit());
