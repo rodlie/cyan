@@ -1281,14 +1281,27 @@ QMap<int, CyanImageFormat::CyanTile> View::setupTiles(Magick::Image image,
 {
     QMap<int, CyanImageFormat::CyanTile> result;
 
+    int wTiles = tiles;
+    int hTiles = tiles;
+
     // tile size
     int width = static_cast<int>(image.columns())/tiles;
     int height = static_cast<int>(image.rows())/tiles;
 
-    qDebug() << "SETUP TILES" << width << height << tiles;
+    float fWidth = static_cast<float>(image.columns())/tiles;
+    float fHeight = static_cast<float>(image.rows())/tiles;
+
+    if (fWidth != width) {
+        wTiles++;
+    }
+    if (fHeight != height) {
+        hTiles++;
+    }
+
+    qDebug() << "SETUP TILES" << width << height << wTiles << hTiles;
     int row = 0;
     int rowItems = 0;
-    for (int i=0;i<(tiles*tiles);++i) {
+    for (int i=0;i<(wTiles*hTiles);++i) {
         result[i].rect = new CyanTileItem(nullptr,
                                           _scene->addPixmap(QPixmap(/*width, height*/)));
 
@@ -1312,7 +1325,7 @@ QMap<int, CyanImageFormat::CyanTile> View::setupTiles(Magick::Image image,
 
         _scene->addItem(result[i].rect);
         result[i].rect->setZValue(TILE_Z);
-        if (rowItems == tiles-1) {
+        if (rowItems == wTiles-1) {
             row++;
             rowItems=0;
         } else { rowItems++; }
