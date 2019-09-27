@@ -108,6 +108,7 @@ private:
     QAction *showGuidesAct;
 
     QActionGroup *magickMemoryResourcesGroup;
+    QActionGroup *viewModeGroup;
 
     QMenu *fileMenu;
     QMenu *optMenu;
@@ -320,6 +321,9 @@ private slots:
 
     // magick resources
     void handleMagickMemoryAct(bool triggered);
+
+    //
+    void handleViewModeAct(bool triggered);
 
     // TODO
     void handleOpenImages(const QList<QUrl> &urls);

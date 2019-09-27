@@ -75,8 +75,8 @@ void Editor::setupUI()
     mainMenu->addMenu(editMenu);
     mainMenu->addMenu(colorMenu);
     mainMenu->addMenu(viewMenu);
-    mainMenu->addMenu(optMenu);
     mainMenu->addMenu(windowsMenu);
+    mainMenu->addMenu(optMenu);
     mainMenu->addMenu(helpMenu);
 
     windowsMenu->attachToMdiArea(mdi);
@@ -156,6 +156,27 @@ void Editor::setupUI()
     viewMenu->addAction(viewZoom100Act);
     viewMenu->addAction(viewZoomFitAct);
 
+#ifndef Q_OS_MAC
+    QAction *viewModeWindows = new QAction(this);
+    QAction *viewModeTabs = new QAction(this);
+
+    connect(viewModeWindows, SIGNAL(triggered(bool)), this, SLOT(handleViewModeAct(bool)));
+    connect(viewModeTabs, SIGNAL(triggered(bool)), this, SLOT(handleViewModeAct(bool)));
+
+    viewModeWindows->setText(tr("Windows"));
+    viewModeWindows->setData(QMdiArea::SubWindowView);
+    viewModeWindows->setCheckable(true);
+    viewModeTabs->setText(tr("Tabs"));
+    viewModeTabs->setData(QMdiArea::TabbedView);
+    viewModeTabs->setCheckable(true);
+
+    viewModeGroup->addAction(viewModeWindows);
+    viewModeGroup->addAction(viewModeTabs);
+
+    viewMenu->addSeparator();
+    viewMenu->addActions(viewModeGroup->actions());
+#endif
+
     guideMenu->addAction(addGuideHAct);
     guideMenu->addAction(addGuideVAct);
     guideMenu->addAction(showGuidesAct);
@@ -186,7 +207,7 @@ void Editor::setupUI()
         QAction *act = new QAction(this);
         act->setCheckable(true);
         QString value = memActs.at(i);
-        act->setText(QString("%1 GB RAM").arg(value));
+        act->setText(QString("%1 GB").arg(value));
         act->setToolTip(tr("Amount of RAM that can be used"));
         act->setData(value.toInt());
         connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
@@ -336,6 +357,7 @@ void Editor::setupWidgets()
 void Editor::setupActions()
 {
     magickMemoryResourcesGroup = new QActionGroup(this);
+    viewModeGroup = new QActionGroup(this);
 
     newImageAct = new QAction(this);
     newImageAct->setText(tr("New"));

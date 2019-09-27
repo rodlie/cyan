@@ -88,6 +88,7 @@ Editor::Editor(QWidget *parent)
     , addGuideHAct(nullptr)
     , showGuidesAct(nullptr)
     , magickMemoryResourcesGroup(nullptr)
+    , viewModeGroup(nullptr)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
@@ -218,6 +219,9 @@ void Editor::saveSettings()
                       saveGeometry());
     settings.setValue("editor_maximized",
                       isMaximized());
+#ifndef Q_OS_MAC
+    settings.setValue("mdi", mdi->viewMode());
+#endif
     /*settings.setValue("infotree_header_state",
                       imageInfoTree->header()->saveState());
     settings.setValue("infotree_header_geometry",
@@ -300,6 +304,24 @@ void Editor::loadSettings()
     if (settings.value("editor_geometry").isValid()) {
         restoreGeometry(settings.value("editor_geometry").toByteArray());
     }
+
+#ifdef Q_OS_MAC
+    mdi->setViewMode(QMdiArea::TabbedView);
+#else
+    mdi->setViewMode(static_cast<QMdiArea::ViewMode>(settings
+                                                     .value("mdi",
+                                                            QMdiArea::SubWindowView)
+                                                     .toInt()));
+    QList<QAction*> viewActions = viewModeGroup->actions();
+    for (int i=0;i<viewActions.size();++i) {
+        QAction *act = viewActions.at(i);
+        if (!act) { continue; }
+        if (static_cast<QMdiArea::ViewMode>(act->data().toInt()) == mdi->viewMode()) {
+            act->setChecked(true);
+            break;
+        }
+    }
+#endif
     /*if (settings.value("infotree_header_state").isValid()) {
         imageInfoTree->header()->restoreState(settings
                                               .value("infotree_header_state").toByteArray());
@@ -1107,6 +1129,15 @@ void Editor::handleMagickMemoryAct(bool triggered)
     if (action->data().toInt()>=2) {
         CyanCommon::setMemoryResource(action->data().toInt());
     }
+}
+
+void Editor::handleViewModeAct(bool triggered)
+{
+    qDebug() << "handle view mode change";
+    Q_UNUSED(triggered)
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    mdi->setViewMode(static_cast<QMdiArea::ViewMode>(action->data().toInt()));
 }
 
 
