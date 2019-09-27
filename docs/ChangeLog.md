@@ -20,16 +20,11 @@ Cyan 2.0 Alpha 2. This is a development release, not for end-users.
 ### Windows
 
 * Updated Qt to 5.13.1
-* Updated other third-party software to latest stable
+* Updated FFmpeg to 4.2.1
 
 ### Linux
 
-Cyan will from now on be distributed as an AppImage. The AppImage will be built against Glibc 2.23, GCC 5.5 and Qt 5.13.1.
-
-The AppImage has been tested on the following distributions:
-
-* Slackware 14.2
-* Ubuntu 16.04/18.04/19.04/19.10
+Cyan will from now on be distributed as an AppImage. The AppImage will be built against Glibc 2.23 and GCC 5.5. Cyan should be compatible with most distributions released around 2016 and beyond. Note that some installations may require additional XCB libraries installed prior to running Cyan *(Fedora 30 was missing libxkbcommon-x11 on the XFCE Live spin)*.
 
 ### macOS
 
