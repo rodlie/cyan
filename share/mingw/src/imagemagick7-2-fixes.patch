@@ -1,0 +1,71 @@
+--- a/coders/pango.c.orig	2019-03-21 00:51:59.435743360 +0100
++++ b/coders/pango.c	2019-03-21 00:52:06.195739421 +0100
+@@ -70,6 +70,9 @@
+ #include <pango/pango.h>
+ #include <pango/pangocairo.h>
+ #include <pango/pango-features.h>
++#ifndef M_PI
++#define M_PI 3.14159265358979323846264338327950288
++#endif
+ #endif
+ 
+ /*
+@@ -209,6 +212,7 @@
+   pango_cairo_font_map_set_resolution(PANGO_CAIRO_FONT_MAP(fontmap),
+     image->resolution.x == 0.0 ? DefaultSVGDensity : image->resolution.x);
+   font_options=cairo_font_options_create();
++  cairo_font_options_set_antialias(font_options,CAIRO_ANTIALIAS_GRAY);
+   option=GetImageOption(image_info,"pango:hinting");
+   if (option != (const char *) NULL)
+     {
+@@ -269,6 +273,17 @@
+       if (LocaleCompare(option,"strong") == 0)
+         pango_context_set_gravity_hint(context,PANGO_GRAVITY_HINT_STRONG);
+     }
++
++  /* Cyan win32 workaround
++   * Fixes antialias issues when using pango_win32
++  */
++  //cairo_font_options_t* options = cairo_font_options_create();
++  //cairo_font_options_set_antialias(options,CAIRO_ANTIALIAS_GRAY);
++  //cairo_font_options_set_hint_style(options,CAIRO_HINT_STYLE_FULL);
++  //cairo_font_options_set_hint_metrics(options,CAIRO_HINT_METRICS_ON);
++  //cairo_font_options_set_subpixel_order(options,CAIRO_SUBPIXEL_ORDER_BGR);
++  //pango_cairo_context_set_font_options(context, options);
++
+   /*
+     Configure layout.
+   */
+@@ -328,6 +343,16 @@
+   if ((align != PANGO_ALIGN_CENTER) &&
+       (draw_info->direction == RightToLeftDirection))
+     align=(PangoAlignment) (PANGO_ALIGN_LEFT+PANGO_ALIGN_RIGHT-align);
++  option=GetImageOption(image_info,"pango:align");
++  if (option != (const char *) NULL)
++    {
++      if (LocaleCompare(option,"center") == 0)
++        align=PANGO_ALIGN_CENTER;
++      if (LocaleCompare(option,"left") == 0)
++        align=PANGO_ALIGN_LEFT;
++      if (LocaleCompare(option,"right") == 0)
++        align=PANGO_ALIGN_RIGHT;
++    }
+   pango_layout_set_alignment(layout,align);
+   if (draw_info->font == (char *) NULL)
+     description=pango_font_description_new();
+@@ -406,6 +431,15 @@
+   cairo_set_source_rgba(cairo_image,QuantumScale*draw_info->fill.red,
+     QuantumScale*draw_info->fill.green,QuantumScale*draw_info->fill.blue,
+     QuantumScale*draw_info->fill.alpha);
++
++  option = GetImageOption(image_info, "pango:rotate");
++  if (option != (const char *)NULL) {
++	  cairo_translate(cairo_image, (int)image->rows / 2, (int)image->columns / 2);
++	  float value = StringToLong(option);
++	  cairo_rotate(cairo_image, value*(M_PI / 180.));
++	  cairo_translate(cairo_image, -(int)image->rows / 2, -(int)image->columns / 2);
++  }
++
+   pango_cairo_show_layout(cairo_image,layout);
+   cairo_destroy(cairo_image);
+   cairo_surface_destroy(surface);
