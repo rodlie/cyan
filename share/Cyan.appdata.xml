@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>Cyan</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>LGPL-2.1</project_license>
+	<name>Cyan</name>
+	<summary>Cyan Image Editor</summary>
+	<description>
+		<p>A simple general-purpose image editor.</p>
+	</description>
+	<launchable type="desktop-id">Cyan.desktop</launchable>
+	<url type="homepage">https://cyan.fxarena.net</url>
+	<screenshots>
+		<screenshot type="default">
+			<image>https://github.com/rodlie/cyan/raw/master/docs/images/screenshot.png</image>
+		</screenshot>
+	</screenshots>
+	<provides>
+		<id>Cyan.desktop</id>
+	</provides>
+</component>

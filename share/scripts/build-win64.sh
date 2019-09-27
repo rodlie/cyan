@@ -26,6 +26,7 @@
 
 CWD=`pwd`
 SNAPSHOT=${SNAPSHOT:-0}
+BTYPE=${BTYPE:-}
 MKJOBS=${MKJOBS:-4}
 MAGICK=${MAGICK:-Magick++-7.Q16HDRI}
 BUILD_DIR=${BUILD_DIR:-"${CWD}/build-win64"}
@@ -33,12 +34,17 @@ MXE=${MXE:-/opt/Cyan-mxe}
 MXE_TC=${MXE_TC:-x86_64-w64-mingw32.shared}
 CMAKE=${MXE_TC}-cmake
 STRIP=${MXE_TC}-strip
+SDK_URL="https://sourceforge.net/projects/prepress/files/sdk"
 INNO_TAR="inno6.tar.xz"
-INNO_URL="https://sourceforge.net/projects/prepress/files/sdk/${INNO_TAR}/download"
+INNO_URL="${SDK_URL}/${INNO_TAR}/download"
+LEGAL_TAR="cyan-win-legal-20190927.tar.xz"
+LEGAL_URL="${SDK_URL}/${LEGAL_TAR}/download"
+
 if [ -d "${CWD}/mxe" ]; then
     MXE="${CWD}/mxe"
 fi
 INNO="${MXE}/inno6/ISCC.exe"
+LEGAL="${MXE}/legal"
 
 if [ ! -d "${MXE}" ]; then
     echo "Please setup MXE!"
@@ -49,6 +55,11 @@ if [ ! -f "${INNO}" ]; then
     wget -O ${INNO_TAR} ${INNO_URL} || exit 1
     tar xf ${INNO_TAR} -C "${MXE}/" || exit 1
     rm -f ${INNO_TAR}
+fi
+if [ ! -d "${LEGAL}" ]; then
+    wget -O ${LEGAL_TAR} ${LEGAL_URL} || exit 1
+    tar xf ${LEGAL_TAR} -C "${MXE}/" || exit 1
+    rm -f ${LEGAL_TAR}
 fi
 
 rm -rf "${BUILD_DIR}" || true
@@ -66,7 +77,7 @@ $CMAKE \
     -DCMAKE_BUILD_TYPE=Release \
     -DMINGW_ROOT="${MXE}/usr/${MXE_TC}" \
     -DCMAKE_INSTALL_PREFIX=/ \
-    -DPROJECT_VERSION_TYPE="" \
+    -DPROJECT_VERSION_TYPE="${BTYPE}" \
     -DMAGICK_PKG_CONFIG=${MAGICK} "${CWD}" || exit 1
 make -j${MKJOBS} || exit 1
 ${STRIP} -s *.exe *.dll */*.dll
@@ -79,6 +90,7 @@ if [ "${CYAN_VERSION}" = "" ]; then
     export CYAN_VERSION="${VERSION_ORIG}"
 fi
 echo "Build installer ${ISS} ..."
+cp -a "${LEGAL}/"* docs/ || exit 1
 wine ${INNO} ${ISS} || exit 1
 ZIP_PATH="Cyan-${CYAN_VERSION}-win64"
 echo "Build archive (portable) ..."
