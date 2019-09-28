@@ -89,6 +89,9 @@ Editor::Editor(QWidget *parent)
     , showGuidesAct(nullptr)
     , magickMemoryResourcesGroup(nullptr)
     , viewModeGroup(nullptr)
+    , profileRGBGroup(nullptr)
+    , profileCMYKGroup(nullptr)
+    , profileGRAYGroup(nullptr)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
@@ -236,11 +239,11 @@ void Editor::saveSettings()
 
     settings.beginGroup(QString("color"));
     settings.setValue(QString("rgb_profile"),
-                      selectedDefaultColorProfile(colorProfileRGBMenu));
+                      selectedDefaultColorProfile(profileRGBGroup));
     settings.setValue(QString("cmyk_profile"),
-                      selectedDefaultColorProfile(colorProfileCMYKMenu));
+                      selectedDefaultColorProfile(profileCMYKGroup));
     settings.setValue(QString("gray_profile"),
-                      selectedDefaultColorProfile(colorProfileGRAYMenu));
+                      selectedDefaultColorProfile(profileGRAYGroup));
     settings.setValue(QString("blackpoint"),
                       blackPointAct->isChecked());
     settings.endGroup();
@@ -370,10 +373,11 @@ void Editor::loadSettings()
                        .arg(tr("Engine memory limit")));
 
     // setup color profiles
-    setDefaultColorProfiles(colorProfileRGBMenu);
+    /*setDefaultColorProfiles(colorProfileRGBMenu);
     setDefaultColorProfiles(colorProfileCMYKMenu);
     setDefaultColorProfiles(colorProfileGRAYMenu);
-    checkDefaultColorProfiles();
+    checkDefaultColorProfiles();*/
+    setDefaultColorProfiles();
 
     // setup color intent
     loadDefaultColorIntent();
@@ -506,13 +510,19 @@ void Editor::readImage(Magick::Blob blob,
             QString defPro;
             switch(image.colorSpace()) {
             case Magick::CMYKColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
+                defPro = selectedDefaultColorProfile(profileCMYKGroup);
                 break;
             case Magick::GRAYColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
+                defPro = selectedDefaultColorProfile(profileGRAYGroup);
                 break;
             default:
-                defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
+                defPro = selectedDefaultColorProfile(profileRGBGroup);
+            }
+            if (defPro.isEmpty()) {
+                QMessageBox::warning(this,
+                                     tr("Missing default profile"),
+                                     tr("Missing default profile for the selected color space!"));
+                return;
             }
             ConvertDialog *dialog = new ConvertDialog(this,
                                                       tr("Assign color profile"),

@@ -104,13 +104,19 @@ void Editor::addLayerToView(Magick::Image image,
             QString defPro;
             switch(image.colorSpace()) {
             case Magick::CMYKColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileCMYKMenu);
+                defPro = selectedDefaultColorProfile(profileCMYKGroup);
                 break;
             case Magick::GRAYColorspace:
-                defPro = selectedDefaultColorProfile(colorProfileGRAYMenu);
+                defPro = selectedDefaultColorProfile(profileGRAYGroup);
                 break;
             default:
-                defPro = selectedDefaultColorProfile(colorProfileRGBMenu);
+                defPro = selectedDefaultColorProfile(profileRGBGroup);
+            }
+            if (defPro.isEmpty()) {
+                QMessageBox::warning(this,
+                                     tr("Missing default profile"),
+                                     tr("Missing default profile for the selected color space!"));
+                return;
             }
             qDebug() << "has default profile?" << defPro;
             image = ColorConvert::convertColorspace(image,

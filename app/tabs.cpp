@@ -156,3 +156,4 @@ void Editor::updateTabTitle(View *view)
     qDebug() << "update canvas title" << title;
     view->setWindowTitle(title);
 }
+

@@ -25,216 +25,130 @@
 #include "CyanColorConvert.h"
 
 void Editor::populateColorProfileMenu(QMenu *menu,
+                                      QActionGroup *group,
                                       Magick::ColorspaceType colorspace)
 {
-    menu->clear();
+    if (!menu || !group) { return; }
     QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(colorspace));
     while (i.hasNext()) {
         i.next();
         QAction *action = new QAction(menu);
-        action->setIcon(QIcon::fromTheme("color-wheel"));
+        //action->setIcon(QIcon::fromTheme("color-wheel"));
         action->setText(i.key());
         action->setData(i.value());
         action->setCheckable(true);
-        menu->addAction(action);
+        group->addAction(action);
         connect(action,
                 SIGNAL(triggered()),
                 this,
-                SLOT(selectDefaultColorProfile()));
+                SLOT(handleColorProfileTriggered()));
     }
+    menu->clear();
+    menu->addActions(group->actions());
 }
 
-void Editor::selectDefaultColorProfile()
+void Editor::handleColorProfileTriggered()
 {
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
 
-    QMenu *menu = qobject_cast<QMenu*>(action->parent());
-    if (!menu) { return; }
-
-    for (int i=0;i<menu->actions().size();++i) {
-        QAction *otherAction = menu->actions().at(i);
-        if (!otherAction) { continue; }
-        otherAction->setChecked(false);
-    }
+    qDebug() << "color profile triggered!" << action->text() << action->data().toString();
     action->setChecked(true);
-
-    QSettings settings;
-    settings.beginGroup(QString("color"));
-    if (menu->objectName() == QString("colorProfileRGBMenu")) {
-        settings.setValue(QString("rgb_profile"),
-                          action->data().toString());
-    } else if (menu->objectName() == QString("colorProfileCMYKMenu")) {
-        settings.setValue(QString("cmyk_profile"),
-                          action->data().toString());
-    } else if (menu->objectName() == QString("colorProfileGRAYMenu")) {
-        settings.setValue(QString("gray_profile"),
-                          action->data().toString());
-    }
-    settings.endGroup();
-    settings.sync();
 }
 
-void Editor::setDefaultColorProfiles(QMenu *menu)
+void Editor::setDefaultColorProfiles()
 {
+    qDebug() << "set default color profiles";
     QSettings settings;
     settings.beginGroup(QString("color"));
-
-    if (menu->actions().size()==0) {
-        if (menu->objectName() == QString("colorProfileRGBMenu")) {
-            populateColorProfileMenu(menu,
-                                     Magick::sRGBColorspace);
-        } else if (menu->objectName() == QString("colorProfileCMYKMenu")) {
-            populateColorProfileMenu(menu,
-                                     Magick::CMYKColorspace);
-        } else if (menu->objectName() == QString("colorProfileGRAYMenu")) {
-            populateColorProfileMenu(menu,
-                                     Magick::GRAYColorspace);
-        }
+    if (settings.value(QString("rgb_profile")).isValid() &&
+        QFile::exists(settings.value(QString("rgb_profile")).toString()))
+    {
+        setDefaultColorProfileFromFilename(profileRGBGroup,
+                                           settings.value(QString("rgb_profile"))
+                                           .toString());
+    } else {
+        setDefaultColorProfileFromTitle(profileRGBGroup,
+                                        QString("sRGB (built-in)"));
+    }
+    if (!profileRGBGroup->checkedAction()) {
+        qDebug() << "RGB PROFILE FALLBACK! (first available)";
+        profileRGBGroup->actions().at(0)->setChecked(true);
     }
 
-    if (menu->objectName() == QString("colorProfileRGBMenu")) {
-        if (settings.value(QString("rgb_profile")).isValid()) {
-            setDefaultColorProfileFromFilename(menu,
-                                               settings.value(QString("rgb_profile"))
-                                               .toString());
-        } else {
-            setDefaultColorProfileFromTitle(menu,
-                                            QString("sRGB (built-in)"));
-        }
-    } else if (menu->objectName() == QString("colorProfileCMYKMenu")) {
-        if (settings.value(QString("cmyk_profile")).isValid()) {
-            setDefaultColorProfileFromFilename(menu,
-                                               settings.value(QString("cmyk_profile"))
-                                               .toString());
-        } else {
-            setDefaultColorProfileFromTitle(menu,
-                                            QString("ISO Coated v2 (built-in)"));
-        }
-    } else if (menu->objectName() == QString("colorProfileGRAYMenu")) {
-        if (settings.value(QString("gray_profile")).isValid()) {
-            setDefaultColorProfileFromFilename(menu,
-                                               settings.value(QString("gray_profile"))
-                                               .toString());
-        } else {
-            setDefaultColorProfileFromTitle(menu,
-                                            QString("ISO Coated v2 - GREY 1c - (built-in)"));
-        }
+    if (settings.value(QString("cmyk_profile")).isValid() &&
+        QFile::exists(settings.value(QString("cmyk_profile")).toString()))
+    {
+        setDefaultColorProfileFromFilename(profileCMYKGroup,
+                                           settings.value(QString("cmyk_profile"))
+                                           .toString());
+    } else {
+        setDefaultColorProfileFromTitle(profileCMYKGroup,
+                                        QString("ISO Coated v2 (built-in)"));
     }
+    if (!profileCMYKGroup->checkedAction()) {
+        qDebug() << "CMYK PROFILE FALLBACK! (first available)";
+        profileCMYKGroup->actions().at(0)->setChecked(true);
+    }
+
+    if (settings.value(QString("gray_profile")).isValid() &&
+        QFile::exists(settings.value(QString("gray_profile")).toString()))
+    {
+        setDefaultColorProfileFromFilename(profileGRAYGroup,
+                                           settings.value(QString("gray_profile"))
+                                           .toString());
+    } else {
+        setDefaultColorProfileFromTitle(profileGRAYGroup,
+                                        QString("ISO Coated v2 - GREY 1c - (built-in)"));
+    }
+    if (!profileGRAYGroup->checkedAction()) {
+        qDebug() << "GRAY PROFILE FALLBACK! (first available)";
+        profileGRAYGroup->actions().at(0)->setChecked(true);
+    }
+
     settings.endGroup();
 }
 
-void Editor::setDefaultColorProfileFromFilename(QMenu *menu,
+void Editor::setDefaultColorProfileFromFilename(QActionGroup *group,
                                                 const QString &filename)
 {
-    for (int i=0;i<menu->actions().size();++i) {
-        QAction *action = menu->actions().at(i);
+    if (!group) { return; }
+    for (int i=0;i<group->actions().size();++i) {
+        QAction *action = group->actions().at(i);
         if (!action) { continue; }
         if (action->data().toString() == filename) {
             action->setChecked(true);
-        } else { action->setChecked(false); }
+        }
     }
 }
 
-void Editor::setDefaultColorProfileFromTitle(QMenu *menu,
+void Editor::setDefaultColorProfileFromTitle(QActionGroup *group,
                                              const QString &title)
 {
-    for (int i=0;i<menu->actions().size();++i) {
-        QAction *action = menu->actions().at(i);
+    if (!group) { return; }
+    for (int i=0;i<group->actions().size();++i) {
+        QAction *action = group->actions().at(i);
         if (!action) { continue; }
         if (action->text() == title) {
             action->setChecked(true);
-        } else { action->setChecked(false); }
-    }
-}
-
-void Editor::checkDefaultColorProfiles()
-{
-    bool hasRGBProfiles = colorProfileRGBMenu->actions().size()>0?true:false;
-    bool hasCMYKProfiles = colorProfileCMYKMenu->actions().size()>0?true:false;
-    bool hasGRAYProfiles = colorProfileGRAYMenu->actions().size()>0?true:false;
-    bool hasRGBDefaultProfile = false;
-    bool hasCMYKDefaultProfile = false;
-    bool hasGRAYDefaultProfile = false;
-
-    if (hasRGBProfiles) {
-        for (int i=0;i<colorProfileRGBMenu->actions().size();++i) {
-            QAction *action = colorProfileRGBMenu->actions().at(i);
-            if (!action) { continue; }
-            if (action->isChecked()) {
-                hasRGBDefaultProfile = true;
-                break;
-            }
-        }
-        if (!hasRGBDefaultProfile) {
-            qWarning() << "NO RGB PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
-            colorProfileRGBMenu->actions().at(0)->setChecked(true);
-            QString defaultProfile = selectedDefaultColorProfile(colorProfileRGBMenu);
-            if (!defaultProfile.isEmpty()) {
-                setDefaultColorProfileFromFilename(colorProfileRGBMenu,
-                                                   defaultProfile);
-            }
-        }
-    }
-    if (hasCMYKProfiles) {
-        for (int i=0;i<colorProfileCMYKMenu->actions().size();++i) {
-            QAction *action = colorProfileCMYKMenu->actions().at(i);
-            if (!action) { continue; }
-            if (action->isChecked()) {
-                hasCMYKDefaultProfile = true;
-                break;
-            }
-        }
-        if (!hasCMYKDefaultProfile) {
-            qWarning() << "NO CMYK PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
-            colorProfileCMYKMenu->actions().at(0)->setChecked(true);
-            QString defaultProfile = selectedDefaultColorProfile(colorProfileCMYKMenu);
-            if (!defaultProfile.isEmpty()) {
-                setDefaultColorProfileFromFilename(colorProfileCMYKMenu,
-                                                   defaultProfile);
-            }
-        }
-    }
-    if (hasGRAYProfiles) {
-        for (int i=0;i<colorProfileGRAYMenu->actions().size();++i) {
-            QAction *action = colorProfileGRAYMenu->actions().at(i);
-            if (!action) { continue; }
-            if (action->isChecked()) {
-                hasGRAYDefaultProfile = true;
-                break;
-            }
-        }
-        if (!hasGRAYDefaultProfile) {
-            qWarning() << "NO GRAY PROFILE SELECTED! SETTING THE FIRST AVAILABLE";
-            colorProfileGRAYMenu->actions().at(0)->setChecked(true);
-            QString defaultProfile = selectedDefaultColorProfile(colorProfileGRAYMenu);
-            if (!defaultProfile.isEmpty()) {
-                setDefaultColorProfileFromFilename(colorProfileCMYKMenu,
-                                                   defaultProfile);
-            }
         }
     }
 }
 
-const QString Editor::selectedDefaultColorProfile(QMenu *menu)
+const QString Editor::selectedDefaultColorProfile(QActionGroup *group)
 {
-    for (int i=0;i<menu->actions().size();++i) {
-        QAction *action = menu->actions().at(i);
-        if (!action) { continue; }
-        if (action->isChecked()) { return action->data().toString(); }
-    }
-    return QString();
+    if (!group) { return QString(); }
+    if (!group->checkedAction()) { return QString(); }
+    return group->checkedAction()->data().toString();
 }
 
-Magick::Blob Editor::selectedDefaultColorProfileData(QMenu *menu)
+Magick::Blob Editor::selectedDefaultColorProfileData(QActionGroup *group)
 {
-    QString filename;
-    for (int i=0;i<menu->actions().size();++i) {
-        QAction *action = menu->actions().at(i);
-        if (!action) { continue; }
-        if (action->isChecked()) { filename =  action->data().toString(); }
-    }
-    if (!filename.isEmpty()) {
+    if (!group) { return Magick::Blob(); }
+    if (!group->checkedAction()) { return Magick::Blob(); }
+
+    QString filename = group->checkedAction()->data().toString();
+    if (QFile::exists(filename)) {
         try {
             Magick::Image image;
             image.read(filename.toStdString());
@@ -395,13 +309,19 @@ void Editor::handleColorConvert(bool ignoreColor,
     QString profile;
     switch(colorspace) {
     case Magick::CMYKColorspace:
-        profile = selectedDefaultColorProfile(colorProfileCMYKMenu);
+        profile = selectedDefaultColorProfile(profileCMYKGroup);
         break;
     case Magick::GRAYColorspace:
-        profile = selectedDefaultColorProfile(colorProfileGRAYMenu);
+        profile = selectedDefaultColorProfile(profileGRAYGroup);
         break;
     default:
-        profile = selectedDefaultColorProfile(colorProfileRGBMenu);
+        profile = selectedDefaultColorProfile(profileRGBGroup);
+    }
+    if (profile.isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("Missing default profile"),
+                             tr("Missing default profile for the selected color space!"));
+        return;
     }
     ConvertDialog *dialog = new ConvertDialog(this,
                                               title,
@@ -436,6 +356,7 @@ void Editor::hasColorProfiles()
     int rgbs = CyanCommon::getColorProfiles(Magick::sRGBColorspace).size();
     int cmyks = CyanCommon::getColorProfiles(Magick::CMYKColorspace).size();
     int grays = CyanCommon::getColorProfiles(Magick::GRAYColorspace).size();
+
     if (rgbs<1 || cmyks<1 || grays<1) {
         QMessageBox::warning(this,
                              tr("Missing color profiles"),

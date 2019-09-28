@@ -110,6 +110,10 @@ private:
     QActionGroup *magickMemoryResourcesGroup;
     QActionGroup *viewModeGroup;
 
+    QActionGroup *profileRGBGroup;
+    QActionGroup *profileCMYKGroup;
+    QActionGroup *profileGRAYGroup;
+
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
@@ -222,16 +226,17 @@ private slots:
 
     // color
     void populateColorProfileMenu(QMenu *menu,
+                                  QActionGroup *group,
                                   Magick::ColorspaceType colorspace);
-    void selectDefaultColorProfile();
-    void setDefaultColorProfiles(QMenu *menu);
-    void setDefaultColorProfileFromFilename(QMenu *menu,
+    void handleColorProfileTriggered();
+    void setDefaultColorProfiles();
+    void setDefaultColorProfileFromFilename(QActionGroup *group,
                                             const QString &filename);
-    void setDefaultColorProfileFromTitle(QMenu *menu,
+    void setDefaultColorProfileFromTitle(QActionGroup *group,
                                          const QString &title);
-    void checkDefaultColorProfiles();
-    const QString selectedDefaultColorProfile(QMenu *menu);
-    Magick::Blob selectedDefaultColorProfileData(QMenu *menu);
+    const QString selectedDefaultColorProfile(QActionGroup *group);
+    Magick::Blob selectedDefaultColorProfileData(QActionGroup *group);
+
     void populateColorIntentMenu();
     void setDefaultColorIntent();
     void loadDefaultColorIntent();

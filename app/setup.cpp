@@ -184,12 +184,16 @@ void Editor::setupUI()
     viewMoveAct->setChecked(true);
     interactButton->setDefaultAction(viewMoveAct);
 
-    populateColorProfileMenu(colorProfileRGBMenu,
+    populateColorProfileMenu(colorProfileRGBMenu,profileRGBGroup, Magick::sRGBColorspace);
+    populateColorProfileMenu(colorProfileCMYKMenu,profileCMYKGroup, Magick::CMYKColorspace);
+    populateColorProfileMenu(colorProfileGRAYMenu,profileGRAYGroup, Magick::GRAYColorspace);
+    /*populateColorProfileMenu(colorProfileRGBMenu,
                              Magick::sRGBColorspace);
     populateColorProfileMenu(colorProfileCMYKMenu,
                              Magick::CMYKColorspace);
     populateColorProfileMenu(colorProfileGRAYMenu,
-                             Magick::GRAYColorspace);
+                             Magick::GRAYColorspace);*/
+
     populateColorIntentMenu();
 
     setActionsDisabled(true);
@@ -358,6 +362,10 @@ void Editor::setupActions()
 {
     magickMemoryResourcesGroup = new QActionGroup(this);
     viewModeGroup = new QActionGroup(this);
+
+    profileRGBGroup = new QActionGroup(this);
+    profileCMYKGroup = new QActionGroup(this);
+    profileGRAYGroup = new QActionGroup(this);
 
     newImageAct = new QAction(this);
     newImageAct->setText(tr("New"));
