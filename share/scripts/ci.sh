@@ -68,9 +68,9 @@ if [ "${OS}" = "Linux" ]; then
     #    cp *.exe *.zip *.7z "${DEPLOY}/"
     #fi
 
-    cp "$CWD/"*.deb "${DEPLOY}/"
-    echo "==> Deploy result:"
-    tree -lah "${DEPLOY}"
+    #cp "$CWD/"*.deb "${DEPLOY}/"
+    #echo "==> Deploy result:"
+    #tree -lah "${DEPLOY}"
 fi
 
 #if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then
