@@ -40,6 +40,11 @@ option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
+option(LINUX_DEPLOY "Linux deploy" OFF)
+
+if(${LINUX_DEPLOY})
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
 
 set(
     HEADERS_API
