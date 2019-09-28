@@ -51,14 +51,12 @@ void Editor::handleColorProfileTriggered()
 {
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
-
-    qDebug() << "color profile triggered!" << action->text() << action->data().toString();
     action->setChecked(true);
+    saveColorProfileSettings();
 }
 
 void Editor::setDefaultColorProfiles()
 {
-    qDebug() << "set default color profiles";
     QSettings settings;
     settings.beginGroup(QString("color"));
     if (settings.value(QString("rgb_profile")).isValid() &&
@@ -164,12 +162,12 @@ Magick::Blob Editor::selectedDefaultColorProfileData(QActionGroup *group)
 
 void Editor::populateColorIntentMenu()
 {
-    QIcon intentIcon = QIcon::fromTheme("video-display");
+    //QIcon intentIcon = QIcon::fromTheme("video-display");
     QAction *action1 = new QAction(colorIntentMenu);
     action1->setText(tr("Undefined"));
     action1->setData(CyanCommon::UndefinedRenderingIntent);
     action1->setCheckable(true);
-    action1->setIcon(intentIcon);
+    //action1->setIcon(intentIcon);
     connect(action1,
             SIGNAL(triggered()),
             this,
@@ -179,7 +177,7 @@ void Editor::populateColorIntentMenu()
     action2->setText(tr("Saturation"));
     action2->setData(CyanCommon::SaturationRenderingIntent);
     action2->setCheckable(true);
-    action2->setIcon(intentIcon);
+    //action2->setIcon(intentIcon);
     connect(action2,
             SIGNAL(triggered()),
             this,
@@ -189,7 +187,7 @@ void Editor::populateColorIntentMenu()
     action3->setText(tr("Perceptual"));
     action3->setData(CyanCommon::PerceptualRenderingIntent);
     action3->setCheckable(true);
-    action3->setIcon(intentIcon);
+    //action3->setIcon(intentIcon);
     connect(action3,
             SIGNAL(triggered()),
             this,
@@ -199,7 +197,7 @@ void Editor::populateColorIntentMenu()
     action4->setText(tr("Absolute"));
     action4->setData(CyanCommon::AbsoluteRenderingIntent);
     action4->setCheckable(true);
-    action4->setIcon(intentIcon);
+    //action4->setIcon(intentIcon);
     connect(action4,
             SIGNAL(triggered()),
             this,
@@ -209,7 +207,7 @@ void Editor::populateColorIntentMenu()
     action5->setText(tr("Relative"));
     action5->setData(CyanCommon::RelativeRenderingIntent);
     action5->setCheckable(true);
-    action5->setIcon(intentIcon);
+    //action5->setIcon(intentIcon);
     connect(action5,
             SIGNAL(triggered()),
             this,
@@ -380,4 +378,34 @@ void Editor::handleColorChanged(const QColor &color)
         if (!view) { continue; }
         view->setBrushColor(color);
     }
+}
+
+void Editor::saveColorProfileSettings()
+{
+    QSettings settings;
+    bool doSave = false;
+    settings.beginGroup(QString("color"));
+    if (settings.value(QString("rgb_profile")).toString() !=
+        selectedDefaultColorProfile(profileRGBGroup))
+    {
+        settings.setValue(QString("rgb_profile"),
+                          selectedDefaultColorProfile(profileRGBGroup));
+        doSave = true;
+    }
+    if (settings.value(QString("cmyk_profile")).toString() !=
+        selectedDefaultColorProfile(profileCMYKGroup))
+    {
+        settings.setValue(QString("cmyk_profile"),
+                          selectedDefaultColorProfile(profileCMYKGroup));
+        doSave = true;
+    }
+    if (settings.value(QString("gray_profile")).toString() !=
+        selectedDefaultColorProfile(profileGRAYGroup))
+    {
+        settings.setValue(QString("gray_profile"),
+                          selectedDefaultColorProfile(profileGRAYGroup));
+        doSave = true;
+    }
+    settings.endGroup();
+    if (doSave) { settings.sync(); }
 }

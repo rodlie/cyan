@@ -121,7 +121,7 @@ QtWindowListMenu::QtWindowListMenu(QWidget *parent)
     : QMenu(parent)
 {
     mdi = nullptr;
-    setTitle(tr("Images"));
+    setTitle(tr("Windows"));
     connect(this, SIGNAL(aboutToShow()), SLOT(syncWithMdiArea()));
     stdGroup = new QActionGroup(this);
     stdGroup->setExclusive(false);

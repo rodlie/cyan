@@ -628,7 +628,7 @@ void Editor::setupIcons()
     colorProfileCMYKMenu->setIcon(colorWheelIcon);
     colorProfileGRAYMenu->setIcon(colorWheelIcon);
     colorIntentMenu->setIcon(QIcon::fromTheme("video-display"));
-    blackPointAct->setIcon(colorWheelIcon);
+    //blackPointAct->setIcon(colorWheelIcon);
 
     QIcon helpIcon = QIcon::fromTheme("help-about");
 

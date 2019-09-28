@@ -252,9 +252,9 @@ private slots:
                             const QString &title = tr("Convert"));
     void hasColorProfiles();
     void handleColorChanged(const QColor &color);
+    void saveColorProfileSettings();
 
     //
-
     void saveSettings();
     void saveSettingsLastOpenDir(const QString &dir);
     void saveSettingsLastSaveDir(const QString &dir);
