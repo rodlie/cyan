@@ -31,17 +31,14 @@ class CYANSHARED_EXPORT CyanTileItem: public QObject, public QGraphicsRectItem
   Q_OBJECT
 
 public:
-
     CyanTileItem(QGraphicsItem *parent = nullptr,
                  QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem());
     QMap<int, bool> layers;
 
 private:
-
     QGraphicsPixmapItem *_pixmap;
 
 public slots:
-
     void setPixmapItem(QGraphicsPixmapItem *pixmapItem);
     QGraphicsPixmapItem* getPixmapItem();
     void setPixmap(const QPixmap &pixmap);

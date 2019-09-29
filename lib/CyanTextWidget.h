@@ -33,16 +33,13 @@ class CYANSHARED_EXPORT CyanTextWidget : public QWidget
     Q_OBJECT
 
 public:
-
     explicit CyanTextWidget(QWidget *parent = nullptr);
     ~CyanTextWidget();
 
 signals:
-
     void textChanged();
 
 public slots:
-
     void setText(const QString &text);
     const QString getText();
     void setTextAlign(int align);
@@ -51,7 +48,6 @@ public slots:
     int getTextRotate();
 
 private:
-
     QTextEdit *htmlEditor;
     QPlainTextEdit *textEditor;
     QPushButton *textBoldButton;
@@ -68,7 +64,6 @@ private:
     void alignmentChanged(Qt::Alignment a);
 
 private slots:
-
     void setup();
     void currentCharFormatChanged(const QTextCharFormat &format);
     void cursorPositionChanged();

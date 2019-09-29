@@ -33,12 +33,10 @@ class CYANSHARED_EXPORT LayerTree : public QTreeWidget
     Q_OBJECT
 
 public:
-
     explicit LayerTree(QWidget *parent = nullptr);
     ~LayerTree();
 
 signals:
-
     void selectedLayer(int id);
     void moveLayerEvent(QKeyEvent *e);
     void layerVisibilityChanged(int id,
@@ -47,7 +45,6 @@ signals:
                            const QString &label);
     void layerLockChanged(int id,
                           bool lock);
-
     void actNewImage();
     void actRemove();
     void actDuplicate();
@@ -56,11 +53,9 @@ signals:
 
 
 private:
-
     QString _canvasID;
     int lastLayerSelected;
     int _maxLayersOrder;
-
     QAction *newImageLayerAct;
     QAction *removeLayerAct;
     QAction *moveUpLayerAct;
@@ -68,20 +63,17 @@ private:
     QAction *duplicateLayerAct;
 
 public slots:
-
     void setCanvasID(const QString &id);
     const QString getCanvasID();
     void handleTabActivated(QMdiSubWindow *tab, bool force = false);
 
 private slots:
-
     void populateTree(View *view);
     void handleItemActivated(QTreeWidgetItem *item,
                              int col);
     void handleItemChanged(QTreeWidgetItem *item,
                            int col);
     void handleContextMenu(const QPoint &pos);
-
     void handleNewImageAct(bool triggered);
     void handleRemoveLayerAct(bool triggered);
     void handleMoveUpLayerAct(bool triggered);
@@ -89,7 +81,6 @@ private slots:
     void handleDuplicateLayerAct(bool triggered);
 
 protected:
-
     void keyPressEvent(QKeyEvent *e);
 };
 

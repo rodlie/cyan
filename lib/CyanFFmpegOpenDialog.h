@@ -47,7 +47,6 @@ class videoDialog : public QDialog
     Q_OBJECT
 
 public:
-
     videoDialog(QWidget *parent = nullptr,
                 int max = 0,
                 const QString &filename = QString(),
@@ -69,7 +68,6 @@ private:
     QSpinBox *_to;
 
 private slots:
-
     void handleSlider(int pos);
     void handleSpin(int pos);
     void handleOk();

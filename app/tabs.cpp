@@ -93,7 +93,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
         return new View(this);
     }*/
 
-    /*Q*/MdiSubWindow *tab = new /*Q*/MdiSubWindow(mdi);
+    MdiSubWindow *tab = new MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
     View *view = new View(tab);
@@ -124,7 +124,6 @@ void Editor::newTab(Magick::Image image, QSize geo)
     updateTabTitle(view);
     handleTabActivated(tab);
     setCurrentZoom();
-    //return view;
 }
 
 void Editor::handleTabActivated(QMdiSubWindow *tab)

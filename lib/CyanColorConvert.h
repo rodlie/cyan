@@ -31,9 +31,7 @@ class CYANSHARED_EXPORT ColorConvert: public QObject
     Q_OBJECT
 
 public:
-
     ColorConvert(QObject *parent = nullptr);
-
     static Magick::Image convertColorspace(Magick::Image image,
                                            Magick::Blob input,
                                            Magick::Blob output,

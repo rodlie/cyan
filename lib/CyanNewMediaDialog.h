@@ -35,7 +35,6 @@ class NewMediaDialog : public QDialog
     Q_OBJECT
 
 public:
-
     NewMediaDialog(QWidget *parent = nullptr,
                    QString title = QObject::tr("New Image"),
                    CyanCommon::newDialogType dialogType = CyanCommon::newImageDialogType,
@@ -45,11 +44,9 @@ public:
     ~NewMediaDialog();
 
 public slots:
-
     Magick::Image getImage();
 
 private:
-
     CyanCommon::newDialogType _type;
     QSpinBox *_width;
     QSpinBox *_height;
@@ -67,7 +64,6 @@ private:
     Magick::Blob _forcedProfile;
 
 private slots:
-
     void handleOk();
     void handleCancel();
     void createImage(QSize geo = QSize(1024, 1024),

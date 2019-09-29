@@ -24,7 +24,6 @@
 #include <QPluginLoader>
 #include <QApplication>
 #include <QToolButton>
-//#include <QMdiSubWindow>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>
@@ -63,10 +62,6 @@ Editor::Editor(QWidget *parent)
     , saveImageAct(nullptr)
     , saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
-    //, newLayerAct(nullptr)
-    //, newTextLayerAct(nullptr)
-    //, openLayerAct(nullptr)
-    //, saveLayerAct(nullptr)
     , quitAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
@@ -95,14 +90,12 @@ Editor::Editor(QWidget *parent)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
-//    , newMenu(nullptr)
     , saveMenu(nullptr)
     , colorMenu(nullptr)
     , colorProfileRGBMenu(nullptr)
     , colorProfileCMYKMenu(nullptr)
     , colorProfileGRAYMenu(nullptr)
     , colorIntentMenu(nullptr)
-    //, layerMenu(nullptr)
     , viewMenu(nullptr)
     , guideMenu(nullptr)
     , memoryMenu(nullptr)
@@ -112,18 +105,8 @@ Editor::Editor(QWidget *parent)
     , openButton(nullptr)
     , saveButton(nullptr)
     , interactButton(nullptr)
-    //, zoomButton(nullptr)
     , layersWidget(nullptr)
-    //, layersDock(nullptr)
-    //, textWidget(nullptr)
-    //, brushSize(nullptr)
-    //, brushDock(nullptr)
-    //, textDock(nullptr)
-    //, colorDock(nullptr)
-    //, colorTriangle(nullptr)
     , colorPicker(nullptr)
-    //, textButton(nullptr)
-    //, convertButton(nullptr)
     , currentZoomStatusIcon(nullptr)
     , currentZoomStatusLabel(nullptr)
     , mainSplitter(nullptr)
@@ -222,13 +205,11 @@ void Editor::saveSettings()
                       saveGeometry());
     settings.setValue("editor_maximized",
                       isMaximized());
+
 #ifndef Q_OS_MAC
     settings.setValue("mdi", mdi->viewMode());
 #endif
-    /*settings.setValue("infotree_header_state",
-                      imageInfoTree->header()->saveState());
-    settings.setValue("infotree_header_geometry",
-                      imageInfoTree->header()->saveGeometry());*/
+
     settings.setValue("mainSplitter_state", mainSplitter->saveState());
     settings.setValue("mainSplitter_geometry", mainSplitter->saveGeometry());
     settings.setValue("leftSplitter_state", leftSplitter->saveState());
@@ -325,14 +306,6 @@ void Editor::loadSettings()
         }
     }
 #endif
-    /*if (settings.value("infotree_header_state").isValid()) {
-        imageInfoTree->header()->restoreState(settings
-                                              .value("infotree_header_state").toByteArray());
-    }
-    if (settings.value("infotree_header_geometry").isValid()) {
-        imageInfoTree->header()->restoreGeometry(settings
-                                                 .value("infotree_header_geometry").toByteArray());
-    }*/
 
     if (settings.value("mainSplitter_state").isValid()) {
         mainSplitter->restoreState(settings.value("mainSplitter_state").toByteArray());
@@ -353,15 +326,6 @@ void Editor::loadSettings()
         rightSplitter->restoreGeometry(settings.value("rightSplitter_geometry").toByteArray());
     }
 
-    /*
-    settings.setValue("mainSplitter_state", mainSplitter->saveState());
-    settings.setValue("mainSplitter_geometry", mainSplitter->saveGeometry());
-    settings.setValue("leftSplitter_state", leftSplitter->saveState());
-    settings.setValue("leftSplitter_geometry", leftSplitter->saveGeometry());
-    settings.setValue("rightSplitter_state", rightSplitter->saveState());
-    settings.setValue("rightSplitter_geometry", rightSplitter->saveGeometry());
-    */
-
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
 
@@ -373,10 +337,6 @@ void Editor::loadSettings()
                        .arg(tr("Engine memory limit")));
 
     // setup color profiles
-    /*setDefaultColorProfiles(colorProfileRGBMenu);
-    setDefaultColorProfiles(colorProfileCMYKMenu);
-    setDefaultColorProfiles(colorProfileGRAYMenu);
-    checkDefaultColorProfiles();*/
     setDefaultColorProfiles();
 
     // setup color intent
@@ -896,24 +856,12 @@ void Editor::handleZoomFitActionTriggered(bool triggered)
     view->setFit(viewZoomFitAct->isChecked());
 }
 
-/*void Editor::handleNewImage(Magick::Image image)
-{
-    if (image.columns()>0 &&
-        image.rows()>0) { newTab(image); }
-}*/
-
-
-
-
-
 void Editor::connectView(View *view)
 {
     if (!view) { return; }
     qDebug() << "connect new view";
     //connect(view, SIGNAL(selectedLayer(int)), this, SLOT(handleLayerSelected(int)));
     connect(view, SIGNAL(selectedLayer(int)), layersWidget, SLOT(setCurrentLayer(int)));
-
-
     connect(view, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(view, SIGNAL(statusMessage(QString)), this, SLOT(handleStatus(QString)));
     connect(view, SIGNAL(warningMessage(QString)), this, SLOT(handleStatus(QString)));
@@ -1076,10 +1024,7 @@ void Editor::setActionsDisabled(bool disabled)
 {
     saveImageAct->setDisabled(disabled);
     saveProjectAsAct->setDisabled(disabled);
-    //newLayerAct->setDisabled(disabled);
-    //openLayerAct->setDisabled(disabled);
     interactButton->setDisabled(disabled);
-    //zoomButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
     layersWidget->setDisabled(disabled);
     convertCMYKAct->setDisabled(disabled);
@@ -1150,24 +1095,6 @@ void Editor::handleViewModeAct(bool triggered)
     mdi->setViewMode(static_cast<QMdiArea::ViewMode>(action->data().toInt()));
 }
 
-
-/*void Editor::handleSetDragMode(bool triggered)
-{
-    qDebug() << "set drag mode" << triggered;
-    if (!triggered) {
-        viewDragAct->setChecked(true);
-        return;
-    }
-    handleSwitchMoveTool(View::InteractiveDragMode);
-}*/
-
-
-
-
-
-
-
-
 void Editor::handleOpenImages(const QList<QUrl> &urls)
 {
     qDebug() << "open images" << urls;
@@ -1196,12 +1123,6 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
         mdi->tileSubWindows();
     }
 }
-
-
-
-
-
-
 
 void Editor::handleOpenLayers(const QList<QUrl> &urls)
 {
@@ -1277,8 +1198,4 @@ void Editor::closeEvent(QCloseEvent *e)
         else { e->accept(); }
     } else { e->accept(); }
 }
-
-
-
-
 

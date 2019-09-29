@@ -51,7 +51,6 @@ class CYANSHARED_EXPORT View : public QGraphicsView
     Q_OBJECT
 
 public:
-
     enum InteractiveMode
     {
         InteractiveNoMode,
@@ -72,7 +71,6 @@ public:
     bool fit;
 
 private:
-
     QString _parentCanvas;
     int _parentLayer;
     CyanImageFormat::CyanCanvas _canvas;
@@ -91,45 +89,33 @@ private:
     View::InteractiveMode _mode;
 
 signals:
-
     void zoomChanged();
     void resetZoom();
     void myZoom(double scaleX,
                 double scaleY);
     void myFit(bool value);
-
     void updatedLayers();
     void addedLayer(int layer);
     void selectedLayer(int layer);
-
     void errorMessage(QString message);
     void warningMessage(QString message);
     void statusMessage(QString message);
-
     void viewClosed();
-
     void lockLayers(bool lock);
     void lockLayer(LayerItem *layer,
                    bool lock);
-
     void isDrag(bool drag);
     void switchMoveTool();
-
     void setDraw(bool draw);
-
     void updateBrushSize(bool larger);
     void updatedBrushStroke(int stroke);
-
     void updateTilePixmap(int id,
                           const QPixmap &pix);
-
     void openImages(QList<QUrl> urls);
     void openLayers(QList<QUrl> urls);
-
     void canvasStatusChanged();
 
 public slots:
-
     void doZoom(double scaleX,
                 double scaleY);
     void setFit(bool value);
@@ -147,45 +133,34 @@ public slots:
                   QSize pos,
                   bool updateView = true,
                   bool isLocked = false);
-
     void duplicateLayer(int id);
-
     CyanImageFormat::CyanLayer getLayerFromOrder(int order);
     int getLastLayerID();
     int getLastLayerOrder();
-
     void clearLayers();
     Magick::Image getCanvas();
     QSize getCanvasSize();
     CyanImageFormat::CyanCanvas getCanvasProject();
-
     void setLayerVisibility(int layer,
                             bool layerIsVisible);
     bool getLayerVisibility(int layer);
-
     void setLayerLock(int layer,
                       bool layerIsLocked);
     bool getLayerLock(int layer);
-
     void setLayerComposite(int layer,
                            Magick::CompositeOperator composite);
-
     Magick::CompositeOperator getLayerComposite(int layer);
     int getLayerCount();
-
     QList<QPair<int, int> > getSortedLayers();
     int getLayerOrder(int layer);
     int getLayerMinOrder();
     int getLayerMaxOrder();
-
     void moveLayerItemDown(int id);
     void moveLayerItemUp(int id);
-
     int getLayerItemIndex(int id);
     LayerItem* getLayerItemFromId(int id);
     LayerItem* getLayerItemUnderId(int id);
     LayerItem* getLayerItemOverId(int id);
-
     CyanImageFormat::CyanLayer getLayer(int layer);
     void setLayer(int layer,
                   Magick::Image image);
@@ -194,108 +169,80 @@ public slots:
     void setLayersFromCanvas(CyanImageFormat::CyanCanvas canvas);
 
     void updateCanvas(CyanImageFormat::CyanCanvas canvas);
-
     void setLayerOrder(int layer, int order);
     QSize getLayerOffset(int layer);
     void setLayerOffset(int layer,
                         QSize offset);
-
     QString getLayerName(int layer);
     void setLayerName(int layer,
                       QString name);
-
     double getLayerOpacity(int layer);
     void setLayerOpacity(int layer,
                          double value,
                          bool update = true);
-
     void removeLayer(int layer);
     void setLockLayers(bool lock);
-
     void setCanvasSpecsFromImage(Magick::Image image);
-
     void setDrawMode(bool draw);
     void setInteractiveMode(View::InteractiveMode mode,
                             bool enable = true);
     View::InteractiveMode getInteractiveMode();
-
     void setBrushStroke(int stroke);
     void setBrushColor(const QColor &color);
-
     void setupCanvas(int width = 1024,
                      int height = 1024,
                      int depth = 8,
                      Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
-
     bool supportsLayers();
     void enableLayers(bool enable);
-
     const QString getCanvasID();
-
     void refreshTiles();
-
     void setSelectedLayer(int id);
-
     void moveLayerEvent(QKeyEvent *e);
-
     void setLayerText(int id,
                       const QString &text,
                       int align = 0,
                       int rotate = 0,
                       bool update = true);
-
     qreal getZoomValue();
-
     bool isDirty();
     void setDirty(bool dirty);
-
     void addGuide(bool isHorizontal = false,
                   QPointF pos = QPointF(0,0));
     void showGuides(bool visibility);
 
 private slots:
-
     void handleLayerMoving(QPointF pos,
                            int id,
                            bool forceRender = false);
     void handleLayerMoved(QPointF pos,
                           int id);
     void handleLayerSelected(int id);
-
     int getParentLayer();
     const QString getParentCanvas();
-
     void initTiles(int tiles = 8);
-
     void clearScene();
     void clearTiles();
     QMap<int, CyanImageFormat::CyanTile> setupTiles(Magick::Image image,
                                                     int tiles = 8);
-
     void handleLayerOverTiles(LayerItem *layerItem,
                               bool ignoreRunning = false);
     void handleLayerOverTiles(int layer);
     void handleTileStatus();
     void handleBrushOverTile(QPointF pos,
                              bool draw = true);
-
     void renderTile(int tile,
                     Magick::Image canvas,
                     QMap<int, CyanImageFormat::CyanLayer> layers,
                     Magick::Geometry crop = Magick::Geometry());
-
     void paintCanvasBackground();
-
     void moveSelectedLayer(MoveLayer gravity,
                            int skip = 1);
-
     void handleCanvasChanged();
-
     void handleZoomChanged();
     void handleGuideMoved();
 
 protected:
-
     void wheelEvent(QWheelEvent* event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);

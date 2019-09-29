@@ -45,6 +45,10 @@ if [ ! -d "$CWD/3rdparty" ]; then
   mkdir -p "$CWD/3rdparty" || exit 1
 fi
 
+if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
+  STATIC=1 PREFIX=$SDK sh ${CWD}/share/scripts/build-magick.sh || exit 1
+fi
+
 if [ ! -f "$SDK/bin/patchelf" ]; then
   cd $WRK || exit 1
   tar xvf $CWD/3rdparty/patchelf-$PELF.tar.bz2 || (cd $CWD/3rdparty; curl -L -O https://nixos.org/releases/patchelf/patchelf-0.7/patchelf-$PELF.tar.bz2) && tar xvf $CWD/3rdparty/patchelf-$PELF.tar.bz2 || exit 1

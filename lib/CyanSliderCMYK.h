@@ -30,32 +30,26 @@ class CYANSHARED_EXPORT CyanSliderCMYK : public QWidget
     Q_OBJECT
 
 public:
-
     explicit CyanSliderCMYK(QWidget *parent = nullptr);
 
 signals:
-
     void colorChanged(const QColor &color);
 
 public slots:
-
     const QColor getColor();
     void setColor(const QColor &color);
 
 private:
-
     QSpinBox *spinC;
     QSpinBox *spinM;
     QSpinBox *spinY;
     QSpinBox *spinK;
-
     QSlider *slideC;
     QSlider *slideM;
     QSlider *slideY;
     QSlider *slideK;
 
 private slots:
-
     void setC(int c);
     void setM(int m);
     void setY(int y);

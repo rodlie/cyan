@@ -35,12 +35,10 @@ class CYANSHARED_EXPORT CyanLayerWidget : public QWidget
     Q_OBJECT
 
 public:
-
     explicit CyanLayerWidget(QWidget *parent = nullptr);
     ~CyanLayerWidget();
 
 signals:
-
     void layerCompositeChanged(const Magick::CompositeOperator &composite,
                                const int &id);
     void layerOpacityChanged(const double &value,
@@ -57,37 +55,29 @@ signals:
     void duplicateLayer(int id);
 
 public slots:
-
     void setCanvasID(const QString &id);
     const QString getCanvasID();
-
     CyanLayerTreeItem* getCurrentLayer();
     void setCurrentLayer(const int &id);
-
     void handleTabActivated(QMdiSubWindow *tab,
                             bool force = false);
     void clearTree();
 
 private:
-
     LayerTree *layerTree;
     QComboBox *layerCompositeBox;
     QSlider *layerOpacitySlider;
     QDoubleSpinBox *layerOpacitySpin;
 
 private slots:
-
     void populateCompositeBox();
-
     void handleLayerActivated(QTreeWidgetItem *item,
                               int col);
     void handleLayerActivated(QTreeWidgetItem *item,
                               QTreeWidgetItem *old);
-
     void handleLayerOpacitySpin(double value);
     void handleLayerOpacitySlider();
     void handleLayerCompositeBox();
-
     void handleTreeSelectedLayer(int id);
     void handleTreeLayerVisibility(int id,
                                    bool visible);
@@ -96,7 +86,6 @@ private slots:
     void handleTreeLayerLock(int id,
                              bool lock);
     void handleTreeMoveLayer(QKeyEvent *e);
-
     void handleNewImageLayer();
     void handleRemoveLayer();
     void handleMoveLayerUp();

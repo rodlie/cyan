@@ -86,37 +86,19 @@ void Editor::setupUI()
     mainToolBar->addWidget(saveButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(interactButton);
-    //mainToolBar->addWidget(zoomButton);
-  //  mainToolBar->addSeparator();
-    //mainToolBar->addWidget(convertButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
     interactButton->addAction(viewMoveAct);
     interactButton->addAction(viewDrawAct);
-    //viewDrawAct->setDisabled(true);
-
-    //newButton->addAction(newImageAct);
-    //newButton->addAction(newLayerAct);
-
-    //openButton->addAction(openImageAct);
-    //openButton->addAction(openLayerAct);
-
-    //zoomButton->addAction(viewZoom100Act);
-    //zoomButton->addAction(viewZoomFitAct);
 
     fileMenu->addAction(newImageAct);
-    //fileMenu->addAction(newLayerAct);
-    //fileMenu->addAction(newTextLayerAct);
-    //fileMenu->addSeparator();
     fileMenu->addAction(openImageAct);
     fileMenu->addAction(saveProjectAct);
     fileMenu->addSeparator();
     fileMenu->addAction(saveProjectAsAct);
     fileMenu->addSeparator();
-    //fileMenu->addAction(openLayerAct);
     fileMenu->addAction(saveImageAct);
-    //fileMenu->addAction(saveLayerAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
@@ -131,7 +113,6 @@ void Editor::setupUI()
     saveMenu->addAction(saveProjectAct);
     saveMenu->addAction(saveProjectAsAct);
     saveMenu->addAction(saveImageAct);
-    //saveMenu->addAction(saveLayerAct);
 
     saveButton->setMenu(saveMenu);
 
@@ -148,8 +129,6 @@ void Editor::setupUI()
     colorMenu->addSeparator();
     colorMenu->addMenu(colorIntentMenu);
     colorMenu->addAction(blackPointAct);
-
-    //convertButton->setMenu(colorMenu);
 
     viewMenu->addMenu(guideMenu);
     viewMenu->addSeparator();
@@ -184,21 +163,19 @@ void Editor::setupUI()
     viewMoveAct->setChecked(true);
     interactButton->setDefaultAction(viewMoveAct);
 
-    populateColorProfileMenu(colorProfileRGBMenu,profileRGBGroup, Magick::sRGBColorspace);
-    populateColorProfileMenu(colorProfileCMYKMenu,profileCMYKGroup, Magick::CMYKColorspace);
-    populateColorProfileMenu(colorProfileGRAYMenu,profileGRAYGroup, Magick::GRAYColorspace);
-    /*populateColorProfileMenu(colorProfileRGBMenu,
+    populateColorProfileMenu(colorProfileRGBMenu,
+                             profileRGBGroup,
                              Magick::sRGBColorspace);
     populateColorProfileMenu(colorProfileCMYKMenu,
+                             profileCMYKGroup,
                              Magick::CMYKColorspace);
     populateColorProfileMenu(colorProfileGRAYMenu,
-                             Magick::GRAYColorspace);*/
+                             profileGRAYGroup,
+                             Magick::GRAYColorspace);
 
     populateColorIntentMenu();
 
     setActionsDisabled(true);
-
-
 
     // magick memory resources
     optMenu->addMenu(memoryMenu);
@@ -282,7 +259,6 @@ void Editor::setupMenus()
 
 void Editor::setupWidgets()
 {
-
     // the main splitters
     // TODO! add top and bottom
     mainSplitter = new QSplitter(this);
@@ -344,17 +320,6 @@ void Editor::setupWidgets()
     interactButton->setPopupMode(QToolButton::InstantPopup);
     interactButton->setText(tr("Tool"));
     interactButton->setToolTip(tr("Tool"));
-
-    /*zoomButton = new QToolButton(this);
-    zoomButton->setPopupMode(QToolButton::InstantPopup);
-    zoomButton->setText(tr("Zoom"));
-    zoomButton->setToolTip(tr("Zoom"));*/
-
-    /*convertButton = new QToolButton(this);
-    convertButton->setMenu(colorMenu);
-    convertButton->setPopupMode(QToolButton::InstantPopup);
-    convertButton->setText(tr("Colors"));
-    convertButton->setToolTip(tr("Color convert"));*/
 }
 
 
@@ -384,22 +349,6 @@ void Editor::setupActions()
     saveProjectAsAct = new QAction(this);
     saveProjectAsAct->setText(tr("Save project as ..."));
     saveProjectAsAct->setDisabled(true);
-
-    /*newLayerAct = new QAction(this);
-    newLayerAct->setText(tr("New image layer"));
-    newLayerAct->setDisabled(true);*/
-
-    /*newTextLayerAct = new QAction(this);
-    newTextLayerAct->setText(tr("New text layer"));
-    newTextLayerAct->setDisabled(true);*/
-
-    /*openLayerAct = new QAction(this);
-    openLayerAct->setText(tr("Import image as layer"));
-    openLayerAct->setDisabled(true);*/
-
-    /*saveLayerAct = new QAction(this);
-    saveLayerAct->setText(tr("Export layer"));
-    saveLayerAct->setDisabled(true);*/
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -473,28 +422,14 @@ void Editor::setupActions()
 
 void Editor::setupConnections()
 {
-
-// clean up!
-
     connect(viewZoom100Act, SIGNAL(triggered(bool)), this, SLOT(handleZoom100ActionTriggered()));
     connect(viewZoomFitAct, SIGNAL(triggered(bool)), this, SLOT(handleZoomFitActionTriggered(bool)));
 
-    //connect(&common, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
-    //connect(&common, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
-
     connect(newImageAct, SIGNAL(triggered(bool)), this, SLOT(newImageDialog()));
-
-
-    //connect(newLayerAct, SIGNAL(triggered(bool)), this, SLOT(newLayerDialog()));
-    //connect(newTextLayerAct, SIGNAL(triggered(bool)), this, SLOT(newTextLayerDialog()));
-
-
-
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(openButton, SIGNAL(clicked(bool)), this, SLOT(loadImageDialog()));
     connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
-    //connect(saveLayerAct, SIGNAL(triggered(bool)), this, SLOT(saveLayerDialog()));
 
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(checkTabsOnClose()));
 
@@ -518,7 +453,6 @@ void Editor::setupConnections()
     connect(this, SIGNAL(warningMessage(QString)), this, SLOT(handleWarning(QString)));
     connect(this, SIGNAL(errorMessage(QString)), this, SLOT(handleError(QString)));
     connect(mdi, SIGNAL(openImages(QList<QUrl>)), this, SLOT(handleOpenImages(QList<QUrl>)));
-    //connect(brushSize, SIGNAL(valueChanged(int)), this, SLOT(handleBrushSize()));
 
     connect(mdi,
             SIGNAL(subWindowActivated(QMdiSubWindow*)),
@@ -573,22 +507,12 @@ void Editor::setupConnections()
             this,
             SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
 
-    /*connect(textWidget,
-            SIGNAL(textChanged()),
-            this,
-            SLOT(handleCurrentLayerTextChanged()));*/
+    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
+    connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newImageDialog()));
 
-    //connect(layerButton, SIGNAL(toggled(bool)), layerPopup, SLOT(pinPopup(bool)));
-    //connect(textButton, SIGNAL(toggled(bool)), textPopup, SLOT(pinPopup(bool)));
-
-        connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
-
-
-        connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newImageDialog()));
-
-        connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
-        connect(addGuideVAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideVAct(bool)));
-        connect(showGuidesAct, SIGNAL(triggered(bool)), this, SLOT(handleShowGuidesAct(bool)));
+    connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
+    connect(addGuideVAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideVAct(bool)));
+    connect(showGuidesAct, SIGNAL(triggered(bool)), this, SLOT(handleShowGuidesAct(bool)));
 }
 
 void Editor::setupIcons()
@@ -600,16 +524,10 @@ void Editor::setupIcons()
     viewZoomFitAct->setIcon(QIcon::fromTheme("zoom-fit-best"));
 
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
-    //newLayerAct->setIcon(QIcon::fromTheme("layer",
-      //                                    QIcon::fromTheme("document-new")));
-    //newTextLayerAct->setIcon(QIcon::fromTheme("font",
-      //                                        QIcon::fromTheme("document-new")));
-
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
     saveImageAct->setIcon(QIcon::fromTheme("document-new"));
     saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
-    //saveLayerAct->setIcon(QIcon::fromTheme("layer"));
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
@@ -640,19 +558,14 @@ void Editor::setupIcons()
     aboutFFmpegAct->setIcon(helpIcon);
 #endif
 
-    //convertButton->setIcon(colorsIcon);
     newButton->setIcon(QIcon::fromTheme("document-new"));
     openButton->setIcon(QIcon::fromTheme("document-open"));
     interactButton->setIcon(QIcon::fromTheme("transform_move"));
-    //zoomButton->setIcon(QIcon::fromTheme("zoom"));
-
 }
 
 void Editor::setupShortcuts()
 {
     newImageAct->setShortcut(QKeySequence(tr("Ctrl+N")));
-    //newLayerAct->setShortcut(QKeySequence(tr("Ctrl+L")));
-    //newTextLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+L")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
 

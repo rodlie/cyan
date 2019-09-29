@@ -34,15 +34,12 @@ class CYANSHARED_EXPORT Mdi : public QMdiArea
     Q_OBJECT
 
 public:
-
     Mdi(QWidget *parent = nullptr);
 
 signals:
-
     void openImages(const QList<QUrl> urls);
 
 protected:
-
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);

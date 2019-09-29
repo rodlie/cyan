@@ -26,7 +26,6 @@
 #include <QActionGroup>
 #include <QMdiArea>
 #include <QDockWidget>
-//#include <QMdiSubWindow>
 #include <QComboBox>
 #include <QStatusBar>
 #include <QSlider>
@@ -47,10 +46,7 @@
 #include "CyanLayerWidget.h"
 
 #include "cyan_common.h" // TODO replace
-
 #include "qtcolorpicker.h"
-
-//#include "cyan_textwidget.h"
 #include "qtwindowlistmenu.h"
 
 class Editor : public QMainWindow
@@ -58,7 +54,6 @@ class Editor : public QMainWindow
     Q_OBJECT
 
 public:
-
     Editor(QWidget *parent = nullptr);
     ~Editor();
 
@@ -77,10 +72,6 @@ private:
     QAction *saveImageAct;
     QAction *saveProjectAct;
     QAction *saveProjectAsAct;
-    //QAction *newLayerAct;
-    //QAction *newTextLayerAct;
-    //QAction *openLayerAct;
-    //QAction *saveLayerAct;
     QAction *blackPointAct;
     QAction *quitAct;
 
@@ -117,14 +108,12 @@ private:
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
-    //QMenu *newMenu;
     QMenu *saveMenu;
     QMenu *colorMenu;
     QMenu *colorProfileRGBMenu;
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
     QMenu *colorIntentMenu;
-    //QMenu *layerMenu;
     QMenu *viewMenu;
     QMenu *guideMenu;
     QMenu *memoryMenu;
@@ -135,14 +124,9 @@ private:
     QToolButton *openButton;
     QToolButton *saveButton;
     QToolButton *interactButton;
-    //QToolButton *zoomButton;
+
     CyanLayerWidget *layersWidget;
-
     QtColorPicker *colorPicker;
-
-    //QToolButton *convertButton;
-
-
 
     QLabel *currentZoomStatusIcon;
     QLabel *currentZoomStatusLabel;
@@ -152,18 +136,15 @@ private:
     QSplitter *leftSplitter;
 
 signals:
-
     void openImage(const QString &filename);
     void statusMessage(const QString &message);
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);
 
 public slots:
-
     View* getCurrentCanvas();
 
 private slots:
-
     // plugins
     void initPlugins(QList<QPluginLoader*> plugins);
     void initWidgetPlugin(CyanWidgetPlugin* plugin);
@@ -289,14 +270,8 @@ private slots:
     void newLayerDialog(bool isText = false);
     void newTextLayerDialog();
 
-
-    //void handleNewImage(Magick::Image image);
-
-
-
     void handleZoom100ActionTriggered();
     void handleZoomFitActionTriggered(bool triggered);
-
 
     void connectView(View *view);
     void setViewTool(View *view);
@@ -306,10 +281,6 @@ private slots:
     void handleZoomFitChanged(bool fit);
     void setCurrentZoom();
 
-    /*void newTabFromLayer(View *parentView,
-                         int layerID);*/
-
-
     void handleCanvasStatus();
 
     void checkTabsOnClose();
@@ -317,7 +288,6 @@ private slots:
 
     void setActionsDisabled(bool disabled);
     void setProjectSaveDisabled(bool disabled);
-
 
     // guides
     void handleAddGuideHAct(bool triggered);

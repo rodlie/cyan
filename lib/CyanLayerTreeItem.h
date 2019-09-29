@@ -31,12 +31,10 @@ class CYANSHARED_EXPORT CyanLayerTreeItem : public QTreeWidget, public QTreeWidg
     Q_OBJECT
 
 public:
-
     explicit CyanLayerTreeItem(QTreeWidget *parent = nullptr);
     ~CyanLayerTreeItem();
 
 private:
-
     Magick::CompositeOperator _composite;
     int _id;
     QString _name;
@@ -46,7 +44,6 @@ private:
     int _order;
 
 public slots:
-
     Magick::CompositeOperator getComposite();
     void setComposite(Magick::CompositeOperator composite);
     int getLayerID();

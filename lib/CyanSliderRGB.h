@@ -30,30 +30,24 @@ class CYANSHARED_EXPORT CyanSliderRGB : public QWidget
     Q_OBJECT
 
 public:
-
     explicit CyanSliderRGB(QWidget *parent = nullptr);
 
 signals:
-
     void colorChanged(const QColor &color);
 
 public slots:
-
     const QColor getColor();
     void setColor(const QColor &color);
 
 private:
-
     QSpinBox *spinR;
     QSpinBox *spinG;
     QSpinBox *spinB;
-
     QSlider *slideR;
     QSlider *slideG;
     QSlider *slideB;
 
 private slots:
-
     void setR(int r);
     void setG(int g);
     void setB(int b);
