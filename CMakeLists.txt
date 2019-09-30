@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(Cyan VERSION 1.99.2)
+project(Cyan VERSION 1.99.3)
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
