@@ -1,16 +1,16 @@
 ## Cyan Image Format
 
-**This is a draft**
+![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-05.png)
 
-**Since Cyan is under development this also goes for the file format, things will change (and break) at any time until we reach RC status.**
+**This is a draft**
 
 Cyan uses the [Magick Image File Format](https://imagemagick.org/script/miff.php) (MIFF) for it's own internal image format. It's a simple and open format that can be inspected and modified outside of Cyan *(ImageMagick needed)*.
 
-### But the MIFF is just a collection of random images, how does it work in Cyan?
+### How does it work?
 
 Let's open up Cyan and create a new image (a empty layer is automatically added). Now save the image as ``cyan-image.miff``.
 
-Now let's use ImageMagick to inspect the file:
+Let's use ImageMagick to inspect the file:
 
 ```
 $ magick identify cyan-image.miff
@@ -19,15 +19,15 @@ cyan-image.miff[0] MIFF 1024x1024 1024x1024+0+0 8-bit TrueColor sRGB 0.040u 0:00
 cyan-image.miff[1] MIFF 1024x1024 1024x1024+0+0 8-bit TrueColor sRGB 8.02099MiB 0.020u 0:00.019
 ```
 
-As you can see the project contains two images. But in Cyan our project ony has one layer. That's because the first image (0) is our "canvas". This image defines the project name, dimensions, bit depth, color space, ICC profile etc. The actual image data from the "canvas" should always be ignored.
+As you can see the project contains two images. But in Cyan our project ony has one layer (image). That's because the first image (0) is our project canvas. This image defines the project name, dimensions, bit depth, color space, ICC profile etc. The actual image data from the project canvas should be empty and always be ignored.
 
-To get more information from the "canvas" we can use ``-verbose`` when inspecting:
+To get more information from the project canvas we can use ``-verbose`` when inspecting:
 
 ```
 $ magick identify -verbose cyan-image.miff[0]
 ```
 
-This will output a lot of information. The only difference between a normal MIFF and a MIFF from Cyan is additional properties.
+This will output a lot of information. The only difference between a vanilla MIFF and a MIFF created in Cyan is additional properties.
 
 ```
 $ magick identify -verbose cyan-image.miff[0]
@@ -38,24 +38,24 @@ $ magick identify -verbose cyan-image.miff[0]
 ...
 ```
 
-* ``cyan-project:`` This identifies the MIFF as a Cyan project.
-* ``cyan-layer-label:`` Cyan layer label (if "canvas" then project label).
+* ``cyan-project:`` This identifies the MIFF as a Cyan project (and version).
+* ``cyan-layer-label:`` Optional Cyan layer label.
 
-The ICC profile embedded in the "canvas" is the main profile used on all layers/images in the project. This means that all layers/images in the project must have the same colorspace as defined in "canvas". The bit depth of each layer/image can of course be different.
+The ICC profile embedded in the project canvas is the main profile used on all images in the project. This means that all images in the project must have the same color space.
 
-Now let's inspect our first available layer (the layers are **not** in order, see ``cyan-layer-order``):
+Now let's inspect our first available "layer" (the images are **not** in order, see ``cyan-layer-order``):
 
 ```
 $ magick identify -verbose cyan-image.miff[1]
 ```
 
-This will output even more information than before. The only difference between a normal MIFF and a MIFF from Cyan is additional properties.
+This will output even more information than before. The only difference between a vanilla MIFF and a MIFF created in Cyan is additional properties.
 
 ```
 $ magick identify -verbose cyan-image.miff[1]
 ...
   Properties:
-    cyan-compose: Normal
+    cyan-compose: 0
     cyan-layer: 1
     cyan-layer-label: New Image
     cyan-layer-lock: 0
@@ -67,7 +67,7 @@ $ magick identify -verbose cyan-image.miff[1]
 ...
 ```
 
-* ``cyan-compose:`` Compose method for this layer. Currently not documented, see [source](https://github.com/rodlie/cyan/blob/master/editor/common/cyan_common.cpp#L56) for more info
+* ``cyan-layer-compose:`` Compose method for this layer
 * ``cyan-layer:`` This identifies the MIFF as a Cyan layer
 * ``cyan-layer-label:`` Layer label
 * ``cyan-layer-lock:`` Is layer locked?
@@ -77,4 +77,3 @@ $ magick identify -verbose cyan-image.miff[1]
 * ``cyan-opacity:`` Layer opacity
 * ``cyan-visibility:`` Is layer visible?
 
-That's all we need to compose the final image.
