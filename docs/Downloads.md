@@ -19,7 +19,7 @@ Latest unstable release for supported platforms.
  [![Download for Windows](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_windows.png)](https://github.com/rodlie/cyan/releases/download/1.99.2/Cyan-1.99.2-win64.exe) *Microsoft Windows 7/8/10 x64 (portable version also [available](https://github.com/rodlie/cyan/releases/download/1.99.2/Cyan-1.99.2-win64.7z))*
  
  
- [![Download for Linux](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_linux.png)](https://github.com/rodlie/cyan/releases/download/1.99.2/Cyan-1.99.2-x86_64.AppImage) *GNU/Linux x86_64 (glibc 2.23+/gcc 5+) (native packages also [available](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan))*
+ [![Download for Linux](https://github.com/rodlie/cyan/raw/master/docs/images/download_for_linux.png)](https://github.com/rodlie/cyan/releases/download/1.99.2/Cyan-1.99.2-x86_64.AppImage) *GNU/Linux x86_64 (glibc 2.23+/gcc 5+)*
 
 Native packages for various Linux distributions are also available on each commit in the master branch.
 
