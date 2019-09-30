@@ -1,5 +1,7 @@
+%define debug_package %{nil}
+
 Name: cyan
-Version: 1.99.1
+Version: 1.99.3
 Release: 1%{?dist}
 Summary: Cyan Image Editor
 
@@ -10,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRequires: gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
 
 %description
-Cyan Image Editor
+General-purpose Image Editor (Alpha)
 
 %prep
 %setup -q

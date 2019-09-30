@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Cyan
 GenericName=Cyan Image Editor
-Comment=Cyan Image Editor
+Comment=General-purpose Image Editor
 Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
 Exec=Cyan %U
 Icon=Cyan
