@@ -164,6 +164,7 @@ QStringList CyanCommon::getColorProfilesPath()
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
     folders << qApp->applicationDirPath() + "/profiles";
+    folders << qApp->applicationDirPath() + "/../Resources/Profiles";
     folders << qApp->applicationDirPath() + "/../share/Cyan/profiles";
     return folders;
 }

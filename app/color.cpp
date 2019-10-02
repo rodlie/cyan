@@ -71,7 +71,9 @@ void Editor::setDefaultColorProfiles()
     }
     if (!profileRGBGroup->checkedAction()) {
         qDebug() << "RGB PROFILE FALLBACK! (first available)";
-        profileRGBGroup->actions().at(0)->setChecked(true);
+        if (profileRGBGroup->actions().size()>0) {
+            profileRGBGroup->actions().at(0)->setChecked(true);
+        }
     }
 
     if (settings.value(QString("cmyk_profile")).isValid() &&
@@ -86,7 +88,9 @@ void Editor::setDefaultColorProfiles()
     }
     if (!profileCMYKGroup->checkedAction()) {
         qDebug() << "CMYK PROFILE FALLBACK! (first available)";
-        profileCMYKGroup->actions().at(0)->setChecked(true);
+        if (profileCMYKGroup->actions().size()>0) {
+            profileCMYKGroup->actions().at(0)->setChecked(true);
+        }
     }
 
     if (settings.value(QString("gray_profile")).isValid() &&
@@ -101,7 +105,9 @@ void Editor::setDefaultColorProfiles()
     }
     if (!profileGRAYGroup->checkedAction()) {
         qDebug() << "GRAY PROFILE FALLBACK! (first available)";
-        profileGRAYGroup->actions().at(0)->setChecked(true);
+        if (profileGRAYGroup->actions().size()>0) {
+            profileGRAYGroup->actions().at(0)->setChecked(true);
+        }
     }
 
     settings.endGroup();

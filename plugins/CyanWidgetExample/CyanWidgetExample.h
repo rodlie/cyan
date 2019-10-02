@@ -37,6 +37,16 @@ public:
 
 public slots:
     void setCurrentColor(const QColor &color);
+    void setCurrentText(const QString &html,
+                        int align,
+                        int rotate,
+                        bool enabled)
+    {
+        Q_UNUSED(html)
+        Q_UNUSED(align)
+        Q_UNUSED(rotate)
+        Q_UNUSED(enabled)
+    }
     QWidget* getWidget(QWidget* parent);
 
 private slots:

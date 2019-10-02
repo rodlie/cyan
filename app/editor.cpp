@@ -337,9 +337,11 @@ void Editor::loadSettings()
                        .arg(tr("Engine memory limit")));
 
     // setup color profiles
+    qDebug() << "setup color profiles";
     setDefaultColorProfiles();
 
     // setup color intent
+    qDebug() << "setup color intent";
     loadDefaultColorIntent();
 
     // add blackpoint
@@ -355,7 +357,7 @@ void Editor::loadSettings()
     settings.endGroup();
 
     // check if we have the required color profiles needed to do anything
-    hasColorProfiles();
+    QTimer::singleShot(100, this, SLOT(hasColorProfiles()));
 }
 
 const QString Editor::loadSettingsLastOpenDir()

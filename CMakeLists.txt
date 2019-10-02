@@ -168,6 +168,7 @@ if(MINGW OR APPLE)
     add_definitions(-DUSE_FC)
     pkg_search_module(FONTCONF REQUIRED fontconfig)
     include_directories(${FONTCONF_INCLUDE_DIRS})
+    #find_package(OpenMP)
 endif()
 
 include_directories(
@@ -190,9 +191,8 @@ if (${DEBUG_TILES})
 endif()
 
 if(APPLE)
-    set(ICON_FILE ${RESOURCE_FOLDER}/icons/${PROJECT_NAME}.icns)
+    set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.icns)
     #set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
-    set_source_files_properties(${PROJECT_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
     set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
@@ -200,10 +200,12 @@ if(APPLE)
     set(MACOSX_BUNDLE_COPYRIGHT ${COPYRIGHT})
     set(MACOSX_BUNDLE_GUI_IDENTIFIER ${IDENTIFIER})
     set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_NAME})
+    set_source_files_properties(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
 endif()
 
 if(WIN32)
-    set(ICON_FILE ${CC_RESOURCE_FOLDER}/icons/${PROJECT_NAME}.ico)
+    set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico)
     set(GUI_TYPE WIN32)
     set(PRODUCT_COMMENTS "${PROJECT_NAME} Image Editor")
     set(PRODUCT_COMPANY_NAME ${COMPANY})
@@ -279,17 +281,20 @@ if(BUILD_LIBRARY)
             ${AVFORMAT_LIBRARIES}
             ${AVCODEC_LIBRARIES})
     endif()
+    #if(APPLE)
+    #    target_link_libraries(${PROJECT_NAME}Api ${OpenMP_CXX_LIBRARIES})
+    #endif()
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
     set(HEADERS_APP ${HEADERS_APP} ${HEADERS_LIB})
 endif()
 
-add_executable(
-    ${PROJECT_NAME}
-    ${SOURCES_APP}
-    ${HEADERS_APP}
-    ${HEADERS_API}
-    ${RESOURCES})
+if(APPLE)
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ICON_FILE} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
+else()
+    add_executable(${PROJECT_NAME} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
+endif()
+
 target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
@@ -316,6 +321,9 @@ endif()
 if(MINGW OR APPLE)
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
+#if(APPLE)
+#    target_link_libraries(${PROJECT_NAME} ${OpenMP_CXX_LIBRARIES})
+#endif()
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")

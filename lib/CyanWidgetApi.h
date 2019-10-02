@@ -62,11 +62,19 @@ public:
 
 public slots:
     virtual void setCurrentColor(const QColor &color) = 0;
+    virtual void setCurrentText(const QString &html,
+                                int align,
+                                int rotate,
+                                bool enabled) = 0;
     virtual QWidget* getWidget(QWidget *parent) = 0;
 
 signals:
     void statusMessage(const QString &text, int timeout);
     void currentColorChanged(const QColor &color);
+    void currentTextChanged(const QString &html,
+                            int align,
+                            int rotate,
+                            bool enabled);
 };
 
 QT_BEGIN_NAMESPACE

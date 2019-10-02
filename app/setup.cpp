@@ -369,17 +369,17 @@ void Editor::setupActions()
                           .arg(qApp->applicationName()));
 
     aboutImageMagickAct = new QAction(this);
-    aboutImageMagickAct->setText(QString("%1 ImageMagick").arg(tr("About")));
+    aboutImageMagickAct->setText(QString("ImageMagick")/*.arg(tr("About"))*/);
 
     aboutLcmsAct = new QAction(this);
-    aboutLcmsAct->setText(QString("%1 Little CMS").arg(tr("About")));
+    aboutLcmsAct->setText(QString("Little CMS")/*.arg(tr("About"))*/);
 
     aboutQtAct = new QAction(this);
-    aboutQtAct->setText(QString("%1 Qt").arg(tr("About")));
+    aboutQtAct->setText(QString("Qt Framework")/*.arg(tr("About"))*/);
 
 #ifdef WITH_FFMPEG
     aboutFFmpegAct = new QAction(this);
-    aboutFFmpegAct->setText(QString("%1 FFmpeg").arg(tr("About")));
+    aboutFFmpegAct->setText(QString("FFmpeg")/*.arg(tr("About"))*/);
 #endif
 
     convertRGBAct = new QAction(this);
