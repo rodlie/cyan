@@ -6,6 +6,15 @@
 
 This document will be updated when noteworthy changes are done in Cyan.
 
+## 1.99.3
+
+**Release date : 20191010 (TBA)**
+
+### General
+
+  * Fix potential crash if no color profiles present
+  * macOS support
+
 ## 1.99.2
 
 **Release date : 20190929**
