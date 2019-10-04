@@ -1,6 +1,3 @@
 [submodule "ImageMagick"]
 	path = ImageMagick
 	url = https://github.com/ImageMagick/ImageMagick
-[submodule "bindings/lua"]
-	path = bindings/lua
-	url = https://github.com/rodlie/lua-imagick
