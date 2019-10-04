@@ -4,54 +4,55 @@
 <fontconfig>
 
 <!-- Font directory list -->
-	<dir>WINDOWSFONTDIR</dir>
+@FC_FONTS_DIR@
+<dir>~/.fonts</dir>
 
 <!--
   Accept deprecated 'mono' alias, replacing it with 'monospace'
 -->
-	<match target="pattern">
-		<test qual="any" name="family">
-			<string>mono</string>
-		</test>
-		<edit name="family" mode="assign">
-			<string>monospace</string>
-		</edit>
-	</match>
+<match target="pattern">
+<test qual="any" name="family">
+<string>mono</string>
+</test>
+<edit name="family" mode="assign">
+<string>monospace</string>
+</edit>
+</match>
 
 <!--
   Accept alternate 'sans serif' spelling, replacing it with 'sans-serif'
 -->
-	<match target="pattern">
-		<test qual="any" name="family">
-			<string>sans serif</string>
-		</test>
-		<edit name="family" mode="assign">
-			<string>sans-serif</string>
-		</edit>
-	</match>
+<match target="pattern">
+<test qual="any" name="family">
+<string>sans serif</string>
+</test>
+<edit name="family" mode="assign">
+<string>sans-serif</string>
+</edit>
+</match>
 
 <!--
   Accept deprecated 'sans' alias, replacing it with 'sans-serif'
 -->
-	<match target="pattern">
-		<test qual="any" name="family">
-			<string>sans</string>
-		</test>
-		<edit name="family" mode="assign">
-			<string>sans-serif</string>
-		</edit>
-	</match>
+<match target="pattern">
+<test qual="any" name="family">
+<string>sans</string>
+</test>
+<edit name="family" mode="assign">
+<string>sans-serif</string>
+</edit>
+</match>
 
 <!-- Font cache directory list -->
-<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>
+@FC_CACHE_DIR@
 
-	<config>
+<config>
 <!--
   Rescan configuration every 30 seconds when FcFontSetList is called
  -->
-		<rescan>
-			<int>30</int>
-		</rescan>
-	</config>
+<rescan>
+<int>30</int>
+</rescan>
+</config>
 
 </fontconfig>

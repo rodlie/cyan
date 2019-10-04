@@ -21,6 +21,7 @@
 #include <QSplashScreen>
 
 #ifdef USE_FC
+#include <QFile>
 #include <fontconfig/fontconfig.h>
 #endif
 
@@ -46,6 +47,11 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
 #ifdef USE_FC
+#ifdef Q_OS_MAC
+    // setup fontconfig on mac
+    QString fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
+    if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
+#endif
     // splash
     QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333),
                          Qt::SplashScreen);
