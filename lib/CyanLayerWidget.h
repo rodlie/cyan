@@ -48,7 +48,7 @@ signals:
     void layerLabelChanged(int id, QString label);
     void layerLockChanged(int id, bool lock);
     void moveLayerEvent(QKeyEvent *e);
-    void newLayer();
+    void newLayer(bool text);
     void removeLayer(int id);
     void moveLayerUp(int id);
     void moveLayerDown(int id);
@@ -62,12 +62,14 @@ public slots:
     void handleTabActivated(QMdiSubWindow *tab,
                             bool force = false);
     void clearTree();
+    void setTextSupport(bool enabled);
 
 private:
     LayerTree *layerTree;
     QComboBox *layerCompositeBox;
     QSlider *layerOpacitySlider;
     QDoubleSpinBox *layerOpacitySpin;
+    bool _textSupport;
 
 private slots:
     void populateCompositeBox();
@@ -87,6 +89,7 @@ private slots:
                              bool lock);
     void handleTreeMoveLayer(QKeyEvent *e);
     void handleNewImageLayer();
+    void handleNewTextLayer();
     void handleRemoveLayer();
     void handleMoveLayerUp();
     void handleMoveLayerDown();

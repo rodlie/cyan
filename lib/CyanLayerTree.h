@@ -46,6 +46,7 @@ signals:
     void layerLockChanged(int id,
                           bool lock);
     void actNewImage();
+    void actNewText();
     void actRemove();
     void actDuplicate();
     void actMoveUp();
@@ -56,7 +57,9 @@ private:
     QString _canvasID;
     int lastLayerSelected;
     int _maxLayersOrder;
+    bool _textSupport;
     QAction *newImageLayerAct;
+    QAction *newTextLayerAct;
     QAction *removeLayerAct;
     QAction *moveUpLayerAct;
     QAction *moveDownLayerAct;
@@ -66,6 +69,7 @@ public slots:
     void setCanvasID(const QString &id);
     const QString getCanvasID();
     void handleTabActivated(QMdiSubWindow *tab, bool force = false);
+    void setTextSupport(bool enabled);
 
 private slots:
     void populateTree(View *view);
@@ -75,6 +79,7 @@ private slots:
                            int col);
     void handleContextMenu(const QPoint &pos);
     void handleNewImageAct(bool triggered);
+    void handleNewTextAct(bool triggered);
     void handleRemoveLayerAct(bool triggered);
     void handleMoveUpLayerAct(bool triggered);
     void handleMoveDownLayerAct(bool triggered);

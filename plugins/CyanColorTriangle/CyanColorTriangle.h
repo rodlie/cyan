@@ -35,6 +35,7 @@ public:
     const QString desc() const;
     double version() const;
     int position() const;
+    bool isText() const;
 
 public slots:
     void setCurrentColor(const QColor &color);

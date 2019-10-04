@@ -59,6 +59,7 @@ public:
     virtual int position() const = 0;
     virtual const QString title() const = 0;
     virtual const QString desc() const = 0;
+    virtual bool isText() const = 0;
 
 public slots:
     virtual void setCurrentColor(const QColor &color) = 0;

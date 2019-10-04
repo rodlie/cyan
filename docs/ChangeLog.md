@@ -12,6 +12,7 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 ### General
 
+  * Minor UI changes
   * Fix potential crash if no color profiles present
   * macOS support
 

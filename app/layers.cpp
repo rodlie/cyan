@@ -55,6 +55,8 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     CyanImageFormat::CyanLayer layer = getCurrentCanvas()->getLayer(id);
     if (!layer.image.isValid()) { return; }
 
+    emit currentTextChanged(layer.html, layer.textAlign, layer.textRotate, layer.isText);
+
     /*if (layer.isText) {
         textWidget->setEnabled(true);
         textWidget->setText(layer.html);

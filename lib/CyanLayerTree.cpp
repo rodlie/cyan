@@ -31,7 +31,9 @@ LayerTree::LayerTree(QWidget *parent) :
     QTreeWidget(parent)
   , lastLayerSelected(-1)
   , _maxLayersOrder(0)
+  , _textSupport(false)
   , newImageLayerAct(nullptr)
+  , newTextLayerAct(nullptr)
   , removeLayerAct(nullptr)
   , moveUpLayerAct(nullptr)
   , moveDownLayerAct(nullptr)
@@ -48,11 +50,16 @@ LayerTree::LayerTree(QWidget *parent) :
     setItemDelegateForColumn(1, new CyanLayerItemDelegate(this));
     setItemDelegateForColumn(2, new CyanLayerItemDelegate(this));
 
-    newImageLayerAct = new QAction(tr("New layer"), this);
+    newImageLayerAct = new QAction(tr("New Image Layer"), this);
+    newTextLayerAct = new QAction(tr("New Text Layer"), this);
     removeLayerAct = new QAction(tr("Remove layer"), this);
     moveUpLayerAct = new QAction(tr("Move up"), this);
     moveDownLayerAct = new QAction(tr("Move down"), this);
     duplicateLayerAct = new QAction(tr("Duplicate layer"), this);
+
+    if (!_textSupport) {
+        newTextLayerAct->setDisabled(true);
+    }
 
     newImageLayerAct->setIcon(QIcon::fromTheme("layer",
                                                QIcon::fromTheme("document-new")));
@@ -65,6 +72,10 @@ LayerTree::LayerTree(QWidget *parent) :
             SIGNAL(triggered(bool)),
             this,
             SLOT(handleNewImageAct(bool)));
+    connect(newTextLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleNewTextAct(bool)));
     connect(removeLayerAct,
             SIGNAL(triggered(bool)),
             this,
@@ -124,6 +135,12 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab, bool force)
     if (!equalID || view->getLayerCount() != topLevelItemCount()) {
         populateTree(view);
     }
+}
+
+void LayerTree::setTextSupport(bool enabled)
+{
+    _textSupport = enabled;
+    newTextLayerAct->setEnabled(enabled);
 }
 
 void LayerTree::populateTree(View *view)
@@ -257,6 +274,9 @@ void LayerTree::handleContextMenu(const QPoint &pos)
 {
     QMenu *menu = new QMenu(this);
     menu->addAction(newImageLayerAct);
+    if (_textSupport) {
+        menu->addAction(newTextLayerAct);
+    }
 
     bool hasLayer = false;
     int layerOrder,firstLayer = -1;
@@ -292,6 +312,12 @@ void LayerTree::handleNewImageAct(bool triggered)
 {
     Q_UNUSED(triggered)
     emit actNewImage();
+}
+
+void LayerTree::handleNewTextAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    emit actNewText();
 }
 
 void LayerTree::handleRemoveLayerAct(bool triggered)

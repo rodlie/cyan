@@ -32,6 +32,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
   , layerCompositeBox(nullptr)
   , layerOpacitySlider(nullptr)
   , layerOpacitySpin(nullptr)
+  , _textSupport(false)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -142,6 +143,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     connect(layerTree, SIGNAL(actMoveUp()), this, SLOT(handleMoveLayerUp()));
     connect(layerTree, SIGNAL(actNewImage()), this, SLOT(handleNewImageLayer()));
     connect(layerTree, SIGNAL(actRemove()), this, SLOT(handleRemoveLayer()));
+    connect(layerTree, SIGNAL(actNewText()), this, SLOT(handleNewTextLayer()));
 
     layerOpacitySpin->setValue(100.0);
 }
@@ -189,6 +191,12 @@ void CyanLayerWidget::handleTabActivated(QMdiSubWindow *tab,
 void CyanLayerWidget::clearTree()
 {
     layerTree->clear();
+}
+
+void CyanLayerWidget::setTextSupport(bool enabled)
+{
+    _textSupport = enabled;
+    layerTree->setTextSupport(enabled);
 }
 
 void CyanLayerWidget::populateCompositeBox()
@@ -416,7 +424,13 @@ void CyanLayerWidget::handleTreeMoveLayer(QKeyEvent *e)
 void CyanLayerWidget::handleNewImageLayer()
 {
     qDebug() << "forward new layer";
-    emit newLayer();
+    emit newLayer(false);
+}
+
+void CyanLayerWidget::handleNewTextLayer()
+{
+    qDebug() << "forward new text layer";
+    emit newLayer(true);
 }
 
 void CyanLayerWidget::handleRemoveLayer()

@@ -112,6 +112,10 @@ Editor::Editor(QWidget *parent)
     , mainSplitter(nullptr)
     , rightSplitter(nullptr)
     , leftSplitter(nullptr)
+    , bottomSplitter(nullptr)
+    , middleSplitter(nullptr)
+    , topSplitter(nullptr)
+    , hasTextSupport(false)
 {
     // set window title
     setWindowTitle(qApp->applicationName());
@@ -161,8 +165,17 @@ void Editor::initPlugins(QList<QPluginLoader *> plugins)
                     SIGNAL(currentColorChanged(QColor)),
                     colorPicker,
                     SLOT(setCurrentColor(QColor)));
+            if (widgetPlugin->isText()) {
+                hasTextSupport = true;
+                connect(this,
+                        SIGNAL(currentTextChanged(QString,int,int,bool)),
+                        plugin,
+                        SLOT(setCurrentText(QString,int,int,bool)));
+            }
         }
     }
+    layersWidget->setTextSupport(hasTextSupport);
+    emit currentTextChanged(QString(""), 0, 0, false);
 }
 
 void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
@@ -171,14 +184,21 @@ void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
     qDebug() << "==> Loaded new Widget Plugin:" << plugin->uuid() << plugin->version() << plugin->title() << plugin->desc();
     int pos = plugin->position();
     // TODO add settings override!
-    // TODO add top bottom container!
     switch (pos) {
     case CyanWidgetPlugin::CyanWidgetPluginBottomPosition:
+        qDebug() << "add plugin to bottom splitter";
+        bottomSplitter->addWidget(plugin->getWidget(this));
+        break;
     case CyanWidgetPlugin::CyanWidgetPluginTopPosition:
+        qDebug() << "add plugin to top splitter";
+        topSplitter->addWidget(plugin->getWidget(this));
+        break;
     case CyanWidgetPlugin::CyanWidgetPluginRightPosition:
+        qDebug() << "add plugin to right splitter";
         rightSplitter->addWidget(plugin->getWidget(this));
         break;
     default:
+        qDebug() << "add plugin to left splitter";
         leftSplitter->addWidget(plugin->getWidget(this));
         break;
     }
@@ -216,6 +236,12 @@ void Editor::saveSettings()
     settings.setValue("leftSplitter_geometry", leftSplitter->saveGeometry());
     settings.setValue("rightSplitter_state", rightSplitter->saveState());
     settings.setValue("rightSplitter_geometry", rightSplitter->saveGeometry());
+    settings.setValue("bottomSplitter_state", bottomSplitter->saveState());
+    settings.setValue("bottomSplitter_geometry", bottomSplitter->saveGeometry());
+    settings.setValue("middleSplitter_state", middleSplitter->saveState());
+    settings.setValue("middleSplitter_geometry", middleSplitter->saveGeometry());
+    settings.setValue("topSplitter_state", topSplitter->saveState());
+    settings.setValue("topSplitter_geometry", topSplitter->saveGeometry());
     settings.endGroup();
 
     settings.beginGroup(QString("color"));
@@ -324,6 +350,24 @@ void Editor::loadSettings()
     }
     if (settings.value("rightSplitter_geometry").isValid()) {
         rightSplitter->restoreGeometry(settings.value("rightSplitter_geometry").toByteArray());
+    }
+    if (settings.value("bottomSplitter_state").isValid()) {
+        bottomSplitter->restoreState(settings.value("bottomSplitter_state").toByteArray());
+    }
+    if (settings.value("bottomSplitter_geometry").isValid()) {
+        bottomSplitter->restoreGeometry(settings.value("bottomSplitter_geometry").toByteArray());
+    }
+    if (settings.value("middleSplitter_state").isValid()) {
+        middleSplitter->restoreState(settings.value("middleSplitter_state").toByteArray());
+    }
+    if (settings.value("middleSplitter_geometry").isValid()) {
+        middleSplitter->restoreGeometry(settings.value("middleSplitter_geometry").toByteArray());
+    }
+    if (settings.value("topSplitter_state").isValid()) {
+        topSplitter->restoreState(settings.value("topSplitter_state").toByteArray());
+    }
+    if (settings.value("topSplitter_geometry").isValid()) {
+        topSplitter->restoreGeometry(settings.value("topSplitter_geometry").toByteArray());
     }
 
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }

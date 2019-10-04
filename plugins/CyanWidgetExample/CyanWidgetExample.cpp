@@ -58,6 +58,11 @@ int CyanWidgetExample::position() const
     return CyanWidgetPluginLeftPosition;
 }
 
+bool CyanWidgetExample::isText() const
+{
+    return false;
+}
+
 void CyanWidgetExample::setCurrentColor(const QColor &color)
 {
     _widget->setStyleSheet(QString("background: rgb(%1, %2, %3);")

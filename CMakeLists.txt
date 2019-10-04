@@ -63,10 +63,10 @@ set(
     lib/CyanLayerWidget.cpp
     lib/CyanLayerTree.cpp
     lib/CyanLayerTreeItem.cpp
-    lib/CyanTextWidget.cpp
-    lib/CyanSliderCMYK.cpp
-    lib/CyanSliderHSV.cpp
-    lib/CyanSliderRGB.cpp
+    #lib/CyanTextWidget.cpp
+    #lib/CyanSliderCMYK.cpp
+    #lib/CyanSliderHSV.cpp
+    #lib/CyanSliderRGB.cpp
     lib/CyanFFmpeg.cpp
     lib/CyanFFmpegOpenDialog.cpp
     lib/CyanNewMediaDialog.cpp
@@ -89,10 +89,10 @@ set(
     lib/CyanLayerWidget.h
     lib/CyanLayerTree.h
     lib/CyanLayerTreeItem.h
-    lib/CyanTextWidget.h
-    lib/CyanSliderCMYK.h
-    lib/CyanSliderHSV.h
-    lib/CyanSliderRGB.h
+    #lib/CyanTextWidget.h
+    #lib/CyanSliderCMYK.h
+    #lib/CyanSliderHSV.h
+    #lib/CyanSliderRGB.h
     lib/CyanFFmpeg.h
     lib/CyanFFmpegOpenDialog.h
     lib/CyanNewMediaDialog.h
@@ -202,6 +202,8 @@ if(APPLE)
     set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_NAME})
     set_source_files_properties(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
+    set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
+    set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
 endif()
 
 if(WIN32)
@@ -216,6 +218,8 @@ if(WIN32)
     set(PRODUCT_ORIGINAL_FILENAME "${PROJECT_NAME}.exe")
     set(PRODUCT_BUNDLE ${PROJECT_NAME})
     set(WINDOWS_RESOURCE_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc)
+    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
+    set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.rc.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
@@ -503,6 +507,11 @@ endif()
 if(BUILD_WIDGET_PLUGIN_EXAMPLE)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanWidgetExample)
 endif()
+
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanStudioText)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorSliderRGB)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorSliderHSV)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorSliderCMYK)
 
 #enable_testing()
 #set(TEST_SOURCES src/tst_cyan.cpp src/FXX.cpp res/tests.qrc)

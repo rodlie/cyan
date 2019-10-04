@@ -197,13 +197,24 @@ void Editor::setupUI()
     memoryMenu->addActions(magickMemoryResourcesGroup->actions());
 
     // splitters
+
     mainSplitter->setOrientation(Qt::Horizontal);
     leftSplitter->setOrientation(Qt::Vertical);
     rightSplitter->setOrientation(Qt::Vertical);
+    bottomSplitter->setOrientation(Qt::Horizontal);
+    middleSplitter->setOrientation(Qt::Vertical);
+    topSplitter->setOrientation(Qt::Horizontal);
+
     mainSplitter->addWidget(leftSplitter);
-    mainSplitter->addWidget(mdi);
+    mainSplitter->addWidget(middleSplitter);
     mainSplitter->addWidget(rightSplitter);
+
     rightSplitter->addWidget(layersWidget);
+
+    middleSplitter->addWidget(topSplitter);
+    middleSplitter->addWidget(mdi);
+    middleSplitter->addWidget(bottomSplitter);
+
     setCentralWidget(mainSplitter);
 }
 
@@ -267,6 +278,12 @@ void Editor::setupWidgets()
     leftSplitter->setObjectName(QString("leftSplitter"));
     rightSplitter = new QSplitter(this);
     rightSplitter->setObjectName(QString("rightSplitter"));
+    bottomSplitter = new QSplitter(this);
+    bottomSplitter->setObjectName(QString("bottomSplitter"));
+    middleSplitter = new QSplitter(this);
+    middleSplitter->setObjectName(QString("middleSplitter"));
+    topSplitter = new QSplitter(this);
+    topSplitter->setObjectName(QString("topSplitter"));
 
     // MDI
     mdi = new Mdi(this);
@@ -479,9 +496,9 @@ void Editor::setupConnections()
             this,
             SLOT(handleLayerLock(int,bool)));
     connect(layersWidget,
-            SIGNAL(newLayer()),
+            SIGNAL(newLayer(bool)),
             this,
-            SLOT(newLayerDialog()));
+            SLOT(newLayerDialog(bool)));
     connect(layersWidget,
             SIGNAL(removeLayer(int)),
             this,

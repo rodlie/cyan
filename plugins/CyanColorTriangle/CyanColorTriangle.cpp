@@ -56,6 +56,11 @@ int CyanColorTriangle::position() const
     return CyanWidgetPluginRightPosition;
 }
 
+bool CyanColorTriangle::isText() const
+{
+    return false;
+}
+
 void CyanColorTriangle::setCurrentColor(const QColor &color)
 {
     if (_triangle->color() != color) {

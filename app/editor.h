@@ -134,12 +134,21 @@ private:
     QSplitter *mainSplitter;
     QSplitter *rightSplitter;
     QSplitter *leftSplitter;
+    QSplitter *bottomSplitter;
+    QSplitter *middleSplitter;
+    QSplitter *topSplitter;
+
+    bool hasTextSupport;
 
 signals:
     void openImage(const QString &filename);
     void statusMessage(const QString &message);
     void errorMessage(const QString &message);
     void warningMessage(const QString &message);
+    void currentTextChanged(const QString &html,
+                            int align,
+                            int rotate,
+                            bool enabled);
 
 public slots:
     View* getCurrentCanvas();
