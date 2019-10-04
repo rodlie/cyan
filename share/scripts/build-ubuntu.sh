@@ -35,9 +35,4 @@ cmake \
  "$CWD"
 make -j${MKJOBS}
 make DESTDIR=`pwd`/pkg install
-if [ ! -d "pkg/usr/lib/x86_64-linux-gnu" ]; then
-    mkdir -p pkg/usr/lib/x86_64-linux-gnu
-fi
-cp -av "$CWD/ImageMagick/install/lib/"*Cyan* pkg/usr/lib/x86_64-linux-gnu
-strip -s pkg/usr/lib/x86_64-linux-gnu/* pkg/usr/bin/*
 tree -lah pkg
