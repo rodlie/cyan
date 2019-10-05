@@ -206,14 +206,18 @@ void Editor::handleDuplicateLayer(int id)
     getCurrentCanvas()->duplicateLayer(id);
 }
 
-void Editor::handleCurrentLayerTextChanged()
+void Editor::handleCurrentLayerTextChanged(const QString &html,
+                                           int align,
+                                           int rotate,
+                                           bool enabled)
 {
+    Q_UNUSED(enabled)
     qDebug() << "handle current layer text changed";
-    /*if (!getCurrentCanvas()) { return; }
+    if (!getCurrentCanvas()) { return; }
     CyanLayerTreeItem *layerItem = layersWidget->getCurrentLayer();
     if (!layerItem) { return; }
     getCurrentCanvas()->setLayerText(layerItem->getLayerID(),
-                                     textWidget->getText(),
-                                     textWidget->getTextAlign(),
-                                     textWidget->getTextRotate());*/
+                                     html,
+                                     align,
+                                     rotate);
 }
