@@ -8,9 +8,9 @@
 
 Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
-***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
+***Currently under early development! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
 
-***You can track development on our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
+***You can track our progress in the [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
 
 ## Features
 
@@ -64,20 +64,27 @@ This program is free software; you can redistribute it and/or modify it under th
 * Cyan Logo by Ole-André Rodlie is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
 * Cyan include some components from Nokia Qt Solutions licensed under LGPL-v2.1+
 
+Source code for third-party software included in the official builds are available on [SourceForge](https://sourceforge.net/projects/prepress/files/sdk/source/).
+
 ## Build
+
+Binary builds are recommended, but you can always build from source. The following instructions are for Linux.
 
 ### Requirements
 
+ * cmake *3+*
+ * pkg-config
  * Qt5 *(Widgets/Concurrent) 5.5+*
- * Little CMS 2
+ * Little CMS *2+*
  * ImageMagick *(Magick++) 7.0.8+*
    * Minimum quantum depth of 16 is recommended
-   * Zero configuration is recommended
+   * Zero configuration is recommended *(Windows/macOS)*
    * HDRI required
    * lcms2 required
+   * zlib/bzip2/lzma required
    * png/tiff/jpeg support as a minimum
  * fontconfig *(Windows/macOS)*
- * ffmpeg *3.x+ (optional)*
+ * ffmpeg *3+ (optional)*
 
 ### RHEL/CentOS/Fedora
 
@@ -97,11 +104,13 @@ On Ubuntu you will need to install the following packages:
 sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
 ```
 
-* **Qt5 shipped with Ubuntu Bionic and beyond has issues, not recommended!**
+* **Qt5 shipped with Ubuntu Bionic and beyond is not recommended!**
 
 ### Other distros
 
 If your system has an up-to-date installation of ImageMagick v7 then you only need ``qtbase`` and  ``lcms2``.
+
+Note that Cyan may at any time add additional (or expect certain) changes to ImageMagick, so it's recommended to build against the ImageMagick version available in our source repository.
 
 ### Build Cyan
 
@@ -119,7 +128,7 @@ make -j4
 A more generic example:
 
 ```
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI <cyan_source_directory>
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr <cyan_source_directory>
 make -jX
 sudo make install
 ```
