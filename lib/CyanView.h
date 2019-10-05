@@ -241,6 +241,7 @@ private slots:
     void handleCanvasChanged();
     void handleZoomChanged();
     void handleGuideMoved();
+    void renderLayerText(int id, bool update);
 
 protected:
     void wheelEvent(QWheelEvent* event);

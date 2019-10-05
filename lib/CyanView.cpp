@@ -1058,9 +1058,9 @@ void View::setLayerText(int id,
     if (_canvas.layers[id].html == text && !needUpdate) { return; }
 
     _canvas.layers[id].html = text;
-    _canvas.layers[id].image = CyanImageFormat::renderText(_canvas.layers[id]);
     handleCanvasChanged();
-    if (update) { handleLayerOverTiles(id); }
+
+    QtConcurrent::run(this, &View::renderLayerText, id, update);
 }
 
 qreal View::getZoomValue()
@@ -1624,6 +1624,13 @@ void View::handleGuideMoved()
 {
     qDebug() << "handle guide moved";
     handleCanvasChanged();
+}
+
+void View::renderLayerText(int id, bool update)
+{
+    if (!_canvas.layers.contains(id) || id<0) { return; }
+    _canvas.layers[id].image = CyanImageFormat::renderText(_canvas.layers[id]);
+    if (update) { handleLayerOverTiles(id); }
 }
 
 void View::setLockLayers(bool lock)
