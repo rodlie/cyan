@@ -8,7 +8,9 @@
 
 Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org).
 
-***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2). You can track development on our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
+***Currently under early development, not usable yet! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2).***
+
+***You can track development on our [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
 
 ## Features
 
@@ -57,9 +59,10 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
-* Color profiles are licensed under [CC Attribution-No Derivative Works 3.0](https://creativecommons.org/licenses/by-nd/3.0/)
-* Icons are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
-* Logo is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
+* Cyan include color profiles from http://www.colormanagement.org that are licensed under [CC Attribution-No Derivative Works 3.0](https://creativecommons.org/licenses/by-nd/3.0/)
+* Cyan include icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
+* Cyan Logo by Ole-André Rodlie is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
+* Cyan include some components from Nokia Qt Solutions licensed under LGPL-v2.1+
 
 ## Build
 

@@ -1,4 +1,0 @@
-Cyan includes ICC color profiles from basICColor GmbH, licensed under a Creative Commons Attribution-No Derivative Works 3.0 license.
-
-https://creativecommons.org/licenses/by-nd/3.0/
-http://www.colormanagement.org/en/download.html

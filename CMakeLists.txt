@@ -380,7 +380,6 @@ if(MINGW)
         ${MINGW_ROOT}/bin/avdevice-58.dll
         ${MINGW_ROOT}/bin/avformat-58.dll
         ${MINGW_ROOT}/bin/avutil-56.dll
-        ${MINGW_ROOT}/bin/avfilter-7.dll
         ${MINGW_ROOT}/bin/avresample-4.dll
         ${MINGW_ROOT}/bin/swscale-5.dll
         ${MINGW_ROOT}/bin/swresample-3.dll)
@@ -405,9 +404,9 @@ if(MINGW)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/docs/README.md COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md ${CMAKE_CURRENT_BINARY_DIR}/docs/ChangeLog.md COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/FatCow.txt COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/basICColor.txt COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
+    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/FatCow.txt COPYONLY)
+    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/basICColor.txt COPYONLY)
+    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/rgb.icc COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/cmyk.icc COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/gray.icc COPYONLY)
@@ -489,10 +488,10 @@ if(UNIX AND NOT APPLE)
         ${CMAKE_CURRENT_SOURCE_DIR}/COPYING
         ${CMAKE_CURRENT_SOURCE_DIR}/README.md
         ${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
+        #${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
+        #${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt
+        #${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt
+        #${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
         DESTINATION
         ${CMAKE_INSTALL_DOCDIR}-${PROJECT_VERSION})
 endif()
