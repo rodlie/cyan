@@ -379,6 +379,7 @@ if(MINGW)
         ${MINGW_ROOT}/bin/avcodec-58.dll
         ${MINGW_ROOT}/bin/avdevice-58.dll
         ${MINGW_ROOT}/bin/avformat-58.dll
+        ${MINGW_ROOT}/bin/avfilter-7.dll
         ${MINGW_ROOT}/bin/avutil-56.dll
         ${MINGW_ROOT}/bin/avresample-4.dll
         ${MINGW_ROOT}/bin/swscale-5.dll
