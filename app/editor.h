@@ -205,7 +205,10 @@ private slots:
     void handleDuplicateLayer(int id);
 
     // text
-    void handleCurrentLayerTextChanged();
+    void handleCurrentLayerTextChanged(const QString &html,
+                                       int align,
+                                       int rotate,
+                                       bool enabled);
 
     // tabs
     void newTab(CyanImageFormat::CyanCanvas canvas);

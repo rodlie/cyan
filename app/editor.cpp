@@ -171,6 +171,10 @@ void Editor::initPlugins(QList<QPluginLoader *> plugins)
                         SIGNAL(currentTextChanged(QString,int,int,bool)),
                         plugin,
                         SLOT(setCurrentText(QString,int,int,bool)));
+                connect(plugin,
+                        SIGNAL(currentTextChanged(QString,int,int,bool)),
+                        this,
+                        SLOT(handleCurrentLayerTextChanged(QString,int,int,bool)));
             }
         }
     }
