@@ -10,11 +10,14 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 **Release date : 20191010 (TBA)**
 
+Cyan 2.0 Alpha 3. This is the first release with binaries available for all supported platforms.
+
 ### General
 
   * Minor UI changes
+  * Fixed various minor bug fixes
   * Fix potential crash if no color profiles present
-  * macOS support
+  * macOS support (Lion 10.7+)
 
 ## 1.99.2
 
