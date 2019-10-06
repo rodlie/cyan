@@ -14,23 +14,45 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 
 ## Features
 
-* Simple and lightweight
-* Multiple Document Interface
-* Supports RGB/CMYK/GRAY 8/16/32 bit images
-  * Depends on ImageMagick quantum depth
-* Supports ICC/ICM v2/v4 color profiles
-* Supports reading video frames through FFmpeg
-* Supports PNG, JPEG, TIFF, EXR, XCF, PSD, MIFF and many more
-  * Support for SVG and similar will be added in the future
-* Supports TIFF, EXR, XCF, MIFF and PSD image layers
-  * Support for Krita (KRA) and OpenRaster (ORA) will be added in the future
-* Extract embedded ICC color profiles from images
-* Embed ICC color profile to image(s)
-* Edit ICC color profile tags
-* Convert to and from RGB/CMYK/GRAY
-* Over 40 different layer compositing modes
+  * Simple and lightweight
+  * Multiple Document Interface
+  * Supports RGB/CMYK/GRAY 8/16/32 bit images
+    * Depends on ImageMagick quantum depth
+  * Supports ICC/ICM v2/v4 color profiles
+  * Supports reading video frames through FFmpeg
+  * Supports PNG, JPEG, TIFF, EXR, XCF, PSD, MIFF and many more
+    * Support for SVG and similar will be added in the future
+  * Supports TIFF, EXR, XCF, MIFF and PSD image layers
+    * Support for Krita (KRA) and OpenRaster (ORA) will be added in the future
+  * Extract embedded ICC color profiles from images
+  * Embed ICC color profile to image(s)
+  * Edit ICC color profile tags
+  * Convert to and from RGB/CMYK/GRAY
+  * Over 40 different layer compositing modes
 
 ***Everything is subject to change during development of v2.***
+
+## System requirements
+
+### Minimum software
+
+ * Windows 7+
+ * macOS 10.7+
+ * Linux (glibc 2.23/gcc 5.x/X11)
+ * FreeBSD/NetBSD/OpenBSD *(source-only)*
+
+### Minimum hardware
+
+ * Intel Core 2 *(or compatible)*
+ * 720p screen resolution
+ * 2GB RAM
+
+### Recommended hardware
+
+ * Intel Core i5 *(or compatible)*
+ * 1080p screen resolution
+ * 8GB RAM
+ * Color calibrated monitor
 
 ## Keyboard/Mouse shortcuts
 
