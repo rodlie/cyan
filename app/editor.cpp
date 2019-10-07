@@ -484,7 +484,7 @@ void Editor::writeProject(const QString &filename, bool setFilename)
 // load unknown image
 void Editor::loadImage(const QString &filename)
 {
-    if (filename.isEmpty()) { return; }
+    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
     if (CyanImageFormat::isValidCanvas(filename)) { // cyan project
         emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading canvas")));
         loadProject(filename);
@@ -670,7 +670,7 @@ void Editor::writeLayer(const QString &filename,
 #ifdef WITH_FFMPEG
 void Editor::readAudio(const QString &filename)
 {
-    if (filename.isEmpty()) { return; }
+    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
     QByteArray coverart = CyanFFmpeg::getEmbeddedCoverArt(filename);
     if (coverart.size()==0) { return; }
     qDebug() << "found image in audio!";
@@ -686,7 +686,7 @@ void Editor::readAudio(const QString &filename)
 
 void Editor::readVideo(const QString &filename)
 {
-    if (filename.isEmpty()) { return; }
+    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
     int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
     if (maxFrame==0) { return; }
 
@@ -878,7 +878,7 @@ void Editor::loadImageDialog()
                                                     QString("%2 (%1)")
                                                     .arg(CyanImageFormat::supportedReadFormats())
                                                     .arg(tr("Media files")));
-    if (filename.isEmpty()) { return; }
+    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
 
     QFileInfo fileInfo(filename);
     if (fileInfo.absolutePath() != loadSettingsLastOpenDir()) {
