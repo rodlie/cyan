@@ -210,6 +210,8 @@ public slots:
     void addGuide(bool isHorizontal = false,
                   QPointF pos = QPointF(0,0));
     void showGuides(bool visibility);
+    void setFilename(const QString &filename);
+    const QString getFilename();
 
 private slots:
     void handleLayerMoving(QPointF pos,

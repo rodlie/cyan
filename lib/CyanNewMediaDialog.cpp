@@ -64,6 +64,8 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _depth32 = new QRadioButton(this);
     _depth64 = new QRadioButton(this);
 
+    _profile->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+
     _ok->setIcon(QIcon::fromTheme("document-new"));
     _cancel->setIcon(QIcon::fromTheme("process-stop"));
 
@@ -140,8 +142,8 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     mainLayout->addWidget(_select);
     mainLayout->addWidget(_profile);
     mainLayout->addWidget(depthWidget);
-    mainLayout->addWidget(buttonWidget);
     mainLayout->addStretch();
+    mainLayout->addWidget(buttonWidget);
 
     if (_type == CyanCommon::newLayerDialogType) {
         _select->hide();

@@ -1105,6 +1105,17 @@ void View::showGuides(bool visibility)
     }
 }
 
+void View::setFilename(const QString &filename)
+{
+    if (filename.isEmpty()) { return; }
+    _canvas.filename = filename;
+}
+
+const QString View::getFilename()
+{
+    return _canvas.filename;
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
@@ -1124,6 +1135,7 @@ void View::setCanvasSpecsFromImage(Magick::Image image)
     _scene->setSceneRect(0, 0, _image.columns(), _image.rows());
     _rect->setRect(_scene->sceneRect());
     _canvas.image = _image;
+    _canvas.filename = QString::fromStdString(image.fileName());
 
     _canvas.dirty = true; // dirty
 

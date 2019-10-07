@@ -70,7 +70,8 @@ private:
     QAction *newImageAct;
     QAction *openImageAct;
     QAction *saveImageAct;
-    QAction *saveProjectAct;
+    QAction *saveImageAsAct;
+    //QAction *saveProjectAct;
     QAction *saveProjectAsAct;
     QAction *blackPointAct;
     QAction *quitAct;
@@ -108,7 +109,7 @@ private:
     QMenu *fileMenu;
     QMenu *optMenu;
     QMenu *helpMenu;
-    QMenu *saveMenu;
+    //QMenu *saveMenu;
     QMenu *colorMenu;
     QMenu *colorProfileRGBMenu;
     QMenu *colorProfileCMYKMenu;
@@ -256,13 +257,13 @@ private slots:
     const QString loadSettingsLastSaveDir();
 
     void loadProject(const QString &filename);
-    void saveProject(const QString &filename);
+    void writeProject(const QString &filename, bool setFilename = true);
 
-    void saveImage(const QString &filename);
+    //void saveImage(const QString &filename);
     void loadImage(const QString &filename);
     void readImage(Magick::Blob blob, const QString &filename = QString());
     void readImage(const QString &filename);
-    void writeImage(const QString &filename);
+    void writeImage(const QString &filename, bool setFilename = true);
     void writeLayer(const QString &filename, int id);
 
 #ifdef WITH_FFMPEG
@@ -274,8 +275,9 @@ private slots:
                                        int frame);
 #endif
 
-    void saveProjectDialog();
-    void saveImageDialog();
+    //void saveProjectDialog();
+    void saveImageDialog(bool ignoreExisting = false, bool setFilename = true);
+    void saveImageAsDialog();
     void saveLayerDialog();
     void loadImageDialog();
     void newImageDialog();

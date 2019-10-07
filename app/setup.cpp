@@ -95,11 +95,12 @@ void Editor::setupUI()
 
     fileMenu->addAction(newImageAct);
     fileMenu->addAction(openImageAct);
-    fileMenu->addAction(saveProjectAct);
-    fileMenu->addSeparator();
-    fileMenu->addAction(saveProjectAsAct);
-    fileMenu->addSeparator();
+    //fileMenu->addAction(saveProjectAct);
+    //fileMenu->addSeparator();
+    //fileMenu->addAction(saveProjectAsAct);
+    //fileMenu->addSeparator();
     fileMenu->addAction(saveImageAct);
+    fileMenu->addAction(saveImageAsAct);
     fileMenu->addSeparator();
     fileMenu->addAction(quitAct);
 
@@ -111,11 +112,11 @@ void Editor::setupUI()
 #endif
     helpMenu->addAction(aboutQtAct);
 
-    saveMenu->addAction(saveProjectAct);
-    saveMenu->addAction(saveProjectAsAct);
-    saveMenu->addAction(saveImageAct);
+    //saveMenu->addAction(saveProjectAct);
+    //saveMenu->addAction(saveProjectAsAct);
+//    saveMenu->addAction(saveImageAct);
 
-    saveButton->setMenu(saveMenu);
+    //saveButton->setMenu(saveMenu);
 
     colorMenu->addAction(convertRGBAct);
     colorMenu->addAction(convertCMYKAct);
@@ -227,8 +228,8 @@ void Editor::setupMenus()
     helpMenu = new QMenu(this);
     helpMenu->setTitle(tr("Help"));
 
-    saveMenu = new QMenu(this);
-    saveMenu->setTitle(tr("Save"));
+//    saveMenu = new QMenu(this);
+//    saveMenu->setTitle(tr("Save"));
 
     colorMenu = new QMenu(this);
     colorMenu->setTitle(tr("Colors"));
@@ -323,10 +324,10 @@ void Editor::setupWidgets()
     openButton->setToolTip(tr("Open"));
 
     saveButton = new QToolButton(this);
-    saveButton->setMenu(saveMenu);
+    /*saveButton->setMenu(saveMenu);
     saveButton->setPopupMode(QToolButton::InstantPopup);
     saveButton->setText(tr("Save"));
-    saveButton->setToolTip(tr("Save"));
+    saveButton->setToolTip(tr("Save"));*/
 
     interactButton = new QToolButton(this);
     interactButton->setPopupMode(QToolButton::InstantPopup);
@@ -351,12 +352,15 @@ void Editor::setupActions()
     openImageAct->setText(tr("Open"));
 
     saveImageAct = new QAction(this);
-    saveImageAct->setText(tr("Export image"));
-    saveImageAct->setDisabled(true);
+    saveImageAct->setText(tr("Save"));
+    //saveImageAct->setDisabled(true);
 
-    saveProjectAct = new QAction(this);
-    saveProjectAct->setText(tr("Save project"));
-    saveProjectAct->setDisabled(true);
+//    saveProjectAct = new QAction(this);
+//    saveProjectAct->setText(tr("Save project"));
+//    saveProjectAct->setDisabled(true);
+
+    saveImageAsAct = new QAction(this);
+    saveImageAsAct->setText(tr("Save as ..."));
 
     saveProjectAsAct = new QAction(this);
     saveProjectAsAct->setText(tr("Save project as ..."));
@@ -440,8 +444,10 @@ void Editor::setupConnections()
     connect(newImageAct, SIGNAL(triggered(bool)), this, SLOT(newImageDialog()));
     connect(openImageAct, SIGNAL(triggered(bool)), this, SLOT(loadImageDialog()));
     connect(openButton, SIGNAL(clicked(bool)), this, SLOT(loadImageDialog()));
-    connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveImageDialog()));
+    //connect(saveProjectAct, SIGNAL(triggered(bool)), this, SLOT(saveProjectDialog()));
     connect(saveImageAct, SIGNAL(triggered(bool)), this, SLOT(saveImageDialog()));
+    connect(saveImageAsAct, SIGNAL(triggered(bool)), this, SLOT(saveImageAsDialog()));
 
     connect(quitAct, SIGNAL(triggered(bool)), this, SLOT(checkTabsOnClose()));
 
@@ -538,8 +544,9 @@ void Editor::setupIcons()
     newImageAct->setIcon(QIcon::fromTheme("document-new"));
     openImageAct->setIcon(QIcon::fromTheme("document-open"));
     saveButton->setIcon(QIcon::fromTheme("document-save"));
-    saveImageAct->setIcon(QIcon::fromTheme("document-new"));
-    saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
+    saveImageAct->setIcon(QIcon::fromTheme("document-save-as"));
+    saveImageAsAct->setIcon(QIcon::fromTheme("document-save-as"));
+//    saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
     saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
@@ -579,6 +586,8 @@ void Editor::setupShortcuts()
 {
     newImageAct->setShortcut(QKeySequence(tr("Ctrl+N")));
     openImageAct->setShortcut(QKeySequence(tr("Ctrl+O")));
+    saveImageAct->setShortcut(QKeySequence(tr("Ctrl+S")));
+    saveImageAsAct->setShortcut(QKeySequence(tr("Ctrl+Shift+S")));
     quitAct->setShortcut(QKeySequence(tr("Ctrl+Q")));
 
     viewZoom100Act->setShortcut(QKeySequence(tr("Ctrl+1")));

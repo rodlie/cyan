@@ -14,7 +14,10 @@ Cyan 2.0 Alpha 3. This is the first v2 release with binaries available for all s
 
 ### General
 
-  * Minor UI changes
+  * One unified load button/function
+  * One unified save button/function
+  * Proper "save as" function
+  * Fix tabs style bug
   * Fixed various minor bugs
   * Fix potential crash if no color profiles present
   * macOS support (Lion 10.7+)

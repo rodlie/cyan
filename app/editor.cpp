@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include "CyanNewMediaDialog.h"
 #include "convertdialog.h"
@@ -60,7 +61,8 @@ Editor::Editor(QWidget *parent)
     , newImageAct(nullptr)
     , openImageAct(nullptr)
     , saveImageAct(nullptr)
-    , saveProjectAct(nullptr)
+    , saveImageAsAct(nullptr)
+    //, saveProjectAct(nullptr)
     , saveProjectAsAct(nullptr)
     , quitAct(nullptr)
     , viewMoveAct(nullptr)
@@ -90,7 +92,7 @@ Editor::Editor(QWidget *parent)
     , fileMenu(nullptr)
     , optMenu(nullptr)
     , helpMenu(nullptr)
-    , saveMenu(nullptr)
+    //, saveMenu(nullptr)
     , colorMenu(nullptr)
     , colorProfileRGBMenu(nullptr)
     , colorProfileCMYKMenu(nullptr)
@@ -434,7 +436,7 @@ const QString Editor::loadSettingsLastSaveDir()
     return result;
 }
 
-// load cyan image project (*.MIFF)
+// load image project (*.MIFF)
 void Editor::loadProject(const QString &filename)
 {
     if (filename.isEmpty()) { return; }
@@ -443,20 +445,28 @@ void Editor::loadProject(const QString &filename)
     if (CyanImageFormat::isValidCanvas(filename)) {
         qDebug() << "is valid project, reading ...";
         CyanImageFormat::CyanCanvas canvas = CyanImageFormat::readCanvas(filename);
+        canvas.filename = filename;
         newTab(canvas);
+    } else {
+        QMessageBox::warning(this,
+                             tr("Invalid project"),
+                             tr("This file is not a valid Cyan project file"));
     }
 }
 
-// save cyan image project (*.MIFF)
-void Editor::saveProject(const QString &filename)
+// save image project (*.MIFF)
+void Editor::writeProject(const QString &filename, bool setFilename)
 {
-    if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     qDebug() << "save project" << filename;
-
+    if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     if (CyanImageFormat::writeCanvas(getCurrentCanvas()->getCanvasProject(),
                                      filename,
                                      MagickCore::ZipCompression)) {
         // TODO, verify project!
+        if (setFilename) {
+            getCurrentCanvas()->setFilename(filename);
+            qDebug() << "was filename set in canvas?" << getCurrentCanvas()->getFilename();
+        }
         getCurrentCanvas()->setDirty(false);
         handleCanvasStatus();
     } else {
@@ -466,10 +476,10 @@ void Editor::saveProject(const QString &filename)
     }
 }
 
-void Editor::saveImage(const QString &filename)
+/*void Editor::saveImage(const QString &filename)
 {
     qDebug() << "save image" << filename;
-}
+}*/
 
 // load unknown image
 void Editor::loadImage(const QString &filename)
@@ -492,6 +502,7 @@ void Editor::loadImage(const QString &filename)
 void Editor::readImage(Magick::Blob blob,
                        const QString &filename)
 {
+    qDebug() << "read image" << filename;
     Magick::Image image;
     image.quiet(false);
 
@@ -585,8 +596,9 @@ void Editor::readImage(const QString &filename)
 }
 
 // write "regular" image to file
-void Editor::writeImage(const QString &filename)
+void Editor::writeImage(const QString &filename, bool setFilename)
 {
+    qDebug() << "write image" << filename;
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
 
     Magick::Image image = CyanImageFormat::renderCanvasToImage(getCurrentCanvas()->getCanvasProject());
@@ -612,6 +624,10 @@ void Editor::writeImage(const QString &filename)
             image.magick("BMP");
         }
         image.write(filename.toStdString());
+        //getCurrentCanvas()->getCanvasProject().filename = filename;
+        if (setFilename) {
+            getCurrentCanvas()->setFilename(filename);
+        }
     }
     catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
@@ -743,7 +759,7 @@ Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
 #endif
 
 // save cyan project filename dialog
-void Editor::saveProjectDialog()
+/*void Editor::saveProjectDialog()
 {
     if (!getCurrentCanvas()) { return; }
     QString filename = QFileDialog::getSaveFileName(this,
@@ -760,20 +776,28 @@ void Editor::saveProjectDialog()
     }
 
     saveProject(filename);
-}
+}*/
 
 // save "regular" image filename dialog
-void Editor::saveImageDialog()
+void Editor::saveImageDialog(bool ignoreExisting, bool setFilename)
 {
+    qDebug() << "saveImageDialog";
     if (!getCurrentCanvas()) { return; }
-    QString filename = QFileDialog::getSaveFileName(this,
-                                                    tr("Save Image"),
-                                                    QString("%1/%2")
-                                                    .arg(loadSettingsLastSaveDir())
-                                                    .arg(getCurrentCanvas()->getCanvasProject().label),
-                                                    QString("%2 (%1)")
-                                                    .arg(CyanImageFormat::supportedWriteFormats())
-                                                    .arg(tr("Image files")));
+    QString filename = getCurrentCanvas()->getFilename();
+    bool fileExists = QFile::exists(filename);
+    if (ignoreExisting) { fileExists = false; }
+        qDebug() << "save to existing image?" << filename << fileExists << "ignore override" << ignoreExisting;
+    if (!fileExists) {
+        qDebug() << "save image dialog";
+        filename = QFileDialog::getSaveFileName(this,
+                                                tr("Save Image"),
+                                                QString("%1/%2")
+                                                .arg(loadSettingsLastSaveDir())
+                                                .arg(getCurrentCanvas()->getCanvasProject().label),
+                                                QString("%2 (%1)")
+                                                .arg(CyanImageFormat::supportedWriteFormats())
+                                                .arg(tr("Image files")));
+    }
     if (filename.isEmpty()) { return; }
     QFileInfo fileInfo(filename);
     if (fileInfo.suffix().isEmpty()) {
@@ -787,7 +811,24 @@ void Editor::saveImageDialog()
         saveSettingsLastSaveDir(fileInfo.absolutePath());
     }
 
-    writeImage(filename);
+    if (filename.endsWith(".miff",
+                           Qt::CaseInsensitive))
+    {
+        QtConcurrent::run(this,
+                          &Editor::writeProject,
+                          filename,
+                          setFilename);
+    } else {
+        QtConcurrent::run(this,
+                          &Editor::writeImage,
+                          filename,
+                          setFilename);
+    }
+}
+
+void Editor::saveImageAsDialog()
+{
+    saveImageDialog(true, false);
 }
 
 // save selected layer to "regular" image filename dialog
@@ -1038,6 +1079,7 @@ void Editor::setCurrentZoom()
 
 void Editor::handleCanvasStatus()
 {
+    qDebug() << "handleCanvasStatus";
     View *view = getCurrentCanvas();
     if (!view) {
         //saveProjectAct->setEnabled(false);
@@ -1079,6 +1121,7 @@ bool Editor::hasDirtyProjects()
 void Editor::setActionsDisabled(bool disabled)
 {
     saveImageAct->setDisabled(disabled);
+    saveImageAct->setDisabled(disabled);
     saveProjectAsAct->setDisabled(disabled);
     interactButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
@@ -1092,13 +1135,16 @@ void Editor::setActionsDisabled(bool disabled)
 
 void Editor::setProjectSaveDisabled(bool disabled)
 {
-    if (!saveButton->isEnabled() && !disabled) {
+    qDebug() << "setProjectSaveDisabled" << disabled;
+    /*if (!saveButton->isEnabled() && !disabled) {
         saveButton->setEnabled(true);
     }
     if (!saveProjectAsAct->isEnabled() && !disabled) {
         saveProjectAsAct->setEnabled(true);
-    }
-    saveProjectAct->setDisabled(disabled);
+    }*/
+    saveButton->setDisabled(disabled);
+    saveImageAct->setDisabled(disabled);
+    //saveProjectAct->setDisabled(disabled);
 }
 
 void Editor::handleAddGuideHAct(bool triggered)
