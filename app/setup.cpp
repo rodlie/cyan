@@ -55,6 +55,7 @@ void Editor::setupStyle()
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
                           "QToolBar { border-color: none; }"
                           "QToolButton::menu-indicator { image: none; }"));
+
 }
 
 void Editor::setupUI()
@@ -179,18 +180,12 @@ void Editor::setupUI()
 
     // magick memory resources
     optMenu->addMenu(memoryMenu);
-    QStringList memActs;
-    memActs << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10";
-    memActs << "11" << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20";
-    memActs << "21" << "22" << "23" << "24" << "25" << "26" << "27" << "28" << "29" << "30";
-    memActs << "31" << "32";
-    for (int i=0;i<memActs.size();++i) {
+    for (int i=2;i<33;++i) {
         QAction *act = new QAction(this);
         act->setCheckable(true);
-        QString value = memActs.at(i);
-        act->setText(QString("%1 GB").arg(value));
+        act->setText(QString("%1 GB").arg(i));
         act->setToolTip(tr("Amount of RAM that can be used"));
-        act->setData(value.toInt());
+        act->setData(i);
         connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
         magickMemoryResourcesGroup->addAction(act);
     }

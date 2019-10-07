@@ -56,18 +56,6 @@ void Editor::handleLayerTreeSelectedLayer(int id)
     if (!layer.image.isValid()) { return; }
 
     emit currentTextChanged(layer.html, layer.textAlign, layer.textRotate, layer.isText);
-
-    /*if (layer.isText) {
-        textWidget->setEnabled(true);
-        textWidget->setText(layer.html);
-        textWidget->setTextAlign(layer.textAlign);
-        textWidget->setTextRotate(layer.textRotate);
-    } else {
-        textWidget->setEnabled(false);
-        textWidget->setText(QString());
-        textWidget->setTextAlign(0);
-        textWidget->setTextRotate(0);
-    }*/
 }
 
 void Editor::handleLayerVisibility(int id,

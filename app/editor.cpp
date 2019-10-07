@@ -335,6 +335,12 @@ void Editor::loadSettings()
             break;
         }
     }
+    if (mdi->viewMode() == QMdiArea::TabbedView) { // workaround qtbug
+        QTabBar *mdiBar = mdi->findChild<QTabBar*>();
+        if (mdiBar) {
+            mdiBar->setDrawBase(false);
+        }
+    }
 #endif
 
     if (settings.value("mainSplitter_state").isValid()) {
@@ -1143,6 +1149,12 @@ void Editor::handleViewModeAct(bool triggered)
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action) { return; }
     mdi->setViewMode(static_cast<QMdiArea::ViewMode>(action->data().toInt()));
+    if (mdi->viewMode() == QMdiArea::TabbedView) { // workaround qtbug
+        QTabBar *mdiBar = mdi->findChild<QTabBar*>();
+        if (mdiBar) {
+            mdiBar->setDrawBase(false);
+        }
+    }
 }
 
 void Editor::handleOpenImages(const QList<QUrl> &urls)
