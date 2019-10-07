@@ -63,7 +63,7 @@ Editor::Editor(QWidget *parent)
     , saveImageAct(nullptr)
     , saveImageAsAct(nullptr)
     //, saveProjectAct(nullptr)
-    , saveProjectAsAct(nullptr)
+    //, saveProjectAsAct(nullptr)
     , quitAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
@@ -1122,7 +1122,7 @@ void Editor::setActionsDisabled(bool disabled)
 {
     saveImageAct->setDisabled(disabled);
     saveImageAct->setDisabled(disabled);
-    saveProjectAsAct->setDisabled(disabled);
+    //saveProjectAsAct->setDisabled(disabled);
     interactButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
     layersWidget->setDisabled(disabled);

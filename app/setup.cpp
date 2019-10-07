@@ -362,9 +362,9 @@ void Editor::setupActions()
     saveImageAsAct = new QAction(this);
     saveImageAsAct->setText(tr("Save as ..."));
 
-    saveProjectAsAct = new QAction(this);
+    /*saveProjectAsAct = new QAction(this);
     saveProjectAsAct->setText(tr("Save project as ..."));
-    saveProjectAsAct->setDisabled(true);
+    saveProjectAsAct->setDisabled(true);*/
 
     quitAct = new QAction(this);
     quitAct->setText(tr("Quit"));
@@ -547,7 +547,7 @@ void Editor::setupIcons()
     saveImageAct->setIcon(QIcon::fromTheme("document-save-as"));
     saveImageAsAct->setIcon(QIcon::fromTheme("document-save-as"));
 //    saveProjectAct->setIcon(QIcon::fromTheme("document-save"));
-    saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
+    //saveProjectAsAct->setIcon(QIcon::fromTheme("document-save-as"));
     quitAct->setIcon(QIcon::fromTheme("application-exit"));
 
     viewMoveAct->setIcon(QIcon::fromTheme("transform_move"));

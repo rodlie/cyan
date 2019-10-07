@@ -72,7 +72,7 @@ private:
     QAction *saveImageAct;
     QAction *saveImageAsAct;
     //QAction *saveProjectAct;
-    QAction *saveProjectAsAct;
+    //QAction *saveProjectAsAct;
     QAction *blackPointAct;
     QAction *quitAct;
 
