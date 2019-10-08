@@ -181,7 +181,30 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
             QString iccFile = it.next();
             QString profile = getProfileTag(iccFile);
             if (iccFile.isEmpty() || profile.isEmpty()) { continue; }
-            if (getProfileColorspace(iccFile)!= colorspace) { continue; }
+            Magick::ColorspaceType iccColorspace = getProfileColorspace(iccFile);
+            if (iccColorspace != colorspace) {
+                // are they really different?
+                bool iccIsRGB = false;
+                bool cpIsRGB = false;
+                switch (iccColorspace) {
+                case Magick::RGBColorspace:
+                case Magick::sRGBColorspace:
+                case Magick::scRGBColorspace:
+                    iccIsRGB = true;
+                    break;
+                default:;
+                }
+                switch (colorspace) {
+                case Magick::RGBColorspace:
+                case Magick::sRGBColorspace:
+                case Magick::scRGBColorspace:
+                    cpIsRGB = true;
+                    break;
+                default:;
+                }
+                if (iccIsRGB != cpIsRGB) { continue; } // skip
+            }
+            //if (getProfileColorspace(iccFile)!= colorspace) { continue; }
             output[profile] = iccFile;
         }
     }
@@ -190,10 +213,11 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
 
 Magick::ColorspaceType CyanCommon::getProfileColorspace(const QString &filename)
 {
+    Magick::ColorspaceType colorspace = Magick::UndefinedColorspace;
     if (!filename.isEmpty()) {
-        return getProfileColorspace(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"));
+        colorspace = getProfileColorspace(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"));
     }
-    return Magick::UndefinedColorspace;
+    return colorspace;
 }
 
 Magick::ColorspaceType CyanCommon::getProfileColorspace(cmsHPROFILE profile)
