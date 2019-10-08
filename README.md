@@ -88,6 +88,49 @@ This program is free software; you can redistribute it and/or modify it under th
 
 Source code for third-party software included in the official builds are available on [SourceForge](https://sourceforge.net/projects/prepress/files/sdk/source/).
 
+
+## ICC Profiles
+
+The following ICC color profiles are included with Cyan:
+
+### sRGB_v4_ICC_preference.icc / sRGB2014.icc
+
+This profile is made available by the International Color Consortium, and may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile.
+
+### sRGB_IEC61966-2-1_no_black_scaling.icc
+
+To anyone who acknowledges that the file "sRGB_IEC61966-2-1_no_black_scaling.icc" is provided "AS IS" WITH NO EXPRESS OR IMPLIED WARRANTY, permission to use, copy and distribute these file for any purpose is hereby granted without fee, provided that the file is not changed including the ICC copyright notice tag, and that the name of ICC shall not be used in advertising or publicity pertaining to distribution of the software without specific, written prior permission. ICC makes no representations about the suitability of this software for any purpose.
+
+### SWOP2006_Coated5v2.icc
+
+This profile is made available by IDEAlliance, with permission of X-Rite, Inc., and may be used, embedded, exchanged, and shared without restriction. It may not be altered, or sold without written permission of IDEAlliance.
+
+### ISOcoated_v2_300_bas.icc / ISOcoated_v2_grey1c_bas.icc
+
+Copyright (c) 2007-2010, basICColor GmbH
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must  
+not
+  claim that you wrote the original software. If you use this software
+  in a product, an acknowledgment in the product documentation would be
+  appreciated but is not required.
+
+  2. Altered source versions must be plainly marked as such, and must  
+not be
+  misrepresented as being the original software.
+
+  3. This notice may not be removed or altered from any source
+  distribution.
+
+
 ## Build
 
 Binary builds are recommended, but you can always build from source. The following instructions are for Linux.

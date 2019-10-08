@@ -410,9 +410,24 @@ if(MINGW)
     #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/FatCow.txt COPYONLY)
     #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/basICColor.txt COPYONLY)
     #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/rgb.icc COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/cmyk.icc COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc ${CMAKE_CURRENT_BINARY_DIR}/profiles/gray.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_300_bas.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/ISOcoated_v2_300_bas.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_grey1c_bas.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/ISOcoated_v2_grey1c_bas.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/SWOP2006_Coated5v2.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/SWOP2006_Coated5v2.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB2014.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB2014.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_IEC61966-2-1_no_black_scaling.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB_IEC61966-2-1_no_black_scaling.icc COPYONLY)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_v4_ICC_preference.icc
+        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB_v4_ICC_preference.icc COPYONLY)
 endif()
 
 
@@ -481,9 +496,12 @@ if(UNIX AND NOT APPLE)
         ${CMAKE_INSTALL_DATAROOTDIR}/applications)
     install(
         FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/rgb.icc
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/cmyk.icc
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/gray.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_300_bas.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_grey1c_bas.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/SWOP2006_Coated5v2.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB2014.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_IEC61966-2-1_no_black_scaling.icc
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_v4_ICC_preference.icc
         DESTINATION
         ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/profiles)
     install(
