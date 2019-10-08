@@ -374,6 +374,7 @@ void View::addLayer(Magick::Image image,
     _canvas.layers[id].order = getLastLayerOrder()+1;
     _canvas.layers[id].isText = isText;
     //_canvas.layers[id].visible = true;
+    _canvas.layers[id].composite = image.compose();
 
     qDebug() << "ADD IMAGE LAYER" << QString::fromStdString(image.label()) << id;
     if (!image.label().empty()) {
