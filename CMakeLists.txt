@@ -185,6 +185,8 @@ include_directories(
 add_compile_options(-Wall -Wextra)
 if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
     add_definitions(-DQT_NO_DEBUG_OUTPUT)
+else()
+    add_definitions(-DQT_MESSAGELOGCONTEXT)
 endif()
 if (${DEBUG_TILES})
     add_definitions(-DSHOW_TILES)
@@ -507,4 +509,3 @@ endif()
 if(BUILD_WIDGET_PLUGIN_EXAMPLE)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanWidgetExample)
 endif()
-
