@@ -182,29 +182,21 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
             QString profile = getProfileTag(iccFile);
             if (iccFile.isEmpty() || profile.isEmpty()) { continue; }
             Magick::ColorspaceType iccColorspace = getProfileColorspace(iccFile);
-            if (iccColorspace != colorspace) {
-                // are they really different?
-                bool iccIsRGB = false;
-                bool cpIsRGB = false;
-                switch (iccColorspace) {
-                case Magick::RGBColorspace:
-                case Magick::sRGBColorspace:
-                case Magick::scRGBColorspace:
-                    iccIsRGB = true;
-                    break;
-                default:;
-                }
-                switch (colorspace) {
-                case Magick::RGBColorspace:
-                case Magick::sRGBColorspace:
-                case Magick::scRGBColorspace:
-                    cpIsRGB = true;
-                    break;
-                default:;
-                }
-                if (iccIsRGB != cpIsRGB) { continue; } // skip
+            switch (iccColorspace) {
+            case Magick::RGBColorspace:
+            case Magick::scRGBColorspace:
+                iccColorspace = Magick::sRGBColorspace;
+                break;
+            default:;
             }
-            //if (getProfileColorspace(iccFile)!= colorspace) { continue; }
+            switch (colorspace) {
+            case Magick::RGBColorspace:
+            case Magick::scRGBColorspace:
+                colorspace = Magick::sRGBColorspace;
+                break;
+            default:;
+            }
+            if (iccColorspace != colorspace) { continue; }
             output[profile] = iccFile;
         }
     }
