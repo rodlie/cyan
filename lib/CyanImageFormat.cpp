@@ -904,7 +904,11 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
 
         // TEMP WORKAROUND!
         if (layer.columns()==1 && layer.rows()==1) {
-            continue;
+            //continue;
+            layer.alpha(true);
+            layer.evaluate(Magick::AlphaChannel,
+                           Magick::MultiplyEvaluateOperator,
+                           0.0);
         }
 
         // comp layer over canvas

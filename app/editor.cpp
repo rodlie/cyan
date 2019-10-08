@@ -1291,7 +1291,7 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
             readVideo(filename);
         } else { // "regular" image
             if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
-            else if (CyanImageFormat::hasLayers(filename)>0) { loadUnknownProject(filename); }
+            else if (CyanImageFormat::hasLayers(filename)>1) { loadUnknownProject(filename); }
             else { readImage(filename); }
         }
 #else
