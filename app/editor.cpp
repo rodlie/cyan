@@ -203,10 +203,11 @@ void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
         qDebug() << "add plugin to right splitter";
         rightSplitter->addWidget(plugin->getWidget(this));
         break;
-    default:
+    case CyanWidgetPlugin::CyanWidgetPluginLeftPosition:
         qDebug() << "add plugin to left splitter";
         leftSplitter->addWidget(plugin->getWidget(this));
         break;
+    default:;
     }
     plugin->setCurrentColor(colorPicker->currentColor());
 }
@@ -454,6 +455,75 @@ void Editor::loadProject(const QString &filename)
     }
 }
 
+void Editor::loadUnknownProject(const QString &filename)
+{
+    qDebug() << "try to load unknown canvas" << filename;
+    if (filename.isEmpty()) { return; }
+    if (!CyanImageFormat::isValidCanvas(filename) && CyanImageFormat::hasLayers(filename)>1) {
+        CyanImageFormat::CyanCanvas canvas = CyanImageFormat::readUnknownCanvas(filename);
+
+        // check for color profile, if none add
+        bool missingProfile = false;
+        if (canvas.profile.length()==0) {
+            qDebug() << "no profile!";
+            QString defPro;
+            switch(canvas.image.colorSpace()) {
+            case Magick::CMYKColorspace:
+                defPro = selectedDefaultColorProfile(profileCMYKGroup);
+                break;
+            case Magick::GRAYColorspace:
+                defPro = selectedDefaultColorProfile(profileGRAYGroup);
+                break;
+            default:
+                defPro = selectedDefaultColorProfile(profileRGBGroup);
+            }
+            if (defPro.isEmpty()) {
+                QMessageBox::warning(this,
+                                     tr("Missing default profile"),
+                                     tr("Missing default profile for the selected color space!"));
+                return;
+            }
+            ConvertDialog *dialog = new ConvertDialog(this,
+                                                      tr("Assign color profile"),
+                                                      defPro,
+                                                      canvas.image.colorSpace());
+            int ret = dialog->exec();
+            if (ret == QDialog::Accepted &&
+                !dialog->getProfile().isEmpty())
+            {
+                qDebug() << "assing profile";
+                Magick::Blob profile;
+                Magick::Image input;
+                input.read(dialog->getProfile().toStdString());
+                input.write(&profile);
+                canvas.image = ColorConvert::convertColorspace(canvas.image,
+                                                        Magick::Blob(),
+                                                        profile);
+                missingProfile = true;
+            } else { return; }
+            QTimer::singleShot(100,
+                               dialog,
+                               SLOT(deleteLater()));
+        }
+        if (missingProfile) {
+            qDebug() << "fix missing profile";
+            // set profile
+            canvas.profile = canvas.image.iccColorProfile();
+            for (int i=0;i<canvas.layers.size();++i) {
+                canvas.layers[i].image = ColorConvert::convertColorspace(canvas.layers[i].image,
+                                                                   Magick::Blob(),
+                                                                   canvas.profile);
+            }
+        }
+        canvas.filename = filename;
+        newTab(canvas);
+    } else {
+        QMessageBox::warning(this,
+                             tr("Invalid project"),
+                             tr("This file is not a valid project file"));
+    }
+}
+
 // save image project (*.MIFF)
 void Editor::writeProject(const QString &filename, bool setFilename)
 {
@@ -484,14 +554,17 @@ void Editor::writeProject(const QString &filename, bool setFilename)
 // load unknown image
 void Editor::loadImage(const QString &filename)
 {
+    qDebug() << "loadImage" << filename;
     if (filename.isEmpty() || !QFile::exists(filename)) { return; }
     if (CyanImageFormat::isValidCanvas(filename)) { // cyan project
         emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading canvas")));
         loadProject(filename);
         emit statusMessage(tr("Done"));
-    } else { // regular image
-        // TODO
-        qDebug() << "HAS LAYERS?" << CyanImageFormat::hasLayers(filename);
+    } else if (CyanImageFormat::hasLayers(filename)>1) {
+        emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading unknown canvas")));
+        loadUnknownProject(filename);
+        emit statusMessage(tr("Done"));
+    }  else { // regular image
         emit statusMessage(QString("%2 %1").arg(filename).arg(tr("Loading image")));
         readImage(filename);
         emit statusMessage(tr("Done"));
@@ -502,7 +575,7 @@ void Editor::loadImage(const QString &filename)
 void Editor::readImage(Magick::Blob blob,
                        const QString &filename)
 {
-    qDebug() << "read image" << filename;
+    qDebug() << "read image" << filename << CyanImageFormat::hasLayers(filename);
     Magick::Image image;
     image.quiet(false);
 
@@ -533,6 +606,7 @@ void Editor::readImage(Magick::Blob blob,
         }
 
         // check for color profile, if none add
+        qDebug() << "image color space?" << image.colorSpace();
         if (image.iccColorProfile().length()==0) {
             QString defPro;
             switch(image.colorSpace()) {
@@ -675,7 +749,6 @@ void Editor::readAudio(const QString &filename)
     if (coverart.size()==0) { return; }
     qDebug() << "found image in audio!";
     try {
-        Magick::Image image;
         readImage(Magick::Blob(coverart.data(),
                                static_cast<size_t>(coverart.size())),
                   filename);
@@ -1218,12 +1291,14 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
             readVideo(filename);
         } else { // "regular" image
             if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
+            else if (CyanImageFormat::hasLayers(filename)>0) { loadUnknownProject(filename); }
             else { readImage(filename); }
         }
 #else
         if (type.name().startsWith(QString("audio")) ||
             type.name().startsWith(QString("video"))) { continue; }
         if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
+        else if (CyanImageFormat::hasLayers(filename)>0) { loadUnknownProject(filename); }
         else { readImage(filename); }
 #endif
     }
@@ -1245,6 +1320,7 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(urls.at(i).toString());
         Magick::Image image;
+        std::list<Magick::Image> images;
 
         try {
 #ifdef WITH_FFMPEG
@@ -1253,32 +1329,46 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
                 if (coverart.size()==0) { continue; }
                 image.read(Magick::Blob(coverart.data(),
                                         static_cast<size_t>(coverart.size())));
+                images.push_back(image);
             } else if (type.name().startsWith(QString("video"))) { // get frame from video
                 image = getVideoFrameAsImage(filename);
-            } else { // "regular" image
-                if (CyanImageFormat::isValidCanvas(filename)) { continue; }
-                image.read(filename.toStdString());
+                images.push_back(image);
+            } else { // image(s)
+                if (CyanImageFormat::isValidCanvas(filename)) { continue; } // skip projects
+                if (CyanImageFormat::hasLayers(filename)>1) {
+                    Magick::readImages(&images, filename.toStdString());
+                } else {
+                    image.read(filename.toStdString());
+                    images.push_back(image);
+                }
             }
 #else
             if (type.name().startsWith(QString("audio")) ||
-                type.name().startsWith(QString("video"))) { continue; }
-            if (CyanImageFormat::isValidCanvas(filename)) {
-                // skip projects
-                continue;
+                type.name().startsWith(QString("video")) ||
+                CyanImageFormat::isValidCanvas(filename))
+            {
+                continue; // skip
             }
-            image.read(filename.toStdString());
+            if (CyanImageFormat::hasLayers(filename)>1) {
+                Magick::readImages(&images, filename.toStdString());
+            } else {
+                image.read(filename.toStdString());
+                images.push_back(image);
+            }
 #endif
 
-            if (image.columns()<=0 ||
-                image.rows()<=0) { continue; } // not an (readable) image, skip
-            image.magick("MIFF");
-            image.fileName(filename.toStdString());
-            if (image.label().empty()) {
-                QFileInfo fileInfo(filename);
-                image.label(fileInfo.baseName().toStdString());
+            for (std::list<Magick::Image>::iterator it = images.begin(); it != images.end(); ++it) {
+                Magick::Image layer = *it;
+                if (layer.columns()<=0 ||
+                    layer.rows()<=0) { continue; } // not an (readable) image, skip
+                layer.magick("MIFF");
+                layer.fileName(filename.toStdString());
+                if (layer.label().empty()) {
+                    QFileInfo fileInfo(filename);
+                    layer.label(fileInfo.baseName().toStdString());
+                }
+                addLayerToView(layer, view);
             }
-
-            addLayerToView(image, view);
         }
         catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
         catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }

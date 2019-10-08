@@ -257,6 +257,7 @@ private slots:
     const QString loadSettingsLastSaveDir();
 
     void loadProject(const QString &filename);
+    void loadUnknownProject(const QString &filename);
     void writeProject(const QString &filename, bool setFilename = true);
 
     //void saveImage(const QString &filename);
