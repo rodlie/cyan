@@ -660,6 +660,72 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
     return canvas;
 }
 
+CyanImageFormat::CyanCanvas CyanImageFormat::readUnknownCanvas(const QString &filename)
+{
+    qDebug() << "read unknown canvas, result may vary!" << filename;
+    CyanCanvas canvas;
+    canvas.filename = filename;
+
+    if (isValidCanvas(filename) || hasLayers(filename)<=1) { return canvas; }
+
+    // read images
+    std::list<Magick::Image> images;
+    try {
+        Magick::readImages(&images,
+                           filename.toStdString());
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    int order = 0;
+    for (std::list<Magick::Image>::iterator it = images.begin(); it != images.end(); ++it){
+
+        if (order==0) { // this is our canvas
+            canvas.image = *it;
+
+            // decompress
+            try { canvas.image.compressType(Magick::NoCompression); }
+            catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+            catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+            // set label
+            canvas.image.fileName(canvas.filename.toStdString());
+            canvas.label = QString::fromStdString(canvas.image.fileName());
+
+            // set profile
+            canvas.profile = canvas.image.iccColorProfile();
+
+            // bump layer (we want to include this canvas as our first layer)
+            order++;
+        }
+
+        CyanLayer layer;
+        layer.image = *it;
+        layer.composite = layer.image.compose();
+
+        layer.label = QString::fromStdString(layer.image.label());
+        if (layer.label.isEmpty()) { layer.label = QString("Layer %1").arg(order); }
+        layer.order = order;
+        layer.position = QSize(layer.image.page().xOff(),
+                               layer.image.page().yOff());
+
+        // decompress
+        try { layer.image.compressType(Magick::NoCompression); }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+        // strip
+        layer.image.strip();
+
+        // add
+        canvas.layers.insert(canvas.layers.size(),
+                             layer);
+        order++;
+    }
+
+    return canvas;
+}
+
 CyanImageFormat::CyanCanvas CyanImageFormat::readImage(const QString &filename)
 {
     CyanCanvas canvas;
@@ -717,8 +783,10 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
                                           QMap<int, CyanImageFormat::CyanLayer> layers,
                                           Magick::Geometry crop)
 {
+    qDebug() << "comp layers" << crop.width() << crop.height();
     // copy canvas to comp
     Magick::Image comp(canvas);
+
     comp.quiet(true); // ignore warnings
 
     // crop comp
@@ -833,8 +901,15 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
                     qDebug() << warn_.what();
                 }
             }*/
+
+        // TEMP WORKAROUND!
+        if (layer.columns()==1 && layer.rows()==1) {
+            continue;
+        }
+
         // comp layer over canvas
         try {
+            qDebug() << "LAYER COMP IMAGE?" << layer.columns() << layer.rows() << offsetX << offsetY;
             comp.quiet(true);
             comp.composite(layer,
                            offsetX,
