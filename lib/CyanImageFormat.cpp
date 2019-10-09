@@ -703,6 +703,11 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readUnknownCanvas(const QString &fi
         layer.image = *it;
         layer.composite = layer.image.compose();
 
+        // TODO tmp workaround:
+        if (layer.composite == Magick::DifferenceCompositeOp) {
+            layer.composite = Magick::ExclusionCompositeOp;
+        }
+
         layer.label = QString::fromStdString(layer.image.label());
         if (layer.label.isEmpty()) { layer.label = QString("Layer %1").arg(order); }
         layer.order = order;
