@@ -696,7 +696,7 @@ CyanImageFormat::CyanCanvas CyanImageFormat::readUnknownCanvas(const QString &fi
             canvas.profile = canvas.image.iccColorProfile();
 
             // bump layer (we want to include this canvas as our first layer)
-            order++;
+            //order++;
         }
 
         CyanLayer layer;

@@ -206,9 +206,14 @@ void LayerTree::populateTree(View *view)
         thumb.write(&pix);
         QPixmap pixmap = QPixmap::fromImage(QImage::fromData(reinterpret_cast<uchar*>(const_cast<void*>(pix.data())),
                                                                                       static_cast<int>(pix.length())));
+
+        QString layerOrder = QString::number(layers.value().order);
+        while (layerOrder.size()<3) {
+            layerOrder.prepend("0");
+        }
         item->setIconSize(QSize(24, 24));
         item->setIcon(3, QIcon(pixmap));
-        item->setText(0, QString::number(layers.value().order));
+        item->setText(0, layerOrder);
         item->setText(3, layers.value().label);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setLayerID(layers.key());

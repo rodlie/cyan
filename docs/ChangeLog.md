@@ -10,15 +10,16 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 **Release date : 20191010 (TBA)**
 
-Cyan 2.0 Alpha 3. This is the first v2 release with binaries available for all supported platforms.
+Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
 ### General
 
+  * Initial support for GIMP project format (XCF)
   * One unified load button/function
   * One unified save button/function
   * Proper "save as" function
-  * Fix tabs style bug
-  * Fixed various minor bugs
+  * Fix tabs styles bug
+  * Fixed various bugs
   * Fix potential crash if no color profiles present
   * macOS support (Lion 10.7+)
 
