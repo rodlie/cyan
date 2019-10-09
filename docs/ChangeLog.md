@@ -14,7 +14,7 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
 ### General
 
-  * Initial support for GIMP project format (XCF)
+  * Initial support for GIMP project format (XCF) *(read-only)*
   * One unified load button/function
   * One unified save button/function
   * Proper "save as" function
