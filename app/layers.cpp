@@ -44,7 +44,7 @@ void Editor::handleLayersOpacity(double value, int id)
 
 void Editor::handleLayersUpdated()
 {
-    layersWidget->handleTabActivated(mdi->currentSubWindow());
+    layersWidget->handleTabActivated(mdi->currentSubWindow(), true);
 }
 
 void Editor::handleLayerTreeSelectedLayer(int id)
