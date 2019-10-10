@@ -44,7 +44,9 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     _cancel = new QPushButton(this);
 
     _ok->setText(tr("Assign"));
+    _ok->setIcon(QIcon::fromTheme("colors"));
     _cancel->setText(tr("Cancel"));
+    _cancel->setIcon(QIcon::fromTheme("process-stop"));
 
     QWidget *buttonWidget = new QWidget(this);
     QHBoxLayout *buttonLayout = new QHBoxLayout(buttonWidget);
@@ -53,6 +55,7 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     buttonLayout->addWidget(_cancel);
 
     _box = new QComboBox(this);
+    _box->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
     mainLayout->addWidget(_box);
     mainLayout->addWidget(buttonWidget);
@@ -80,10 +83,12 @@ void ConvertDialog::populateProfiles()
     _box->clear();
     int index = -1;
     int c = 0;
+    QIcon colorWheelIcon = QIcon::fromTheme("color-wheel");
     QMapIterator<QString, QString> i(CyanCommon::getColorProfiles(_colorspace));
     while (i.hasNext()) {
         i.next();
-        _box->addItem(i.key(),
+        _box->addItem(colorWheelIcon,
+                      i.key(),
                       i.value());
         if (i.value() == _filename) { index = c; }
         c++;
