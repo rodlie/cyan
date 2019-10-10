@@ -24,6 +24,7 @@
 #include <QMapIterator>
 #include <QDebug>
 #include <QSettings>
+#include <QColor>
 
 #include "CyanImageFormat.h"
 
@@ -46,6 +47,8 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _depth8(nullptr)
   , _depth16(nullptr)
   , _forcedProfile(profile)
+  , _picker(nullptr)
+  , _solidColor(nullptr)
 {
     setWindowTitle(title);
     setWindowIcon(_type==CyanCommon::newImageDialogType?QIcon::fromTheme("document-new"):QIcon::fromTheme("layer"));
@@ -63,6 +66,8 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _depth16 = new QRadioButton(this);
     _depth32 = new QRadioButton(this);
     _depth64 = new QRadioButton(this);
+    _picker = new QtColorPicker(this, -1, true, false);
+    _solidColor = new QCheckBox(this);
 
     _profile->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
@@ -77,6 +82,9 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
 
     QWidget *depthWidget = new QWidget(this);
     QVBoxLayout *depthLayout = new QVBoxLayout(depthWidget);
+
+    QWidget *backgroundWidget = new QWidget(this);
+    QVBoxLayout *backgroundLayout = new QVBoxLayout(backgroundWidget);
 
     _width->setRange(1, 10000);
     _height->setRange(1, 10000);
@@ -134,6 +142,18 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
         _depth64->setDisabled(false);
     }
 
+    //
+    _picker->setStandardColors();
+    _solidColor->setText(tr("Solid Color"));
+    QWidget *solidWidget = new QWidget(this);
+    solidWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *solidLayout = new QHBoxLayout(solidWidget);
+    solidLayout->setContentsMargins(0,0,0,0);
+    solidLayout->addWidget(_solidColor);
+    solidLayout->addWidget(_picker);
+    backgroundLayout->addWidget(solidWidget);
+
+    //
     buttonLayout->addWidget(_ok);
     buttonLayout->addWidget(_cancel);
 
@@ -142,6 +162,7 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     mainLayout->addWidget(_select);
     mainLayout->addWidget(_profile);
     mainLayout->addWidget(depthWidget);
+    mainLayout->addWidget(backgroundWidget);
     mainLayout->addStretch();
     mainLayout->addWidget(buttonWidget);
 
@@ -225,15 +246,27 @@ void NewMediaDialog::createImage(QSize geo,
     QString label = _label->text();
     if (label.isEmpty()) { label = windowTitle(); }
     try {
-        _image.size(Magick::Geometry(static_cast<size_t>(geo.width()),
-                                     static_cast<size_t>(geo.height())));
+        Magick::Geometry mGeo = Magick::Geometry(static_cast<size_t>(geo.width()),
+                                                 static_cast<size_t>(geo.height()));
+        if (_solidColor->isChecked()) {
+        _image = Magick::Image(mGeo, Magick::Color(QString("rgba(%1,%2,%3,%4)")
+                                                   .arg(_picker->currentColor().red())
+                                                   .arg(_picker->currentColor().green())
+                                                   .arg(_picker->currentColor().blue())
+                                                   .arg(_picker->currentColor().alpha())
+                                                   .toStdString()));
+        } else {
+            _image.size(mGeo);
+        }
         _image.colorSpace(colorspace);
         _image.depth(depth);
         _image.label(label.toStdString());
         _image.alpha(true);
-        _image.evaluate(Magick::AlphaChannel,
-                        Magick::MultiplyEvaluateOperator,
-                        0.0);
+        if (!_solidColor->isChecked()) {
+            _image.evaluate(Magick::AlphaChannel,
+                            Magick::MultiplyEvaluateOperator,
+                            0.0);
+        }
         _image.profile("ICC",
                        selectedProfile());
     }

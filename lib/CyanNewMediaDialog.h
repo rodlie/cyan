@@ -25,10 +25,13 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QRadioButton>
+#include <QCheckBox>
 
 #include <Magick++.h>
 
 #include "cyan_common.h"
+
+#include "qtcolorpicker.h"
 
 class NewMediaDialog : public QDialog
 {
@@ -62,6 +65,8 @@ private:
     QRadioButton *_depth32;
     QRadioButton *_depth64;
     Magick::Blob _forcedProfile;
+    QtColorPicker *_picker;
+    QCheckBox *_solidColor;
 
 private slots:
     void handleOk();

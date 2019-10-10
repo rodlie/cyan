@@ -8,12 +8,13 @@ This document will be updated when noteworthy changes are done in Cyan.
 
 ## 1.99.3
 
-**Release date : 20191010 (TBA)**
+**Release date : 20191019 (TBA)**
 
 Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
 ### General
 
+  * Option to add solid color on new image or layer
   * Initial support for GIMP project format (XCF) *(read-only)*
   * One unified load button/function
   * One unified save button/function
