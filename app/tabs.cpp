@@ -31,6 +31,8 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     QString hguides = QString::fromStdString(canvas.image.attribute(QString(CYAN_IMAGE_H_GUIDES)
                                                                     .toStdString()));
 
+    qDebug() << "GUIDES?" << vguides << hguides;
+
     // setup view
     view->setCanvasSpecsFromImage(canvas.image);
     view->setLayersFromCanvas(canvas);
@@ -43,12 +45,14 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
         for (int i=0;i<splitGuides.size();++i) {
             QString guide = splitGuides.at(i);
             QStringList splitGuide = guide.split("x");
+            qDebug() << "VGUIDE?" << splitGuide.size() << guide;
             if (splitGuide.size()!=2) { continue; }
             QString pX = splitGuide.at(0);
             QString pY = splitGuide.at(1);
+            qDebug() << "VGUIDE POS?" << pX << pY;
             view->addGuide(false,
-                           QPointF(pX.toInt(),
-                                   pY.toInt()));
+                           QPointF(pX.toDouble(),
+                                   pY.toDouble()));
         }
     }
     if (!hguides.isEmpty()) {
@@ -56,12 +60,14 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
         for (int i=0;i<splitGuides.size();++i) {
             QString guide = splitGuides.at(i);
             QStringList splitGuide = guide.split("x");
+            qDebug() << "HGUIDE?" << splitGuide.size() << guide;
             if (splitGuide.size()!=2) { continue; }
             QString pX = splitGuide.at(0);
             QString pY = splitGuide.at(1);
+            qDebug() << "HGUIDE POS?" << pX << pY;
             view->addGuide(true,
-                           QPointF(pX.toInt(),
-                                   pY.toInt()));
+                           QPointF(pX.toDouble(),
+                                   pY.toDouble()));
         }
     }
 
