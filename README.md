@@ -141,7 +141,7 @@ Binary builds are recommended, but you can always build from source. The followi
  * pkg-config
  * Qt5 *(Widgets/Concurrent) 5.5+*
  * Little CMS *2+*
- * ImageMagick *(Magick++) 7.0.8+*
+ * ImageMagick *(Magick++) 7.0.8-34+*
    * Minimum quantum depth of 16 is recommended
    * Zero configuration is recommended *(Windows/macOS)*
    * HDRI required
