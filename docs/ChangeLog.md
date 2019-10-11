@@ -1,8 +1,6 @@
 # Changes
 
-![Promo](https://github.com/rodlie/cyan/raw/master/docs/images/cyan-promo-02.png)
-
-[![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
+![ImageHeader](images/cyan-promo-02.png)
 
 This document will be updated when noteworthy changes are done in Cyan.
 
@@ -16,8 +14,14 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
   * Improved new image/layer dialog
   * Dropped OpenEXR in official binaries (has limited support in ImageMagick)
-  * Option to add solid color on new image or layer
+  * Option to add "Background" on new image or layer
+    * Solid
+    * Gradient
+    * Radial
+    * Plasma
+    * Noise
   * Initial support for GIMP project format (XCF) *(read-only)*
+    * This also includes multi-layered PSD and TIFF files
   * One unified load button/function
   * One unified save button/function
   * Proper "save as" function

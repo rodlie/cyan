@@ -447,6 +447,9 @@ void NewMediaDialog::createImage(QSize geo,
         } else {
             _image.profile("ICC", selectedProfile());
         }
+        if (_image.depth() != depth) {
+            _image.depth(depth);
+        }
         _image.label(label.toStdString());
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
