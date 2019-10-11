@@ -312,7 +312,7 @@ Magick::CompositeOperator CyanImageFormat::findCompositeMode(const QString &titl
 
 bool CyanImageFormat::isValidCanvas(const QString &filename)
 {
-    if (filename.isEmpty()) { return false; }
+    if (!QFile::exists(filename)) { return false; }
     try {
         Magick::Image image;
         image.quiet(true);
@@ -322,13 +322,15 @@ bool CyanImageFormat::isValidCanvas(const QString &filename)
         if (project>0) { return true; }
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return false;
 }
 
 bool CyanImageFormat::isValidImage(const QString &filename)
 {
-    if (filename.isEmpty()) { return false; }
+    if (!QFile::exists(filename)) { return false; }
     try {
         Magick::Image image;
         image.quiet(false);
@@ -336,13 +338,15 @@ bool CyanImageFormat::isValidImage(const QString &filename)
         return image.isValid();
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return false;
 }
 
 int CyanImageFormat::hasLayers(const QString &filename)
 {
-    if (filename.isEmpty()) { return 0; }
+    if (!QFile::exists(filename)) { return 0; }
     try {
         std::list<Magick::Image> layers;
         Magick::pingImages(&layers,
@@ -350,7 +354,9 @@ int CyanImageFormat::hasLayers(const QString &filename)
         return static_cast<int>(layers.size());
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
     return 0;
 }
 
@@ -1027,6 +1033,7 @@ const QString CyanImageFormat::supportedImageFormats(bool readFormats)
             found << suffix.toLower();
         }
     }
+    if (hasDelegate("tiff")) { found << "*.tif"; }
 
     delete [] mFormat;
     exception = DestroyExceptionInfo(exception);

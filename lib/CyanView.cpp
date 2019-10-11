@@ -1082,7 +1082,7 @@ void View::setDirty(bool dirty)
 
 void View::addGuide(bool isHorizontal, QPointF pos)
 {
-    qDebug() << "add guide!";
+    qDebug() << "add guide!" << isHorizontal << pos;
     int id = _canvas.guides.size();
     _canvas.guides[id] = new CyanGuideItem(nullptr, isHorizontal);
     _scene->addItem(_canvas.guides[id]);
