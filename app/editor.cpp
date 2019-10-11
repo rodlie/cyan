@@ -993,7 +993,8 @@ void Editor::newLayerDialog(bool isText)
                                                 CyanCommon::newLayerDialogType,
                                                 getCurrentCanvas()->getCanvas().colorSpace(),
                                                 getCurrentCanvas()->getCanvasProject().profile,
-                                                getCurrentCanvas()->getCanvasSize());
+                                                getCurrentCanvas()->getCanvasSize(),
+                                                getCurrentCanvas()->getCanvas().depth());
     int res =  dialog->exec();
     if (res == QDialog::Accepted) {
         getCurrentCanvas()->addLayer(dialog->getImage(), true, false, isText);

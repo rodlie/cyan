@@ -14,6 +14,7 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
 ### General
 
+  * Improved new image/layer dialog
   * Dropped OpenEXR in official binaries (has limited support in ImageMagick)
   * Option to add solid color on new image or layer
   * Initial support for GIMP project format (XCF) *(read-only)*

@@ -924,7 +924,7 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
 
         // comp layer over canvas
         try {
-            qDebug() << "LAYER COMP IMAGE?" << layer.columns() << layer.rows() << offsetX << offsetY;
+            //qDebug() << "LAYER COMP IMAGE?" << layer.columns() << layer.rows() << offsetX << offsetY;
             comp.quiet(true);
             comp.composite(layer,
                            offsetX,

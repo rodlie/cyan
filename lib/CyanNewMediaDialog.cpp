@@ -25,15 +25,18 @@
 #include <QDebug>
 #include <QSettings>
 #include <QColor>
+#include <QDateTime>
+#include <QtConcurrent/qtconcurrentrun.h>
 
 #include "CyanImageFormat.h"
+#include "CyanColorConvert.h"
 
 NewMediaDialog::NewMediaDialog(QWidget *parent,
                                QString title,
                                CyanCommon::newDialogType dialogType,
                                Magick::ColorspaceType colorspace,
                                Magick::Blob profile,
-                               QSize size) :
+                               QSize size, int depth) :
     QDialog (parent)
   , _type(dialogType)
   , _width(nullptr)
@@ -44,14 +47,16 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
   , _label(nullptr)
   , _select(nullptr)
   , _profile(nullptr)
-  , _depth8(nullptr)
-  , _depth16(nullptr)
   , _forcedProfile(profile)
-  , _picker(nullptr)
-  , _solidColor(nullptr)
+  , _colorPickerFrom(nullptr)
+  , _colorPickerTo(nullptr)
+  , _drawOption(nullptr)
+  , _bitBox(nullptr)
+  , _progbar(nullptr)
 {
     setWindowTitle(title);
     setWindowIcon(_type==CyanCommon::newImageDialogType?QIcon::fromTheme("document-new"):QIcon::fromTheme("layer"));
+    setMinimumWidth(250);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -62,12 +67,69 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _cancel = new QPushButton(this);
     _select = new QComboBox(this);
     _profile = new QComboBox(this);
-    _depth8 = new QRadioButton(this);
-    _depth16 = new QRadioButton(this);
-    _depth32 = new QRadioButton(this);
-    _depth64 = new QRadioButton(this);
-    _picker = new QtColorPicker(this, -1, true, false);
-    _solidColor = new QCheckBox(this);
+
+    _progbar = new QProgressBar(this);
+    _progbar->setMinimum(0);
+    _progbar->setMaximum(0);
+    _progbar->setValue(-1);
+    _progbar->setHidden(true);
+
+    _bitBox = new QComboBox(this);
+    _bitBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    int _depth = CyanImageFormat::supportedQuantumDepth();
+    if (_depth >= 8) {
+        _bitBox->addItem(tr("8-bit"), 8);
+    }
+    if (_depth >= 16) {
+        _bitBox->addItem(tr("16-bit"), 16);
+    }
+    if (_depth >= 32) {
+        _bitBox->addItem(tr("32-bit"), 32);
+    }
+    if (_depth == 64) {
+        _bitBox->addItem(tr("64-bit"), 64);
+    }
+
+    switch (depth) {
+    case 8:
+        _bitBox->setCurrentIndex(0);
+        break;
+    case 16:
+        _bitBox->setCurrentIndex(1);
+        break;
+    case 32:
+        _bitBox->setCurrentIndex(2);
+        break;
+    case 64:
+        _bitBox->setCurrentIndex(3);
+    default:
+        break;
+    }
+
+    _colorPickerFrom = new QtColorPicker(this, -1, true, false);
+    _colorPickerTo = new QtColorPicker(this, -1, true, false);
+
+    _colorPickerFrom->setStandardColors();
+    _colorPickerTo->setStandardColors();
+
+    _drawOption = new QComboBox(this);
+    _drawOption->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+
+    _drawOption->addItem(tr("Transparent"), CyanDrawTextureTransparent);
+    _drawOption->addItem(tr("Solid color"), CyanDrawTextureSolid);
+    _drawOption->addItem(tr("Gradient"), CyanDrawTextureGradient);
+    _drawOption->addItem(tr("Gradient (Color From/To)"), CyanDrawTextureGradientColor);
+    _drawOption->addItem(tr("Radial Gradient"), CyanDrawTextureRadial);
+    _drawOption->addItem(tr("Radial Gradient (Color From/To)"), CyanDrawTextureRadialColor);
+    _drawOption->addItem(tr("Plasma"), CyanDrawTexturePlasma);
+    _drawOption->addItem(tr("Plasma Fractal"), CyanDrawTexturePlasmaFractal);
+    _drawOption->addItem(tr("Plasma (Color From/To)"), CyanDrawTexturePlasmaColor);
+    _drawOption->addItem(tr("Gaussian Noise"), CyanDrawTextureGaussianNoise);
+    _drawOption->addItem(tr("Impulse Noise"), CyanDrawTextureImpulseNoise);
+    _drawOption->addItem(tr("Laplacian Noise"), CyanDrawTextureLaplacianNoise);
+    _drawOption->addItem(tr("Loops (Gaussian)"), CyanDrawTextureLoopsGaussian);
+    _drawOption->addItem(tr("Loops (Impulse)"), CyanDrawTextureLoopsImpulse);
+    _drawOption->addItem(tr("Loops (Laplacian)"), CyanDrawTextureLoopsImpulse);
 
     _profile->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
@@ -75,16 +137,34 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _cancel->setIcon(QIcon::fromTheme("process-stop"));
 
     QWidget *buttonWidget = new QWidget(this);
+    buttonWidget->setContentsMargins(0,0,0,0);
     QHBoxLayout *buttonLayout = new QHBoxLayout(buttonWidget);
+    buttonLayout->setContentsMargins(0,0,0,0);
 
     QWidget *sizeWidget = new QWidget(this);
+    sizeWidget->setContentsMargins(0,0,0,0);
     QHBoxLayout *sizeLayout = new QHBoxLayout(sizeWidget);
+    sizeLayout->setContentsMargins(0,0,0,0);
 
-    QWidget *depthWidget = new QWidget(this);
-    QVBoxLayout *depthLayout = new QVBoxLayout(depthWidget);
+    QWidget *colorWidget = new QWidget(this);
+    colorWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *colorLayout = new QHBoxLayout(colorWidget);
+    colorLayout->setContentsMargins(0,0,0,0);
+
+    colorLayout->addStretch();
+    colorLayout->addWidget(_colorPickerFrom);
+    colorLayout->addWidget(_colorPickerTo);
 
     QWidget *backgroundWidget = new QWidget(this);
-    QVBoxLayout *backgroundLayout = new QVBoxLayout(backgroundWidget);
+    backgroundWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *backgroundLayout = new QHBoxLayout(backgroundWidget);
+    backgroundLayout->setContentsMargins(0,0,0,0);
+
+    QLabel *backgroundLabel = new QLabel(this);
+    backgroundLabel->setText(tr("Background"));
+
+    backgroundLayout->addWidget(backgroundLabel);
+    backgroundLayout->addWidget(_drawOption);
 
     _width->setRange(1, 10000);
     _height->setRange(1, 10000);
@@ -97,11 +177,6 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
         _height->setValue(1024);
     }
 
-    _depth8->setText(tr("8-bit"));
-    _depth16->setText(tr("16-bit"));
-    _depth32->setText(tr("32-bit"));
-    _depth64->setText(tr("64-bit"));
-
     _label->setPlaceholderText(title);
 
     _ok->setText(tr("New"));
@@ -113,62 +188,71 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
     _select->addItem(colorsIcon, tr("CMYK"), 1);
     _select->addItem(colorsIcon, tr("GRAY"), 2);
 
+    QLabel *widthLabel = new QLabel(this);
+    widthLabel->setText(tr("Width"));
+    QLabel *heightLabel = new QLabel(this);
+    heightLabel->setText(tr("Height"));
+
+    sizeLayout->addWidget(widthLabel);
     sizeLayout->addWidget(_width);
+    sizeLayout->addWidget(heightLabel);
     sizeLayout->addWidget(_height);
 
-    depthLayout->addWidget(_depth8);
-    depthLayout->addWidget(_depth16);
-    depthLayout->addWidget(_depth32);
-    depthLayout->addWidget(_depth64);
-
-    _depth8->setDisabled(true);
-    _depth16->setDisabled(true);
-    _depth32->setDisabled(true);
-    _depth64->setDisabled(true);
-
-    int depth = CyanImageFormat::supportedQuantumDepth();
-    qDebug() << "DEPTH?" << depth;
-    if (depth >= 8) {
-        _depth8->setDisabled(false);
-        _depth8->setChecked(true);
-    }
-    if (depth >= 16) {
-        _depth16->setDisabled(false);
-    }
-    if (depth >= 32) {
-        _depth32->setDisabled(false);
-    }
-    if (depth == 64) {
-        _depth64->setDisabled(false);
-    }
-
-    //
-    _picker->setStandardColors();
-    _solidColor->setText(tr("Solid Color"));
-    QWidget *solidWidget = new QWidget(this);
-    solidWidget->setContentsMargins(0,0,0,0);
-    QHBoxLayout *solidLayout = new QHBoxLayout(solidWidget);
-    solidLayout->setContentsMargins(0,0,0,0);
-    solidLayout->addWidget(_solidColor);
-    solidLayout->addWidget(_picker);
-    backgroundLayout->addWidget(solidWidget);
-
-    //
+    buttonLayout->addStretch();
     buttonLayout->addWidget(_ok);
     buttonLayout->addWidget(_cancel);
 
+    //
+    QWidget *colorspaceWidget = new QWidget(this);
+    colorspaceWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *colorspaceLayout = new QHBoxLayout(colorspaceWidget);
+    colorspaceLayout->setContentsMargins(0,0,0,0);
+
+    QLabel *colorspaceLabel = new QLabel(this);
+    colorspaceLabel->setText(tr("Color space"));
+
+    colorspaceLayout->addWidget(colorspaceLabel);
+    colorspaceLayout->addWidget(_select);
+
+    //
+    QWidget *colorprofileWidget = new QWidget(this);
+    colorprofileWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *colorprofileLayout = new QHBoxLayout(colorprofileWidget);
+    colorprofileLayout->setContentsMargins(0,0,0,0);
+
+    QLabel *colorprofileLabel = new QLabel(this);
+    colorprofileLabel->setText(tr("Color profile"));
+
+    colorprofileLayout->addWidget(colorprofileLabel);
+    colorprofileLayout->addWidget(_profile);
+
+    //
+    QWidget *colordepthWidget = new QWidget(this);
+    colordepthWidget->setContentsMargins(0,0,0,0);
+    QHBoxLayout *colordepthLayout = new QHBoxLayout(colordepthWidget);
+    colordepthLayout->setContentsMargins(0,0,0,0);
+
+    QLabel *colordepthLabel = new QLabel(this);
+    colordepthLabel->setText(tr("Color depth"));
+
+    colordepthLayout->addWidget(colordepthLabel);
+    colordepthLayout->addWidget(_bitBox);
+
+    //
     mainLayout->addWidget(_label);
     mainLayout->addWidget(sizeWidget);
-    mainLayout->addWidget(_select);
-    mainLayout->addWidget(_profile);
-    mainLayout->addWidget(depthWidget);
+    mainLayout->addWidget(colorspaceWidget);
+    mainLayout->addWidget(colorprofileWidget);
+    mainLayout->addWidget(colordepthWidget);
     mainLayout->addWidget(backgroundWidget);
+    mainLayout->addWidget(colorWidget);
     mainLayout->addStretch();
+    mainLayout->addWidget(_progbar);
     mainLayout->addWidget(buttonWidget);
 
     if (_type == CyanCommon::newLayerDialogType) {
-        _select->hide();
-        _profile->hide();
+        colorspaceWidget->setHidden(true);
+        colorprofileWidget->setHidden(true);
     }
     handleColorspaceChanged();
 
@@ -212,26 +296,23 @@ void NewMediaDialog::handleOk()
             break;
         }
     }
-    int depth = 0;
-    if (_depth8->isChecked()) {
-        depth = 8;
-    } else if (_depth16->isChecked()) {
-        depth = 16;
-    } else if (_depth32->isChecked()) {
-        depth = 32;
-    } else if (_depth64->isChecked()) {
-        depth = 64;
-    }
+    int depth = _bitBox->currentData().toInt();
     if (depth > CyanImageFormat::supportedQuantumDepth()) {
         qWarning() << "requested depth higher than supported by IM!";
         depth = CyanImageFormat::supportedQuantumDepth();
     }
-    createImage(QSize(_width->value(),
+    /*createImage(QSize(_width->value(),
                       _height->value()),
                 type,
                 depth);
 
-    QDialog::accept();
+    QDialog::accept();*/
+    this->setEnabled(false);
+    QtConcurrent::run(this,
+                      &NewMediaDialog::createImage,
+                      QSize(_width->value(), _height->value()),
+                      type,
+                      depth);
 }
 
 void NewMediaDialog::handleCancel()
@@ -243,37 +324,137 @@ void NewMediaDialog::createImage(QSize geo,
                                  Magick::ColorspaceType colorspace,
                                  size_t depth)
 {
+    _progbar->setHidden(false);
     QString label = _label->text();
     if (label.isEmpty()) { label = windowTitle(); }
+    int option = _drawOption->currentData().toInt();
+    Magick::Geometry mGeo = Magick::Geometry(static_cast<size_t>(geo.width()),
+                                             static_cast<size_t>(geo.height()));
+    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
+    Magick::SetRandomSeed(qrand());
     try {
-        Magick::Geometry mGeo = Magick::Geometry(static_cast<size_t>(geo.width()),
-                                                 static_cast<size_t>(geo.height()));
-        if (_solidColor->isChecked()) {
-        _image = Magick::Image(mGeo, Magick::Color(QString("rgba(%1,%2,%3,%4)")
-                                                   .arg(_picker->currentColor().red())
-                                                   .arg(_picker->currentColor().green())
-                                                   .arg(_picker->currentColor().blue())
-                                                   .arg(_picker->currentColor().alpha())
-                                                   .toStdString()));
-        } else {
-            _image.size(mGeo);
-        }
-        _image.colorSpace(colorspace);
+        _image = Magick::Image(mGeo, Magick::Color("rgba(0,0,0,0)"));
+        //_image.colorSpace(Magick::sRGBColorspace); // we start off as RGB then convert later
         _image.depth(depth);
-        _image.label(label.toStdString());
         _image.alpha(true);
-        if (!_solidColor->isChecked()) {
-            _image.evaluate(Magick::AlphaChannel,
-                            Magick::MultiplyEvaluateOperator,
-                            0.0);
-        }
-        _image.profile("ICC",
-                       selectedProfile());
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
     catch(Magick::Warning &warn_ ) {
         qDebug() << warn_.what();
     }
+    qDebug() << "ADD TEXTURE";
+    try {
+        switch (option) {
+        case CyanDrawTextureSolid:
+            _image = Magick::Image(mGeo, Magick::Color(_colorPickerFrom->currentColor()
+                                                       .name().toStdString()));
+            break;
+        case CyanDrawTextureGradient:
+            _image.size(mGeo);
+            _image.read("gradient:");
+            break;
+        case CyanDrawTextureGradientColor:
+            _image.size(mGeo);
+            _image.read(QString("gradient:%1-%2")
+                        .arg(_colorPickerFrom->currentColor().name())
+                        .arg(_colorPickerTo->currentColor().name())
+                        .toStdString());
+            break;
+        case CyanDrawTextureRadial:
+            _image.size(mGeo);
+            _image.read("radial-gradient:");
+            break;
+        case CyanDrawTextureRadialColor:
+            _image.size(mGeo);
+            _image.read(QString("radial-gradient:%1-%2")
+                        .arg(_colorPickerFrom->currentColor().name())
+                        .arg(_colorPickerTo->currentColor().name())
+                        .toStdString());
+            break;
+        case CyanDrawTexturePlasma:
+            _image.size(mGeo);
+            _image.read("plasma:");
+            break;
+        case CyanDrawTexturePlasmaFractal:
+            _image.size(mGeo);
+            _image.read("plasma:fractal");
+            break;
+        case CyanDrawTexturePlasmaColor:
+            _image.size(mGeo);
+            _image.read(QString("Plasma:%1-%2")
+                        .arg(_colorPickerFrom->currentColor().name())
+                        .arg(_colorPickerTo->currentColor().name())
+                        .toStdString());
+            break;
+        case CyanDrawTextureGaussianNoise:
+        case CyanDrawTextureLoopsGaussian:
+            _image = Magick::Image(mGeo, Magick::Color("rgba(0,0,0,0)"));
+            _image.size(mGeo);
+            _image.addNoise(Magick::GaussianNoise);
+            break;
+        case CyanDrawTextureImpulseNoise:
+        case CyanDrawTextureLoopsImpulse:
+            _image = Magick::Image(mGeo, Magick::Color("rgba(0,0,0,0)"));
+            _image.size(mGeo);
+            _image.addNoise(Magick::ImpulseNoise);
+            break;
+        case CyanDrawTextureLaplacianNoise:
+        case CyanDrawTextureLoopsLaplacian:
+            _image = Magick::Image(mGeo, Magick::Color("rgba(0,0,0,0)"));
+            _image.size(mGeo);
+            _image.addNoise(Magick::LaplacianNoise);
+            break;
+        default:
+            _image.size(mGeo);
+            _image.evaluate(Magick::AlphaChannel,
+                            Magick::MultiplyEvaluateOperator,
+                            0.0);
+            break;
+        }
+
+        if (option == CyanDrawTextureLoopsGaussian ||
+            option == CyanDrawTextureLoopsImpulse ||
+            option == CyanDrawTextureLoopsLaplacian)
+        { // fancy and slow "loops" effect
+            qDebug() << "FANCY";
+            _image.alpha(false);
+            _image.blur(0,10);
+            _image.normalize();
+            _image.fx("sin(u*4*pi)*100");
+            _image.edge(1);
+            _image.blur(0,10);
+            _image.alpha(true);
+        }
+
+        if (colorspace != _image.colorSpace()) {
+            qDebug() << "NEED TO CONVERT COLORSPACE!" << colorspace << "vs" << _image.colorSpace();
+            QString defaultProfile;
+            QSettings settings;
+            settings.beginGroup(QString("color"));
+            switch(_image.colorSpace()) {
+            case Magick::CMYKColorspace:
+                defaultProfile = settings.value(QString("cmyk_profile")).toString();
+                break;
+            case Magick::GRAYColorspace:
+                defaultProfile = settings.value(QString("gray_profile")).toString();
+                break;
+            default:
+                defaultProfile = settings.value(QString("rgb_profile")).toString();
+            }
+            settings.endGroup();
+            _image = ColorConvert::convertColorspace(_image, defaultProfile, selectedProfile());
+            _image.profile("ICC", selectedProfile()); // probably remove
+        } else {
+            _image.profile("ICC", selectedProfile());
+        }
+        _image.label(label.toStdString());
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+
+    QDialog::accept();
 }
 
 void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)

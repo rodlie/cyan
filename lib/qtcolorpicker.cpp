@@ -462,7 +462,7 @@ void QtColorPicker::setCurrentColor(const QColor &color)
 */
 void QtColorPicker::insertColor(const QColor &color, const QString &text, int index)
 {
-    qDebug() << "insert color" << index;
+    //qDebug() << "insert color" << index;
     popup->insertColor(color, text, index);
     if (!firstInserted) {
 	col = color;

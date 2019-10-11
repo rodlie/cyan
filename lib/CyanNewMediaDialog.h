@@ -24,13 +24,11 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QComboBox>
-#include <QRadioButton>
-#include <QCheckBox>
+#include <QProgressBar>
 
 #include <Magick++.h>
 
 #include "cyan_common.h"
-
 #include "qtcolorpicker.h"
 
 class NewMediaDialog : public QDialog
@@ -38,12 +36,31 @@ class NewMediaDialog : public QDialog
     Q_OBJECT
 
 public:
+    enum CyanDrawTextureType
+    {
+        CyanDrawTextureTransparent,
+        CyanDrawTextureSolid,
+        CyanDrawTextureGradient,
+        CyanDrawTextureGradientColor,
+        CyanDrawTextureRadial,
+        CyanDrawTextureRadialColor,
+        CyanDrawTexturePlasma,
+        CyanDrawTexturePlasmaFractal,
+        CyanDrawTexturePlasmaColor,
+        CyanDrawTextureGaussianNoise,
+        CyanDrawTextureImpulseNoise,
+        CyanDrawTextureLaplacianNoise,
+        CyanDrawTextureLoopsGaussian,
+        CyanDrawTextureLoopsImpulse,
+        CyanDrawTextureLoopsLaplacian
+    };
     NewMediaDialog(QWidget *parent = nullptr,
                    QString title = QObject::tr("New Image"),
                    CyanCommon::newDialogType dialogType = CyanCommon::newImageDialogType,
                    Magick::ColorspaceType colorspace = Magick::UndefinedColorspace,
                    Magick::Blob profile = Magick::Blob(),
-                   QSize size = QSize(0,0));
+                   QSize size = QSize(0,0),
+                   int depth = 8);
     ~NewMediaDialog();
 
 public slots:
@@ -60,13 +77,12 @@ private:
     QLineEdit *_label;
     QComboBox *_select;
     QComboBox *_profile;
-    QRadioButton *_depth8;
-    QRadioButton *_depth16;
-    QRadioButton *_depth32;
-    QRadioButton *_depth64;
     Magick::Blob _forcedProfile;
-    QtColorPicker *_picker;
-    QCheckBox *_solidColor;
+    QtColorPicker *_colorPickerFrom;
+    QtColorPicker *_colorPickerTo;
+    QComboBox *_drawOption;
+    QComboBox *_bitBox;
+    QProgressBar *_progbar;
 
 private slots:
     void handleOk();
