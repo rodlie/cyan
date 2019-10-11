@@ -44,6 +44,7 @@ option(LINUX_DEPLOY "Linux deploy" OFF)
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+    find_package(Threads REQUIRED)
 endif()
 
 set(
@@ -57,6 +58,7 @@ set(
     lib/CyanLayerItemDelegate.cpp
     lib/CyanView.cpp
     lib/CyanColorConvert.cpp
+    lib/CyanColorConvertDialog.cpp
     lib/CyanPluginLoader.cpp
     lib/CyanMdi.cpp
     lib/CyanMdiWindow.cpp
@@ -83,6 +85,7 @@ set(
     lib/CyanLayerItemDelegate.h
     lib/CyanView.h
     lib/CyanColorConvert.h
+    lib/CyanColorConvertDialog.h
     lib/CyanPluginLoader.h
     lib/CyanMdi.h
     lib/CyanMdiWindow.h
@@ -110,7 +113,7 @@ set(
     #app/widgets/colorcmyk.cpp
     #app/widgets/colorhsv.cpp
     #app/dialogs/newmediadialog.cpp
-    app/dialogs/convertdialog.cpp
+    #app/dialogs/convertdialog.cpp
     app/main.cpp
     #app/converter.cpp
     app/editor.cpp
@@ -129,7 +132,7 @@ set(
     #app/widgets/colorcmyk.h
     #app/widgets/colorhsv.h
     #app/dialogs/newmediadialog.h
-    app/dialogs/convertdialog.h
+    #app/dialogs/convertdialog.h
     #app/converter.h
     app/editor.h)
 set(RESOURCES share/icons.qrc)
@@ -330,6 +333,9 @@ endif()
 #if(APPLE)
 #    target_link_libraries(${PROJECT_NAME} ${OpenMP_CXX_LIBRARIES})
 #endif()
+if(${LINUX_DEPLOY})
+    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 if(MINGW)
     set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
@@ -337,7 +343,7 @@ if(MINGW)
     set(
         DLLS
         ${MINGW_ROOT}/bin/libbz2.dll
-        ${MINGW_ROOT}/bin/libHalf-12.dll
+        #${MINGW_ROOT}/bin/libHalf-12.dll
         ${MINGW_ROOT}/bin/libjpeg-9.dll
         ${MINGW_ROOT}/bin/libpangowin32-1.0-0.dll
         ${MINGW_ROOT}/bin/libwinpthread-1.dll
@@ -350,28 +356,28 @@ if(MINGW)
         ${MINGW_ROOT}/bin/liblzma-5.dll
         ${MINGW_ROOT}/bin/libpcre-1.dll
         ${MINGW_ROOT}/bin/libffi-6.dll
-        ${MINGW_ROOT}/bin/libIex-2_2-12.dll
+        #${MINGW_ROOT}/bin/libIex-2_2-12.dll
         ${MINGW_ROOT}/bin/libMagick++-7.Q16HDRI-Cyan-4.dll
         ${MINGW_ROOT}/bin/libpcre2-16-0.dll
         ${MINGW_ROOT}/bin/libfontconfig-1.dll
-        ${MINGW_ROOT}/bin/libIexMath-2_2-12.dll
+        #${MINGW_ROOT}/bin/libIexMath-2_2-12.dll
         ${MINGW_ROOT}/bin/libMagickCore-7.Q16HDRI-Cyan-6.dll
         ${MINGW_ROOT}/bin/libpixman-1-0.dll
         ${MINGW_ROOT}/bin/libfreetype-6.dll
-        ${MINGW_ROOT}/bin/libIlmImf-2_2-22.dll
+        #${MINGW_ROOT}/bin/libIlmImf-2_2-22.dll
         ${MINGW_ROOT}/bin/libMagickWand-7.Q16HDRI-Cyan-6.dll
         ${MINGW_ROOT}/bin/libpng16-16.dll
         ${MINGW_ROOT}/bin/zlib1.dll
         ${MINGW_ROOT}/bin/libgcc_s_seh-1.dll
-        ${MINGW_ROOT}/bin/libIlmImfUtil-2_2-22.dll
+        #${MINGW_ROOT}/bin/libIlmImfUtil-2_2-22.dll
         ${MINGW_ROOT}/bin/libopenjp2.dll
         ${MINGW_ROOT}/bin/libstdc++-6.dll
         ${MINGW_ROOT}/bin/libglib-2.0-0.dll
-        ${MINGW_ROOT}/bin/libIlmThread-2_2-12.dll
+        #${MINGW_ROOT}/bin/libIlmThread-2_2-12.dll
         ${MINGW_ROOT}/bin/libpango-1.0-0.dll
         ${MINGW_ROOT}/bin/libtiff-5.dll
         ${MINGW_ROOT}/bin/libgobject-2.0-0.dll
-        ${MINGW_ROOT}/bin/libImath-2_2-12.dll
+        #${MINGW_ROOT}/bin/libImath-2_2-12.dll
         ${MINGW_ROOT}/bin/libpangocairo-1.0-0.dll
         ${MINGW_ROOT}/bin/libwebp-7.dll
         ${MINGW_ROOT}/bin/libgomp-1.dll
@@ -381,7 +387,7 @@ if(MINGW)
         ${MINGW_ROOT}/bin/avcodec-58.dll
         ${MINGW_ROOT}/bin/avdevice-58.dll
         ${MINGW_ROOT}/bin/avformat-58.dll
-        ${MINGW_ROOT}/bin/avfilter-7.dll
+        #${MINGW_ROOT}/bin/avfilter-7.dll
         ${MINGW_ROOT}/bin/avutil-56.dll
         ${MINGW_ROOT}/bin/avresample-4.dll
         ${MINGW_ROOT}/bin/swscale-5.dll

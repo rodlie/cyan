@@ -37,7 +37,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 
 #include "CyanNewMediaDialog.h"
-#include "convertdialog.h"
+#include "CyanColorConvertDialog.h"
 #include "CyanColorConvert.h"
 
 #ifdef WITH_FFMPEG

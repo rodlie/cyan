@@ -21,7 +21,7 @@
 #include <QMessageBox>
 #include <QApplication>
 
-#include "convertdialog.h"
+#include "CyanColorConvertDialog.h"
 #include "CyanColorConvert.h"
 
 void Editor::populateColorProfileMenu(QMenu *menu,

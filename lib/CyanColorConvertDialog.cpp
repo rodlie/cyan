@@ -15,7 +15,7 @@
 #
 */
 
-#include "convertdialog.h"
+#include "CyanColorConvertDialog.h"
 
 #include <QIcon>
 #include <QVBoxLayout>
