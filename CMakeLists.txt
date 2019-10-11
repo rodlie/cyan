@@ -300,6 +300,8 @@ endif()
 
 if(APPLE)
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${ICON_FILE} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
+elseif(WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${ICON_FILE} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
 else()
     add_executable(${PROJECT_NAME} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
 endif()
