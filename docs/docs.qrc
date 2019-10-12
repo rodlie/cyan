@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>html/ChangeLog.html</file>
+        <file>html/Thanks.html</file>
+        <file>html/Support.html</file>
+    </qresource>
+</RCC>

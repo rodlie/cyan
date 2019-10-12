@@ -3,6 +3,7 @@
         <file>icons/patron.png</file>
         <file>icons/liberapay.png</file>
         <file>icons/brushsize.png</file>
+        <file>icons/magick_logo.png</file>
         <file>icons/lcms_logo.png</file>
         <file>icons/ffmpeg_logo.png</file>
         <file>icons/hicolor/index.theme</file>
@@ -111,5 +112,6 @@
         <file>icons/hicolor/16x16/actions/transform_move.png</file>
         <file>icons/hicolor/48x48/apps/Cyan.png</file>
         <file>icons/splash.png</file>
+        <file>icons/paypal.png</file>
     </qresource>
 </RCC>

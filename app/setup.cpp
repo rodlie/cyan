@@ -105,13 +105,13 @@ void Editor::setupUI()
     fileMenu->addAction(quitAct);
 
     helpMenu->addAction(aboutCyanAct);
-    helpMenu->addAction(aboutImageMagickAct);
+    /*helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
 #ifdef WITH_FFMPEG
     helpMenu->addAction(aboutFFmpegAct);
 #endif
     helpMenu->addAction(aboutQtAct);
-
+*/
     //saveMenu->addAction(saveProjectAct);
     //saveMenu->addAction(saveProjectAsAct);
 //    saveMenu->addAction(saveImageAct);
@@ -384,19 +384,6 @@ void Editor::setupActions()
                           .arg(tr("About"))
                           .arg(qApp->applicationName()));
 
-    aboutImageMagickAct = new QAction(this);
-    aboutImageMagickAct->setText(QString("ImageMagick")/*.arg(tr("About"))*/);
-
-    aboutLcmsAct = new QAction(this);
-    aboutLcmsAct->setText(QString("Little CMS")/*.arg(tr("About"))*/);
-
-    aboutQtAct = new QAction(this);
-    aboutQtAct->setText(QString("Qt Framework")/*.arg(tr("About"))*/);
-
-#ifdef WITH_FFMPEG
-    aboutFFmpegAct = new QAction(this);
-    aboutFFmpegAct->setText(QString("FFmpeg")/*.arg(tr("About"))*/);
-#endif
 
     convertRGBAct = new QAction(this);
     convertRGBAct->setText(tr("Convert to RGB"));
@@ -455,12 +442,6 @@ void Editor::setupConnections()
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));
 
     connect(aboutCyanAct, SIGNAL(triggered()), this, SLOT(aboutCyan()));
-    connect(aboutImageMagickAct, SIGNAL(triggered()), this, SLOT(aboutImageMagick()));
-    connect(aboutLcmsAct, SIGNAL(triggered()), this, SLOT(aboutLcms()));
-    connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-#ifdef WITH_FFMPEG
-    connect(aboutFFmpegAct, SIGNAL(triggered()), this, SLOT(aboutFFmpeg()));
-#endif
 
     connect(convertRGBAct, SIGNAL(triggered()), this, SLOT(handleColorConvertRGB()));
     connect(convertCMYKAct, SIGNAL(triggered()), this, SLOT(handleColorConvertCMYK()));
@@ -569,14 +550,7 @@ void Editor::setupIcons()
 
     QIcon helpIcon = QIcon::fromTheme("help-about");
 
-    aboutQtAct->setIcon(helpIcon);
-    aboutLcmsAct->setIcon(helpIcon);
-    aboutImageMagickAct->setIcon(helpIcon);
     aboutCyanAct->setIcon(helpIcon);
-#ifdef WITH_FFMPEG
-    aboutFFmpegAct->setIcon(helpIcon);
-#endif
-
     newButton->setIcon(QIcon::fromTheme("document-new"));
     openButton->setIcon(QIcon::fromTheme("document-open"));
     interactButton->setIcon(QIcon::fromTheme("transform_move"));

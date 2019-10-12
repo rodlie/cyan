@@ -82,12 +82,6 @@ private:
     QAction *viewZoomFitAct;
 
     QAction *aboutCyanAct;
-    QAction *aboutImageMagickAct;
-    QAction *aboutLcmsAct;
-    QAction *aboutQtAct;
-#ifdef WITH_FFMPEG
-    QAction *aboutFFmpegAct;
-#endif
 
     QAction *convertRGBAct;
     QAction *convertCMYKAct;
@@ -172,11 +166,6 @@ private slots:
 
     // about
     void aboutCyan();
-    void aboutImageMagick();
-    void aboutLcms();
-#ifdef WITH_FFMPEG
-    void aboutFFmpeg();
-#endif
 
     // messages
     void handleError(const QString &message);

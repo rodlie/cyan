@@ -1,9 +1,5 @@
 # Changes
 
-![ImageHeader](images/cyan-promo-02.png)
-
-This document will be updated when noteworthy changes are done in Cyan.
-
 ## 1.99.3
 
 **Release date : 20191019 (TBA)**

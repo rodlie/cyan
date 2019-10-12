@@ -39,6 +39,7 @@
 #include "CyanNewMediaDialog.h"
 #include "CyanColorConvertDialog.h"
 #include "CyanColorConvert.h"
+#include "CyanAboutDialog.h"
 
 #ifdef WITH_FFMPEG
 #include "CyanFFmpegOpenDialog.h"
@@ -70,12 +71,6 @@ Editor::Editor(QWidget *parent)
     , viewZoom100Act(nullptr)
     , viewZoomFitAct(nullptr)
     , aboutCyanAct(nullptr)
-    , aboutImageMagickAct(nullptr)
-    , aboutLcmsAct(nullptr)
-    , aboutQtAct(nullptr)
-#ifdef WITH_FFMPEG
-    , aboutFFmpegAct(nullptr)
-#endif
     , convertRGBAct(nullptr)
     , convertCMYKAct(nullptr)
     , convertGRAYAct(nullptr)
@@ -1398,3 +1393,8 @@ void Editor::closeEvent(QCloseEvent *e)
     } else { e->accept(); }
 }
 
+void Editor::aboutCyan()
+{
+    CyanAboutDialog *aboutDialog = new CyanAboutDialog(this);
+    aboutDialog->exec();
+}

@@ -52,6 +52,7 @@ set(
     lib/CyanWidgetApi.h)
 set(
     SOURCES_LIB
+    lib/CyanAboutDialog.cpp
     lib/CyanImageFormat.cpp
     lib/CyanTileItem.cpp
     lib/CyanLayerItem.cpp
@@ -79,6 +80,7 @@ set(
     lib/qtwindowlistmenu.cpp)
 set(
     HEADERS_LIB
+    lib/CyanAboutDialog.h
     lib/CyanImageFormat.h
     lib/CyanTileItem.h
     lib/CyanLayerItem.h
@@ -117,7 +119,7 @@ set(
     app/main.cpp
     #app/converter.cpp
     app/editor.cpp
-    app/about.cpp
+    #app/about.cpp
     app/setup.cpp
     app/color.cpp
     app/viewtool.cpp
@@ -135,7 +137,7 @@ set(
     #app/dialogs/convertdialog.h
     #app/converter.h
     app/editor.h)
-set(RESOURCES share/icons.qrc)
+set(RESOURCES share/icons.qrc docs/docs.qrc)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
