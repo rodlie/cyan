@@ -8,6 +8,7 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
 ### General
 
+  * Ui changes
   * Improved new image/layer dialog
   * Dropped OpenEXR in official binaries (has limited support in ImageMagick)
   * Option to add "Background" on new image or layer

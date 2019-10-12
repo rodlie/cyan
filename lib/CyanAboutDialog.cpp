@@ -101,7 +101,6 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     supportBrowser->setOpenExternalLinks(true);
     supportBrowser->setAcceptRichText(true);
     supportBrowser->setSource(QUrl::fromUserInput(":/html/Support.html"));
-    tabs->addTab(supportBrowser, tr("Support"));
 
     QTextBrowser *changesBrowser = new QTextBrowser(this);
     changesBrowser->setAcceptRichText(true);
@@ -110,7 +109,6 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     changesBrowser->setOpenExternalLinks(true);
     changesBrowser->setAcceptRichText(true);
     changesBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));
-    tabs->addTab(changesBrowser, tr("Changes"));
 
     QTextBrowser *thanksBrowser = new QTextBrowser(this);
     thanksBrowser->setAcceptRichText(true);
@@ -119,7 +117,6 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     thanksBrowser->setOpenExternalLinks(true);
     thanksBrowser->setAcceptRichText(true);
     thanksBrowser->setSource(QUrl::fromUserInput(":/html/Thanks.html"));
-    tabs->addTab(thanksBrowser, tr("Thanks"));
 
     QWidget *thirdpartyWidget = new QWidget(this);
     thirdpartyWidget->setContentsMargins(0,0,0,0);
@@ -137,6 +134,10 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     aboutQtButton->setText(tr("About Qt %1").arg(qVersion()));
     connect(aboutQtButton, SIGNAL(released()), qApp, SLOT(aboutQt()));
     thirdpartyLayout->addWidget(aboutQtButton);
+
+    tabs->addTab(changesBrowser, tr("Changes"));
+    tabs->addTab(supportBrowser, tr("Support"));
+    tabs->addTab(thanksBrowser, tr("Thanks"));
     tabs->addTab(thirdpartyWidget, tr("Third-party"));
 
     size_t magickQ;
