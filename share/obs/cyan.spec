@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name: cyan
-Version: 1.99.3
+Version: 2.0.0
 Release: 1%{?dist}
 Summary: Cyan Image Editor
 
@@ -9,10 +9,10 @@ License: LGPL-2.1
 URL: https://cyan.fxarena.net
 Source0: %{name}-%{version}.tar.gz
 
-BuildRequires: gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
+BuildRequires: gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel fontconfig-devel qt5-qtbase-devel cmake3
 
 %description
-General-purpose Image Editor (Alpha)
+Simple general-purpose image editor
 
 %prep
 %setup -q

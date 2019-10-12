@@ -141,7 +141,7 @@ Binary builds are recommended, but you can always build from source. The followi
 On RHEL/CentOS/Fedora you will need to install the following packages:
 
 ```
-sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel OpenEXR-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel qt5-qtbase-devel cmake3
+sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-devel libwebp-devel pango-devel cairo-devel libtiff-devel xz-devel zlib-devel qt5-qtbase-devel cmake3
 ```
 
 ***Remember to replace ``cmake`` with ``cmake3`` on RHEL/CentOS when running the build command further down.***
@@ -151,7 +151,7 @@ sudo yum install git gcc-c++ autoconf libpng-devel libjpeg-turbo-devel lcms2-dev
 On Ubuntu you will need to install the following packages:
 
 ```
-sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libopenexr-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
+sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
 ```
 
 * **Qt5 shipped with Ubuntu Bionic and beyond is not recommended!**
