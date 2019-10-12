@@ -30,7 +30,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     QWidget(parent)
   , layerTree(nullptr)
   , layerCompositeBox(nullptr)
-  , layerOpacitySlider(nullptr)
+  //, layerOpacitySlider(nullptr)
   , layerOpacitySpin(nullptr)
   , _textSupport(false)
 {
@@ -39,16 +39,17 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     QWidget *compositeWidget = new QWidget(this);
     QHBoxLayout *compositeLayout = new QHBoxLayout(compositeWidget);
 
-    QWidget *opacityWidget = new QWidget(this);
-    QHBoxLayout *opacityLayout = new QHBoxLayout(opacityWidget);
+    //QWidget *opacityWidget = new QWidget(this);
+    //QHBoxLayout *opacityLayout = new QHBoxLayout(opacityWidget);
 
     //QLabel *compositeLabel = new QLabel(this);
-    QLabel *compositeIconLabel = new QLabel(this);
+    //QLabel *compositeIconLabel = new QLabel(this);
     layerCompositeBox = new QComboBox(this);
+    layerCompositeBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
     //QLabel *opacityLabel = new QLabel(this);
-    QLabel *opacityIconLabel = new QLabel(this);
-    layerOpacitySlider = new QSlider(this);
+    //QLabel *opacityIconLabel = new QLabel(this);
+    //layerOpacitySlider = new QSlider(this);
     layerOpacitySpin = new QDoubleSpinBox(this);
 
     layerTree = new LayerTree(this);
@@ -59,40 +60,40 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     /*compositeLabel->setText(tr("Mode"));
     compositeLabel->setSizePolicy(QSizePolicy::Minimum,
                                   QSizePolicy::Minimum);*/
-    compositeIconLabel->setPixmap(QIcon::fromTheme("images")
+    /*compositeIconLabel->setPixmap(QIcon::fromTheme("images")
                                   .pixmap(16, 16));
     compositeIconLabel->setMinimumSize(QSize(16, 16));
     compositeIconLabel->setMaximumSize(QSize(16, 16));
     compositeIconLabel->setToolTip(tr("Layer composite mode"));
-
+*/
     /*opacityLabel->setText(tr("Opacity"));
     opacityLabel->setSizePolicy(QSizePolicy::Minimum,
                                 QSizePolicy::Minimum);*/
-    opacityIconLabel->setPixmap(QIcon::fromTheme("layer")
+  /*  opacityIconLabel->setPixmap(QIcon::fromTheme("layer")
                                 .pixmap(16, 16));
     opacityIconLabel->setMinimumSize(QSize(16, 16));
     opacityIconLabel->setMaximumSize(QSize(16, 16));
     opacityIconLabel->setToolTip(tr("Layer opacity"));
-
-    layerOpacitySlider->setOrientation(Qt::Horizontal);
-    layerOpacitySlider->setRange(0, 100);
+*/
+    //layerOpacitySlider->setOrientation(Qt::Horizontal);
+    //layerOpacitySlider->setRange(0, 100);
     layerOpacitySpin->setRange(0, 100);
 
-    compositeLayout->addWidget(compositeIconLabel);
+   // compositeLayout->addWidget(compositeIconLabel);
     //compositeLayout->addWidget(compositeLabel);
     compositeLayout->addWidget(layerCompositeBox);
     compositeLayout->setContentsMargins(0, 0, 0, 0);
     //compositeLayout->setSpacing(0);
 
-    opacityLayout->addWidget(opacityIconLabel);
+    //opacityLayout->addWidget(opacityIconLabel);
     //opacityLayout->addWidget(opacityLabel);
-    opacityLayout->addWidget(layerOpacitySlider);
-    opacityLayout->addWidget(layerOpacitySpin);
-    opacityLayout->setContentsMargins(0, 0, 0, 0);
+    //opacityLayout->addWidget(layerOpacitySlider);
+    compositeLayout->addWidget(layerOpacitySpin);
+    //opacityLayout->setContentsMargins(0, 0, 0, 0);
     //opacityLayout->setSpacing(0);
 
     mainLayout->addWidget(compositeWidget);
-    mainLayout->addWidget(opacityWidget);
+    //mainLayout->addWidget(opacityWidget);
     mainLayout->addWidget(layerTree);
 
     mainLayout->setContentsMargins(0, 10, 0, 0);
@@ -113,14 +114,14 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
             this,
             SLOT(handleLayerActivated(QTreeWidgetItem*,QTreeWidgetItem*)));
 
-    connect(layerOpacitySlider,
+    /*connect(layerOpacitySlider,
             SIGNAL(sliderReleased()),
             this,
             SLOT(handleLayerOpacitySlider()));
     connect(layerOpacitySlider,
             SIGNAL(sliderMoved(int)),
             this,
-            SLOT(handleLayerOpacitySlider()));
+            SLOT(handleLayerOpacitySlider()));*/
     connect(layerOpacitySpin,
             SIGNAL(valueChanged(double)),
             this,
@@ -472,9 +473,9 @@ void CyanLayerWidget::handleDuplicateLayer()
 void CyanLayerWidget::handleLayerOpacitySpin(double value)
 {
     qDebug() << "handle spin" << value;
-    layerOpacitySlider->blockSignals(true);
+    /*layerOpacitySlider->blockSignals(true);
     layerOpacitySlider->setValue(static_cast<int>(value));
-    layerOpacitySlider->blockSignals(false);
+    layerOpacitySlider->blockSignals(false);*/
 
     CyanLayerTreeItem *layer = dynamic_cast<CyanLayerTreeItem*>(layerTree->currentItem());
     if (!layer) { return; }
@@ -487,5 +488,5 @@ void CyanLayerWidget::handleLayerOpacitySpin(double value)
 
 void CyanLayerWidget::handleLayerOpacitySlider()
 {
-    layerOpacitySpin->setValue(static_cast<int>(layerOpacitySlider->value()));
+    //layerOpacitySpin->setValue(static_cast<int>(layerOpacitySlider->value()));
 }

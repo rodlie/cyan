@@ -67,7 +67,7 @@ public slots:
 private:
     LayerTree *layerTree;
     QComboBox *layerCompositeBox;
-    QSlider *layerOpacitySlider;
+    //QSlider *layerOpacitySlider;
     QDoubleSpinBox *layerOpacitySpin;
     bool _textSupport;
 
