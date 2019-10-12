@@ -65,10 +65,17 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
 
-    QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3 Edition</div></h2>")
+    QString typeString = CYAN_VERSION_TYPE;
+    QString gitValue = CYAN_VERSION_GIT;
+    if (typeString.isEmpty()) { typeString = "Community"; }
+    if (!gitValue.isEmpty()) {
+        typeString.append(QString(" %1").arg(CYAN_VERSION_GIT));
+    }
+
+    QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
-            .arg(CYAN_VERSION_TYPE);
+            .arg(typeString);
    textString.append(QString("<p style=\"text-align:justify;font-size:small;\">%7 &copy; 2018-2019 Ole-André Rodlie, FxArena DA. %6. %1%2%3%4%5</p>")
                  .arg(tr("This program is free software; "))
                  .arg(tr("you can redistribute it and/or modify it under the terms of "))
@@ -122,7 +129,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     thirdpartyLayout->addWidget(aboutQtButton);
 
     tabs->addTab(supportBrowser, tr("Documentation"));
-    tabs->addTab(thirdpartyWidget, tr("Third-party"));
+    tabs->addTab(thirdpartyWidget, tr("Software"));
 
     size_t magickQ;
     size_t magickV;
