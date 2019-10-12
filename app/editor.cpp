@@ -1396,5 +1396,5 @@ void Editor::closeEvent(QCloseEvent *e)
 void Editor::aboutCyan()
 {
     CyanAboutDialog *aboutDialog = new CyanAboutDialog(this);
-    aboutDialog->exec();
+    aboutDialog->show();
 }

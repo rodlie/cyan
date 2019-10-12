@@ -60,26 +60,23 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     headerLayout->addWidget(logoLabel);
 
     QLabel *textLabel = new QLabel(this);
-    textLabel->setMinimumWidth(400);
-    textLabel->setMaximumWidth(400);
+    textLabel->setMinimumWidth(200);
+    textLabel->setMaximumWidth(200);
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
 
-    QString textString = QString("<h2 align=\"center\">%1 %2 %3</h2>")
+    QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3 Edition</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
             .arg(CYAN_VERSION_TYPE);
-    textString.append(QString("<p align=\"center\">%2 &copy; 2018-2019 Ole-André Rodlie, FxArena DA.<br>%1.</p>")
-                 .arg(tr("All rights reserved"))
-                 .arg(tr("Copyright")));
-   textString.append(QString("<p style=\"text-align:justify;font-size:small;\">%1%2%3%4%5</p>")
+   textString.append(QString("<p style=\"text-align:justify;font-size:small;\">%7 &copy; 2018-2019 Ole-André Rodlie, FxArena DA. %6. %1%2%3%4%5</p>")
                  .arg(tr("This program is free software; "))
                  .arg(tr("you can redistribute it and/or modify it under the terms of "))
                  .arg(tr("the GNU Lesser General Public License "))
                  .arg(tr("as published by the Free Software Foundation; "))
-                 .arg(tr("either version 2.1 of the License, or (at your option) any later version.")));
-
-    textString.append(QString("<p align=\"center\"><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a></p>"));
+                 .arg(tr("either version 2.1 of the License, or (at your option) any later version."))
+                 .arg(tr("All rights reserved"))
+                 .arg(tr("Copyright")));
     textLabel->setText(textString);
 
     headerLayout->addWidget(textLabel);
@@ -94,29 +91,18 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     tabs->setMinimumWidth(400);
     infoLayout->addWidget(tabs);
 
+    QLabel *supportWidget = new QLabel(this);
+    supportWidget->setText(QString("<p align=\"center\"><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a></p>"));
+    supportWidget->setOpenExternalLinks(true);
+    infoLayout->addWidget(supportWidget);
+
     QTextBrowser *supportBrowser = new QTextBrowser(this);
     supportBrowser->setAcceptRichText(true);
     supportBrowser->setReadOnly(true);
     supportBrowser->setOpenLinks(true);
     supportBrowser->setOpenExternalLinks(true);
     supportBrowser->setAcceptRichText(true);
-    supportBrowser->setSource(QUrl::fromUserInput(":/html/Support.html"));
-
-    QTextBrowser *changesBrowser = new QTextBrowser(this);
-    changesBrowser->setAcceptRichText(true);
-    changesBrowser->setReadOnly(true);
-    changesBrowser->setOpenLinks(true);
-    changesBrowser->setOpenExternalLinks(true);
-    changesBrowser->setAcceptRichText(true);
-    changesBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));
-
-    QTextBrowser *thanksBrowser = new QTextBrowser(this);
-    thanksBrowser->setAcceptRichText(true);
-    thanksBrowser->setReadOnly(true);
-    thanksBrowser->setOpenLinks(true);
-    thanksBrowser->setOpenExternalLinks(true);
-    thanksBrowser->setAcceptRichText(true);
-    thanksBrowser->setSource(QUrl::fromUserInput(":/html/Thanks.html"));
+    supportBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));
 
     QWidget *thirdpartyWidget = new QWidget(this);
     thirdpartyWidget->setContentsMargins(0,0,0,0);
@@ -135,9 +121,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     connect(aboutQtButton, SIGNAL(released()), qApp, SLOT(aboutQt()));
     thirdpartyLayout->addWidget(aboutQtButton);
 
-    tabs->addTab(changesBrowser, tr("Changes"));
-    tabs->addTab(supportBrowser, tr("Support"));
-    tabs->addTab(thanksBrowser, tr("Thanks"));
+    tabs->addTab(supportBrowser, tr("Documentation"));
     tabs->addTab(thirdpartyWidget, tr("Third-party"));
 
     size_t magickQ;
@@ -146,6 +130,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
 
     QString html;
+    html.append(QString("<html><head><style>body { font-family: Arial, Verdana, Helvetica; font-size: 10pt; } h1, h2 { font-weight: normal; } ul li a { text-decoration: none; }</style></head><body>"));
     html.append(QString("<img src=\":/icons/magick_logo.png\"><br><h2>%1</h2>").arg(magickInfo));
     html.append(QString("<p><a href=\"https://imagemagick.org\">%2®</a> %3.</p><p>"
                          "%2 %4 <a href=\"%1\">%5</a>.</p>")
@@ -220,7 +205,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                  .arg((swscale_version() & 0xff)));
     html.append(QString("<p>%1</p>").arg(tr("FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.")));
 #endif
-
+    html.append(QString("</body></html>"));
     thirdpartyBrowser->setHtml(html);
 
     mainLayout->addWidget(headerWidget);
