@@ -20,7 +20,7 @@ Simple general-purpose image editor
 %build
 STATIC=1 sh share/scripts/build-magick.sh
 mkdir build && cd build
-CYAN_VERSION=%{version} PKG_CONFIG_PATH=`pwd`/../ImageMagick/install/lib/pkgconfig cmake3 -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI ..
+CYAN_VERSION=%{version} PKG_CONFIG_PATH=`pwd`/../ImageMagick/install/lib/pkgconfig cmake3 -DLINUX_DEPLOY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI ..
 make 
 
 %install
