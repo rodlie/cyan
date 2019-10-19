@@ -1,13 +1,18 @@
 # Changes
 
+## 1.99.4
+
+**Release date : TBA**
+
+  * Adjustments layers (Non-destructive)
+  
 ## 1.99.3
 
-**Release date : 20191019 (TBA)**
+**Release date : 20191029 (TBA)**
 
 Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
-### General
-
+  * Improved Linux binaries (better compatibility)
   * Ui changes
   * Improved new image/layer dialog
   * Dropped OpenEXR in official binaries (has limited support in ImageMagick)
