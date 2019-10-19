@@ -44,6 +44,7 @@ option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(LINUX_DEPLOY "Linux deploy" OFF)
+option(ENABLE_FONTCONFIG "Fontconfig support" ON)
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
@@ -173,11 +174,24 @@ if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCO
     add_definitions(-DWITH_FFMPEG -D__STDC_CONSTANT_MACROS)
 endif()
 
-if(MINGW OR APPLE)
+if(${ENABLE_FONTCONFIG})
     add_definitions(-DUSE_FC)
     pkg_search_module(FONTCONF REQUIRED fontconfig)
     include_directories(${FONTCONF_INCLUDE_DIRS})
-    #find_package(OpenMP)
+    if (APPLE)
+        set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
+        set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
+    elseif(WIN32)
+        set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
+        set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
+    else()
+        set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")
+        set(FC_CACHE_DIR "<cachedir prefix=\"xdg\">fontconfig</cachedir><cachedir>~/.fontconfig</cachedir>")
+    endif()
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
+        ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
+        @ONLY)
 endif()
 
 include_directories(
@@ -213,8 +227,6 @@ if(APPLE)
     set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_NAME})
     set_source_files_properties(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
-    set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
-    set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
 endif()
 
 if(WIN32)
@@ -229,8 +241,6 @@ if(WIN32)
     set(PRODUCT_ORIGINAL_FILENAME "${PROJECT_NAME}.exe")
     set(PRODUCT_BUNDLE ${PROJECT_NAME})
     set(WINDOWS_RESOURCE_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc)
-    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
-    set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.rc.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
@@ -241,12 +251,7 @@ if(WIN32)
         @ONLY)
 endif()
 
-if(MINGW OR APPLE)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-        ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
-        @ONLY)
-endif()
+
 
 #add_library(
 #    ${PROJECT_NAME}LuaMagick
@@ -335,7 +340,7 @@ endif()
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
 endif()
-if(MINGW OR APPLE)
+if(${ENABLE_FONTCONFIG})
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
 #if(APPLE)
