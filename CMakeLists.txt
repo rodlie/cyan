@@ -44,7 +44,7 @@ option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(LINUX_DEPLOY "Linux deploy" OFF)
-option(ENABLE_FONTCONFIG "Fontconfig support" ON)
+option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")

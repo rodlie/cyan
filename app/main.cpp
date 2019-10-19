@@ -112,6 +112,11 @@ int main(int argc, char *argv[])
     QString fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
     if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
 #endif
+#ifdef Q_OS_LINUX
+    // setup fontconfig on linux
+    QString fontconfig = QString("%1/../etc/fonts").arg(QApplication::applicationDirPath());
+    if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
+#endif
     // splash
     QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333),
                          Qt::SplashScreen);
