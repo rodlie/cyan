@@ -66,7 +66,8 @@ public:
     };
 
     explicit View(QWidget* parent = nullptr,
-                  bool setup = false);
+                  bool setup = false,
+                  bool native = false);
     ~View();
     bool fit;
 

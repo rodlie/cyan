@@ -133,7 +133,9 @@ private:
     QSplitter *middleSplitter;
     QSplitter *topSplitter;
 
-    bool hasTextSupport;
+    bool hasTextSupport; // remove
+
+    bool _native;
 
 signals:
     void openImage(const QString &filename);
@@ -154,15 +156,16 @@ private slots:
     void initWidgetPlugin(CyanWidgetPlugin* plugin);
 
     // setup
-    void setupStyle();
+    void setupStyle(bool native = false);
     void setupUI();
     void setupMenus();
-    void setupWidgets();
+    void setupWidgets(bool native = false);
     void setupActions();
     void setupConnections();
     void setupIcons();
     void setupShortcuts();
     void setupOptions();
+    void handleStyleChange(bool triggered);
 
     // about
     void aboutCyan();

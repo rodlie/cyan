@@ -28,7 +28,9 @@
 #include <QTimer>
 #include <QGridLayout>
 
-View::View(QWidget* parent, bool setup) :
+View::View(QWidget* parent,
+           bool setup,
+           bool native) :
     QGraphicsView(parent)
   , fit(false)
   , _scene(nullptr)
@@ -45,7 +47,9 @@ View::View(QWidget* parent, bool setup) :
 {
     // setup the basics
     setAcceptDrops(true);
-    setBackgroundBrush(QColor(30, 30, 30));
+    if (!native) {
+        setBackgroundBrush(QColor(30, 30, 30));
+    }
     setMouseTracking(true);
 
     // rulers

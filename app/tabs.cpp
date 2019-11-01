@@ -22,7 +22,7 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     MdiSubWindow *tab = new MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
-    View *view = new View(tab);
+    View *view = new View(tab, false, _native);
     connectView(view);
 
     // get guides
@@ -102,7 +102,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
     MdiSubWindow *tab = new MdiSubWindow(mdi);
     tab->setAttribute(Qt::WA_DeleteOnClose);
 
-    View *view = new View(tab);
+    View *view = new View(tab, false, _native);
     connectView(view);
 
     if (geo.width()>0) {

@@ -35,7 +35,8 @@ class CYANSHARED_EXPORT CyanLayerWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit CyanLayerWidget(QWidget *parent = nullptr);
+    explicit CyanLayerWidget(QWidget *parent = nullptr,
+                             bool native = false);
     ~CyanLayerWidget();
 
 signals:

@@ -20,19 +20,27 @@
 #include <QVBoxLayout>
 #include <QDir>
 #include <QToolBox>
+#include <QSettings>
+#include <QMessageBox>
 
 #include "CyanLayerWidget.h"
 
-void Editor::setupStyle()
+void Editor::setupStyle(bool native)
 {
-    // style app
-    qApp->setStyle(QStyleFactory::create("fusion"));
-    if (QIcon::themeName().isEmpty()) {
-        // we include fallback hicolor icons
-        QIcon::setThemeName("hicolor");
+    if (native) {
+        if (QIcon::themeName().isEmpty()) { // if no theme add hicolor
+            QIcon::setThemeName("hicolor");
+        }
+        return; // ignore custom
     }
 
-    // set colors
+    // set qt style (force fusion)
+    qApp->setStyle(QStyleFactory::create("fusion"));
+
+    // set icon theme (force hicolor)
+    QIcon::setThemeName("hicolor");
+
+    // set (dark) colors
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(53,53,53));
     palette.setColor(QPalette::WindowText, Qt::white);
@@ -55,13 +63,17 @@ void Editor::setupStyle()
     setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
                           "QToolBar { border-color: none; }"
                           "QToolButton::menu-indicator { image: none; }"));
-
 }
 
 void Editor::setupUI()
 {
-    setupStyle();
-    setupWidgets();
+    QSettings settings;
+    settings.beginGroup("gui");
+    _native = settings.value("native", false).toBool();
+    settings.endGroup();
+
+    setupStyle(_native);
+    setupWidgets(_native);
     setupMenus();
     setupActions();
     setupConnections();
@@ -179,6 +191,30 @@ void Editor::setupUI()
 
     setActionsDisabled(true);
 
+
+    // native/app style
+    QActionGroup *nativeGroup = new QActionGroup(this);
+
+    QAction *nativeStyle = new QAction(this);
+    nativeStyle->setCheckable(true);
+    nativeStyle->setText(tr("System Theme"));
+    nativeStyle->setData(true);
+    nativeGroup->addAction(nativeStyle);
+    connect(nativeStyle, SIGNAL(triggered(bool)), this, SLOT(handleStyleChange(bool)));
+
+    QAction *appStyle = new QAction(this);
+    appStyle->setCheckable(true);
+    appStyle->setText(tr("Application Theme"));
+    appStyle->setData(false);
+    nativeGroup->addAction(appStyle);
+    connect(appStyle, SIGNAL(triggered(bool)), this, SLOT(handleStyleChange(bool)));
+
+    viewMenu->addSeparator();
+    viewMenu->addActions(nativeGroup->actions());
+
+    if (_native) { nativeStyle->setChecked(true); }
+    else { appStyle->setChecked(true); }
+
     // magick memory resources
     optMenu->addMenu(memoryMenu);
     for (int i=2;i<33;++i) {
@@ -264,7 +300,7 @@ void Editor::setupMenus()
     colorIntentMenu->setTitle(tr("Rendering Intent"));
 }
 
-void Editor::setupWidgets()
+void Editor::setupWidgets(bool native)
 {
     // the main splitters
     // TODO! add top and bottom
@@ -283,14 +319,16 @@ void Editor::setupWidgets()
 
     // MDI
     mdi = new Mdi(this);
-    mdi->setBackground(QBrush(QColor(20, 20, 20)));
+    if (!native) {
+        mdi->setBackground(QBrush(QColor(20, 20, 20)));
+    }
 
     // status bar
     mainStatusBar = new QStatusBar(this);
     mainStatusBar->setObjectName(QString("mainStatusBar"));
 
     // layer widget
-    layersWidget = new CyanLayerWidget(this);
+    layersWidget = new CyanLayerWidget(this, native);
 
     // add zoom % in status bar
     currentZoomStatusLabel = new QLabel(this);
@@ -574,6 +612,25 @@ void Editor::setupShortcuts()
 void Editor::setupOptions()
 {
 
+}
+
+void Editor::handleStyleChange(bool triggered)
+{
+    Q_UNUSED(triggered)
+    qDebug() << "handle style change?";
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    if (action->data().toBool() != _native) {
+        QSettings settings;
+        settings.beginGroup("gui");
+        settings.setValue("native", action->data().toBool());
+        settings.endGroup();
+        settings.sync();
+        _native = action->data().toBool();
+        QMessageBox::information(this,
+                                 tr("Restart to apply"),
+                                 tr("You will need to restart Cyan to apply this setting."));
+    }
 }
 
 

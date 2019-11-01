@@ -27,7 +27,8 @@
 #include "CyanImageFormat.h"
 #include "CyanLayerItemDelegate.h"
 
-LayerTree::LayerTree(QWidget *parent) :
+LayerTree::LayerTree(QWidget *parent,
+                     bool native) :
     QTreeWidget(parent)
   , lastLayerSelected(-1)
   , _maxLayersOrder(0)
@@ -39,7 +40,9 @@ LayerTree::LayerTree(QWidget *parent) :
   , moveDownLayerAct(nullptr)
   , duplicateLayerAct(nullptr)
 {
-    setStyleSheet("QTreeView::item:selected { background-color: rgb(33, 33, 33); }");
+    if (!native) {
+        setStyleSheet("QTreeView::item:selected { background-color: rgb(33, 33, 33); }");
+    }
     setColumnCount(4);
     setHeaderHidden(true);
     setColumnHidden(0, true);

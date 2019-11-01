@@ -33,7 +33,8 @@ class CYANSHARED_EXPORT LayerTree : public QTreeWidget
     Q_OBJECT
 
 public:
-    explicit LayerTree(QWidget *parent = nullptr);
+    explicit LayerTree(QWidget *parent = nullptr,
+                       bool native = false);
     ~LayerTree();
 
 signals:

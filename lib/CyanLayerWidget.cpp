@@ -26,7 +26,8 @@
 #include "CyanImageFormat.h"
 #include "CyanView.h"
 
-CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
+CyanLayerWidget::CyanLayerWidget(QWidget *parent,
+                                 bool native) :
     QWidget(parent)
   , layerTree(nullptr)
   , layerCompositeBox(nullptr)
@@ -52,7 +53,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent) :
     //layerOpacitySlider = new QSlider(this);
     layerOpacitySpin = new QDoubleSpinBox(this);
 
-    layerTree = new LayerTree(this);
+    layerTree = new LayerTree(this, native);
 
     layerCompositeBox->setSizePolicy(QSizePolicy::Expanding,
                                      QSizePolicy::Fixed);

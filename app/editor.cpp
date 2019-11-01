@@ -113,6 +113,7 @@ Editor::Editor(QWidget *parent)
     , middleSplitter(nullptr)
     , topSplitter(nullptr)
     , hasTextSupport(false)
+    , _native(false)
 {
     // set window title
     setWindowTitle(qApp->applicationName());
