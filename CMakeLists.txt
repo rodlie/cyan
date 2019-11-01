@@ -45,6 +45,7 @@ option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(LINUX_DEPLOY "Linux deploy" OFF)
 option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
+option(MINGW32 "mingw32" OFF)
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
@@ -356,7 +357,6 @@ if(MINGW)
     set(
         DLLS
         ${MINGW_ROOT}/bin/libbz2.dll
-        #${MINGW_ROOT}/bin/libHalf-12.dll
         ${MINGW_ROOT}/bin/libjpeg-9.dll
         ${MINGW_ROOT}/bin/libpangowin32-1.0-0.dll
         ${MINGW_ROOT}/bin/libwinpthread-1.dll
@@ -369,28 +369,21 @@ if(MINGW)
         ${MINGW_ROOT}/bin/liblzma-5.dll
         ${MINGW_ROOT}/bin/libpcre-1.dll
         ${MINGW_ROOT}/bin/libffi-6.dll
-        #${MINGW_ROOT}/bin/libIex-2_2-12.dll
         ${MINGW_ROOT}/bin/libMagick++-7.Q16HDRI-Cyan-4.dll
         ${MINGW_ROOT}/bin/libpcre2-16-0.dll
         ${MINGW_ROOT}/bin/libfontconfig-1.dll
-        #${MINGW_ROOT}/bin/libIexMath-2_2-12.dll
         ${MINGW_ROOT}/bin/libMagickCore-7.Q16HDRI-Cyan-6.dll
         ${MINGW_ROOT}/bin/libpixman-1-0.dll
         ${MINGW_ROOT}/bin/libfreetype-6.dll
-        #${MINGW_ROOT}/bin/libIlmImf-2_2-22.dll
         ${MINGW_ROOT}/bin/libMagickWand-7.Q16HDRI-Cyan-6.dll
         ${MINGW_ROOT}/bin/libpng16-16.dll
         ${MINGW_ROOT}/bin/zlib1.dll
-        ${MINGW_ROOT}/bin/libgcc_s_seh-1.dll
-        #${MINGW_ROOT}/bin/libIlmImfUtil-2_2-22.dll
         ${MINGW_ROOT}/bin/libopenjp2.dll
         ${MINGW_ROOT}/bin/libstdc++-6.dll
         ${MINGW_ROOT}/bin/libglib-2.0-0.dll
-        #${MINGW_ROOT}/bin/libIlmThread-2_2-12.dll
         ${MINGW_ROOT}/bin/libpango-1.0-0.dll
         ${MINGW_ROOT}/bin/libtiff-5.dll
         ${MINGW_ROOT}/bin/libgobject-2.0-0.dll
-        #${MINGW_ROOT}/bin/libImath-2_2-12.dll
         ${MINGW_ROOT}/bin/libpangocairo-1.0-0.dll
         ${MINGW_ROOT}/bin/libwebp-7.dll
         ${MINGW_ROOT}/bin/libgomp-1.dll
@@ -400,11 +393,15 @@ if(MINGW)
         ${MINGW_ROOT}/bin/avcodec-58.dll
         ${MINGW_ROOT}/bin/avdevice-58.dll
         ${MINGW_ROOT}/bin/avformat-58.dll
-        #${MINGW_ROOT}/bin/avfilter-7.dll
         ${MINGW_ROOT}/bin/avutil-56.dll
         ${MINGW_ROOT}/bin/avresample-4.dll
         ${MINGW_ROOT}/bin/swscale-5.dll
         ${MINGW_ROOT}/bin/swresample-3.dll)
+    if(${MINGW32})
+        list(APPEND DLLS ${MINGW_ROOT}/bin/libgcc_s_sjlj-1.dll)
+    else()
+        list(APPEND DLLS ${MINGW_ROOT}/bin/libgcc_s_seh-1.dll)
+    endif()
     set(
         QT_DLLS
         ${QT_ROOT}/bin/Qt5Concurrent.dll
