@@ -8,7 +8,7 @@
   
 ## 1.99.3
 
-**Release date : 20191103 (TBA)**
+**Release date : 20191103**
 
 Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
