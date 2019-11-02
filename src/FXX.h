@@ -139,7 +139,7 @@ public:
     std::string backendInfo();
 
     void clearImage(FXX::Image data);
-    bool saveImage(FXX::Image data);
+    bool saveImage(FXX::Image data, int quality = 100);
 
     bool hasJPEG();
     bool hasPNG();
