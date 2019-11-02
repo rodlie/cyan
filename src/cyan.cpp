@@ -93,28 +93,37 @@ Cyan::Cyan(QWidget *parent)
     , imageInfoTree(Q_NULLPTR)
     , ignoreConvertAction(false)
     , progBar(Q_NULLPTR)
+    , prefsMenu(Q_NULLPTR)
+    , nativeStyle(false)
 {
+    // get style settings
+    QSettings settings;
+    settings.beginGroup("ui");
+    nativeStyle = settings.value("native", false).toBool();
+    settings.endGroup();
+
     // style app
-    qApp->setStyle(QStyleFactory::create("fusion"));
-    QPalette palette;
-    palette.setColor(QPalette::Window, QColor(53,53,53));
-    palette.setColor(QPalette::WindowText, Qt::white);
-    palette.setColor(QPalette::Base, QColor(15,15,15));
-    palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-    palette.setColor(QPalette::Link, Qt::white);
-    palette.setColor(QPalette::LinkVisited, Qt::white);
-    palette.setColor(QPalette::ToolTipText, Qt::black);
-    palette.setColor(QPalette::Text, Qt::white);
-    palette.setColor(QPalette::Button, QColor(53,53,53));
-    palette.setColor(QPalette::ButtonText, Qt::white);
-    palette.setColor(QPalette::BrightText, Qt::red);
-    palette.setColor(QPalette::Highlight, QColor(0,124,151));
-    palette.setColor(QPalette::HighlightedText, Qt::black);
-    palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
-    palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
-    qApp->setPalette(palette);
-    setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
-    QString padding = "margin-right:5px;";
+    if (!nativeStyle) {
+        qApp->setStyle(QStyleFactory::create("fusion"));
+        QPalette palette;
+        palette.setColor(QPalette::Window, QColor(53,53,53));
+        palette.setColor(QPalette::WindowText, Qt::white);
+        palette.setColor(QPalette::Base, QColor(15,15,15));
+        palette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+        palette.setColor(QPalette::Link, Qt::white);
+        palette.setColor(QPalette::LinkVisited, Qt::white);
+        palette.setColor(QPalette::ToolTipText, Qt::black);
+        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::Button, QColor(53,53,53));
+        palette.setColor(QPalette::ButtonText, Qt::white);
+        palette.setColor(QPalette::BrightText, Qt::red);
+        palette.setColor(QPalette::Highlight, QColor(0,124,151));
+        palette.setColor(QPalette::HighlightedText, Qt::black);
+        palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
+        palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
+        qApp->setPalette(palette);
+        setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
+    }
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
     setAttribute(Qt::WA_QuitOnClose);
@@ -244,15 +253,18 @@ Cyan::Cyan(QWidget *parent)
     grayLabel->setText(tr("GRAY"));
     bitDepthLabel->setText(tr("Depth"));
 
-    inputLabel->setStyleSheet(padding);
-    outputLabel->setStyleSheet(padding);
-    monitorLabel->setStyleSheet(padding);
-    renderLabel->setStyleSheet(padding);
-    blackLabel->setStyleSheet(padding);
-    rgbLabel->setStyleSheet(padding);
-    cmykLabel->setStyleSheet(padding);
-    grayLabel->setStyleSheet(padding);
-    bitDepthLabel->setStyleSheet(padding);
+    if (!nativeStyle) {
+    QString padding = "margin-right:5px;";
+        inputLabel->setStyleSheet(padding);
+        outputLabel->setStyleSheet(padding);
+        monitorLabel->setStyleSheet(padding);
+        renderLabel->setStyleSheet(padding);
+        blackLabel->setStyleSheet(padding);
+        rgbLabel->setStyleSheet(padding);
+        cmykLabel->setStyleSheet(padding);
+        grayLabel->setStyleSheet(padding);
+        bitDepthLabel->setStyleSheet(padding);
+    }
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -317,8 +329,10 @@ Cyan::Cyan(QWidget *parent)
     menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
 
-    fileMenu = new QMenu(tr("File"));
-    helpMenu = new QMenu(tr("Help"));
+    fileMenu = new QMenu(tr("File"), this);
+    helpMenu = new QMenu(tr("Help"), this);
+    prefsMenu = new QMenu(tr("Preferences"), this);
+
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
@@ -348,6 +362,16 @@ Cyan::Cyan(QWidget *parent)
     exportEmbeddedProfileAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
     exportEmbeddedProfileAction->setDisabled(true);
     fileMenu->addAction(exportEmbeddedProfileAction);
+
+    fileMenu->addSeparator();
+
+    fileMenu->addMenu(prefsMenu);
+    QAction *nativeAction = new QAction(tr("Use System Theme"), this);
+    nativeAction->setCheckable(true);
+    nativeAction->setChecked(nativeStyle);
+    connect(nativeAction, SIGNAL(triggered(bool)),
+            this, SLOT(handleNativeStyleChanged(bool)));
+    prefsMenu->addAction(nativeAction);
 
     fileMenu->addSeparator();
 
@@ -544,8 +568,10 @@ void Cyan::aboutCyan()
             "font-family: sans-serif; }"
             "h1, h2, h3, h4 { font-weight: normal; }"
             "p, pre, li { font-size: 10pt; }"
-            "h1#devel { font-size: small; }"
-            ".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }";
+            "h1#devel { font-size: small; }";
+    if (!nativeStyle) {
+        style.append(".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }");
+    }
     if (!html.isEmpty()) {
         HelpDialog *dialog = new HelpDialog(this, tr("About Cyan"), html, style);
         dialog->exec();
@@ -1509,4 +1535,19 @@ void Cyan::handleLoadImageLayer(Magick::Image image)
     if (!image.isValid()) { return; }
     qDebug() << "handle load image layer";
     openImage(image);
+}
+
+void Cyan::handleNativeStyleChanged(bool triggered)
+{
+    Q_UNUSED(triggered)
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    QSettings settings;
+    settings.beginGroup("ui");
+    settings.setValue("native", action->isChecked());
+    settings.endGroup();
+    settings.sync();
+    QMessageBox::information(this,
+                             tr("Restart is required"),
+                             tr("Restart Cyan to apply settings."));
 }

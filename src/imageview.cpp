@@ -34,11 +34,20 @@
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QSettings>
 
 ImageView::ImageView(QWidget* parent) : QGraphicsView(parent)
 , fit(false) {
     setAcceptDrops(true);
-    setBackgroundBrush(QColor(30,30,30));
+
+    // set style
+    QSettings settings;
+    settings.beginGroup("ui");
+    bool nativeStyle = settings.value("native", false).toBool();
+    settings.endGroup();
+    if (!nativeStyle) {
+        setBackgroundBrush(QColor(30,30,30));
+    }
     setDragMode(QGraphicsView::ScrollHandDrag);
 }
 

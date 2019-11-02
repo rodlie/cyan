@@ -100,6 +100,8 @@ private:
     QTreeWidget *imageInfoTree;
     bool ignoreConvertAction;
     QProgressBar *progBar;
+    QMenu *prefsMenu;
+    bool nativeStyle;
 
 private slots:
     void readConfig();
@@ -177,6 +179,8 @@ private slots:
 
     void handleImageHasLayers(std::vector<Magick::Image> layers);
     void handleLoadImageLayer(Magick::Image image);
+
+    void handleNativeStyleChanged(bool triggered);
 };
 
 #endif // CYAN_H
