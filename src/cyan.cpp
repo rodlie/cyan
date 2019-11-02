@@ -95,6 +95,7 @@ Cyan::Cyan(QWidget *parent)
     , progBar(Q_NULLPTR)
     , prefsMenu(Q_NULLPTR)
     , nativeStyle(false)
+    , qualityBox(Q_NULLPTR)
 {
     // get style settings
     QSettings settings;
@@ -233,28 +234,19 @@ Cyan::Cyan(QWidget *parent)
     renderingIntent->addItem(renderIcon, tr("Relative"),
                              FXX::RelativeRenderingIntent);
 
-    QLabel *inputLabel = new QLabel(this);
-    QLabel *outputLabel = new QLabel(this);
-    QLabel *monitorLabel = new QLabel(this);
-    QLabel *renderLabel = new QLabel(this);
-    QLabel *blackLabel = new QLabel(this);
-    QLabel *rgbLabel = new QLabel(this);
-    QLabel *cmykLabel = new QLabel(this);
-    QLabel *grayLabel = new QLabel(this);
-    QLabel *bitDepthLabel = new QLabel(this);
-
-    inputLabel->setText(tr("Input"));
-    outputLabel->setText(tr("Output"));
-    monitorLabel->setText(tr("Monitor"));
-    renderLabel->setText(tr("Intent"));
-    blackLabel->setText(tr("Black Point"));
-    rgbLabel->setText(tr("RGB"));
-    cmykLabel->setText(tr("CMYK"));
-    grayLabel->setText(tr("GRAY"));
-    bitDepthLabel->setText(tr("Depth"));
+    QLabel *inputLabel = new QLabel(tr("Input"), this);
+    QLabel *outputLabel = new QLabel(tr("Output"), this);
+    QLabel *monitorLabel = new QLabel(tr("Monitor"), this);
+    QLabel *renderLabel = new QLabel(tr("Intent"), this);
+    QLabel *blackLabel = new QLabel(tr("Black Point"), this);
+    QLabel *rgbLabel = new QLabel(tr("RGB"), this);
+    QLabel *cmykLabel = new QLabel(tr("CMYK"), this);
+    QLabel *grayLabel = new QLabel(tr("GRAY"), this);
+    QLabel *bitDepthLabel = new QLabel(tr("Depth"), this);
+    QLabel *qualityLabel = new QLabel(tr("Quality"), this);
 
     if (!nativeStyle) {
-    QString padding = "margin-right:5px;";
+        QString padding = "margin-right:5px;";
         inputLabel->setStyleSheet(padding);
         outputLabel->setStyleSheet(padding);
         monitorLabel->setStyleSheet(padding);
@@ -264,6 +256,7 @@ Cyan::Cyan(QWidget *parent)
         cmykLabel->setStyleSheet(padding);
         grayLabel->setStyleSheet(padding);
         bitDepthLabel->setStyleSheet(padding);
+        qualityLabel->setStyleSheet(padding);
     }
 
     inputLabel->setToolTip(tr("Input profile for image"));
@@ -278,12 +271,17 @@ Cyan::Cyan(QWidget *parent)
     grayLabel->setToolTip(tr("Default GRAY profile, "
                              "used when image don't have an embedded profile"));
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
+    qualityLabel->setToolTip(tr("Compression quality on output image."));
 
     progBar = new QProgressBar(this);
     progBar->setTextVisible(false);
     progBar->setRange(0,1);
     progBar->setValue(1);
     progBar->setMaximumWidth(70);
+
+    qualityBox = new QSpinBox(this);
+    qualityBox->setRange(0, 100);
+    qualityBox->setValue(100);
 
     convertBar->addWidget(inputLabel);
     convertBar->addWidget(inputProfile);
@@ -292,6 +290,8 @@ Cyan::Cyan(QWidget *parent)
     convertBar->addWidget(outputProfile);
     convertBar->addWidget(bitDepthLabel);
     convertBar->addWidget(bitDepth);
+    convertBar->addWidget(qualityLabel);
+    convertBar->addWidget(qualityBox);
     convertBar->addWidget(progBar);
 
     profileBar->addWidget(rgbLabel);
@@ -634,7 +634,7 @@ void Cyan::saveImageDialog()
         }
 
         file = QFileDialog::getSaveFileName(this, tr("Save image"), dir,
-                                            tr("Image files (*.tif *.psd *.jpg)"));
+                                            tr("Image files (*.tif *.tiff *.psd *.jpg)"));
         if (!file.isEmpty()) {
             QFileInfo imageFile(file);
             if (imageFile.suffix().isEmpty()) {
@@ -736,7 +736,7 @@ void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
     }
 
     disableUI();
-    if (fx.saveImage(output)) {
+    if (fx.saveImage(output, qualityBox->value())) {
         if (notify) {
             QMessageBox::information(this, tr("Image save"), tr("Image saved to %1.")
                                                              .arg(file));

@@ -690,7 +690,7 @@ void FXX::clearImage(FXX::Image data)
     data.layers.clear();
 }
 
-bool FXX::saveImage(FXX::Image data)
+bool FXX::saveImage(FXX::Image data, int quality)
 {
     if (data.imageBuffer.size()==0 || data.filename.empty()) {
         return false;
@@ -711,6 +711,7 @@ bool FXX::saveImage(FXX::Image data)
     }
     if (image.columns() == 0 && image.rows() == 0) { return false; }
     try {
+        image.quality(quality);
         image.write(data.filename);
     }
     catch(Magick::Error &error_ ) {

@@ -54,6 +54,7 @@
 #include <QMap>
 #include <QThread>
 #include <QFutureWatcher>
+#include <QSpinBox>
 
 #include "imageview.h"
 #include "profiledialog.h"
@@ -102,6 +103,7 @@ private:
     QProgressBar *progBar;
     QMenu *prefsMenu;
     bool nativeStyle;
+    QSpinBox *qualityBox;
 
 private slots:
     void readConfig();

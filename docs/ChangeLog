@@ -1,8 +1,9 @@
 ## 1.2.2 - 20191103
 
- * Fixed GIMP support on Linux
+ * Added support for output compression quality
  * Added support for ImageMagick 7
  * Support for system theme
+ * Fixed GIMP support on Linux
 
 ## 1.2.1 - 20181204
 
