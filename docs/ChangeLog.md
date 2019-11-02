@@ -34,6 +34,15 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
   * Fix potential crash if no color profiles present
   * macOS support (Lion 10.7+)
 
+## 1.2.2
+
+**Release date : 20191103**
+
+ * Added support for output compression quality
+ * Added support for ImageMagick 7
+ * Support for system theme
+ * Fixed GIMP support on Linux
+
 ## 1.99.2
 
 **Release date : 20190929**
