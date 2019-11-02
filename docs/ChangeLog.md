@@ -8,15 +8,17 @@
   
 ## 1.99.3
 
-**Release date : 20191029 (TBA)**
+**Release date : 20191103 (TBA)**
 
 Cyan 2.0 Alpha 3. This is a development release, not for end-users.
 
+  * Added support for system theme/style
+  * Updated to Qt 5.13.2 on Linux and Windows
   * Improved Linux binaries (better compatibility)
   * Ui changes
   * Improved new image/layer dialog
-  * Dropped OpenEXR in official binaries (has limited support in ImageMagick)
-  * Option to add "Background" on new image or layer
+  * Dropped OpenEXR in official binaries (has limited support in ImageMagick anyway)
+  * Option to add background on new image or layer
     * Solid
     * Gradient
     * Radial
@@ -26,7 +28,7 @@ Cyan 2.0 Alpha 3. This is a development release, not for end-users.
     * This also includes multi-layered PSD and TIFF files
   * One unified load button/function
   * One unified save button/function
-  * Proper "save as" function
+  * Proper save function
   * Fix tabs styles bug
   * Fixed various bugs
   * Fix potential crash if no color profiles present
