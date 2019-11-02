@@ -1,9 +1,15 @@
+## 1.2.2 - 20191103
+
+ * Fixed GIMP support on Linux
+ * Added support for ImageMagick 7
+ * Support for system theme
+
 ## 1.2.1 - 20181204
 
-* Fixed GIMP 2.10 Windows support
-* Fixed broken Cyan Python plug-in
-* Support XCF (GIMP image format)
-* Support reading layers from XCF, TIFF, PSD
+ * Fixed GIMP 2.10 Windows support
+ * Fixed broken Cyan Python plug-in
+ * Support XCF (GIMP image format)
+ * Support reading layers from XCF, TIFF, PSD
 
 ## 1.2.0 - 20181203
 
