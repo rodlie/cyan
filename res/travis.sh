@@ -64,7 +64,7 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
     echo "Extracting win sdk ..."
     mkdir -p ${MXE}
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-static-20191103-mxe-xenial-sdk.tar.xz/download && mv download download.tar.xz
+    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-mingw64-gcc7-static-xenial-20191103.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
     echo "Extracting xenial64 sdk ..."
