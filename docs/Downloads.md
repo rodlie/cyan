@@ -6,10 +6,10 @@
 
 Latest stable release for supported platforms:
 
-[![Download Cyan Stable](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/1.2.1)
+[![Download Cyan Stable](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/1.2.2)
 
 ## Master branch (1.99.x)
 
 Latest snapshots for supported platforms:
 
-[![Download Cyan Alpha](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/builds)
+[![Download Cyan Master](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/builds)
