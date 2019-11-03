@@ -13,3 +13,5 @@ Latest stable release for supported platforms:
 Latest snapshots for supported platforms:
 
 [![Download Cyan Master](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/builds)
+
+Native packages for CentOS and Fedora available [here](https://software.opensuse.org//download.html?project=home%3Arodlie%3Acyan-master&package=cyan).
