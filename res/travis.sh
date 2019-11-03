@@ -42,6 +42,8 @@ CWD=`pwd`
 MXE=/opt/mxe
 SDK=/opt/${OS}
 DEPLOY=/opt/deploy
+MXE_GIT=https://github.com/rodlie/mxe
+MXE_BRANCH=cyan-1.2.2
 
 COMMIT="${TRAVIS_COMMIT}"
 if [ "${TRAVIS_TAG}" != "" ]; then
@@ -62,15 +64,23 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils wine
     sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
     sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
+
+    echo "Setup MXE ..."
+    cd /opt
+    git clone ${MXE_GIT}
+    cd ${MXE}
+    git checkout ${MXE_BRANCH}
+
     echo "Extracting win64 sdk ..."
-    mkdir -p ${MXE}
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-mingw64_xenial64-gcc7-qt59-static-20191103.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C ${MXE}/
     rm -f download.tar.xz
+    
     echo "Extracting xenial64 sdk ..."
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-xenial64.tar.xz/download && mv download download.tar.xz
     sudo tar xf download.tar.xz -C /
     rm -f download.tar.xz
+    
     echo "Extracting linux64 sdk ..."
     wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-linux64.tar.xz/download && mv download download.tar.xz
     tar xf download.tar.xz -C /opt
@@ -107,6 +117,10 @@ if [ "${OS}" = "Linux" ]; then
   mkdir -p ${CWD}/linux64-test && cd ${CWD}/linux64-test
   qmake ../tests.pro
   make
+
+  echo "===> Update MXE ..."
+  cd ${MXE}
+  make MXE_USE_CCACHE=
 
   echo "===> Building win64 ..."
   mkdir -p ${CWD}/win64
