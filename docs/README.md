@@ -8,6 +8,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 # News
 
+* [Cyan 2.0 Alpha 3 Released](https://github.com/rodlie/cyan/releases/tag/1.99.3)
 * [Cyan 1.2.2 Released](https://github.com/rodlie/cyan/releases/tag/1.2.2)
 * [Cyan 2.0 Alpha 2 Released](https://github.com/rodlie/cyan/releases/tag/1.99.2)
 * [Cyan 2.0 Alpha 1 Released](https://github.com/rodlie/cyan/releases/tag/1.99.1)
