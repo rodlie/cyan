@@ -42,13 +42,7 @@ option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
-option(LINUX_DEPLOY "Linux deploy" OFF)
 option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
-
-if(${LINUX_DEPLOY})
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-    find_package(Threads REQUIRED)
-endif()
 
 set(HEADERS_API
     lib/CyanWidgetApi.h
@@ -290,9 +284,6 @@ if(BUILD_LIBRARY)
 endif()
 if(${ENABLE_FONTCONFIG})
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
-endif()
-if(${LINUX_DEPLOY})
-    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(UNIX AND NOT APPLE)
