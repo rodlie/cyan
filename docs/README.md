@@ -4,7 +4,7 @@
 ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan)
 ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan)
 
-![screenshot](docs/images/screenshot.png)
+![screenshot](images/screenshot.png)
 
 Cyan 2 aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY based on [ImageMagick](https://imagemagick.org).
 
