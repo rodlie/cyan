@@ -244,16 +244,16 @@ if(BUILD_LIBRARY)
         PROPERTIES
         SOVERSION
         ${PROJECT_VERSION_MAJOR})
-    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_STATIC_CFLAGS})
+    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
     target_link_libraries(
         ${PROJECT_NAME}Api
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
         Qt5::Concurrent
-        ${MAGICK_STATIC_LIBRARIES}
+        ${MAGICK_LIBRARIES}
         ${LCMS2_LIBRARIES}
-        ${MAGICK_STATIC_LDFLAGS}
+        ${MAGICK_LDFLAGS}
         ${LCMS2_LDFLAGS})
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
@@ -268,16 +268,16 @@ else()
     add_executable(${PROJECT_NAME} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
 endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_STATIC_LIBRARIES}
+    ${MAGICK_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${MAGICK_STATIC_LDFLAGS}
+    ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS})
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
