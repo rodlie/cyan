@@ -1402,6 +1402,7 @@ void View::handleLayerOverTiles(LayerItem *layerItem,
                                    geo);
     }
     QTimer::singleShot(10, this, SLOT(handleTileStatus()));
+    QTimer::singleShot(100, this, SLOT(handleTileStatus()));
 }
 
 void View::handleLayerOverTiles(int layer)
