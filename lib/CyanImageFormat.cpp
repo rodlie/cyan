@@ -1051,9 +1051,7 @@ bool CyanImageFormat::isBlacklistedReadFormat(const QString &readFormat)
     blacklisted << "*.a" << "*.b" << "*.c" << "*.o" << "*.txt" << "*.vst" << "*.tile";
     blacklisted << "*.text" << "*.screenshot" << "*.radial-gradient" << "*.plasma" << "*.pattern";
     blacklisted << "*.pango" << "*.mono" << "*.mat" << "*.mask" << "*.map" << "*.http";
-#ifndef WITH_FFMPEG
     blacklisted << "*.m2v" << "*.mpg" << "*.mpeg" << "*.mov" << "*.mkv" << "*.m4v" << "*.avi";
-#endif
     if (blacklisted.contains(readFormat)) { return true; }
     return false;
 }

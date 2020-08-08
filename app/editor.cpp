@@ -41,11 +41,6 @@
 #include "CyanColorConvert.h"
 #include "CyanAboutDialog.h"
 
-#ifdef WITH_FFMPEG
-#include "CyanFFmpegOpenDialog.h"
-#include "CyanFFmpeg.h"
-#endif
-
 #ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
 #else
@@ -737,96 +732,6 @@ void Editor::writeLayer(const QString &filename,
     catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
 }
 
-#ifdef WITH_FFMPEG
-void Editor::readAudio(const QString &filename)
-{
-    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
-    QByteArray coverart = CyanFFmpeg::getEmbeddedCoverArt(filename);
-    if (coverart.size()==0) { return; }
-    qDebug() << "found image in audio!";
-    try {
-        readImage(Magick::Blob(coverart.data(),
-                               static_cast<size_t>(coverart.size())),
-                  filename);
-    }
-    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
-    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
-}
-
-void Editor::readVideo(const QString &filename)
-{
-    if (filename.isEmpty() || !QFile::exists(filename)) { return; }
-    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
-    if (maxFrame==0) { return; }
-
-    videoDialog *dialog = new videoDialog(this,
-                                          maxFrame,
-                                          filename);
-    int ret = dialog->exec();
-    if (ret == QDialog::Accepted) {
-        if (dialog->getFrames().isNull()) { // open one frame as image
-            readVideo(filename,
-                      dialog->getFrame());
-        } else { // open muliple frames as images
-            for (int i=dialog->getFrames().width();i<dialog->getFrames().height()+1;++i) {
-                readVideo(filename, i);
-            }
-            mdi->tileSubWindows(); // tile on multiple images
-        }
-    }
-    QTimer::singleShot(100,
-                       dialog,
-                       SLOT(deleteLater()));
-}
-
-void Editor::readVideo(const QString &filename, int frame)
-{
-    if (filename.isEmpty() || frame<0) { return; }
-    try {
-        Magick::Image image = CyanFFmpeg::getVideoFrame(filename, frame);
-        Magick::Blob blob;
-        image.write(&blob);
-        if (blob.length()>0) { readImage(blob, filename); }
-    }
-    catch(Magick::Error &error_ ) { emit errorMessage(error_.what()); }
-    catch(Magick::Warning &warn_ ) { emit warningMessage(warn_.what()); }
-}
-
-Magick::Image Editor::getVideoFrameAsImage(const QString &filename)
-{
-    Magick::Image result;
-    if (filename.isEmpty()) { return result; }
-    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
-    if (maxFrame==0) { return result; }
-    videoDialog *dialog = new videoDialog(this,
-                                          maxFrame,
-                                          filename);
-    int ret = dialog->exec();
-    if (ret == QDialog::Accepted) {
-        result = CyanFFmpeg::getVideoFrame(filename,
-                                       dialog->getFrame());
-    }
-    QTimer::singleShot(100,
-                       dialog,
-                       SLOT(deleteLater()));
-    return result;
-}
-
-Magick::Image Editor::getVideoFrameAsImage(const QString &filename,
-                                           int frame)
-{
-    Magick::Image result;
-    if (filename.isEmpty()) { return result; }
-    int maxFrame = CyanFFmpeg::getVideoMaxFrames(filename);
-    if (maxFrame==0) { return result; }
-    if (frame>maxFrame) { frame = maxFrame; }
-    if (frame<0) { frame = 0; }
-    result = CyanFFmpeg::getVideoFrame(filename,
-                                   frame);
-    return result;
-}
-#endif
-
 // save cyan project filename dialog
 /*void Editor::saveProjectDialog()
 {
@@ -956,19 +861,9 @@ void Editor::loadImageDialog()
 
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(filename);
-#ifdef WITH_FFMPEG
-    if (type.name().startsWith(QString("audio"))) {
-        readAudio(filename);
-    } else if(type.name().startsWith(QString("video"))) {
-        readVideo(filename);
-    } else {
-        loadImage(filename);
-    }
-#else
     if (type.name().startsWith(QString("audio")) ||
         type.name().startsWith(QString("video"))) { return; }
     loadImage(filename);
-#endif
 }
 
 void Editor::newImageDialog()
@@ -1281,23 +1176,11 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
         QString filename = urls.at(i).toLocalFile();
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(filename);
-#ifdef WITH_FFMPEG
-        if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-            readAudio(filename);
-        } else if (type.name().startsWith(QString("video"))) { // get frame from video
-            readVideo(filename);
-        } else { // "regular" image
-            if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
-            else if (CyanImageFormat::hasLayers(filename)>1) { loadUnknownProject(filename); }
-            else { readImage(filename); }
-        }
-#else
         if (type.name().startsWith(QString("audio")) ||
             type.name().startsWith(QString("video"))) { continue; }
         if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
         else if (CyanImageFormat::hasLayers(filename)>0) { loadUnknownProject(filename); }
         else { readImage(filename); }
-#endif
     }
     if (urls.size()>1) {
         mdi->tileSubWindows();
@@ -1320,26 +1203,6 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
         std::list<Magick::Image> images;
 
         try {
-#ifdef WITH_FFMPEG
-            if (type.name().startsWith(QString("audio"))) { // try to get "coverart" from audio
-                QByteArray coverart = CyanFFmpeg::getEmbeddedCoverArt(filename);
-                if (coverart.size()==0) { continue; }
-                image.read(Magick::Blob(coverart.data(),
-                                        static_cast<size_t>(coverart.size())));
-                images.push_back(image);
-            } else if (type.name().startsWith(QString("video"))) { // get frame from video
-                image = getVideoFrameAsImage(filename);
-                images.push_back(image);
-            } else { // image(s)
-                if (CyanImageFormat::isValidCanvas(filename)) { continue; } // skip projects
-                if (CyanImageFormat::hasLayers(filename)>1) {
-                    Magick::readImages(&images, filename.toStdString());
-                } else {
-                    image.read(filename.toStdString());
-                    images.push_back(image);
-                }
-            }
-#else
             if (type.name().startsWith(QString("audio")) ||
                 type.name().startsWith(QString("video")) ||
                 CyanImageFormat::isValidCanvas(filename))
@@ -1352,7 +1215,6 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
                 image.read(filename.toStdString());
                 images.push_back(image);
             }
-#endif
 
             for (std::list<Magick::Image>::iterator it = images.begin(); it != images.end(); ++it) {
                 Magick::Image layer = *it;

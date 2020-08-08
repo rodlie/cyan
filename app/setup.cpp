@@ -119,9 +119,6 @@ void Editor::setupUI()
     helpMenu->addAction(aboutCyanAct);
     /*helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
-#ifdef WITH_FFMPEG
-    helpMenu->addAction(aboutFFmpegAct);
-#endif
     helpMenu->addAction(aboutQtAct);
 */
     //saveMenu->addAction(saveProjectAct);

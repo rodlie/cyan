@@ -26,14 +26,6 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
-#ifdef WITH_FFMPEG
-extern "C" {
-#include <libavutil/avutil.h>
-#include <libavcodec/avcodec.h>
-#include <libavdevice/avdevice.h>
-}
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -126,20 +118,6 @@ int main(int argc, char *argv[])
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
-
-    // setup ffmpeg
-#ifdef WITH_FFMPEG
-#ifdef LIBAVUTIL_VERSION_MAJOR
-#if (LIBAVUTIL_VERSION_MAJOR < 56)
-    av_register_all();
-    avdevice_register_all();
-    avcodec_register_all();
-#endif
-#endif
-#ifdef QT_NO_DEBUG
-    av_log_set_level(AV_LOG_QUIET);
-#endif
-#endif
 
 #ifdef USE_FC
     // setup fontconfig

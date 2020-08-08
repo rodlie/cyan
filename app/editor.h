@@ -259,15 +259,6 @@ private slots:
     void writeImage(const QString &filename, bool setFilename = true);
     void writeLayer(const QString &filename, int id);
 
-#ifdef WITH_FFMPEG
-    void readAudio(const QString &filename);
-    void readVideo(const QString &filename);
-    void readVideo(const QString &filename, int frame);
-    Magick::Image getVideoFrameAsImage(const QString &filename);
-    Magick::Image getVideoFrameAsImage(const QString &filename,
-                                       int frame);
-#endif
-
     //void saveProjectDialog();
     void saveImageDialog(bool ignoreExisting = false, bool setFilename = true);
     void saveImageAsDialog();

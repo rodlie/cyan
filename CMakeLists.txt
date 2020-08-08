@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(Cyan VERSION 1.99.3)
+project(Cyan VERSION 1.99.4)
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
 endif()
@@ -41,11 +41,9 @@ set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
-option(ENABLE_FFMPEG "FFmpeg support (if available)" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(LINUX_DEPLOY "Linux deploy" OFF)
 option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
-option(MINGW32 "mingw32" OFF)
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
@@ -75,8 +73,8 @@ set(
     #lib/CyanSliderCMYK.cpp
     #lib/CyanSliderHSV.cpp
     #lib/CyanSliderRGB.cpp
-    lib/CyanFFmpeg.cpp
-    lib/CyanFFmpegOpenDialog.cpp
+    #lib/CyanFFmpeg.cpp
+    #lib/CyanFFmpegOpenDialog.cpp
     lib/CyanNewMediaDialog.cpp
     #lib/CyanRuler.cpp
     lib/CyanGuideItem.cpp
@@ -103,8 +101,8 @@ set(
     #lib/CyanSliderCMYK.h
     #lib/CyanSliderHSV.h
     #lib/CyanSliderRGB.h
-    lib/CyanFFmpeg.h
-    lib/CyanFFmpegOpenDialog.h
+    #lib/CyanFFmpeg.h
+    #lib/CyanFFmpegOpenDialog.h
     lib/CyanNewMediaDialog.h
     #lib/CyanRuler.h
     lib/CyanGuideItem.h
@@ -162,18 +160,6 @@ find_package(Qt5Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
-#pkg_search_module(LUA REQUIRED lua)
-if(${ENABLE_FFMPEG})
-    pkg_search_module(AVUTIL OPTIONAL libavutil)
-    pkg_search_module(AVDEVICE OPTIONAL libavdevice)
-    pkg_search_module(SWSCALE OPTIONAL libswscale)
-    pkg_search_module(AVFORMAT OPTIONAL libavformat)
-    pkg_search_module(AVCODEC OPTIONAL libavcodec)
-endif()
-
-if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCODEC_FOUND)
-    add_definitions(-DWITH_FFMPEG -D__STDC_CONSTANT_MACROS)
-endif()
 
 if(${ENABLE_FONTCONFIG})
     add_definitions(-DUSE_FC)
@@ -203,7 +189,6 @@ include_directories(
     lib
     ${MAGICK_INCLUDE_DIRS}
     ${LCMS2_INCLUDE_DIRS}
-    #${LUA_INCLUDE_DIRS}
 )
 
 add_compile_options(-Wall -Wextra)
@@ -252,19 +237,6 @@ if(WIN32)
         @ONLY)
 endif()
 
-
-
-#add_library(
-#    ${PROJECT_NAME}LuaMagick
-#    SHARED
-#    ${CMAKE_CURRENT_SOURCE_DIR}/bindings/lua/src/imagick.c)
-#target_compile_options(${PROJECT_NAME}LuaMagick PRIVATE ${MAGICK_STATIC_CFLAGS})
-#target_link_libraries(
-#    ${PROJECT_NAME}LuaMagick
-#    ${MAGICK_STATIC_LIBRARIES}
-#    ${MAGICK_STATIC_LDFLAGS}
-#    ${LUA_LIBRARIES})
-
 if(BUILD_LIBRARY)
     add_library(
         ${PROJECT_NAME}Api
@@ -293,18 +265,6 @@ if(BUILD_LIBRARY)
         ${LCMS2_LIBRARIES}
         ${MAGICK_STATIC_LDFLAGS}
         ${LCMS2_LDFLAGS})
-    if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND  AND AVCODEC_FOUND)
-        target_link_libraries(
-            ${PROJECT_NAME}Api
-            ${AVUTIL_LIBRARIES}
-            ${AVDEVICE_LIBRARIES}
-            ${SWSCALE_LIBRARIES}
-            ${AVFORMAT_LIBRARIES}
-            ${AVCODEC_LIBRARIES})
-    endif()
-    #if(APPLE)
-    #    target_link_libraries(${PROJECT_NAME}Api ${OpenMP_CXX_LIBRARIES})
-    #endif()
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
     set(HEADERS_APP ${HEADERS_APP} ${HEADERS_LIB})
@@ -329,29 +289,15 @@ target_link_libraries(
     ${LCMS2_LIBRARIES}
     ${MAGICK_STATIC_LDFLAGS}
     ${LCMS2_LDFLAGS})
-if(AVUTIL_FOUND AND AVDEVICE_FOUND AND SWSCALE_FOUND AND AVFORMAT_FOUND AND AVCODEC_FOUND)
-    target_link_libraries(
-        ${PROJECT_NAME}
-        ${AVUTIL_LIBRARIES}
-        ${AVDEVICE_LIBRARIES}
-        ${SWSCALE_LIBRARIES}
-        ${AVFORMAT_LIBRARIES}
-        ${AVCODEC_LIBRARIES})
-endif()
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
 endif()
 if(${ENABLE_FONTCONFIG})
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
 endif()
-#if(APPLE)
-#    target_link_libraries(${PROJECT_NAME} ${OpenMP_CXX_LIBRARIES})
-#endif()
 if(${LINUX_DEPLOY})
     target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
-
-
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
