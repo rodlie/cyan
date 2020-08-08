@@ -1,11 +1,5 @@
 # Changes
 
-## 1.99.4
-
-**Release date : TBA**
-
-  * Adjustments layers (Non-destructive)
-  
 ## 1.99.3
 
 **Release date : 20191103**

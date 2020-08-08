@@ -1,4 +1,4 @@
-# Cyan 2.0
+# Cyan2 (experimental)
 
 [![GitHub license](https://img.shields.io/github/license/rodlie/cyan)](https://github.com/rodlie/cyan/blob/master/COPYING)
 ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan)
@@ -6,42 +6,7 @@
 
 ![screenshot](docs/images/screenshot.png)
 
-Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a general-purpose image editor based on [ImageMagick](https://imagemagick.org).
-
-***Currently under early development! please use [v1.2](https://github.com/rodlie/cyan/tree/1.2). You can track our progress in the [ChangeLog](https://cyan.fxarena.net/ChangeLog).***
-
-## Features
-
-  * Simple and lightweight
-  * Multiple Document Interface (and tabs support)
-  * Supports multi-layered images (TIFF/XCF/PSD)
-  * Supports RGB/CMYK/GRAY color space
-  * Supports ICC color profiles
-  * Supports the most common image and video file formats
-
-***Everything is subject to change during development of v2.***
-
-## System requirements
-
-### Minimum software
-
- * Windows 7+
- * macOS 10.7+
- * Linux (glibc 2.23/gcc 5.x/X11)
- * FreeBSD/NetBSD/OpenBSD *(source-only)*
-
-### Minimum hardware
-
- * Intel Core 2 *(or compatible)*
- * 720p screen resolution
- * 2GB RAM
-
-### Recommended hardware
-
- * Intel Core i5 *(or compatible)*
- * 1080p screen resolution
- * 8GB RAM
- * Color calibrated monitor
+Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but now aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY based on [ImageMagick](https://imagemagick.org).
 
 ## Keyboard/Mouse shortcuts
 
@@ -62,13 +27,11 @@ Cyan was an prepress color converter (and [GIMP](https://gimp.org) plug-in) but 
 | Left mouse         | Drag (if move tool selected)       |
 | Left mouse + Wheel | Brush size (if draw tool selected) |
 
-## FAQ
-
-...
-
 ## License
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+Copyright (c) Ole-André Rodlie ``<ole.andre.rodlie@gmail.com>``. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
 * Cyan include icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
 * Cyan Logo by Ole-André Rodlie is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)

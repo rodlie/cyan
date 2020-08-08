@@ -41,7 +41,7 @@ set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
-option(ENABLE_FFMPEG "FFmpeg support (if available)" ON)
+option(ENABLE_FFMPEG "FFmpeg support (if available)" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(LINUX_DEPLOY "Linux deploy" OFF)
 option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
@@ -351,100 +351,6 @@ if(${LINUX_DEPLOY})
     target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
-if(MINGW)
-    set(MINGW_ROOT "/opt/Cyan-mxe/usr/x86_64-w64-mingw32.shared" CACHE STRING "MINGW/MXE root dir")
-    set(QT_ROOT "${MINGW_ROOT}/qt5" CACHE STRING "MINGW/MXE Qt root dir")
-    set(
-        DLLS
-        ${MINGW_ROOT}/bin/libbz2.dll
-        ${MINGW_ROOT}/bin/libjpeg-9.dll
-        ${MINGW_ROOT}/bin/libpangowin32-1.0-0.dll
-        ${MINGW_ROOT}/bin/libwinpthread-1.dll
-        ${MINGW_ROOT}/bin/libcairo-2.dll
-        ${MINGW_ROOT}/bin/libharfbuzz-0.dll
-        ${MINGW_ROOT}/bin/liblcms2-2.dll
-        ${MINGW_ROOT}/bin/libpcre16-0.dll
-        ${MINGW_ROOT}/bin/libexpat-1.dll
-        ${MINGW_ROOT}/bin/libiconv-2.dll
-        ${MINGW_ROOT}/bin/liblzma-5.dll
-        ${MINGW_ROOT}/bin/libpcre-1.dll
-        ${MINGW_ROOT}/bin/libffi-6.dll
-        ${MINGW_ROOT}/bin/libMagick++-7.Q16HDRI-Cyan-4.dll
-        ${MINGW_ROOT}/bin/libpcre2-16-0.dll
-        ${MINGW_ROOT}/bin/libfontconfig-1.dll
-        ${MINGW_ROOT}/bin/libMagickCore-7.Q16HDRI-Cyan-6.dll
-        ${MINGW_ROOT}/bin/libpixman-1-0.dll
-        ${MINGW_ROOT}/bin/libfreetype-6.dll
-        ${MINGW_ROOT}/bin/libMagickWand-7.Q16HDRI-Cyan-6.dll
-        ${MINGW_ROOT}/bin/libpng16-16.dll
-        ${MINGW_ROOT}/bin/zlib1.dll
-        ${MINGW_ROOT}/bin/libopenjp2.dll
-        ${MINGW_ROOT}/bin/libstdc++-6.dll
-        ${MINGW_ROOT}/bin/libglib-2.0-0.dll
-        ${MINGW_ROOT}/bin/libpango-1.0-0.dll
-        ${MINGW_ROOT}/bin/libtiff-5.dll
-        ${MINGW_ROOT}/bin/libgobject-2.0-0.dll
-        ${MINGW_ROOT}/bin/libpangocairo-1.0-0.dll
-        ${MINGW_ROOT}/bin/libwebp-7.dll
-        ${MINGW_ROOT}/bin/libgomp-1.dll
-        ${MINGW_ROOT}/bin/libintl-8.dll
-        ${MINGW_ROOT}/bin/libpangoft2-1.0-0.dll
-        ${MINGW_ROOT}/bin/libwebpmux-3.dll
-        ${MINGW_ROOT}/bin/avcodec-58.dll
-        ${MINGW_ROOT}/bin/avdevice-58.dll
-        ${MINGW_ROOT}/bin/avformat-58.dll
-        ${MINGW_ROOT}/bin/avutil-56.dll
-        ${MINGW_ROOT}/bin/avresample-4.dll
-        ${MINGW_ROOT}/bin/swscale-5.dll
-        ${MINGW_ROOT}/bin/swresample-3.dll)
-    if(${MINGW32})
-        list(APPEND DLLS ${MINGW_ROOT}/bin/libgcc_s_sjlj-1.dll)
-    else()
-        list(APPEND DLLS ${MINGW_ROOT}/bin/libgcc_s_seh-1.dll)
-    endif()
-    set(
-        QT_DLLS
-        ${QT_ROOT}/bin/Qt5Concurrent.dll
-        ${QT_ROOT}/bin/Qt5Core.dll
-        ${QT_ROOT}/bin/Qt5Gui.dll
-        ${QT_ROOT}/bin/Qt5Widgets.dll)
-    add_custom_command(
-        TARGET
-        ${PROJECT_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${DLLS}
-        ${CMAKE_CURRENT_BINARY_DIR}/
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${QT_DLLS}
-        ${CMAKE_CURRENT_BINARY_DIR}/)
-    configure_file(${QT_ROOT}/plugins/platforms/qwindows.dll ${CMAKE_CURRENT_BINARY_DIR}/platforms/qwindows.dll COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/docs/COPYING COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/docs/README.md COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md ${CMAKE_CURRENT_BINARY_DIR}/docs/ChangeLog.md COPYONLY)
-    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/FatCow.txt COPYONLY)
-    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/basICColor.txt COPYONLY)
-    #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt ${CMAKE_CURRENT_BINARY_DIR}/docs/Nokia.txt COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_300_bas.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/ISOcoated_v2_300_bas.icc COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/ISOcoated_v2_grey1c_bas.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/ISOcoated_v2_grey1c_bas.icc COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/SWOP2006_Coated5v2.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/SWOP2006_Coated5v2.icc COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB2014.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB2014.icc COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_IEC61966-2-1_no_black_scaling.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB_IEC61966-2-1_no_black_scaling.icc COPYONLY)
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/icc/sRGB_v4_ICC_preference.icc
-        ${CMAKE_CURRENT_BINARY_DIR}/profiles/sRGB_v4_ICC_preference.icc COPYONLY)
-endif()
 
 
 if(UNIX AND NOT APPLE)

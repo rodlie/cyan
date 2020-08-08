@@ -76,10 +76,10 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
             .arg(typeString);
-   textString.append(QString("<p style=\"text-align:justify;font-size:small;\">%7 &copy; 2018-2019 Ole-André Rodlie, FxArena DA. %6. %1%2%3%4%5</p>")
+   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%7 &copy; Ole-André Rodlie.<br>%6.<br><br> %1%2%3%4%5</p>")
                  .arg(tr("This program is free software; "))
                  .arg(tr("you can redistribute it and/or modify it under the terms of "))
-                 .arg(tr("the GNU Lesser General Public License "))
+                 .arg(tr("the GNU General Public License "))
                  .arg(tr("as published by the Free Software Foundation; "))
                  .arg(tr("either version 2.1 of the License, or (at your option) any later version."))
                  .arg(tr("All rights reserved"))
@@ -89,29 +89,29 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     headerLayout->addWidget(textLabel);
     headerLayout->addStretch();
 
-    QWidget *infoWidget = new QWidget(this);
+    /*QWidget *infoWidget = new QWidget(this);
     infoWidget->setContentsMargins(0,0,0,0);
     QVBoxLayout *infoLayout = new QVBoxLayout(infoWidget);
     infoLayout->setContentsMargins(0,0,0,0);
 
     QTabWidget *tabs = new QTabWidget(this);
     tabs->setMinimumWidth(400);
-    infoLayout->addWidget(tabs);
+    infoLayout->addWidget(tabs);*/
 
-    QLabel *supportWidget = new QLabel(this);
+    /*QLabel *supportWidget = new QLabel(this);
     supportWidget->setText(QString("<p align=\"center\"><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a></p>"));
     supportWidget->setOpenExternalLinks(true);
-    infoLayout->addWidget(supportWidget);
+    infoLayout->addWidget(supportWidget);*/
 
-    QTextBrowser *supportBrowser = new QTextBrowser(this);
+    /*QTextBrowser *supportBrowser = new QTextBrowser(this);
     supportBrowser->setAcceptRichText(true);
     supportBrowser->setReadOnly(true);
     supportBrowser->setOpenLinks(true);
     supportBrowser->setOpenExternalLinks(true);
     supportBrowser->setAcceptRichText(true);
-    supportBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));
+    supportBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));*/
 
-    QWidget *thirdpartyWidget = new QWidget(this);
+    /*QWidget *thirdpartyWidget = new QWidget(this);
     thirdpartyWidget->setContentsMargins(0,0,0,0);
     QVBoxLayout *thirdpartyLayout = new QVBoxLayout(thirdpartyWidget);
     thirdpartyLayout->setContentsMargins(0,0,0,0);
@@ -124,14 +124,14 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     thirdpartyLayout->addWidget(thirdpartyBrowser);
     QPushButton *aboutQtButton = new QPushButton(this);
     aboutQtButton->setFocusPolicy(Qt::NoFocus);
-    aboutQtButton->setText(tr("About Qt %1").arg(qVersion()));
+    aboutQtButton->setText(tr("Powered by Qt %1").arg(qVersion()));
     connect(aboutQtButton, SIGNAL(released()), qApp, SLOT(aboutQt()));
-    thirdpartyLayout->addWidget(aboutQtButton);
+    thirdpartyLayout->addWidget(aboutQtButton);*/
 
-    tabs->addTab(supportBrowser, tr("Documentation"));
-    tabs->addTab(thirdpartyWidget, tr("Software"));
+    //tabs->addTab(supportBrowser, tr("Documentation"));
+    //tabs->addTab(thirdpartyWidget, tr("Third-party Software"));
 
-    size_t magickQ;
+    /*size_t magickQ;
     size_t magickV;
     MagickCore::GetMagickQuantumDepth(&magickQ);
     QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
@@ -213,8 +213,8 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     html.append(QString("<p>%1</p>").arg(tr("FFmpeg is a trademark of Fabrice Bellard, originator of the FFmpeg project.")));
 #endif
     html.append(QString("</body></html>"));
-    thirdpartyBrowser->setHtml(html);
+    thirdpartyBrowser->setHtml(html);*/
 
     mainLayout->addWidget(headerWidget);
-    mainLayout->addWidget(infoWidget);
+    //mainLayout->addWidget(infoWidget);
 }
