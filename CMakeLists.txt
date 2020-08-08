@@ -134,7 +134,10 @@ set(HEADERS_APP
     #app/converter.h
     app/editor.h
 )
-set(RESOURCES share/icons.qrc docs/docs.qrc)
+set(RESOURCES
+    share/icons.qrc
+    #docs/docs.qrc
+)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
@@ -362,8 +365,8 @@ if(UNIX AND NOT APPLE)
     install(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/COPYING
-        ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/README.md
+        #${CMAKE_CURRENT_SOURCE_DIR}/docs/ChangeLog.md
         #${CMAKE_CURRENT_SOURCE_DIR}/docs/Nokia.txt
         #${CMAKE_CURRENT_SOURCE_DIR}/docs/FatCow.txt
         #${CMAKE_CURRENT_SOURCE_DIR}/docs/basICColor.txt
