@@ -136,7 +136,7 @@ set(HEADERS_APP
 )
 set(RESOURCES
     share/icons.qrc
-    #docs/docs.qrc
+    docs/docs.qrc
 )
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")

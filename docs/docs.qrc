@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>html/ChangeLog.html</file>
-        <file>html/Thanks.html</file>
-        <file>html/Support.html</file>
+        <file>README.md</file>
     </qresource>
 </RCC>
