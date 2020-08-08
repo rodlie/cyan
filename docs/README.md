@@ -1,4 +1,4 @@
-# Cyan 2 (experimental)
+# Cyan Pixel Editor
 
 [![GitHub license](https://img.shields.io/github/license/rodlie/cyan)](https://github.com/rodlie/cyan/blob/master/COPYING)
 ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan)
