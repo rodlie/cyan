@@ -36,6 +36,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
 {
     setWindowTitle(tr("About Cyan"));
     setAttribute(Qt::WA_DeleteOnClose);
+    setMinimumWidth(400);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
 
@@ -50,23 +51,16 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     headerLayout->addWidget(logoLabel);
 
     QLabel *textLabel = new QLabel(this);
-    textLabel->setMinimumWidth(200);
-    textLabel->setMaximumWidth(200);
+    /*textLabel->setMinimumWidth(400);
+    textLabel->setMaximumWidth(400);*/
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
-
-    QString typeString = CYAN_VERSION_TYPE;
-    QString gitValue = CYAN_VERSION_GIT;
-    if (typeString.isEmpty()) { typeString = "Community"; }
-    if (!gitValue.isEmpty()) {
-        typeString.append(QString(" %1").arg(CYAN_VERSION_GIT));
-    }
 
     QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
-            .arg(typeString);
-   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%7 &copy; Ole-André Rodlie.<br>%6.<br><br> %1%2%3%4%5</p>")
+            .arg(tr("Pixel Editor"));
+   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%7 &copy; Ole-André Rodlie. %6.<br><br> %1%2%3%4%5</p>")
                  .arg(tr("This program is free software; "))
                  .arg(tr("you can redistribute it and/or modify it under the terms of "))
                  .arg(tr("the GNU General Public License "))

@@ -42,19 +42,12 @@ option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
-option(LINUX_DEPLOY "Linux deploy" OFF)
 option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
 
-if(${LINUX_DEPLOY})
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-    find_package(Threads REQUIRED)
-endif()
-
-set(
-    HEADERS_API
-    lib/CyanWidgetApi.h)
-set(
-    SOURCES_LIB
+set(HEADERS_API
+    lib/CyanWidgetApi.h
+)
+set(SOURCES_LIB
     lib/CyanAboutDialog.cpp
     lib/CyanImageFormat.cpp
     lib/CyanTileItem.cpp
@@ -80,9 +73,9 @@ set(
     lib/CyanGuideItem.cpp
     lib/qtcolorpicker.cpp
     lib/qtcolortriangle.cpp
-    lib/qtwindowlistmenu.cpp)
-set(
-    HEADERS_LIB
+    lib/qtwindowlistmenu.cpp
+)
+set(HEADERS_LIB
     lib/CyanAboutDialog.h
     lib/CyanImageFormat.h
     lib/CyanTileItem.h
@@ -109,9 +102,9 @@ set(
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     lib/qtcolortriangle.h
-    lib/qtwindowlistmenu.h)
-set(
-    SOURCES_APP
+    lib/qtwindowlistmenu.h
+)
+set(SOURCES_APP
     app/cyan_common.cpp
     #app/widgets/cyan_textwidget.cpp
     #app/widgets/colorrgb.cpp
@@ -128,9 +121,9 @@ set(
     app/viewtool.cpp
     app/messages.cpp
     app/layers.cpp
-    app/tabs.cpp)
-set(
-    HEADERS_APP
+    app/tabs.cpp
+)
+set(HEADERS_APP
     app/cyan_common.h
     #app/widgets/cyan_textwidget.h
     #app/widgets/colorrgb.h
@@ -139,7 +132,8 @@ set(
     #app/dialogs/newmediadialog.h
     #app/dialogs/convertdialog.h
     #app/converter.h
-    app/editor.h)
+    app/editor.h
+)
 set(RESOURCES share/icons.qrc docs/docs.qrc)
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
@@ -152,11 +146,7 @@ add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
 add_definitions(-DCYAN_WEBSITE="${WEBSITE}")
 add_definitions(-DCYAN_LIBRARY)
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5Test REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent Test REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
@@ -218,9 +208,9 @@ endif()
 if(WIN32)
     set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico)
     set(GUI_TYPE WIN32)
-    set(PRODUCT_COMMENTS "${PROJECT_NAME} Image Editor")
+    set(PRODUCT_COMMENTS "${PROJECT_NAME} Pixel Editor")
     set(PRODUCT_COMPANY_NAME ${COMPANY})
-    set(PRODUCT_FILE_DESCRIPTION "${PROJECT_NAME} Image Editor")
+    set(PRODUCT_FILE_DESCRIPTION "${PROJECT_NAME} Pixel Editor")
     set(PRODUCT_VERSION "${PROJECT_VERSION}")
     set(PRODUCT_INTERNAL_NAME ${PROJECT_NAME})
     set(PRODUCT_COMPANY_COPYRIGHT ${COPYRIGHT})
@@ -294,9 +284,6 @@ if(BUILD_LIBRARY)
 endif()
 if(${ENABLE_FONTCONFIG})
     target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
-endif()
-if(${LINUX_DEPLOY})
-    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(UNIX AND NOT APPLE)
