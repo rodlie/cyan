@@ -1,9 +1,10 @@
 theme: jekyll-theme-minimal
 title: Cyan
-description: Open source prepress image viewer and converter
+description: Pixel Editor and Converter
 logo: https://github.com/rodlie/cyan/raw/master/share/icons/hicolor/256x256/apps/Cyan.png
-show_downloads: true
 github:
   windows_url: https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Windows.7z
   linux_url: https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Linux.txz
   macos_url: https://github.com/rodlie/cyan/releases/download/1.2.1/Cyan-1.2.1-Mac.dmg
+  source_url: https://github.com/rodlie/cyan/archive/1.2.2.tar.gz
+  
