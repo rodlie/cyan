@@ -13,13 +13,13 @@ before_install:
   - sudo apt-get update
 
 install:
-  - sudo apt-get install cmake pkg-config tree qtbase5-dev libfontconfig1-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
+  - sudo apt-get install cmake pkg-config tree qtbase5-dev liblcms2-dev
 
 script:
   - export CWD=`pwd`
-  - MKJOBS=2 STATIC=1 sh share/scripts/build-magick.sh
+  - MKJOBS=2 STATIC=0 SIMPLE=1 sh share/scripts/build-magick.sh
   - mkdir build && cd build
-  - PKG_CONFIG_PATH="${CWD}/ImageMagick/install/lib/pkgconfig" cmake -DLINUX_DEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/usr ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
   - make -j2
   - make DESTDIR="${CWD}/pkg" install
   - tree "${CWD}/pkg"

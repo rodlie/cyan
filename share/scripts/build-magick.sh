@@ -22,6 +22,7 @@ QUANTUM=${QUANTUM:-16}
 REBUILD=${REBUILD:-0}
 NOBUILD=${NOBUILD:-0}
 PREFIX=${PREFIX:-$CWD/ImageMagick/install}
+SIMPLE=${SIMPLE:-0}
 
 if [ "$STATIC" = 1 ]; then
     BUILD_TYPE="--enable-static --disable-shared"
@@ -52,6 +53,12 @@ fi
 #fi
 
 cd "${CWD}/ImageMagick" || exit 1
+if [ "$SIMPLE" = 1 ]; then
+  ./configure --prefix=/usr || exit 1
+  make -j${MKJOBS} || exit 1
+  sudo make install || exit 1
+  sudo ldconfig
+else
 CXXFLAGS="-fPIC" ./configure \
   --prefix="$PREFIX" \
   ${BUILD_TYPE} \
@@ -101,3 +108,4 @@ CXXFLAGS="-fPIC" ./configure \
   --with-zstd=no || exit 1
 make -j${MKJOBS} || exit 1
 make install || exit 1
+fi
