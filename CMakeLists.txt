@@ -16,16 +16,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(Cyan VERSION 1.99.4)
-if(NOT PROJECT_VERSION_TWEAK)
-    set(PROJECT_VERSION_TWEAK 0)
-endif()
-
-if(DEFINED ENV{CYAN_VERSION})
-    set(PROJECT_VERSION $ENV{CYAN_VERSION})
-endif()
-if(DEFINED ENV{CYAN_GIT})
-    set(PROJECT_VERSION_GIT $ENV{CYAN_GIT})
-endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -34,15 +24,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(COMPANY "FxArena DA")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie, FxArena DA. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
-set(WEBSITE "https://cyan.fxarena.net")
-set(PROJECT_VERSION_TYPE "Community" CACHE STRING "Version type")
-set(INSTALLER_ID "0830D6C5-BB35-41E6-B694-971AA1CC8059" CACHE STRING "Windows Installer ID")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_LIBRARY "Build shared CyanApi library" OFF)
 option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
-option(ENABLE_FONTCONFIG "Fontconfig support on deployment" OFF)
+option(ENABLE_FONTCONFIG "Fontconfig support (only needed on Windows/macOS)" OFF)
 
 set(HEADERS_API
     lib/CyanWidgetApi.h
@@ -141,15 +128,9 @@ set(RESOURCES
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
-add_definitions(-DCYAN_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}")
-add_definitions(-DCYAN_VERSION_MINOR="${PROJECT_VERSION_MINOR}")
-add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
-add_definitions(-DCYAN_VERSION_GIT="${PROJECT_VERSION_GIT}")
-add_definitions(-DCYAN_VERSION_TYPE="${PROJECT_VERSION_TYPE}")
-add_definitions(-DCYAN_WEBSITE="${WEBSITE}")
 add_definitions(-DCYAN_LIBRARY)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent Test REQUIRED)
+find_package(Qt5 REQUIRED Core Gui Widgets Concurrent Test)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
@@ -196,7 +177,6 @@ endif()
 
 if(APPLE)
     set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.icns)
-    #set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
     set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
@@ -211,9 +191,9 @@ endif()
 if(WIN32)
     set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.ico)
     set(GUI_TYPE WIN32)
-    set(PRODUCT_COMMENTS "${PROJECT_NAME} Pixel Editor")
+    set(PRODUCT_COMMENTS "${PROJECT_NAME} Pixel Editor/Converter")
     set(PRODUCT_COMPANY_NAME ${COMPANY})
-    set(PRODUCT_FILE_DESCRIPTION "${PROJECT_NAME} Pixel Editor")
+    set(PRODUCT_FILE_DESCRIPTION "${PROJECT_NAME} Pixel Editor/Converter")
     set(PRODUCT_VERSION "${PROJECT_VERSION}")
     set(PRODUCT_INTERNAL_NAME ${PROJECT_NAME})
     set(PRODUCT_COMPANY_COPYRIGHT ${COPYRIGHT})
@@ -225,9 +205,9 @@ if(WIN32)
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
         @ONLY)
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/${PROJECT_NAME}.iss.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.iss
-        @ONLY)
+        ${ICON_FILE}
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.ico
+        COPYONLY)
 endif()
 
 if(BUILD_LIBRARY)
