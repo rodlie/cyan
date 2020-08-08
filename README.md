@@ -81,7 +81,7 @@ not be
 
 ## Build
 
-Binary builds are recommended, but you can always build from source. The following instructions are for Linux.
+The following build instructions are for Linux.
 
 ### Requirements
 
@@ -90,14 +90,7 @@ Binary builds are recommended, but you can always build from source. The followi
  * Qt5 *(Widgets/Concurrent) 5.5+*
  * Little CMS *2+*
  * ImageMagick *(Magick++) 7.0.8-34+*
-   * Minimum quantum depth of 16 is recommended
-   * Zero configuration is recommended *(Windows/macOS)*
-   * HDRI required
-   * lcms2 required
-   * zlib/bzip2/lzma required
-   * png/tiff/jpeg support as a minimum
  * fontconfig *(Windows/macOS)*
- * ffmpeg *3+ (optional)*
 
 ### RHEL/CentOS/Fedora
 
@@ -116,8 +109,6 @@ On Ubuntu you will need to install the following packages:
 ```
 sudo apt-get install git build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev
 ```
-
-* **Qt5 shipped with Ubuntu Bionic and beyond is not recommended!**
 
 ### Other distros
 
