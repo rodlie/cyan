@@ -34,7 +34,8 @@ if [ "${APT}" = 1 ]; then
     libopenjp2-7-dev \
     libheif-dev \
     liblzma-dev \
-    libbz2-dev
+    libbz2-dev \
+    tree
 fi
 
 if [ ! -d ImageMagick ]; then
