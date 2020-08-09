@@ -4,6 +4,8 @@ compiler: g++
 matrix:
   include:
     - os: linux
+      dist: focal
+    - os: linux
       dist: bionic
 
 before_install:

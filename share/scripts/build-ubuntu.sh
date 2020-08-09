@@ -148,12 +148,18 @@ if [ "${PKG}" = 1 ]; then
     touch debian/control
     dpkg-shlibdeps usr/bin/Cyan
     cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
-    dpkg-deb -b $DEB || exit 1
-    mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
-    ls -lah *.deb
+    if [ "${DEPLOY}" = 1 ]; then
+        sudo chown root:root ${DEB}
+        sudo dpkg-deb -b $DEB || exit 1
+        sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
+    else
+        dpkg-deb -b $DEB || exit 1
+        mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
+    fi
+    ls -lah $CWD/*.deb
     if [ "${DEPLOY}" = 1 ]; then
         sudo mkdir -p /opt/deploy
-        sudo cp $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
+        sudo cp $CWD/*.deb
         tree -lah /opt/deploy
     fi
 else
