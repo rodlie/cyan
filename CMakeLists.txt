@@ -30,7 +30,12 @@ option(BUILD_WIDGET_PLUGIN_EXAMPLE "Build widget plugin example" OFF)
 option(BUILD_WIDGET_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(RUNTIME_WARNINGS "Show warnings during runtime" OFF)
-option(ENABLE_FONTCONFIG "Fontconfig support (only needed on Windows/macOS)" OFF)
+option(LINUX_DEPLOY "Linux deploy" OFF)
+
+if(${LINUX_DEPLOY})
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/x86_64-linux-gnu")
+    find_package(Threads REQUIRED)
+endif()
 
 set(HEADERS_API
     lib/CyanWidgetApi.h
@@ -135,26 +140,22 @@ find_package(Qt5 REQUIRED Core Gui Widgets Concurrent Test)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
+pkg_search_module(FONTCONF REQUIRED fontconfig)
 
-if(${ENABLE_FONTCONFIG})
-    add_definitions(-DUSE_FC)
-    pkg_search_module(FONTCONF REQUIRED fontconfig)
-    include_directories(${FONTCONF_INCLUDE_DIRS})
-    if (APPLE)
-        set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
-        set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
-    elseif(WIN32)
-        set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
-        set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
-    else()
-        set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")
-        set(FC_CACHE_DIR "<cachedir prefix=\"xdg\">fontconfig</cachedir><cachedir>~/.fontconfig</cachedir>")
-    endif()
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-        ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
-        @ONLY)
+if (APPLE)
+    set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
+    set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
+elseif(WIN32)
+    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
+    set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
+else()
+    set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")
+    set(FC_CACHE_DIR "<cachedir prefix=\"xdg\">fontconfig</cachedir><cachedir>~/.fontconfig</cachedir>")
 endif()
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
+    ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
+    @ONLY)
 
 include_directories(
     app
@@ -164,6 +165,7 @@ include_directories(
     lib
     ${MAGICK_INCLUDE_DIRS}
     ${LCMS2_INCLUDE_DIRS}
+    ${FONTCONF_INCLUDE_DIRS}
 )
 
 add_compile_options(-Wall -Wextra)
@@ -231,16 +233,16 @@ if(BUILD_LIBRARY)
         PROPERTIES
         SOVERSION
         ${PROJECT_VERSION_MAJOR})
-    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_CFLAGS})
+    target_compile_options(${PROJECT_NAME}Api PRIVATE ${MAGICK_STATIC_CFLAGS})
     target_link_libraries(
         ${PROJECT_NAME}Api
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
         Qt5::Concurrent
-        ${MAGICK_LIBRARIES}
+        ${MAGICK_STATIC_LIBRARIES}
         ${LCMS2_LIBRARIES}
-        ${MAGICK_LDFLAGS}
+        ${MAGICK_STATIC_LDFLAGS}
         ${LCMS2_LDFLAGS})
 else()
     set(SOURCES_APP ${SOURCES_APP} ${SOURCES_LIB})
@@ -255,22 +257,23 @@ else()
     add_executable(${PROJECT_NAME} ${SOURCES_APP} ${HEADERS_APP} ${HEADERS_API} ${RESOURCES})
 endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_LIBRARIES}
+    ${MAGICK_STATIC_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${MAGICK_LDFLAGS}
-    ${LCMS2_LDFLAGS})
+    ${MAGICK_STATIC_LDFLAGS}
+    ${LCMS2_LDFLAGS}
+    ${FONTCONF_LDFLAGS})
 if(BUILD_LIBRARY)
     target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}Api)
 endif()
-if(${ENABLE_FONTCONFIG})
-    target_link_libraries(${PROJECT_NAME} ${FONTCONF_LDFLAGS})
+if(${LINUX_DEPLOY})
+    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 if(UNIX AND NOT APPLE)

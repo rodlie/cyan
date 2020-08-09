@@ -11,7 +11,9 @@ CMakeLists.txt.user*
 *.pro.user*
 *~
 build
-build-*
+build-magick
+build-cyan
+build-pkg
 Makefile*
 .directory
 *.stash

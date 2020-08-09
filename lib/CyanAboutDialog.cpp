@@ -59,7 +59,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
-            .arg(tr("Pixel Editor"));
+            .arg(tr("Pixel Editor and Converter"));
    textString.append(QString("<p style=\"text-align:center;font-size:small;\">%7 &copy; Ole-André Rodlie. %6.<br><br> %1%2%3%4%5</p>")
                  .arg(tr("This program is free software; "))
                  .arg(tr("you can redistribute it and/or modify it under the terms of "))

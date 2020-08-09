@@ -80,24 +80,6 @@ not be
   3. This notice may not be removed or altered from any source
   distribution.
 
-
-## Build
-
-### Requirements
-
- * cmake *3+*
- * pkg-config
- * Qt5 *(Widgets/Concurrent) 5.5+*
- * Little CMS *2+*
- * ImageMagick *(Magick++) 7.0.8-34+*
- * fontconfig *(Windows/macOS)*
-
-```
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr <cyan_source_directory>
-make -jX
-sudo make install
-```
-
 ## Changelog
 
 ## 1.99.4
@@ -106,7 +88,6 @@ sudo make install
 
 * Bug fixes
 * Dropped FFmpeg support (focus on primary functions instead)
-* Dropped Linux/macOS binary (too much work for no gains)
 
 ## 1.99.3
 

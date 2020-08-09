@@ -20,11 +20,11 @@
 #include <QApplication>
 #include <QSplashScreen>
 #include <QtMsgHandler>
-
-#ifdef USE_FC
 #include <QFile>
+#include <QStringList>
+#include <QFile>
+
 #include <fontconfig/fontconfig.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,10 +88,8 @@ void msgHandler(QtMsgType type,
 
 int main(int argc, char *argv[])
 {
-#ifdef USE_FC
     // always force fontconfig in pango
     qputenv("PANGOCAIRO_BACKEND", "fc");
-#endif
 
     qInstallMessageHandler(msgHandler);
 
@@ -101,7 +99,6 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
-#ifdef USE_FC
 #ifdef Q_OS_MAC
     // setup fontconfig on mac
     QString fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
@@ -115,31 +112,26 @@ int main(int argc, char *argv[])
     // splash
     QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(512,512),
                          Qt::SplashScreen);
-    splash.setStyleSheet("font-weight:bold;");
     splash.show();
-#endif
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
 
-#ifdef USE_FC
     // setup fontconfig
-    //splash.showMessage(QObject::tr("Loading fonts, this might take a while ..."),
-    //                   Qt::AlignBottom|Qt::AlignLeft, Qt::white);
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
         FcConfigDestroy(config);
     }
-#endif
 
     // editor
     Editor w;
+    QStringList args = QApplication::arguments();
+    if (args.size()>1 && QFile::exists(args.at(1))) {
+            w.loadImage(args.at(1));
+    }
     w.show();
-
-#ifdef USE_FC
     splash.finish(&w);
-#endif
 
     return a.exec();
 }
