@@ -47,6 +47,10 @@ if [ "$PKG" = 1 ]; then
     mkdir -p "${PKG_DIR}"
 fi
 
+HEIC="yes"
+if [ "${DISTRO}" = "bionic" ]; then
+    HEIC="no"
+fi
 if [ "${CLEAN}" = 1 ]; then
     rm -rf build-magick || true
     mkdir build-magick && cd build-magick
@@ -71,7 +75,7 @@ if [ "${CLEAN}" = 1 ]; then
 --with-freetype=no \
 --with-gslib=no \
 --with-gvc=no \
---with-heic=yes \
+--with-heic=${HEIC} \
 --with-jbig=no \
 --with-jpeg=yes \
 --with-lcms=yes \
