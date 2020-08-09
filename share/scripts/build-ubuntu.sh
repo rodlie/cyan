@@ -11,6 +11,7 @@ CLEAN=${CLEAN:-1}
 DATE=`date "+%Y%m%d%H%M"`
 DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
 DEPLOY=${DEPLOY:-0}
+WIN32=${WIN32:-0}
 
 if [ "${APT}" = 1 ]; then
     sudo apt-get install \
@@ -53,6 +54,7 @@ fi
 HEIC="no"
 if [ "${DISTRO}" = "focal" ]; then
     HEIC="yes"
+    WIN32=1
 fi
 if [ "${CLEAN}" = 1 ]; then
     rm -rf build-magick || true
@@ -170,4 +172,25 @@ else
     sudo ldconfig
     sudo update-mime-database /usr/local/share/mime
     sudo update-desktop-database
+fi
+
+# WIN32
+PATH_ORIG=$PATH
+if [ "${DISTRO}" = "focal" ] && [ "${WIN32}" = 1 ] && [ "${PKG}" = 1 ]; then
+    cd $CWD
+    sudo chmod 777 /opt
+    mkdir -p /opt/cyan-mxe
+    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-focal-usr-20200809.tar.xz
+    tar xf cyan-mxe-focal-usr-20200809.tar.xz -C /opt/cyan-mxe
+    MXE=/opt/cyan-mxe
+    MXE_TC=i686-w64-mingw32.static
+    CMAKE=${MXE_TC}-cmake
+    STRIP=${MXE_TC}-strip
+    export PATH=$MXE/usr/bin:$PATH
+    export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
+    mkdir build-win32 && cd build-win32
+    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
+    make -j${MKJOBS}
+    $STRIP -s Cyan.exe
+    ls -lah Cyan.exe
 fi
