@@ -23,7 +23,9 @@ Cyan 2 aims to be a simple general-purpose image editor and converter for RGB/CM
 | Ctrl + Tab         | Switch image                       |
 | Ctrl + G           | Add vertical guide                 |
 | Ctrl + Shift + G   | Add horizontal guide               |
-| Arrows (+Shift)    | Move selected layer                |
+| Arrows (+Shift)    | Move selected layer X/Y            |
+| PageUp             | Move selected layer stack up       |
+| PageDown           | Move selected layer stack down     |
 | Mouse wheel        | Zoom                               |
 | Third mouse        | Switch interactive tool            |
 | Left mouse         | Drag (if move tool selected)       |
@@ -86,8 +88,9 @@ not be
 
 **Release date : TBA**
 
-* Bug fixes
-* Dropped FFmpeg support (focus on primary functions instead)
+  * Change layer stacking with PageUp/PageDown keys
+  * Bug fixes
+  * Dropped FFmpeg support (focus on primary functions instead)
 
 ## 1.99.3
 

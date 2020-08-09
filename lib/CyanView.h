@@ -115,6 +115,8 @@ signals:
     void openImages(QList<QUrl> urls);
     void openLayers(QList<QUrl> urls);
     void canvasStatusChanged();
+    void moveLayerSignalUp(int id);
+    void moveLayerSignalDown(int id);
 
 public slots:
     void doZoom(double scaleX,
@@ -158,6 +160,8 @@ public slots:
     int getLayerMaxOrder();
     void moveLayerItemDown(int id);
     void moveLayerItemUp(int id);
+    void moveSelectedLayerDown();
+    void moveSelectedLayerUp();
     int getLayerItemIndex(int id);
     LayerItem* getLayerItemFromId(int id);
     LayerItem* getLayerItemUnderId(int id);

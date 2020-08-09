@@ -317,6 +317,12 @@ void View::keyPressEvent(QKeyEvent *e)
     case Qt::Key_Down:
         moveSelectedLayer(MoveLayerDown, skip);
         return;
+    case Qt::Key_PageUp:
+        moveSelectedLayerUp();
+        return;
+    case Qt::Key_PageDown:
+        moveSelectedLayerDown();
+        return;
     default:;
     }
     QGraphicsView::keyPressEvent(e);
@@ -705,6 +711,28 @@ void View::moveLayerItemUp(int id)
     qDebug() << "RESTACK ITEMS (move layer up) ...";
     layerOver->stackBefore(layerUnder);
     handleCanvasChanged();
+}
+
+void View::moveSelectedLayerDown()
+{
+    qDebug() << "move selected layer down" << _selectedLayer;
+    for (int i=0;i<_scene->items().size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+        if (!item) { continue; }
+        if (item->getID() != _selectedLayer) { continue; }
+        emit moveLayerSignalDown(item->getID());
+    }
+}
+
+void View::moveSelectedLayerUp()
+{
+    qDebug() << "move selected layer up" << _selectedLayer;
+    for (int i=0;i<_scene->items().size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+        if (!item) { continue; }
+        if (item->getID() != _selectedLayer) { continue; }
+        emit moveLayerSignalUp(item->getID());
+    }
 }
 
 int View::getLayerItemIndex(int id)

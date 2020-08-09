@@ -941,6 +941,15 @@ void Editor::connectView(View *view)
             SIGNAL(moveLayerEvent(QKeyEvent*)),
             view,
             SLOT(moveLayerEvent(QKeyEvent*)));
+
+    connect(view,
+            SIGNAL(moveLayerSignalUp(int)),
+            this,
+            SLOT(handleMoveLayerUp(int)));
+    connect(view,
+            SIGNAL(moveLayerSignalDown(int)),
+            this,
+            SLOT(handleMoveLayerDown(int)));
 }
 
 void Editor::setViewTool(View *view)
