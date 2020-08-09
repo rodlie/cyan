@@ -49,6 +49,7 @@ LayerTree::LayerTree(QWidget *parent,
     setColumnWidth(1, 24);
     setColumnWidth(2, 24);
     setIconSize(QSize(24, 24));
+    header()->setMaximumSectionSize(24); // QTBUG-68503
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegateForColumn(1, new CyanLayerItemDelegate(this));
     setItemDelegateForColumn(2, new CyanLayerItemDelegate(this));
