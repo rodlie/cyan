@@ -11,7 +11,7 @@ before_install:
   - sudo apt-get update
 
 script:
-  - bash DEPLOY=1 share/scripts/build-ubuntu.sh
+  - DEPLOY=1 bash share/scripts/build-ubuntu.sh
 
 deploy:
   provider: releases
