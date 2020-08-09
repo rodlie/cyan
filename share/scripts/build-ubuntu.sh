@@ -13,7 +13,7 @@ DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
 DEPLOY=${DEPLOY:-0}
 
 if [ "${APT}" = 1 ]; then
-    apt-get -v &> /dev/null && sudo apt-get install \
+    sudo apt-get install \
     git \
     dpkg \
     dpkg-dev \
@@ -32,10 +32,12 @@ if [ "${APT}" = 1 ]; then
     liblzma-dev \
     zlib1g-dev \
     libopenjp2-7-dev \
-    libheif-dev \
     liblzma-dev \
     libbz2-dev \
     tree
+    if [ "${DISTRO}" = "focal" ]; then
+        sudo apt-get install libheif-dev
+    fi
 fi
 
 if [ ! -d ImageMagick ]; then
@@ -48,9 +50,9 @@ if [ "$PKG" = 1 ]; then
     mkdir -p "${PKG_DIR}"
 fi
 
-HEIC="yes"
-if [ "${DISTRO}" = "bionic" ]; then
-    HEIC="no"
+HEIC="no"
+if [ "${DISTRO}" = "focal" ]; then
+    HEIC="yes"
 fi
 if [ "${CLEAN}" = 1 ]; then
     rm -rf build-magick || true
