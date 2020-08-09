@@ -1361,13 +1361,10 @@ QMap<int, CyanImageFormat::CyanTile> View::setupTiles(Magick::Image image,
 void View::handleLayerOverTiles(LayerItem *layerItem,
                                 bool ignoreRunning)
 {
-    //if (future.isRunning() || !layerItem) { return; }
-    if (!ignoreRunning) {
-        if (future.isRunning()) { return; }
-    }
+    if (!ignoreRunning && future.isRunning()) { return; }
     if (!layerItem) { return; }
 
-    QList<QGraphicsItem*> items = _scene->collidingItems(layerItem);
+    QList<QGraphicsItem*> items = _scene->collidingItems(layerItem, Qt::IntersectsItemBoundingRect);
     for (int i=0;i<items.size();++i) {
         CyanTileItem *item = dynamic_cast<CyanTileItem*>(items.at(i));
         if (!item) { continue; }
@@ -1401,8 +1398,7 @@ void View::handleLayerOverTiles(LayerItem *layerItem,
                                    _canvas.layers,
                                    geo);
     }
-    QTimer::singleShot(10, this, SLOT(handleTileStatus()));
-    QTimer::singleShot(100, this, SLOT(handleTileStatus()));
+    handleTileStatus();
 }
 
 void View::handleLayerOverTiles(int layer)
@@ -1430,7 +1426,7 @@ void View::handleTileStatus()
         int tile = tiles.key();
 
         QVector<int> colliding;
-        QList<QGraphicsItem*> items = _scene->collidingItems(_canvas.tiles[tile].rect);
+        QList<QGraphicsItem*> items = _scene->collidingItems(_canvas.tiles[tile].rect, Qt::IntersectsItemBoundingRect);
         for (int i=0;i<items.size();++i) {
             LayerItem *item = dynamic_cast<LayerItem*>(items.at(i));
             if (!item) { continue; }
@@ -1442,7 +1438,6 @@ void View::handleTileStatus()
             layer.next();
             if (!colliding.contains(layer.key()) && layer.value()) {
                 _canvas.tiles[tile].rect->layers[layer.key()] = false;
-
 #ifdef SHOW_TILES
                 QPen newPen(Qt::red);
                 newPen.setWidth(0);
