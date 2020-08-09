@@ -159,7 +159,7 @@ if [ "${PKG}" = 1 ]; then
     ls -lah $CWD/*.deb
     if [ "${DEPLOY}" = 1 ]; then
         sudo mkdir -p /opt/deploy
-        sudo cp $CWD/*.deb
+        sudo cp $CWD/*.deb /opt/deploy
         tree -lah /opt/deploy
     fi
 else
