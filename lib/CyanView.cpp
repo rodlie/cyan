@@ -721,6 +721,7 @@ void View::moveSelectedLayerDown()
         if (!item) { continue; }
         if (item->getID() != _selectedLayer) { continue; }
         emit moveLayerSignalDown(item->getID());
+        return;
     }
 }
 
@@ -732,6 +733,7 @@ void View::moveSelectedLayerUp()
         if (!item) { continue; }
         if (item->getID() != _selectedLayer) { continue; }
         emit moveLayerSignalUp(item->getID());
+        return;
     }
 }
 
