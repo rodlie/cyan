@@ -794,7 +794,7 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
                                           QMap<int, CyanImageFormat::CyanLayer> layers,
                                           Magick::Geometry crop)
 {
-    qDebug() << "comp layers" << crop.width() << crop.height();
+    //qDebug() << "comp layers" << crop.width() << crop.height();
     // copy canvas to comp
     Magick::Image comp(canvas);
 

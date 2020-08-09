@@ -56,6 +56,7 @@ void msgHandler(QtMsgType type,
                 context.function);
         break;
 #endif
+#ifdef SHOW_WARN
     case QtWarningMsg:
         fprintf(stderr,
                 "Warning: %s (%s:%u, %s)\n",
@@ -64,6 +65,7 @@ void msgHandler(QtMsgType type,
                 context.line,
                 context.function);
         break;
+#endif
     case QtCriticalMsg:
         fprintf(stderr,
                 "Critical: %s (%s:%u, %s)\n",
@@ -80,6 +82,7 @@ void msgHandler(QtMsgType type,
                 context.line,
                 context.function);
         abort();
+    default:;
     }
 }
 
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
     if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
 #endif
     // splash
-    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(500,333),
+    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(512,512),
                          Qt::SplashScreen);
     splash.setStyleSheet("font-weight:bold;");
     splash.show();
@@ -121,8 +124,8 @@ int main(int argc, char *argv[])
 
 #ifdef USE_FC
     // setup fontconfig
-    splash.showMessage(QObject::tr("Loading fonts, this might take a while ..."),
-                       Qt::AlignBottom|Qt::AlignLeft, Qt::white);
+    //splash.showMessage(QObject::tr("Loading fonts, this might take a while ..."),
+    //                   Qt::AlignBottom|Qt::AlignLeft, Qt::white);
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
