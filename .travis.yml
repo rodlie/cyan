@@ -15,7 +15,7 @@ before_install:
 script:
   - sudo chmod 777 /opt
   - mkdir -p /opt/deploy
-  - MKJOBS=2 bash share/scripts/build-ubuntu.sh
+  - MKJOBS=2 bash share/scripts/travis.sh
 
 deploy:
   provider: releases
