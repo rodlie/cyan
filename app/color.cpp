@@ -328,7 +328,10 @@ void Editor::handleColorConvert(bool ignoreColor,
                              tr("Missing default profile for the selected color space!"));
         return;
     }
-    if (getCurrentCanvas()->getCanvasProject().layers.size()>1) { // warn when converting to CMYK with multiple layers
+    if (getCurrentCanvas()->getCanvasProject().layers.size()>1 &&
+        colorspace == Magick::CMYKColorspace)
+    {
+        // warn when converting to CMYK with multiple layers
         QMessageBox question;
         question.setWindowTitle(tr("Convert to CMYK?"));
         question.setIconPixmap(QIcon::fromTheme("color-wheel").pixmap(QSize(32, 32)));
