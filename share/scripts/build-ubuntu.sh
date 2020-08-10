@@ -180,8 +180,8 @@ if [ "${DISTRO}" = "focal" ] && [ "${WIN32}" = 1 ] && [ "${PKG}" = 1 ]; then
     cd $CWD
     sudo chmod 777 /opt
     mkdir -p /opt/cyan-mxe
-    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-usr-focal-20200810.tar.xz
-    tar xf cyan-mxe-usr-focal-20200810.tar.xz -C /opt/cyan-mxe
+    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-usr-focal-20200810-1.tar.xz
+    tar xf cyan-mxe-usr-focal-20200810-1.tar.xz -C /opt/cyan-mxe
     MXE=/opt/cyan-mxe
     MXE_TC=i686-w64-mingw32.static
     CMAKE=${MXE_TC}-cmake
