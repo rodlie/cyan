@@ -17,6 +17,7 @@ HDRI="enable"
 PATH_ORIG=$PATH
 SDK_TAR=cyan-mxe-usr-focal-20200810-1.tar.xz
 SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
+SDK_LEGAL=cyan-mxe-legal-20200810.tar.xz
 MXE=/opt/cyan-mxe
 
 if [ "${DISTRO}" = "focal" ]; then
@@ -25,9 +26,8 @@ if [ "${DISTRO}" = "focal" ]; then
     WIN64=1
 fi
 
-SHORT=`git rev-parse --short HEAD`
-if [ "${SHORT}" = "" ]; then
-    $DATE="${DATE}.${SHORT}"
+if [ "${TRAVIS_COMMIT}" != "" ]; then
+    $DATE="${DATE}.${TRAVIS_COMMIT}"
 fi
 
 if [ "${APT}" = 1 ]; then
@@ -169,6 +169,8 @@ if [ "${WIN32}" = 1 ] || [ "${WIN64}" = 1 ]; then
         wget $SDK_URL/$SDK_TAR
         tar xf $SDK_TAR -C /opt/cyan-mxe
     fi
+    cd $CWD
+    wget $SDK_URL/$SDK_LEGAL
 fi
 if [ "${WIN32}" = 1 ]; then
     MXE_TC=i686-w64-mingw32.static
@@ -187,6 +189,7 @@ if [ "${WIN32}" = 1 ]; then
     $STRIP -s Cyan.exe
     cd $CWD
     mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
+    tar xf $SDK_LEGAL -C $WIN_PKG
     cp $WIN_BUILD/Cyan.exe $WIN_PKG/
     cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
     cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
@@ -199,15 +202,31 @@ if [ "${WIN32}" = 1 ]; then
     fi
 fi
 if [ "${WIN64}" = 1 ]; then
-    cd $CWD
     MXE_TC=x86_64-w64-mingw32.static
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
+    WIN_BUILD=build-win64
+    WIN_PKG=Cyan-$VERSION.$DATE-Windows-x64
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
-    mkdir build-win64 && cd build-win64
+
+    cd $CWD
+    rm -rf $WIN_BUILD || true
+    mkdir $WIN_BUILD && cd $WIN_BUILD
     $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
     make -j${MKJOBS}
     $STRIP -s Cyan.exe
-    ls -lah Cyan.exe
+    cd $CWD
+    mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
+    tar xf $SDK_LEGAL -C $WIN_PKG
+    cp $WIN_BUILD/Cyan.exe $WIN_PKG/
+    cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
+    cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
+    cp $CWD/COPYING $WIN_PKG/
+    cp $CWD/docs/README.md $WIN_PKG/
+    cp $CWD/share/icc/* $WIN_PKG/profiles/
+    zip -9 -r ${WIN_PKG}.zip $WIN_PKG
+    if [ -d "/opt/deploy" ]; then
+        cp ${WIN_PKG}.zip /opt/deploy/
+    fi
 fi
