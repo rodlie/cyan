@@ -26,9 +26,8 @@ if [ "${DISTRO}" = "focal" ]; then
     WIN64=1
 fi
 
-if [ "${TRAVIS_COMMIT}" != "" ]; then
-    $DATE="${DATE}.${TRAVIS_COMMIT}"
-fi
+SHORT=`git rev-parse --short HEAD`
+DATE="${DATE}.${SHORT}"
 
 if [ "${APT}" = 1 ]; then
     sudo apt-get install \
