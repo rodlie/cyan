@@ -190,6 +190,7 @@ if [ "${WIN32}" = 1 ]; then
     mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
     tar xf $SDK_LEGAL -C $WIN_PKG
     cp $WIN_BUILD/Cyan.exe $WIN_PKG/
+    cp -a $WIN_BUILD/etc $WIN_PKG/
     cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
     cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
     cp $CWD/COPYING $WIN_PKG/
@@ -219,6 +220,7 @@ if [ "${WIN64}" = 1 ]; then
     mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
     tar xf $SDK_LEGAL -C $WIN_PKG
     cp $WIN_BUILD/Cyan.exe $WIN_PKG/
+    cp -a $WIN_BUILD/etc $WIN_PKG/
     cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
     cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
     cp $CWD/COPYING $WIN_PKG/
