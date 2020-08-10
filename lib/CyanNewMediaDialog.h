@@ -28,7 +28,7 @@
 
 #include <Magick++.h>
 
-#include "cyan_common.h"
+#include "CyanCommon.h"
 #include "qtcolorpicker.h"
 
 class NewMediaDialog : public QDialog

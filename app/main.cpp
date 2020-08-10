@@ -109,10 +109,13 @@ int main(int argc, char *argv[])
     QString fontconfig = QString("%1/../etc/fonts").arg(QApplication::applicationDirPath());
     if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
 #endif
+
+#ifndef Q_OS_LINUX
     // splash
     QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(512,512),
                          Qt::SplashScreen);
     splash.show();
+#endif
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
@@ -126,12 +129,15 @@ int main(int argc, char *argv[])
 
     // editor
     Editor w;
+    w.show();
     QStringList args = QApplication::arguments();
     if (args.size()>1 && QFile::exists(args.at(1))) {
             w.loadImage(args.at(1));
     }
-    w.show();
+
+#ifndef Q_OS_LINUX
     splash.finish(&w);
+#endif
 
     return a.exec();
 }

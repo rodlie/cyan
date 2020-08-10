@@ -15,7 +15,7 @@
 #
 */
 
-#include "cyan_common.h"
+#include "CyanCommon.h"
 
 #include <QDebug>
 #include <QFile>

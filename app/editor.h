@@ -45,7 +45,7 @@
 #include "CyanMdiWindow.h"
 #include "CyanLayerWidget.h"
 
-#include "cyan_common.h" // TODO replace
+#include "CyanCommon.h"
 #include "qtcolorpicker.h"
 #include "qtwindowlistmenu.h"
 

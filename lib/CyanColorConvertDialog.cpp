@@ -22,7 +22,7 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-#include "cyan_common.h"
+#include "CyanCommon.h"
 
 ConvertDialog::ConvertDialog(QWidget *parent,
                              const QString &title,

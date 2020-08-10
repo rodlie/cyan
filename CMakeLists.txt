@@ -42,6 +42,7 @@ set(HEADERS_API
 )
 set(SOURCES_LIB
     lib/CyanAboutDialog.cpp
+    lib/CyanCommon.cpp
     lib/CyanImageFormat.cpp
     lib/CyanTileItem.cpp
     lib/CyanLayerItem.cpp
@@ -65,11 +66,12 @@ set(SOURCES_LIB
     #lib/CyanRuler.cpp
     lib/CyanGuideItem.cpp
     lib/qtcolorpicker.cpp
-    lib/qtcolortriangle.cpp
+    #lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp
 )
 set(HEADERS_LIB
     lib/CyanAboutDialog.h
+    lib/CyanCommon.h
     lib/CyanImageFormat.h
     lib/CyanTileItem.h
     lib/CyanLayerItem.h
@@ -94,11 +96,10 @@ set(HEADERS_LIB
     lib/CyanGuideItem.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
-    lib/qtcolortriangle.h
+    #lib/qtcolortriangle.h
     lib/qtwindowlistmenu.h
 )
 set(SOURCES_APP
-    app/cyan_common.cpp
     #app/widgets/cyan_textwidget.cpp
     #app/widgets/colorrgb.cpp
     #app/widgets/colorcmyk.cpp
@@ -117,7 +118,6 @@ set(SOURCES_APP
     app/tabs.cpp
 )
 set(HEADERS_APP
-    app/cyan_common.h
     #app/widgets/cyan_textwidget.h
     #app/widgets/colorrgb.h
     #app/widgets/colorcmyk.h
@@ -146,7 +146,7 @@ if (APPLE)
     set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
     set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
 elseif(WIN32)
-    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir>")
+    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir><dir>~/AppData/Local/Microsoft/Windows/Fonts</dir>")
     set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
 else()
     set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")

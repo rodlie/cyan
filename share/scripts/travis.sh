@@ -68,7 +68,7 @@ rm -rf "${PKG_DIR}" || true
 mkdir -p "${PKG_DIR}"
 
 if [ "${DISTRO}" = "xenial" ]; then
-    MAGICK_RELEASE = $MAGICK_SAFE
+    MAGICK_RELEASE=$MAGICK_SAFE
 fi
 if [ ! -d ImageMagick ]; then
     git clone https://github.com/ImageMagick/ImageMagick

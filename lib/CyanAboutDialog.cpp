@@ -29,7 +29,7 @@
 
 #include <Magick++.h>
 
-#include "cyan_common.h"
+#include "CyanCommon.h"
 
 CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     QDialog (parent)
