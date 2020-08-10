@@ -21,7 +21,9 @@
 #include <QObject>
 #include <QDialog>
 
-class CyanAboutDialog : public QDialog
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanAboutDialog : public QDialog
 {
     Q_OBJECT
 

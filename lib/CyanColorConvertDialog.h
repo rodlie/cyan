@@ -25,7 +25,9 @@
 
 #include <Magick++.h>
 
-class ConvertDialog : public QDialog
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT ConvertDialog : public QDialog
 {
     Q_OBJECT
 

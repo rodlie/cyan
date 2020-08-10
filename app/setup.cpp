@@ -337,7 +337,7 @@ void Editor::setupWidgets(bool native)
 
     // main color picker
     colorPicker = new QtColorPicker(this, -1, true, false);
-    //colorPicker->setIconSize(QSize(24, 24));
+    colorPicker->setIconSize(QSize(16, 32));
     colorPicker->setStandardColors();
 
     // toolbar

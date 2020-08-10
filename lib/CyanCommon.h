@@ -28,17 +28,13 @@
 #include <lcms2.h>
 #include <Magick++.h>
 
+#include "CyanGlobal.h"
 
-
-
-class CyanCommon: public QObject
+class CYANSHARED_EXPORT CyanCommon: public QObject
 {
     Q_OBJECT
 
 public:
-
-
-
     enum ICCTag {
         ICCDescription,
         ICCManufacturer,

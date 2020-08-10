@@ -43,7 +43,9 @@ class QWidget;
 class QColor;
 QT_END_NAMESPACE
 
-class CyanWidgetPlugin
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT CyanWidgetPlugin
 {
 public:
     enum CyanWidgetPluginPosition

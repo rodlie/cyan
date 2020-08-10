@@ -149,7 +149,7 @@ signals:
 
 public slots:
     View* getCurrentCanvas();
-    void loadImage(const QString &filename);
+    void openConsoleImage(const QString &filename);
 
 private slots:
     // plugins
@@ -254,7 +254,7 @@ private slots:
     void writeProject(const QString &filename, bool setFilename = true);
 
     //void saveImage(const QString &filename);
-
+    void loadImage(const QString &filename);
     void readImage(Magick::Blob blob, const QString &filename = QString());
     void readImage(const QString &filename);
     void writeImage(const QString &filename, bool setFilename = true);

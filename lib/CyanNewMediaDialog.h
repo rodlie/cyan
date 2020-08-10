@@ -31,7 +31,9 @@
 #include "CyanCommon.h"
 #include "qtcolorpicker.h"
 
-class NewMediaDialog : public QDialog
+#include "CyanGlobal.h"
+
+class CYANSHARED_EXPORT NewMediaDialog : public QDialog
 {
     Q_OBJECT
 

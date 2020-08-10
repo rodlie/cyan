@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     w.show();
     QStringList args = QApplication::arguments();
     if (args.size()>1 && QFile::exists(args.at(1))) {
-            w.loadImage(args.at(1));
+            w.openConsoleImage(args.at(1));
     }
 
 #ifndef Q_OS_LINUX

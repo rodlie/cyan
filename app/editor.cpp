@@ -141,6 +141,11 @@ View *Editor::getCurrentCanvas()
     return view;
 }
 
+void Editor::openConsoleImage(const QString &filename)
+{
+    loadImage(filename);
+}
+
 void Editor::initPlugins(QList<QPluginLoader *> plugins)
 {
     // TODO get order from settings!
