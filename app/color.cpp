@@ -20,6 +20,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QApplication>
+#include <QPixmap>
 
 #include "CyanColorConvertDialog.h"
 #include "CyanColorConvert.h"
@@ -326,6 +327,16 @@ void Editor::handleColorConvert(bool ignoreColor,
                              tr("Missing default profile"),
                              tr("Missing default profile for the selected color space!"));
         return;
+    }
+    if (getCurrentCanvas()->getCanvasProject().layers.size()>1) { // warn when converting to CMYK with multiple layers
+        QMessageBox question;
+        question.setWindowTitle(tr("Convert to CMYK?"));
+        question.setIconPixmap(QIcon::fromTheme("color-wheel").pixmap(QSize(32, 32)));
+        question.setText(tr("Working in CMYK color space with multiple layers are not recommended. Convert to CMYK?"));
+        question.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+        question.setDefaultButton(QMessageBox::No);
+        int reply = question.exec();
+        if (reply != QMessageBox::Yes) { return; }
     }
     ConvertDialog *dialog = new ConvertDialog(this,
                                               title,
