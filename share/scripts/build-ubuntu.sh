@@ -3,15 +3,27 @@ set -e -x
 
 CWD=`pwd`
 MKJOBS=${MKJOBS:-4}
-PKG=${PKG:-1}
-PREFIX=${PREFIX:-"/usr/local"}
+PREFIX=${PREFIX:-"/usr"}
 APT=${APT:-1}
 PKG_DIR="${CWD}/build-pkg"
 CLEAN=${CLEAN:-1}
 DATE=`date "+%Y%m%d%H%M"`
 DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
-DEPLOY=${DEPLOY:-0}
 WIN32=${WIN32:-0}
+WIN64=${WIN64:-0}
+HEIC="no"
+QDEPTH=16
+HDRI="enable"
+PATH_ORIG=$PATH
+SDK_TAR=cyan-mxe-usr-focal-20200810-1.tar.xz
+SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
+MXE=/opt/cyan-mxe
+
+if [ "${DISTRO}" = "focal" ]; then
+    HEIC="yes"
+    WIN32=1
+    WIN64=1
+fi
 
 if [ "${APT}" = 1 ]; then
     sudo apt-get install \
@@ -41,34 +53,28 @@ if [ "${APT}" = 1 ]; then
     fi
 fi
 
+rm -rf "${PKG_DIR}" || true
+mkdir -p "${PKG_DIR}"
+
 if [ ! -d ImageMagick ]; then
     git clone https://github.com/ImageMagick/ImageMagick
 fi
 
-if [ "$PKG" = 1 ]; then
-    PREFIX=/usr
-    rm -rf "${PKG_DIR}" || true
-    mkdir -p "${PKG_DIR}"
-fi
-
-HEIC="no"
-if [ "${DISTRO}" = "focal" ]; then
-    HEIC="yes"
-    WIN32=1
-fi
 if [ "${CLEAN}" = 1 ]; then
     rm -rf build-magick || true
     mkdir build-magick && cd build-magick
     CXXFLAGS="-fPIC" CFLAGS="-fPIC" ../ImageMagick/configure \
---prefix=${PKG_DIR}/usr --enable-static --disable-shared \
+--prefix=${PKG_DIR}/usr \
+--enable-static \
+--disable-shared \
 --with-utilities=no \
 --disable-docs \
 --enable-zero-configuration \
---enable-hdri \
+--${HDRI}-hdri \
 --enable-largefile \
 --disable-deprecated \
 --disable-legacy-support \
---with-quantum-depth=16 \
+--with-quantum-depth=${QDEPTH} \
 --with-bzlib=yes \
 --with-autotrace=no \
 --with-djvu=no \
@@ -107,21 +113,11 @@ else
     cd build-magick
 fi
 make -j${MKJOBS}
-if [ "${PKG}" = 1 ]; then
-    make install
-else
-    sudo make install
-fi
+make install
 
-if [ "${PKG}" = 1 ]; then
-    export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/pkgconfig
-else
-    sudo ldconfig
-    export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-fi
+export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/pkgconfig
 
 cd $CWD
-
 rm -rf build-cyan || true
 mkdir build-cyan && cd build-cyan
 VERSION=`cat ../CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
@@ -131,64 +127,65 @@ cmake \
 -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
 -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
 make -j${MKJOBS}
-if [ "${PKG}" = 1 ]; then
-    make DESTDIR=${PKG_DIR} install
-    rm -rf ${PKG_DIR}/$PREFIX/{etc,include} ${PKG_DIR}/$PREFIX/bin/Magick* ${PKG_DIR}/$PREFIX/lib ${PKG_DIR}/$PREFIX/share/ImageMagick-*
-    DEB=${PKG_DIR}
-    mkdir $DEB/DEBIAN
-    CONTROL=$DEB/DEBIAN/control
-    DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
-    echo "Package: cyan" > $CONTROL || exit 1
-    echo "Version: $VERSION.$DATE" >> $CONTROL || exit 1
-    echo "Section: X11" >> $CONTROL || exit 1
-    echo "Priority: optional" >> $CONTROL || exit 1
-    echo "Maintainer: Ole-André Rodlie <ole.andre.rodlie@gmail.com>" >> $CONTROL || exit 1
-    echo "Standards-Version: 3.9.6" >> $CONTROL || exit 1
-    echo "Homepage: https://github.com/rodlie/cyan" >> $CONTROL || exit 1
-    echo "Architecture: amd64" >> $CONTROL || exit 1
-    echo "Description: Cyan Pixel Editor" >> $CONTROL || exit 1
-    echo "Installed-Size: $DEB_SIZE" >> $CONTROL || exit 1
-    cd $DEB
-    mkdir debian
-    touch debian/control
-    dpkg-shlibdeps usr/bin/Cyan
-    cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
-    if [ "${DEPLOY}" = 1 ]; then
-        sudo chown root:root ${DEB}
-        sudo dpkg-deb -b $DEB || exit 1
-        sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
-    else
-        dpkg-deb -b $DEB || exit 1
-        mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
-    fi
-    ls -lah $CWD/*.deb
-    if [ "${DEPLOY}" = 1 ]; then
-        sudo mkdir -p /opt/deploy
-        sudo cp $CWD/*.deb /opt/deploy
-        tree -lah /opt/deploy
-    fi
-else
-    sudo make install
-    sudo ldconfig
-    sudo update-mime-database /usr/local/share/mime
-    sudo update-desktop-database
+make DESTDIR=${PKG_DIR} install
+rm -rf ${PKG_DIR}/$PREFIX/{etc,include} ${PKG_DIR}/$PREFIX/bin/Magick* ${PKG_DIR}/$PREFIX/lib ${PKG_DIR}/$PREFIX/share/ImageMagick-*
+DEB=${PKG_DIR}
+mkdir $DEB/DEBIAN
+CONTROL=$DEB/DEBIAN/control
+DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
+echo "Package: cyan" > $CONTROL || exit 1
+echo "Version: $VERSION.$DATE" >> $CONTROL || exit 1
+echo "Section: X11" >> $CONTROL || exit 1
+echo "Priority: optional" >> $CONTROL || exit 1
+echo "Maintainer: Ole-André Rodlie <ole.andre.rodlie@gmail.com>" >> $CONTROL || exit 1
+echo "Standards-Version: 3.9.6" >> $CONTROL || exit 1
+echo "Homepage: https://github.com/rodlie/cyan" >> $CONTROL || exit 1
+echo "Architecture: amd64" >> $CONTROL || exit 1
+echo "Description: Cyan Pixel Editor" >> $CONTROL || exit 1
+echo "Installed-Size: $DEB_SIZE" >> $CONTROL || exit 1
+cd $DEB
+mkdir debian
+touch debian/control
+dpkg-shlibdeps usr/bin/Cyan
+cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
+sudo chown root:root ${DEB}
+sudo dpkg-deb -b $DEB || exit 1
+sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
+if [ -d "/opt/deploy" ]; then
+    cp $CWD/*.deb /opt/deploy/
 fi
 
-# WIN32
-PATH_ORIG=$PATH
-if [ "${DISTRO}" = "focal" ] && [ "${WIN32}" = 1 ] && [ "${PKG}" = 1 ]; then
+# CROSSBUILD FOR WINDOWS
+
+if [ "${WIN32}" = 1 ] || [ "${WIN64}" = 1 ]; then
+    if [ ! -d "/opt/cyan-mxe" ]; then
+        mkdir -p /opt/cyan-mxe
+        cd $CWD
+        wget $SDK_URL/$SDK_TAR
+        tar xf $SDK_TAR -C /opt/cyan-mxe
+    fi
+fi
+if [ "${WIN32}" = 1 ]; then
     cd $CWD
-    sudo chmod 777 /opt
-    mkdir -p /opt/cyan-mxe
-    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-usr-focal-20200810-1.tar.xz
-    tar xf cyan-mxe-usr-focal-20200810-1.tar.xz -C /opt/cyan-mxe
-    MXE=/opt/cyan-mxe
     MXE_TC=i686-w64-mingw32.static
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
     mkdir build-win32 && cd build-win32
+    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
+    make -j${MKJOBS}
+    $STRIP -s Cyan.exe
+    ls -lah Cyan.exe
+fi
+if [ "${WIN64}" = 1 ]; then
+    cd $CWD
+    MXE_TC=x86_64-w64-mingw32.static
+    CMAKE=${MXE_TC}-cmake
+    STRIP=${MXE_TC}-strip
+    export PATH=$MXE/usr/bin:$PATH_ORIG
+    export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
+    mkdir build-win64 && cd build-win64
     $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
     make -j${MKJOBS}
     $STRIP -s Cyan.exe

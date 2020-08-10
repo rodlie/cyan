@@ -13,7 +13,9 @@ before_install:
   - sudo apt-get update
 
 script:
-  - DEPLOY=1 bash share/scripts/build-ubuntu.sh
+  - sudo chmod 777 /opt
+  - mkdir -p /opt/deploy
+  - MKJOBS=2 bash share/scripts/build-ubuntu.sh
 
 deploy:
   provider: releases
