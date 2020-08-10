@@ -180,13 +180,13 @@ if [ "${DISTRO}" = "focal" ] && [ "${WIN32}" = 1 ] && [ "${PKG}" = 1 ]; then
     cd $CWD
     sudo chmod 777 /opt
     mkdir -p /opt/cyan-mxe
-    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-focal-usr-20200809.tar.xz
-    tar xf cyan-mxe-focal-usr-20200809.tar.xz -C /opt/cyan-mxe
+    wget https://github.com/rodlie/cyan/releases/download/1.2.2/cyan-mxe-usr-focal-20200810.tar.xz
+    tar xf cyan-mxe-usr-focal-20200810.tar.xz -C /opt/cyan-mxe
     MXE=/opt/cyan-mxe
     MXE_TC=i686-w64-mingw32.static
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
-    export PATH=$MXE/usr/bin:$PATH
+    export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
     mkdir build-win32 && cd build-win32
     $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
