@@ -277,6 +277,8 @@ QtColorPicker::QtColorPicker(QWidget *parent,
     setAutoFillBackground(true);
     setCheckable(true);
 
+    setContentsMargins(0,0,0,0);
+
     // Set text
     if (textEnabled) { setText(tr("Black")); }
     firstInserted = false;
@@ -348,17 +350,15 @@ void QtColorPicker::buttonPressed(bool toggled)
 void QtColorPicker::paintEvent(QPaintEvent *e)
 {
     if (dirty) {
-        //int iconSize = style()->pixelMetric(QStyle::PM_SmallIconSize);
-        QPixmap pix(iconSize().width(), iconSize().height());
+        int iconSize = style()->pixelMetric(QStyle::PM_LargeIconSize);
+        qDebug() << iconSize;
+        QPixmap pix(/*iconSize().width(), iconSize().height()*/iconSize, iconSize);
         pix.fill(palette().button().color());
 
         QPainter p(&pix);
-
-        int w = pix.width();			// width of cell in pixels
-        int h = pix.height();			// height of cell in pixels
         p.setPen(QPen(Qt::gray));
         p.setBrush(col);
-        p.drawRect(2, 2, w - 5, h - 5);
+        p.drawRect(0, 0, iconSize, iconSize);
         setIcon(QIcon(pix));
 
         dirty = false;
