@@ -22,7 +22,7 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
     qDebug() << "handle switch view tool" << tool;
     View::InteractiveMode mode = View::InteractiveNoMode;
     if (tool == View::InteractiveNoMode) {
-        if (viewMoveAct->isChecked()) {
+        if (viewMoveAct->isChecked() && viewDrawAct->isEnabled()) { // draw
             /*// drag
             viewMoveAct->setChecked(false);
             viewDragAct->setChecked(true);
@@ -34,7 +34,7 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
             //viewDragAct->setChecked(false);
             viewDrawAct->setChecked(true);
             mode = View::InteractiveDrawMode;
-        } else if (viewDrawAct->isChecked()) {
+        } else if (viewDrawAct->isChecked() && viewMoveAct->isEnabled()) { // move
             // move
             viewMoveAct->setChecked(true);
             //viewDragAct->setChecked(false);
@@ -50,14 +50,18 @@ void Editor::handleSwitchMoveTool(View::InteractiveMode tool)
             viewDrawAct->setChecked(false);
             break;*/
         case View::InteractiveDrawMode:
-            viewMoveAct->setChecked(false);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(true);
+            if (viewDrawAct->isEnabled()) {
+                viewMoveAct->setChecked(false);
+                //viewDragAct->setChecked(false);
+                viewDrawAct->setChecked(true);
+            }
             break;
         case View::IteractiveMoveMode:
-            viewMoveAct->setChecked(true);
-            //viewDragAct->setChecked(false);
-            viewDrawAct->setChecked(false);
+            if (viewMoveAct->isEnabled()) {
+                viewMoveAct->setChecked(true);
+                //viewDragAct->setChecked(false);
+                viewDrawAct->setChecked(false);
+            }
             break;
         default:;
         }
@@ -84,6 +88,7 @@ void Editor::handleSetMoveMode(bool triggered)
 
 void Editor::handleSetDrawMode(bool triggered)
 {
+    if (!viewDrawAct->isEnabled()) { return; }
     if (!triggered) {
         viewDrawAct->setChecked(true);
         interactButton->setDefaultAction(viewDrawAct);

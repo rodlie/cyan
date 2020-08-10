@@ -413,6 +413,7 @@ void Editor::setupActions()
     viewDrawAct->setText("Draw");
     viewDrawAct->setCheckable(true);
     viewDrawAct->setChecked(false);
+    viewDrawAct->setDisabled(true);
 
     aboutCyanAct = new QAction(this);
     aboutCyanAct->setText(QString("%1 %2")
