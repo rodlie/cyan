@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Build Cyan on Ubuntu (and for Windows through MXE)
+#
+
 set -e -x
 
 CWD=`pwd`
@@ -7,7 +11,7 @@ PREFIX=${PREFIX:-"/usr"}
 APT=${APT:-1}
 PKG_DIR="${CWD}/build-pkg"
 CLEAN=${CLEAN:-1}
-DATE=`date "+%Y%m%d%H%M"`
+DATE=`date "+%Y%m%d"`
 DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
 WIN32=${WIN32:-0}
 WIN64=${WIN64:-0}
@@ -19,6 +23,9 @@ SDK_TAR=cyan-mxe-usr-focal-20200810-1.tar.xz
 SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
 SDK_LEGAL=cyan-mxe-legal-20200810.tar.xz
 MXE=/opt/cyan-mxe
+MAGICK_RELEASE=7.0.10-26
+MAGICK_SAFE=7.0.8-34
+MAGICK_TYPE=Magick++-7.Q16HDRI
 
 if [ "${DISTRO}" = "focal" ]; then
     HEIC="yes"
@@ -60,10 +67,15 @@ fi
 rm -rf "${PKG_DIR}" || true
 mkdir -p "${PKG_DIR}"
 
+if [ "${DISTRO}" = "xenial" ]; then
+    MAGICK_RELEASE = $MAGICK_SAFE
+fi
 if [ ! -d ImageMagick ]; then
     git clone https://github.com/ImageMagick/ImageMagick
+    ( cd ImageMagick ; git checkout $MAGICK_RELEASE )
 fi
 
+cd $CWD
 if [ "${CLEAN}" = 1 ]; then
     rm -rf build-magick || true
     mkdir build-magick && cd build-magick
@@ -128,7 +140,7 @@ VERSION=`cat ../CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'
 cmake \
 -DCMAKE_BUILD_TYPE=Release \
 -DLINUX_DEPLOY=ON \
--DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI \
+-DMAGICK_PKG_CONFIG=$MAGICK_TYPE \
 -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
 make -j${MKJOBS}
 make DESTDIR=${PKG_DIR} install
@@ -183,7 +195,7 @@ if [ "${WIN32}" = 1 ]; then
     cd $CWD
     rm -rf $WIN_BUILD || true
     mkdir $WIN_BUILD && cd $WIN_BUILD
-    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
+    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=$MAGICK_TYPE -DCMAKE_INSTALL_PREFIX=/ ..
     make -j${MKJOBS}
     $STRIP -s Cyan.exe
     cd $CWD
@@ -213,7 +225,7 @@ if [ "${WIN64}" = 1 ]; then
     cd $CWD
     rm -rf $WIN_BUILD || true
     mkdir $WIN_BUILD && cd $WIN_BUILD
-    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=Magick++-7.Q16HDRI -DCMAKE_INSTALL_PREFIX=/ ..
+    $CMAKE -DCMAKE_BUILD_TYPE=Release -DENABLE_FONTCONFIG=ON -DMAGICK_PKG_CONFIG=$MAGICK_TYPE -DCMAKE_INSTALL_PREFIX=/ ..
     make -j${MKJOBS}
     $STRIP -s Cyan.exe
     cd $CWD
