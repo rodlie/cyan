@@ -60,14 +60,11 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
             .arg(tr("Pixel Editor and Converter"));
-   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%7 &copy; Ole-André Rodlie. %6.<br><br> %1%2%3%4%5</p>")
-                 .arg(tr("This program is free software; "))
-                 .arg(tr("you can redistribute it and/or modify it under the terms of "))
-                 .arg(tr("the GNU General Public License "))
-                 .arg(tr("as published by the Free Software Foundation; "))
-                 .arg(tr("either version 2.1 of the License, or (at your option) any later version."))
-                 .arg(tr("All rights reserved"))
-                 .arg(tr("Copyright")));
+   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%1 &copy; Ole-André Rodlie, FxArena DA. %2.<br><br> %3<br><br>%4</p>")
+                     .arg(tr("Copyright"))
+                     .arg(tr("All rights reserved"))
+                     .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."))
+                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.")));
     textLabel->setText(textString);
 
     headerLayout->addWidget(textLabel);
