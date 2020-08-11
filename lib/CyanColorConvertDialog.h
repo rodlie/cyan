@@ -22,6 +22,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QComboBox>
+#include <QLabel>
 
 #include <Magick++.h>
 
@@ -39,7 +40,6 @@ public:
                   Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
 
 public slots:
-
     const QString getProfile();
 
 private:
@@ -48,6 +48,8 @@ private:
     QPushButton *_ok;
     QPushButton *_cancel;
     QComboBox *_box;
+    QLabel *_label;
+    QLabel *_icon;
 
 private slots:
 

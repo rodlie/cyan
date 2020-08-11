@@ -102,7 +102,7 @@ public:
                                        bool are = false);
 
 
-
+    static const QString colorspaceToString(Magick::ColorspaceType colorspace);
 
 };
 

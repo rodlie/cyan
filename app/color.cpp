@@ -334,8 +334,8 @@ void Editor::handleColorConvert(bool ignoreColor,
         // warn when converting to CMYK with multiple layers
         QMessageBox question;
         question.setWindowTitle(tr("Convert to CMYK?"));
-        question.setIconPixmap(QIcon::fromTheme("color-wheel").pixmap(QSize(32, 32)));
-        question.setText(tr("Working in CMYK color space with multiple layers are not recommended. Convert to CMYK?"));
+        question.setIconPixmap(QIcon::fromTheme("colors").pixmap(QSize(32, 32)));
+        question.setText(tr("Working in CMYK color space with multiple layers are not recommended. Convert to CMYK anyway?"));
         question.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
         question.setDefaultButton(QMessageBox::No);
         int reply = question.exec();

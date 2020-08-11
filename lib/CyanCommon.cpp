@@ -50,45 +50,8 @@ const QString CyanCommon::canvasWindowTitle(Magick::Image image)
     }
 
     QString profile = CyanCommon::getProfileTag(image.iccColorProfile());
-    if (profile.isEmpty()) { profile = "N/A"; }
-    QString colorspace;
-    switch(image.colorSpace()) {
-    case Magick::RGBColorspace:
-    case Magick::sRGBColorspace:
-    case Magick::scRGBColorspace:
-    case Magick::TransparentColorspace:
-        colorspace = "RGB";
-        break;
-    case Magick::CMYKColorspace:
-        colorspace = "CMYK";
-        break;
-    case Magick::CMYColorspace:
-        colorspace = "CMY";
-        break;
-    case Magick::GRAYColorspace:
-        colorspace = "GRAY";
-        break;
-    case Magick::LinearGRAYColorspace:
-        colorspace = "LinearGRAY";
-        break;
-    case Magick::LabColorspace:
-        colorspace = "LAB";
-        break;
-    case Magick::HSBColorspace:
-        colorspace = "HSB";
-        break;
-    case Magick::HSLColorspace:
-        colorspace = "HSL";
-        break;
-    case Magick::Rec601YCbCrColorspace:
-        colorspace = "Rec601YCbCr";
-        break;
-    case Magick::Rec709YCbCrColorspace:
-        colorspace = "Rec709YCbCr";
-        break;
-    default:
-        colorspace = QObject::tr("Other");
-    }
+    if (profile.isEmpty()) { profile = QObject::tr("N/A"); }
+    QString colorspace = colorspaceToString(image.colorSpace());
     QString result;
     try {
         int width = static_cast<int>(image.columns());
@@ -313,5 +276,48 @@ const QString CyanCommon::humanFileSize(float num, bool mp, bool are)
         num /= byte;
     }
     return QString().setNum(num,'f',2)+" "+unit;
+}
+
+const QString CyanCommon::colorspaceToString(Magick::ColorspaceType colorspace)
+{
+    QString result;
+    switch(colorspace) {
+    case Magick::RGBColorspace:
+    case Magick::sRGBColorspace:
+    case Magick::scRGBColorspace:
+    case Magick::TransparentColorspace:
+        result = "RGB";
+        break;
+    case Magick::CMYKColorspace:
+        result = "CMYK";
+        break;
+    case Magick::CMYColorspace:
+        result = "CMY";
+        break;
+    case Magick::GRAYColorspace:
+        result = "GRAY";
+        break;
+    case Magick::LinearGRAYColorspace:
+        result = "LinearGRAY";
+        break;
+    case Magick::LabColorspace:
+        result = "LAB";
+        break;
+    case Magick::HSBColorspace:
+        result = "HSB";
+        break;
+    case Magick::HSLColorspace:
+        result = "HSL";
+        break;
+    case Magick::Rec601YCbCrColorspace:
+        result = "Rec601YCbCr";
+        break;
+    case Magick::Rec709YCbCrColorspace:
+        result = "Rec709YCbCr";
+        break;
+    default:
+        result = QObject::tr("Other");
+    }
+    return result;
 }
 

@@ -34,16 +34,19 @@ ConvertDialog::ConvertDialog(QWidget *parent,
   , _ok(nullptr)
   , _cancel(nullptr)
   , _box(nullptr)
+  , _label(nullptr)
+  , _icon(nullptr)
 {
     setWindowTitle(title);
-    setWindowIcon(QIcon(":/icons/colors.png"));
+    setWindowIcon(QIcon::fromTheme("colors"));
+
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
     _ok = new QPushButton(this);
     _cancel = new QPushButton(this);
 
-    _ok->setText(tr("Assign"));
+    _ok->setText(tr("Convert"));
     _ok->setIcon(QIcon::fromTheme("colors"));
     _cancel->setText(tr("Cancel"));
     _cancel->setIcon(QIcon::fromTheme("process-stop"));
@@ -57,6 +60,20 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     _box = new QComboBox(this);
     _box->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
 
+    QWidget *labelWidget = new QWidget(this);
+    QHBoxLayout *labelLayout = new QHBoxLayout(labelWidget);
+
+    _label = new QLabel(this);
+    _icon = new QLabel(this);
+
+    _icon->setPixmap(QIcon::fromTheme("colors").pixmap(QSize(32, 32)));
+    _label->setText(tr("Convert selected image to %1 color space using the following profile:")
+                    .arg(CyanCommon::colorspaceToString(colorspace)));
+    _label->setWordWrap(true);
+    labelLayout->addWidget(_icon);
+    labelLayout->addWidget(_label);
+
+    mainLayout->addWidget(labelWidget);
     mainLayout->addWidget(_box);
     mainLayout->addWidget(buttonWidget);
     mainLayout->addStretch();
