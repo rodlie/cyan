@@ -831,6 +831,7 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
 
         // copy layer
         Magick::Image layer(layers[id].image);
+        layer.quiet(true);
 
         if (!layers[id].visible || !layer.isValid()) { continue; } //skip
 
@@ -857,7 +858,6 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
                 qWarning() << warn_.what();
                 ignore = true;
             }
-
             if (ignore) { continue; } // something failed, skip
 
             // repage layer
@@ -925,7 +925,6 @@ Magick::Image CyanImageFormat::compLayers(Magick::Image canvas,
         // comp layer over canvas
         try {
             //qDebug() << "LAYER COMP IMAGE?" << layer.columns() << layer.rows() << offsetX << offsetY;
-            comp.quiet(true);
             comp.composite(layer,
                            offsetX,
                            offsetY,
