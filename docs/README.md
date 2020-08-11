@@ -2,9 +2,22 @@
 
 ![screenshot](images/screenshot.png)
 
-Cyan 2 aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY based on [ImageMagick](https://imagemagick.org).
+Cyan 2 *(1.99.x)* aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
 
-***Cyan 2 is EXPERIMENTAL, not for regular use!***
+## Downloads
+
+### Cyan 1.2.x
+
+Cyan [1.2.x](https://github.com/rodlie/cyan/tree/1.2) is currently the stable version, you can download it from [GitHub](https://github.com/rodlie/cyan/releases/tag/1.2.2) or [SourceForge](https://sourceforge.net/projects/prepress/files/1.2.2/).
+
+[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/1.2.2/)
+
+### Cyan 1.99.x
+
+Cyan [1.99.x](https://github.com/rodlie/cyan/tree/master) is currently the experimental version, you can download it from [GitHub](https://github.com/rodlie/cyan/releases/tag/continuous) or [SourceForge](https://sourceforge.net/projects/prepress/files/continuous/).
+
+[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/continuous/)
+
 
 ## Shortcuts
 
@@ -29,7 +42,7 @@ Cyan 2 aims to be a simple general-purpose image editor and converter for RGB/CM
 
 ## License
 
-Copyright (c) Ole-André Rodlie. All rights reserved.
+Copyright (c) Ole-André Rodlie, FxArena DA. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
@@ -84,6 +97,8 @@ not be
 
 **Release date : TBA**
 
+  * UI fixes
+  * Disabled brush (until core is done)
   * Change layer stacking with PageUp/PageDown keys
   * Bug fixes
   * Dropped FFmpeg support (focus on primary functions instead)
@@ -93,11 +108,8 @@ not be
 **Release date : 20191103**
 
   * Added support for system theme/style
-  * Updated to Qt 5.13.2 on Linux and Windows
-  * Improved Linux binaries (better compatibility)
   * Ui changes
   * Improved new image/layer dialog
-  * Dropped OpenEXR in official binaries (has limited support in ImageMagick anyway)
   * Option to add background on new image or layer
     * Solid
     * Gradient
@@ -117,29 +129,14 @@ not be
 
 **Release date : 20190929**
 
-### General
-
 * UI clean up
 * Bug fixes
-
-### Windows
-
-* Updated Qt to 5.13.1
-* Updated FFmpeg to 4.2.1
-
-### Linux
-
-Cyan will from now on be distributed as an AppImage. The AppImage will be built against Glibc 2.23 and GCC 5.5. Cyan should be compatible with most distributions released around 2016 and beyond. Note that some installations may require additional XCB libraries installed prior to running Cyan *(Fedora 30 was missing libxkbcommon-x11 on the XFCE Live spin)*.
-
-### macOS
-
-Work on the new SDK for macOS has begun, binaries will probably be available on the next release. The binary will be compatible with OS X Lion (10.7).
 
 ## 1.99.1
 
 **Release date : 20190919**
 
-First step on the road to version 2.0. This is a development release, not for end-users.
+First step on the road to version 2.0. This (1.99.x) is a development release, not for end-users.
 
 * Initial support for video frame import
 * Initial support for guides
