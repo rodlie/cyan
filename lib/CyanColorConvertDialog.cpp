@@ -67,7 +67,7 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     _icon = new QLabel(this);
 
     _icon->setPixmap(QIcon::fromTheme("colors").pixmap(QSize(32, 32)));
-    _label->setText(tr("Convert selected image to %1 color space using the following profile:")
+    _label->setText(tr("Convert selected image to %1 color space?")
                     .arg(CyanCommon::colorspaceToString(colorspace)));
     _label->setWordWrap(true);
     labelLayout->addWidget(_icon);
