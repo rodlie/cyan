@@ -113,7 +113,7 @@ set(SOURCES_APP
     app/setup.cpp
     app/color.cpp
     app/viewtool.cpp
-    app/messages.cpp
+    #app/messages.cpp
     app/layers.cpp
     app/tabs.cpp
 )

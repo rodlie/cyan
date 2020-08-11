@@ -631,4 +631,27 @@ void Editor::handleStyleChange(bool triggered)
     }
 }
 
+void Editor::handleError(const QString &message)
+{
+    qDebug() << "error" << message;
+    mainStatusBar->showMessage(message, 6000);
+    QMessageBox::warning(this,
+                         tr("Error"),
+                         message);
+}
 
+void Editor::handleWarning(const QString &message)
+{
+    qDebug() << "warning" << message;
+    mainStatusBar->showMessage(message);
+    /*QMessageBox::warning(this,
+                         tr("Cyan Warning"),
+                         message);*/
+}
+
+void Editor::handleStatus(const QString &message)
+{
+    qDebug() << "status" << message;
+    mainStatusBar->showMessage(message,
+                               6000);
+}
