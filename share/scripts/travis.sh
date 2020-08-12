@@ -33,6 +33,7 @@ BTAG="Q${QDEPTH}${HDRI}.${DATE}.${GIT_SHORT}"
 PELF="$PKG_DIR/$PREFIX/bin/patchelf"
 LIBDEPS="dpkg-shlibdeps --ignore-missing-info"
 LIBDIR="lib/x86_64-linux-gnu"
+LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH}"
 
 if [ "${DISTRO}" = "focal" ]; then
     HEIC="yes"
@@ -209,6 +210,7 @@ if [ "${PKG_DEB}" = 1 ]; then
     mkdir debian
     touch debian/control
     mkdir -p ${PKG_DIR}/${PREFIX}/bin/DEBIAN
+    export LD_LIBRARY_PATH="`pwd`/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH_ORIG"
     $LIBDEPS usr/bin/Cyan
     DEPENDS_APP="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
     $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.7
@@ -223,6 +225,7 @@ if [ "${PKG_DEB}" = 1 ]; then
     sudo chown root:root ${DEB}
     sudo dpkg-deb -b $DEB || exit 1
     sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1${DISTRO}_amd64.deb
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH_ORIG"
     if [ -d "/opt/deploy" ]; then
         cp $CWD/*.deb /opt/deploy/
     fi
