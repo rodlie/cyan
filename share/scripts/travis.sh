@@ -17,7 +17,7 @@ WIN32=${WIN32:-0}
 WIN64=${WIN64:-0}
 HEIC="no"
 QDEPTH=16
-HDRI="enable"
+HDRI="HDRI"
 PATH_ORIG=$PATH
 SDK_TAR=cyan-mxe-usr-focal-20200810-1.tar.xz
 SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
@@ -25,17 +25,24 @@ SDK_LEGAL=cyan-mxe-legal-20200810.tar.xz
 MXE=/opt/cyan-mxe
 MAGICK_RELEASE=7.0.10-26
 MAGICK_SAFE=7.0.8-34
-MAGICK_TYPE=Magick++-7.Q16HDRI
+MAGICK_TYPE=Magick++-7.Q${QDEPTH}${HDRI}
+LOCAL_BUILD=${LOCAL_BUILD:-0}
+PKG_DEB=${PKG_DEB:-1}
+GIT_SHORT=`git rev-parse --short HEAD`
+BTAG="Q${QDEPTH}${HDRI}.${DATE}.${GIT_SHORT}"
+PELF="$PKG_DIR/$PREFIX/bin/patchelf"
 
 if [ "${DISTRO}" = "focal" ]; then
     HEIC="yes"
-    WIN32=1
-    WIN64=1
+    if [ "${LOCAL_BUILD}" != 1 ]; then
+        WIN32=1
+        WIN64=1
+    fi
 fi
 
-SHORT=`git rev-parse --short HEAD`
-DATE="${DATE}.${SHORT}"
-
+if [ "${LOCAL_BUILD}" = 1 ]; then
+    APT=0
+fi
 if [ "${APT}" = 1 ]; then
     sudo apt-get install \
     git \
@@ -76,17 +83,38 @@ if [ ! -d ImageMagick ]; then
 fi
 
 cd $CWD
+if [ ! -d patchelf ]; then
+    git clone https://github.com/NixOS/patchelf
+    ( cd patchelf ;
+        git checkout 0.7
+        bash bootstrap.sh
+    )
+fi
+
+cd $CWD
+rm -rf build-patchelf || true
+mkdir build-patchelf && cd build-patchelf
+../patchelf/configure --prefix=${PKG_DIR}/${PREFIX}
+make && make install
+
+cd $CWD
 if [ "${CLEAN}" = 1 ]; then
+    ENABLE_HDRI="disable"
+    if [ "${HDRI}" = "HDRI" ]; then
+        ENABLE_HDRI="enable"
+    fi
     rm -rf build-magick || true
     mkdir build-magick && cd build-magick
-    CXXFLAGS="-fPIC" CFLAGS="-fPIC" ../ImageMagick/configure \
+    ../ImageMagick/configure \
 --prefix=${PKG_DIR}/usr \
---enable-static \
---disable-shared \
+--libdir=${PKG_DIR}/usr/lib/x86_64-linux-gnu \
+--with-package-release-name=Cyan \
+--disable-static \
+--enable-shared \
 --with-utilities=no \
 --disable-docs \
 --enable-zero-configuration \
---${HDRI}-hdri \
+--${ENABLE_HDRI}-hdri \
 --enable-largefile \
 --disable-deprecated \
 --disable-legacy-support \
@@ -131,7 +159,12 @@ fi
 make -j${MKJOBS}
 make install
 
-export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/pkgconfig
+cd ${PKG_DIR}/${PREFIX}/lib/x86_64-linux-gnu
+for so in *.so*; do
+    $PELF --set-rpath '$ORIGIN' $so
+done
+
+export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/pkgconfig
 
 cd $CWD
 rm -rf build-cyan || true
@@ -139,36 +172,48 @@ mkdir build-cyan && cd build-cyan
 VERSION=`cat ../CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
 cmake \
 -DCMAKE_BUILD_TYPE=Release \
--DLINUX_DEPLOY=ON \
 -DMAGICK_PKG_CONFIG=$MAGICK_TYPE \
+-DCMAKE_INSTALL_RPATH='$ORIGIN/../lib/x86_64-linux-gnu' \
 -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
 make -j${MKJOBS}
 make DESTDIR=${PKG_DIR} install
-rm -rf ${PKG_DIR}/$PREFIX/{etc,include} ${PKG_DIR}/$PREFIX/bin/Magick* ${PKG_DIR}/$PREFIX/lib ${PKG_DIR}/$PREFIX/share/ImageMagick-*
-DEB=${PKG_DIR}
-mkdir $DEB/DEBIAN
-CONTROL=$DEB/DEBIAN/control
-DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
-echo "Package: cyan" > $CONTROL || exit 1
-echo "Version: $VERSION.$DATE" >> $CONTROL || exit 1
-echo "Section: X11" >> $CONTROL || exit 1
-echo "Priority: optional" >> $CONTROL || exit 1
-echo "Maintainer: Ole-André Rodlie <ole.andre.rodlie@gmail.com>" >> $CONTROL || exit 1
-echo "Standards-Version: 3.9.6" >> $CONTROL || exit 1
-echo "Homepage: https://github.com/rodlie/cyan" >> $CONTROL || exit 1
-echo "Architecture: amd64" >> $CONTROL || exit 1
-echo "Description: Cyan Pixel Editor" >> $CONTROL || exit 1
-echo "Installed-Size: $DEB_SIZE" >> $CONTROL || exit 1
-cd $DEB
-mkdir debian
-touch debian/control
-dpkg-shlibdeps usr/bin/Cyan
-cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
-sudo chown root:root ${DEB}
-sudo dpkg-deb -b $DEB || exit 1
-sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$DATE-1${DISTRO}_amd64.deb
-if [ -d "/opt/deploy" ]; then
-    cp $CWD/*.deb /opt/deploy/
+
+rm -rf ${PKG_DIR}/$PREFIX/{etc,include}
+rm -rf ${PKG_DIR}/$PREFIX/bin/{Magick*,patchelf}
+rm -rf ${PKG_DIR}/$PREFIX/share/{ImageMagick-*,man}
+rm -rf ${PKG_DIR}/$PREFIX/share/doc/patchelf
+rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{ImageMagick-*,pkgconfig}
+rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{*.la,*.so,*.0.0}
+strip -s ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/*
+strip -s ${PKG_DIR}/$PREFIX/bin/*
+
+cd $CWD
+if [ "${PKG_DEB}" = 1 ]; then
+    DEB=${PKG_DIR}
+    mkdir $DEB/DEBIAN
+    CONTROL=$DEB/DEBIAN/control
+    DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
+    echo "Package: cyan" > $CONTROL || exit 1
+    echo "Version: $VERSION.$BTAG" >> $CONTROL || exit 1
+    echo "Section: X11" >> $CONTROL || exit 1
+    echo "Priority: optional" >> $CONTROL || exit 1
+    echo "Maintainer: Ole-André Rodlie <ole.andre.rodlie@gmail.com>" >> $CONTROL || exit 1
+    echo "Standards-Version: 3.9.6" >> $CONTROL || exit 1
+    echo "Homepage: https://github.com/rodlie/cyan" >> $CONTROL || exit 1
+    echo "Architecture: amd64" >> $CONTROL || exit 1
+    echo "Description: Cyan Pixel Editor" >> $CONTROL || exit 1
+    echo "Installed-Size: $DEB_SIZE" >> $CONTROL || exit 1
+    cd $DEB
+    mkdir debian
+    touch debian/control
+    #dpkg-shlibdeps usr/bin/Cyan
+    #cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
+    #sudo chown root:root ${DEB}
+    #sudo dpkg-deb -b $DEB || exit 1
+    #sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1${DISTRO}_amd64.deb
+    #if [ -d "/opt/deploy" ]; then
+    #    cp $CWD/*.deb /opt/deploy/
+    #fi
 fi
 
 # CROSSBUILD FOR WINDOWS
@@ -188,7 +233,7 @@ if [ "${WIN32}" = 1 ]; then
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
     WIN_BUILD=build-win32
-    WIN_PKG=Cyan-$VERSION.$DATE-Windows-x32
+    WIN_PKG=Cyan-$VERSION.$BTAG-Windows-x32
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
 
@@ -218,7 +263,7 @@ if [ "${WIN64}" = 1 ]; then
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
     WIN_BUILD=build-win64
-    WIN_PKG=Cyan-$VERSION.$DATE-Windows-x64
+    WIN_PKG=Cyan-$VERSION.$BTAG-Windows-x64
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
 

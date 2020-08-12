@@ -28,12 +28,6 @@ set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 option(BUILD_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(RUNTIME_WARNINGS "Show warnings during runtime" OFF)
-option(LINUX_DEPLOY "Linux deploy (internal use)" OFF)
-
-if(${LINUX_DEPLOY})
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/x86_64-linux-gnu")
-    find_package(Threads REQUIRED)
-endif()
 
 set(HEADERS_API lib/CyanWidgetApi.h)
 set(HEADERS_APP app/editor.h)
@@ -217,22 +211,19 @@ else()
         ${RESOURCES})
 endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_STATIC_LIBRARIES}
+    ${MAGICK_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${MAGICK_STATIC_LDFLAGS}
+    ${MAGICK_LDFLAGS}
     ${LCMS2_LDFLAGS}
     ${FONTCONF_LDFLAGS}
 )
-if(${LINUX_DEPLOY})
-    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-endif()
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
