@@ -56,15 +56,33 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
 
+    size_t magickQ;
+    size_t magickV;
+    MagickCore::GetMagickQuantumDepth(&magickQ);
+    QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
+
     QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
-            .arg(tr("Pixel Editor and Converter"));
-   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%1 &copy; Ole-André Rodlie, FxArena DA. %2.<br><br> %3<br><br>%4</p>")
+            .arg(tr("Pixel Viewer, Editor and Converter."));
+   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%3 %4</p><p style=\"text-align:center;font-size:small;font-weight:bold;\">%1 &copy; Ole-André Rodlie, FxArena DA. %2.</p><p style=\"text-align:center;font-size:small;font-weight:bold;\">%5 %6 Q%17<br><a href=\"%8\">%7</a></p><p style=\"text-align:left;font-size:small;\"><table><tr><td><b>%15</b></td><td>%16</td></tr><tr><td><b>%13</b></td><td>%14</td></tr><tr><td><b>%11</b></td><td>%9</td></tr><tr><td><b>%12</b></td><td>%10</td></tr></table></p>")
                      .arg(tr("Copyright"))
                      .arg(tr("All rights reserved"))
                      .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."))
-                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.")));
+                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details."))
+                     .arg(tr("Powered by"))
+                     .arg(magickInfo)
+                     .arg(MagickCore::GetMagickCopyright())
+                     .arg(MagickCore::GetMagickLicense())
+                     .arg(MagickCore::GetMagickFeatures())
+                     .arg(MagickCore::GetMagickDelegates())
+                     .arg(tr("Features"))
+                     .arg(tr("Delegates"))
+                     .arg(tr("Memory limit"))
+                     .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory()))
+                     .arg(tr("Thread limit"))
+                     .arg(Magick::ResourceLimits::thread())
+                     .arg(magickQ));
     textLabel->setText(textString);
 
     headerLayout->addWidget(textLabel);
