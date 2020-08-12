@@ -31,13 +31,16 @@ PKG_DEB=${PKG_DEB:-1}
 GIT_SHORT=`git rev-parse --short HEAD`
 BTAG="Q${QDEPTH}${HDRI}.${DATE}.${GIT_SHORT}"
 PELF="$PKG_DIR/$PREFIX/bin/patchelf"
+LIBDEPS="dpkg-shlibdeps --ignore-missing-info"
+LIBDIR="lib/x86_64-linux-gnu"
 
 if [ "${DISTRO}" = "focal" ]; then
     HEIC="yes"
-    if [ "${LOCAL_BUILD}" != 1 ]; then
-        WIN32=1
-        WIN64=1
-    fi
+    # DISABLE FOR NOW, NEED NEW SDK
+    #if [ "${LOCAL_BUILD}" != 1 ]; then
+    #    WIN32=1
+    #    WIN64=1
+    #fi
 fi
 
 if [ "${LOCAL_BUILD}" = 1 ]; then
@@ -82,20 +85,20 @@ if [ ! -d ImageMagick ]; then
     ( cd ImageMagick ; git checkout $MAGICK_RELEASE )
 fi
 
-cd $CWD
-if [ ! -d patchelf ]; then
-    git clone https://github.com/NixOS/patchelf
-    ( cd patchelf ;
-        git checkout 0.7
-        bash bootstrap.sh
-    )
-fi
+#cd $CWD
+#if [ ! -d patchelf ]; then
+#    git clone https://github.com/NixOS/patchelf
+#    ( cd patchelf ;
+#        git checkout 0.7
+#        bash bootstrap.sh
+#    )
+#fi
 
-cd $CWD
-rm -rf build-patchelf || true
-mkdir build-patchelf && cd build-patchelf
-../patchelf/configure --prefix=${PKG_DIR}/${PREFIX}
-make && make install
+#cd $CWD
+#rm -rf build-patchelf || true
+#mkdir build-patchelf && cd build-patchelf
+#../patchelf/configure --prefix=${PKG_DIR}/${PREFIX}
+#make && make install
 
 cd $CWD
 if [ "${CLEAN}" = 1 ]; then
@@ -159,10 +162,10 @@ fi
 make -j${MKJOBS}
 make install
 
-cd ${PKG_DIR}/${PREFIX}/lib/x86_64-linux-gnu
-for so in *.so*; do
-    $PELF --set-rpath '$ORIGIN' $so
-done
+#cd ${PKG_DIR}/${PREFIX}/lib/x86_64-linux-gnu
+#for so in *.so*; do
+#    $PELF --set-rpath '$ORIGIN' $so
+#done
 
 export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/pkgconfig
 
@@ -173,7 +176,6 @@ VERSION=`cat ../CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'
 cmake \
 -DCMAKE_BUILD_TYPE=Release \
 -DMAGICK_PKG_CONFIG=$MAGICK_TYPE \
--DCMAKE_INSTALL_RPATH='$ORIGIN/../lib/x86_64-linux-gnu' \
 -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
 make -j${MKJOBS}
 make DESTDIR=${PKG_DIR} install
@@ -183,7 +185,7 @@ rm -rf ${PKG_DIR}/$PREFIX/bin/{Magick*,patchelf}
 rm -rf ${PKG_DIR}/$PREFIX/share/{ImageMagick-*,man}
 rm -rf ${PKG_DIR}/$PREFIX/share/doc/patchelf
 rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{ImageMagick-*,pkgconfig}
-rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{*.la,*.so,*.0.0}
+rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{*.la,*.so}
 strip -s ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/*
 strip -s ${PKG_DIR}/$PREFIX/bin/*
 
@@ -206,14 +208,24 @@ if [ "${PKG_DEB}" = 1 ]; then
     cd $DEB
     mkdir debian
     touch debian/control
-    #dpkg-shlibdeps usr/bin/Cyan
-    #cat debian/substvars | sed 's#shlibs:Depends=#Depends: #g' >> $CONTROL
-    #sudo chown root:root ${DEB}
-    #sudo dpkg-deb -b $DEB || exit 1
-    #sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1${DISTRO}_amd64.deb
-    #if [ -d "/opt/deploy" ]; then
-    #    cp $CWD/*.deb /opt/deploy/
-    #fi
+    mkdir -p ${PKG_DIR}/${PREFIX}/bin/DEBIAN
+    $LIBDEPS usr/bin/Cyan
+    DEPENDS_APP="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
+    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.7
+    DEPENDS_LIB="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
+    rm -rf ${PKG_DIR}/${PREFIX}/bin/DEBIAN
+    DEPENDS="${DEPENDS_APP},${DEPENDS_LIB}"
+    IFS=","
+    read -a deparr <<< "$DEPENDS"
+    printf -v joined '%s,' "${deparr[@]}"
+    echo "shlibs:Depends=${joined%,}" >> $CONTROL
+    cat $CONTROL
+    sudo chown root:root ${DEB}
+    sudo dpkg-deb -b $DEB || exit 1
+    sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1${DISTRO}_amd64.deb
+    if [ -d "/opt/deploy" ]; then
+        cp $CWD/*.deb /opt/deploy/
+    fi
 fi
 
 # CROSSBUILD FOR WINDOWS
