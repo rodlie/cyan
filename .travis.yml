@@ -17,7 +17,11 @@ before_install:
 script:
   - sudo chmod 777 /opt
   - mkdir -p /opt/deploy
-  - MKJOBS=2 bash share/scripts/travis.sh
+  - MKJOBS=2 WIN32=0 WIN64=0 QDEPTH=16 HDRI="HDRI" bash share/scripts/travis.sh
+  - sudo rm -rf build-*
+  - MKJOBS=2 APT=0 WIN32=0 WIN64=0 QDEPTH=32 bash share/scripts/travis.sh
+  - sudo rm -rf build-*
+  - MKJOBS=2 APT=0 WIN32=0 WIN64=0 QDEPTH=8 bash share/scripts/travis.sh
 
 deploy:
   provider: releases

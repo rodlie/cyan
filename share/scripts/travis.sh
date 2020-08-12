@@ -16,8 +16,8 @@ DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
 WIN32=${WIN32:-0}
 WIN64=${WIN64:-0}
 HEIC="no"
-QDEPTH=16
-HDRI="HDRI"
+QDEPTH=${QDEPTH:-16}
+#HDRI=${HDRI:-"HDRI"}
 PATH_ORIG=$PATH
 SDK_TAR=cyan-mxe-usr-focal-20200810-1.tar.xz
 SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
@@ -29,19 +29,17 @@ MAGICK_TYPE=Magick++-7.Q${QDEPTH}${HDRI}
 LOCAL_BUILD=${LOCAL_BUILD:-0}
 PKG_DEB=${PKG_DEB:-1}
 GIT_SHORT=`git rev-parse --short HEAD`
-BTAG="Q${QDEPTH}${HDRI}.${DATE}.${GIT_SHORT}"
+BTAG="Q${QDEPTH}${HDRI}.${GIT_SHORT}"
 PELF="$PKG_DIR/$PREFIX/bin/patchelf"
 LIBDEPS="dpkg-shlibdeps --ignore-missing-info"
 LIBDIR="lib/x86_64-linux-gnu"
 LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH}"
 
-if [ "${DISTRO}" = "focal" ]; then
+if [ "${DISTRO}" != "focal" ]; then
+    WIN32=0
+    WIN64=0
+else
     HEIC="yes"
-    # DISABLE FOR NOW, NEED NEW SDK
-    #if [ "${LOCAL_BUILD}" != 1 ]; then
-    #    WIN32=1
-    #    WIN64=1
-    #fi
 fi
 
 if [ "${LOCAL_BUILD}" = 1 ]; then
@@ -224,13 +222,14 @@ if [ "${PKG_DEB}" = 1 ]; then
     cat $CONTROL
     sudo chown root:root ${DEB}
     sudo dpkg-deb -b $DEB || exit 1
-    sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1${DISTRO}_amd64.deb
+    sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1-${DISTRO}_amd64.deb
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH_ORIG"
     if [ -d "/opt/deploy" ]; then
         cp $CWD/*.deb /opt/deploy/
     fi
 fi
 
+cd $CWD
 # CROSSBUILD FOR WINDOWS
 
 if [ "${WIN32}" = 1 ] || [ "${WIN64}" = 1 ]; then
@@ -303,3 +302,5 @@ if [ "${WIN64}" = 1 ]; then
         cp ${WIN_PKG}.zip /opt/deploy/
     fi
 fi
+
+cd $CWD
