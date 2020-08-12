@@ -12,13 +12,6 @@ Cyan [1.2.x](https://github.com/rodlie/cyan/tree/1.2) is currently the stable ve
 
 [![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/1.2.2/)
 
-### Cyan 1.99.x
-
-Cyan [1.99.x](https://github.com/rodlie/cyan/tree/master) is currently the experimental version, you can download it from [GitHub](https://github.com/rodlie/cyan/releases/tag/continuous) or [SourceForge](https://sourceforge.net/projects/prepress/files/continuous/).
-
-[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/continuous/)
-
-
 ## Shortcuts
 
 | Shortcut           | Action                             |
