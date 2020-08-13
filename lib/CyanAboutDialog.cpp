@@ -22,10 +22,6 @@
 #include <QPixmap>
 #include <QImage>
 #include <QApplication>
-#include <QTableWidget>
-#include <QTextBrowser>
-#include <QDebug>
-#include <QPushButton>
 
 #include <Magick++.h>
 
@@ -36,158 +32,121 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
 {
     setWindowTitle(tr("About Cyan"));
     setAttribute(Qt::WA_DeleteOnClose);
-    setMinimumWidth(400);
+    setMaximumSize(770, 420);
+    setMinimumSize(770, 420);
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    bool hasHdri= QString(MagickCore::GetMagickFeatures()).contains("HDRI");
+    size_t magickQ;
+    size_t magickV;
+    MagickCore::GetMagickQuantumDepth(&magickQ);
+    QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
+    QString magickDepth = QString("Q%1").arg(magickQ);
+    if (hasHdri) {
+        magickDepth.append("HDRI");
+    }
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
     QWidget *headerWidget = new QWidget(this);
     headerWidget->setContentsMargins(0,0,0,0);
     QVBoxLayout *headerLayout = new QVBoxLayout(headerWidget);
     headerLayout->setContentsMargins(0,0,0,0);
 
+    QWidget *headerContainer = new QWidget(this);
+    headerContainer->setContentsMargins(0,0,0,0);
+    QHBoxLayout *headerContainerLayout = new QHBoxLayout(headerContainer);
+    headerContainerLayout->setContentsMargins(0,0,0,0);
+    headerContainerLayout->addWidget(headerWidget);
+
     QLabel *logoLabel = new QLabel(this);
     logoLabel->setAlignment(Qt::AlignHCenter);
     logoLabel->setPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/Cyan.png")));
     headerLayout->addWidget(logoLabel);
 
+    QWidget *magickWidget = new QWidget(this);
+    magickWidget->setContentsMargins(0,0,0,0);
+    magickWidget->setMaximumWidth(300);
+    QVBoxLayout *magickLayout = new QVBoxLayout(magickWidget);
+    magickLayout->setContentsMargins(0,0,0,0);
+    QLabel *magickLabel = new QLabel(this);
+    magickLabel->setWordWrap(true);
+    magickLabel->setOpenExternalLinks(true);
+    magickLabel->setText(QString("<p style=\"text-align:left;font-size:small;\"><table>"
+                                 "<tr><td><b>%1</b></td><td>&nbsp;:&nbsp;</td><td<td>%2</td></tr>"
+                                 "<tr><td><b>%3</b></td><td>&nbsp;:&nbsp;</td><td>%4</td></tr>"
+                                 "<tr><td><b>%5</b></td><td>&nbsp;:&nbsp;</td><td>%6</td></tr>"
+                                 "<tr><td><b>%7</b></td><td>&nbsp;:&nbsp;</td><td>%8</td></tr>"
+                                 "<tr><td><b>%9</b></td><td>&nbsp;:&nbsp;</td><td<td>%10</td></tr>"
+                                 "<tr><td><b>%11</b></td><td>&nbsp;:&nbsp;</td><td>%12</td></tr>"
+                                 "<tr><td><b>%13</b></td><td>&nbsp;:&nbsp;</td><td>%14</td></tr>"
+                                 "<tr><td><b>%15</b></td><td>&nbsp;:&nbsp;</td><td>%16</td></tr>"
+                                 "</table></p>"
+                                 "<p style=\"text-align:center;font-size:small;/*font-weight:bold;*/\">"
+                                 "%17 <a href=\"%18\">%19</a> %20<br>%21 %22"
+                                 "<br><br>"
+                                 "%17 <a href=\"http://www.littlecms.com/\">Little CMS %23</a><br>%21 &copy; 2020 Marti Maria Saguer. %24."
+                                 "</p>")
+                         .arg(tr("Area Limit"))
+                         .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true))
+                         .arg(tr("Map Limit"))
+                         .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::map()))
+                         .arg(tr("Memory Limit"))
+                         .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory()))
+                         .arg(tr("Width Limit"))
+                         .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::width(), true))
+                         .arg(tr("Height Limit"))
+                         .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::height(), true))
+                         .arg(tr("Thread Limit"))
+                         .arg(Magick::ResourceLimits::thread())
+                         .arg(tr("Features"))
+                         .arg(MagickCore::GetMagickFeatures())
+                         .arg(tr("Delegates"))
+                         .arg(MagickCore::GetMagickDelegates())
+                         .arg(tr("Powered by"))
+                         .arg(MagickCore::GetMagickLicense())
+                         .arg(magickInfo)
+                         .arg(magickDepth)
+                         .arg(tr("Copyright"))
+                         .arg(MagickCore::GetMagickCopyright())
+                         .arg(QString::number(LCMS_VERSION)
+                                                   .insert(1,".")
+                                                   .remove(2,1)
+                                                   .remove(3,1))
+                         .arg(tr("All rights reserved"))
+                         );
+    magickLayout->addWidget(magickLabel);
+    magickLayout->addStretch();
+    headerContainerLayout->addSpacing(20);
+    headerContainerLayout->addWidget(magickWidget);
+
     QLabel *textLabel = new QLabel(this);
-    /*textLabel->setMinimumWidth(400);
-    textLabel->setMaximumWidth(400);*/
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
 
-    size_t magickQ;
-    size_t magickV;
-    MagickCore::GetMagickQuantumDepth(&magickQ);
-    QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
+    QLabel *footerLabel = new QLabel(this);
+    footerLabel->setWordWrap(true);
+    footerLabel->setOpenExternalLinks(true);
+    footerLabel->setText("<p style=\"text-align:right;\">"
+                         "<a href=\"https://github.com/rodlie/cyan\"><img src=\":/icons/GitHub-Mark-Light-32px.png\"></a>"
+                         "&nbsp;&nbsp;&nbsp;"
+                         "<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a>"
+                         "</p>");
 
     QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
             .arg(tr("Pixel Viewer, Editor and Converter."));
-   textString.append(QString("<p style=\"text-align:center;font-size:small;\">%3 %4</p><p style=\"text-align:center;font-size:small;font-weight:bold;\">%1 &copy; Ole-André Rodlie, FxArena DA. %2.</p><p style=\"text-align:center;font-size:small;font-weight:bold;\">%5 %6 Q%17<br><a href=\"%8\">%7</a></p><p style=\"text-align:left;font-size:small;\"><table><tr><td><b>%15</b></td><td>%16</td></tr><tr><td><b>%13</b></td><td>%14</td></tr><tr><td><b>%11</b></td><td>%9</td></tr><tr><td><b>%12</b></td><td>%10</td></tr></table></p>")
+   textString.append(QString("<p style=\"text-align:justify;font-size:small;font-weight:normal;\">%3 %4</p>"
+                             "<p style=\"text-align:center;font-size:small;/*font-weight:bold;*/\">"
+                             "%1 &copy; 2016-2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
+                             "</p>")
                      .arg(tr("Copyright"))
                      .arg(tr("All rights reserved"))
                      .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."))
-                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details."))
-                     .arg(tr("Powered by"))
-                     .arg(magickInfo)
-                     .arg(MagickCore::GetMagickCopyright())
-                     .arg(MagickCore::GetMagickLicense())
-                     .arg(MagickCore::GetMagickFeatures())
-                     .arg(MagickCore::GetMagickDelegates())
-                     .arg(tr("Features"))
-                     .arg(tr("Delegates"))
-                     .arg(tr("Memory limit"))
-                     .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory()))
-                     .arg(tr("Thread limit"))
-                     .arg(Magick::ResourceLimits::thread())
-                     .arg(magickQ));
+                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.")));
     textLabel->setText(textString);
-
     headerLayout->addWidget(textLabel);
     headerLayout->addStretch();
-
-    /*QWidget *infoWidget = new QWidget(this);
-    infoWidget->setContentsMargins(0,0,0,0);
-    QVBoxLayout *infoLayout = new QVBoxLayout(infoWidget);
-    infoLayout->setContentsMargins(0,0,0,0);
-
-    QTabWidget *tabs = new QTabWidget(this);
-    tabs->setMinimumWidth(400);
-    infoLayout->addWidget(tabs);*/
-
-    /*QLabel *supportWidget = new QLabel(this);
-    supportWidget->setText(QString("<p align=\"center\"><a href=\"https://liberapay.com/rodlie/donate\"><img src=\":/icons/liberapay.png\"></a>&nbsp;<a href=\"https://www.patreon.com/bePatron?u=23266568\"><img src=\":/icons/patron.png\"></a>&nbsp;<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a></p>"));
-    supportWidget->setOpenExternalLinks(true);
-    infoLayout->addWidget(supportWidget);*/
-
-    /*QTextBrowser *supportBrowser = new QTextBrowser(this);
-    supportBrowser->setAcceptRichText(true);
-    supportBrowser->setReadOnly(true);
-    supportBrowser->setOpenLinks(true);
-    supportBrowser->setOpenExternalLinks(true);
-    supportBrowser->setAcceptRichText(true);
-    supportBrowser->setSource(QUrl::fromUserInput(":/html/ChangeLog.html"));*/
-
-    /*QWidget *thirdpartyWidget = new QWidget(this);
-    thirdpartyWidget->setContentsMargins(0,0,0,0);
-    QVBoxLayout *thirdpartyLayout = new QVBoxLayout(thirdpartyWidget);
-    thirdpartyLayout->setContentsMargins(0,0,0,0);
-    QTextBrowser *thirdpartyBrowser = new QTextBrowser(this);
-    thirdpartyBrowser->setAcceptRichText(true);
-    thirdpartyBrowser->setReadOnly(true);
-    thirdpartyBrowser->setOpenLinks(true);
-    thirdpartyBrowser->setOpenExternalLinks(true);
-    thirdpartyBrowser->setAcceptRichText(true);
-    thirdpartyLayout->addWidget(thirdpartyBrowser);
-    QPushButton *aboutQtButton = new QPushButton(this);
-    aboutQtButton->setFocusPolicy(Qt::NoFocus);
-    aboutQtButton->setText(tr("Powered by Qt %1").arg(qVersion()));
-    connect(aboutQtButton, SIGNAL(released()), qApp, SLOT(aboutQt()));
-    thirdpartyLayout->addWidget(aboutQtButton);*/
-
-    //tabs->addTab(supportBrowser, tr("Documentation"));
-    //tabs->addTab(thirdpartyWidget, tr("Third-party Software"));
-
-    /*size_t magickQ;
-    size_t magickV;
-    MagickCore::GetMagickQuantumDepth(&magickQ);
-    QString magickInfo = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst();
-
-    QString html;
-    html.append(QString("<html><head><style>body { font-family: Arial, Verdana, Helvetica; font-size: 10pt; } h1, h2 { font-weight: normal; } ul li a { text-decoration: none; }</style></head><body>"));
-    html.append(QString("<img src=\":/icons/magick_logo.png\"><br><h2>%1</h2>").arg(magickInfo));
-    html.append(QString("<p><a href=\"https://imagemagick.org\">%2®</a> %3.</p><p>"
-                         "%2 %4 <a href=\"%1\">%5</a>.</p>")
-                 .arg(MagickCore::GetMagickLicense())
-                 .arg(MagickCore::GetMagickPackageName())
-                 .arg(tr("is used to read, create, save, edit, compose, and  convert bitmap images"))
-                 .arg(tr("is distributed under the following"))
-                 .arg(tr("license")));
-    html.append(QString("<p>%1</p>").arg(MagickCore::GetMagickCopyright()));
-
-    html.append(QString("<p><strong>%4</strong>:<br><br>Q%1 %2 %3</p>")
-                 .arg(magickQ)
-                 .arg(MagickCore::GetMagickFeatures())
-                 .arg(MagickCore::GetMagickDelegates())
-                 .arg(tr("Features")));
-    html.append(QString("<p><strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::disk()))
-                 .arg(tr("Disk Limit")));
-    html.append(QString("<strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true))
-                 .arg(tr("Area Limit")));
-    html.append(QString("<strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::map()))
-                 .arg(tr("Map Limit")));
-    html.append(QString("<strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory()))
-                 .arg(tr("Memory Limit")));
-    html.append(QString("<strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::width(), true))
-                 .arg(tr("Width Limit")));
-    html.append(QString("<strong>%2</strong>: %1<br>")
-                 .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::height(), true))
-                 .arg(tr("Height Limit")));
-    html.append(QString("<strong>%2</strong>: %1</p>")
-                 .arg(Magick::ResourceLimits::thread())
-                 .arg(tr("Thread Limit")));
-    html.append(QString("<hr><br><img src=\":/icons/lcms_logo.png\"><br><h2>Little CMS %1</h2>")
-                 .arg(QString::number(LCMS_VERSION)
-                      .insert(1,".")
-                      .remove(2,1)
-                      .remove(3,1)));
-    html.append(QString("<p><a href=\"http://www.littlecms.com/\">Little CMS</a> %1.</p><p>Little CMS %2 <a href=\"https://opensource.org/licenses/mit-license.php\">%3</a>.</p>")
-                 .arg(tr("is an small-footprint color management engine, with special focus on accuracy and performance"))
-                 .arg(tr("is distributed under the following"))
-                 .arg(tr("license")));
-    html.append(QString("<p>%2 &copy; 2018 Marti Maria Saguer.<br>%1.</p>")
-                 .arg(tr("All rights reserved"))
-                 .arg(tr("Copyright")));
-    html.append(QString("</body></html>"));
-    thirdpartyBrowser->setHtml(html);*/
-
-    mainLayout->addWidget(headerWidget);
-    //mainLayout->addWidget(infoWidget);
+    mainLayout->addWidget(headerContainer);
+    mainLayout->addWidget(footerLabel);
 }

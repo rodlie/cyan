@@ -110,5 +110,6 @@
         <file>icons/hicolor/48x48/apps/Cyan.png</file>
         <file>icons/splash.png</file>
         <file>icons/paypal.png</file>
+        <file>icons/GitHub-Mark-Light-32px.png</file>
     </qresource>
 </RCC>
