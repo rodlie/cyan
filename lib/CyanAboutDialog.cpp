@@ -81,10 +81,10 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                                  "<tr><td><b>%13</b></td><td>&nbsp;:&nbsp;</td><td>%14</td></tr>"
                                  "<tr><td><b>%15</b></td><td>&nbsp;:&nbsp;</td><td>%16</td></tr>"
                                  "</table></p>"
-                                 "<p style=\"text-align:center;font-size:small;/*font-weight:bold;*/\">"
+                                 "<p style=\"text-align:center;font-size:small;\">"
                                  "%17 <a href=\"%18\">%19</a> %20<br>%21 %22"
                                  "<br><br>"
-                                 "%17 <a href=\"http://www.littlecms.com/\">Little CMS %23</a><br>%21 &copy; 2020 Marti Maria Saguer. %24."
+                                 "%17 <a href=\"http://www.littlecms.com/\">Little CMS %23</a><br>%21 &copy; 2020 Marti Maria Saguer.<br>%24."
                                  "</p>")
                          .arg(tr("Area Limit"))
                          .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::area(),false, true))
