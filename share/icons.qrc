@@ -108,7 +108,6 @@
         <file>icons/hicolor/16x16/actions/process-stop.png</file>
         <file>icons/hicolor/16x16/actions/transform_move.png</file>
         <file>icons/hicolor/48x48/apps/Cyan.png</file>
-        <file>icons/splash.png</file>
         <file>icons/paypal.png</file>
         <file>icons/GitHub-Mark-Light-32px.png</file>
     </qresource>

@@ -293,7 +293,7 @@ void Editor::loadSettings()
     settings.beginGroup("engine");
     CyanCommon::setDiskResource(settings
                             .value("disk_limit", 0).toInt());
-    int maxMem = settings.value("memory_limit", 4).toInt();
+    int maxMem = settings.value("memory_limit", 2).toInt();
     CyanCommon::setMemoryResource(maxMem);
     settings.endGroup();
 

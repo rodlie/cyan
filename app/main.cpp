@@ -99,20 +99,19 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
+    QString fontconfig;
 #ifdef Q_OS_MAC
-    // setup fontconfig on mac
-    QString fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
-    if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
+    fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
+#elif defined (Q_OS_WIN)
+    fontconfig = QString("%1/etc/fonts").arg(QApplication::applicationDirPath());
+#elif defined (Q_OS_LINUX)
+    fontconfig = QString("%1/../etc/fonts").arg(QApplication::applicationDirPath());
 #endif
-#ifdef Q_OS_LINUX
-    // setup fontconfig on linux
-    QString fontconfig = QString("%1/../etc/fonts").arg(QApplication::applicationDirPath());
     if (QFile::exists(fontconfig)) { qputenv("FONTCONFIG_PATH", fontconfig.toUtf8()); }
-#endif
 
 #ifndef Q_OS_LINUX
     // splash
-    QSplashScreen splash(QIcon(":/icons/splash.png").pixmap(512,512),
+    QSplashScreen splash(QIcon(":/icons/hicolor/512x512/apps/Cyan.png").pixmap(512,512),
                          Qt::SplashScreen);
     splash.show();
 #endif

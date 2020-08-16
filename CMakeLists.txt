@@ -211,16 +211,16 @@ else()
         ${RESOURCES})
 endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_LIBRARIES}
+    ${MAGICK_STATIC_LIBRARIES}
     ${LCMS2_LIBRARIES}
-    ${MAGICK_LDFLAGS}
+    ${MAGICK_STATIC_LDFLAGS}
     ${LCMS2_LDFLAGS}
     ${FONTCONF_LDFLAGS}
 )
