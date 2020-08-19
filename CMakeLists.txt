@@ -49,6 +49,7 @@ set(SOURCES_LIB
     lib/CyanLayerTreeItem.cpp
     lib/CyanNewMediaDialog.cpp
     lib/CyanGuideItem.cpp
+    lib/CyanBatchWidget.cpp
     lib/qtcolorpicker.cpp
     #lib/qtcolortriangle.cpp
     lib/qtwindowlistmenu.cpp
@@ -71,6 +72,7 @@ set(HEADERS_LIB
     lib/CyanLayerTreeItem.h
     lib/CyanNewMediaDialog.h
     lib/CyanGuideItem.h
+    lib/CyanBatchWidget.h
     lib/CyanGlobal.h
     lib/qtcolorpicker.h
     #lib/qtcolortriangle.h
