@@ -4,14 +4,6 @@
 
 Cyan 2 *(1.99.x)* aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
 
-## Downloads
-
-### Cyan 1.2.x
-
-Cyan [1.2.x](https://github.com/rodlie/cyan/tree/1.2) is currently the stable version, you can download it from [GitHub](https://github.com/rodlie/cyan/releases/tag/1.2.2) or [SourceForge](https://sourceforge.net/projects/prepress/files/1.2.2/).
-
-[![Download Cyan](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/prepress/files/1.2.2/)
-
 ## Shortcuts
 
 | Shortcut           | Action                             |
