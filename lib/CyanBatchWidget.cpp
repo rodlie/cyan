@@ -3,6 +3,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QTimer>
+#include <QSettings>
 
 CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     QWidget(parent)
@@ -10,11 +12,11 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
   , _progress(nullptr)
   , _apply(nullptr)
   , _cancel(nullptr)
-  , _profileType(nullptr)
   , _profile(nullptr)
   , _intent(nullptr)
   , _blackpoint(nullptr)
   , _format(nullptr)
+  , _compression(nullptr)
   , _quality(nullptr)
 {
     setAcceptDrops(true);
@@ -39,9 +41,6 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     profileLabel->setText(tr("Profile"));
     profileLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    _profileType = new QComboBox(this);
-    _profileType->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     _profile = new QComboBox(this);
 
     QWidget *intentWidget = new QWidget(this);
@@ -56,6 +55,7 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     intentLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _blackpoint = new QCheckBox(this);
+    _blackpoint->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     _blackpoint->setText(tr("Black Point"));
 
     QWidget *formatWidget = new QWidget(this);
@@ -69,11 +69,18 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
 
     _format = new QComboBox(this);
 
+    QLabel *compressionLabel = new QLabel(this);
+    compressionLabel->setText(tr("Compression"));
+    compressionLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    _compression = new QComboBox(this);
+
     QLabel *qualityLabel = new QLabel(this);
     qualityLabel->setText(tr("Quality"));
     qualityLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _quality = new QSpinBox(this);
+    _quality->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _tree = new QTreeWidget(this);
 
@@ -84,20 +91,23 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
     _apply = new QPushButton(this);
+    _apply->setIcon(QIcon::fromTheme("convert_gray_to_color"));
     _apply->setText(tr("Convert"));
 
     _cancel = new QPushButton(this);
+    _cancel->setIcon(QIcon::fromTheme("edit-delete"));
     _cancel->setText(tr("Cancel"));
 
     _progress = new QProgressBar(this);
 
     formatLayout->addWidget(formatLabel);
     formatLayout->addWidget(_format);
+    formatLayout->addWidget(compressionLabel);
+    formatLayout->addWidget(_compression);
     formatLayout->addWidget(qualityLabel);
     formatLayout->addWidget(_quality);
 
     profileLayout->addWidget(profileLabel);
-    profileLayout->addWidget(_profileType);
     profileLayout->addWidget(_profile);
 
     intentLayout->addWidget(intentLabel);
@@ -115,4 +125,72 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     mainLayout->addWidget(optWidget);
     mainLayout->addWidget(_tree);
     mainLayout->addWidget(buttonWidget);
+
+    QTimer::singleShot(1, this, SLOT(setupUI()));
+}
+
+void CyanBatchWidget::setupUI()
+{
+    populateIntent(/*CyanCommon::PerceptualRenderingIntent*/);
+    populateFormat(/*CyanCommon::OutputFormatConverterTiff*/);
+    _quality->setRange(0, 100);
+    _quality->setValue(100);
+    populateProfilesFromSettings(Magick::CMYKColorspace);
+}
+
+void CyanBatchWidget::populateIntent(CyanCommon::RenderingIntent intent)
+{
+    _intent->clear();
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Undefined"), CyanCommon::UndefinedRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Saturation"), CyanCommon::SaturationRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Perceptual"), CyanCommon::PerceptualRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Absolute"), CyanCommon::AbsoluteRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Relative"), CyanCommon::RelativeRenderingIntent);
+    _intent->setCurrentIndex(intent);
+}
+
+void CyanBatchWidget::populateFormat(CyanCommon::OutputFormatConverter format)
+{
+    _format->clear();
+    _format->addItem(QIcon::fromTheme("document-new"), tr("TIFF"), CyanCommon::OutputFormatConverterTiff);
+    _format->addItem(QIcon::fromTheme("document-new"), tr("JPEG"), CyanCommon::OutputFormatConverterJpeg);
+    _format->addItem(QIcon::fromTheme("document-new"), tr("PSD"), CyanCommon::OutputFormatConverterPsd);
+    _format->setCurrentIndex(format);
+}
+
+void CyanBatchWidget::populateProfiles(const QString &defaultProfile,
+                                       Magick::ColorspaceType colorspace)
+{
+    _profile->clear();
+    int index = 1;
+    _profile->addItem(QIcon::fromTheme("color-wheel"), tr("Select ..."));
+    QMapIterator<QString, QString> profiles(CyanCommon::getColorProfiles(colorspace));
+    while (profiles.hasNext()) {
+        profiles.next();
+        _profile->addItem(QIcon::fromTheme("color-wheel"), profiles.key(), profiles.value());
+        if (profiles.value() == defaultProfile && !defaultProfile.isEmpty()) {
+            _profile->setCurrentIndex(index);
+        }
+        index++;
+    }
+}
+
+void CyanBatchWidget::populateProfilesFromSettings(Magick::ColorspaceType colorspace)
+{
+    QString profile;
+    QSettings settings;
+    settings.beginGroup(QString("color"));
+    switch (colorspace) {
+    case Magick::CMYKColorspace:
+        profile = settings.value(QString("cmyk_profile")).toString();
+        break;
+    case Magick::GRAYColorspace:
+        profile = settings.value(QString("gray_profile")).toString();
+        break;
+    default:
+        profile = settings.value(QString("rgb_profile")).toString();
+        ;
+    }
+    populateProfiles(profile, colorspace);
+    settings.endGroup();
 }

@@ -9,6 +9,8 @@
 #include <QCheckBox>
 #include <QSpinBox>
 
+#include "CyanCommon.h"
+
 class CyanBatchWidget : public QWidget
 {
     Q_OBJECT
@@ -20,12 +22,20 @@ private:
     QProgressBar *_progress;
     QPushButton *_apply;
     QPushButton *_cancel;
-    QComboBox *_profileType;
     QComboBox *_profile;
     QComboBox *_intent;
     QCheckBox *_blackpoint;
     QComboBox *_format;
+    QComboBox *_compression;
     QSpinBox *_quality;
+
+private slots:
+    void setupUI();
+    void populateIntent(CyanCommon::RenderingIntent intent = CyanCommon::UndefinedRenderingIntent);
+    void populateFormat(CyanCommon::OutputFormatConverter format = CyanCommon::OutputFormatConverterTiff);
+    void populateProfiles(const QString &defaultProfile = QString(),
+                          Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
+    void populateProfilesFromSettings(Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
 };
 
 #endif // CYANBATCHWIDGET_H
