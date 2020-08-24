@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.2.2
+VERSION = 1.2.3
 
 SOURCES += \
     src/main.cpp \
