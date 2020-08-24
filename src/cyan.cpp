@@ -96,6 +96,8 @@ Cyan::Cyan(QWidget *parent)
     , prefsMenu(Q_NULLPTR)
     , nativeStyle(false)
     , qualityBox(Q_NULLPTR)
+    , magickMemoryResourcesGroup(Q_NULLPTR)
+    , memoryMenu(Q_NULLPTR)
 {
     // get style settings
     QSettings settings;
@@ -332,10 +334,25 @@ Cyan::Cyan(QWidget *parent)
     fileMenu = new QMenu(tr("File"), this);
     helpMenu = new QMenu(tr("Help"), this);
     prefsMenu = new QMenu(tr("Preferences"), this);
+    memoryMenu = new QMenu(tr("Memory limit"), this);
 
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
     menuBar->setMaximumHeight(20);
+
+    prefsMenu->addMenu(memoryMenu);
+
+    magickMemoryResourcesGroup = new QActionGroup(this);
+    for (int i=2;i<33;++i) {
+        QAction *act = new QAction(this);
+        act->setCheckable(true);
+        act->setText(QString("%1 GB").arg(i));
+        act->setToolTip(tr("Amount of RAM that can be used"));
+        act->setData(i);
+        connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
+        magickMemoryResourcesGroup->addAction(act);
+    }
+    memoryMenu->addActions(magickMemoryResourcesGroup->actions());
 
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
@@ -443,6 +460,24 @@ void Cyan::readConfig()
     QSettings settings;
     bool firstrun = false;
 
+    settings.beginGroup("engine");
+    setDiskResource(settings.value("disk_limit", 0).toInt());
+    int maxMem = settings.value("memory_limit", 2).toInt();
+    setMemoryResource(maxMem);
+    settings.endGroup();
+    QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
+    bool foundAct = false;
+    for (int i=0;i<memActions.size();++i) {
+        QAction *act = memActions.at(i);
+        if (!act) { continue; }
+        if (act->data().toInt()==maxMem) {
+            act->setChecked(true);
+            foundAct = true;
+            break;
+        }
+    }
+    if (!foundAct) { memoryMenu->setDisabled(true); }
+
     settings.beginGroup("color");
     blackPoint->setChecked(settings.value("black").toBool());
 
@@ -503,6 +538,12 @@ void Cyan::readConfig()
 void Cyan::writeConfig()
 {
     QSettings settings;
+
+    settings.beginGroup("engine");
+    settings.setValue("disk_limit", getDiskResource());
+    settings.setValue("memory_limit", getMemoryResource());
+    settings.endGroup();
+
     settings.beginGroup("color");
     settings.setValue("black", blackPoint->isChecked());
 
@@ -1550,4 +1591,51 @@ void Cyan::handleNativeStyleChanged(bool triggered)
     QMessageBox::information(this,
                              tr("Restart is required"),
                              tr("Restart Cyan to apply settings."));
+}
+
+int Cyan::getDiskResource()
+{
+    return qRound(static_cast<double>(Magick::ResourceLimits::disk()/RESOURCE_BYTE));
+}
+
+void Cyan::setDiskResource(int gib)
+{
+    try {
+        Magick::ResourceLimits::disk(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+int Cyan::getMemoryResource()
+{
+    int memMax =  qRound(static_cast<double>(Magick::ResourceLimits::memory()/RESOURCE_BYTE));
+    qDebug() << "Get ImageMagick memory limit" << memMax;
+    return memMax;
+}
+
+void Cyan::setMemoryResource(int gib)
+{
+    qDebug() << "Set ImageMagick memory limit" << gib;
+    try {
+        Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+        Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+void Cyan::handleMagickMemoryAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    QSettings settings;
+    if (action->data().toInt()>=2) {
+        setMemoryResource(action->data().toInt());
+    }
 }

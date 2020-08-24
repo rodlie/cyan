@@ -55,10 +55,13 @@
 #include <QThread>
 #include <QFutureWatcher>
 #include <QSpinBox>
+#include <QActionGroup>
 
 #include "imageview.h"
 #include "profiledialog.h"
 #include "FXX.h"
+
+#define RESOURCE_BYTE 1050000000
 
 class Cyan : public QMainWindow
 {
@@ -104,6 +107,8 @@ private:
     QMenu *prefsMenu;
     bool nativeStyle;
     QSpinBox *qualityBox;
+    QActionGroup *magickMemoryResourcesGroup;
+    QMenu *memoryMenu;
 
 private slots:
     void readConfig();
@@ -183,6 +188,12 @@ private slots:
     void handleLoadImageLayer(Magick::Image image);
 
     void handleNativeStyleChanged(bool triggered);
+
+    int getDiskResource();
+    void setDiskResource(int gib);
+    int getMemoryResource();
+    void setMemoryResource(int gib);
+    void handleMagickMemoryAct(bool triggered);
 };
 
 #endif // CYAN_H
