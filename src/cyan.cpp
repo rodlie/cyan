@@ -760,6 +760,11 @@ void Cyan::openImage(Magick::Image image)
 
 void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
 {
+    qDebug() << "SAVE PSD?" << imageData.isPSD;
+    if (imageData.isPSD) {
+        exportPSD(file);
+        return;
+    }
     if (file.isEmpty()) { return; }
     bool hasWork = imageData.workBuffer.size()>0;
     bool hasMaster = imageData.imageBuffer.size()>0;
@@ -975,6 +980,55 @@ void Cyan::setImage(QByteArray image)
     scene->clear();
     scene->addPixmap(pixmap);
     scene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
+}
+
+void Cyan::exportPSD(const QString &filename)
+{
+    /*if (ignoreConvertAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
+        return;
+    }*/
+
+    disableUI();
+    FXX::Image image = imageData;
+    QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
+                                   .toString();
+    QString selectedOutputProfile = outputProfile->itemData(outputProfile->currentIndex())
+                                    .toString();
+    int currentDepth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
+
+    image.intent = static_cast<FXX::RenderingIntent>(renderingIntent->itemData(renderingIntent->currentIndex())
+                                                     .toInt());
+    image.blackpoint = blackPoint->isChecked();
+    image.depth = static_cast<size_t>(currentDepth);
+
+    // add input profile
+    if (!selectedInputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedInputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccInputBuffer = buffer;
+        }
+    } else {
+        image.iccInputBuffer = imageData.iccInputBuffer;
+    }
+
+    // add output profile
+    if (!selectedOutputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedOutputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccOutputBuffer = buffer;
+        }
+    } else {
+        image.iccOutputBuffer = imageData.iccOutputBuffer;
+    }
+
+    // check if input profile exists
+    if (image.iccInputBuffer.size()==0) { return; }
+
+    // proc
+    FXX::writePSD(image, filename.toStdString());
+    enableUI();
 }
 
 void Cyan::updateImage()
@@ -1264,7 +1318,8 @@ void Cyan::gimpPlugin()
         gimpPath.append(QDir::homePath());
         gimpPath.append(QDir::separator());
 #ifndef Q_OS_MAC
-        gimpPath.append(QString(".gimp-%1").arg(version));
+        //gimpPath.append(QString(".gimp-%1").arg(version));
+        gimpPath.append(QString(".config/GIMP-AppImage/%1").arg(version));
         if (gimpDir.exists(gimpPath)) { hasDir = true; }
         if (!hasDir) {
             gimpPath = QString("%1/.config/GIMP/%2").arg(QDir::homePath()).arg(version);
@@ -1558,7 +1613,7 @@ void Cyan::handleReadWatcher()
     }
     if (image.layers.size()>0) {
         handleImageHasLayers(image.layers);
-        imageData.layers.clear();
+        //imageData.layers.clear();
     }
 }
 

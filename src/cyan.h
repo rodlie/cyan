@@ -142,6 +142,7 @@ private slots:
     void resetImageZoom();
 
     void setImage(QByteArray image);
+    void exportPSD(QString const &filename);
     void updateImage();
 
     QByteArray getMonitorProfile();

@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 3.1)
 enable_testing()
 
-project(Cyan VERSION 1.2.3)
+project(Cyan VERSION 1.2.99)
 
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
@@ -55,7 +55,7 @@ set(TEST_HEADERS src/FXX.h)
 set(TEST_RESOURCE_FILES res/tests.qrc)
 
 set(COMPANY "Cyan")
-set(COPYRIGHT "Copyright Ole-Andre Rodlie, INRIA. All rights reserved.")
+set(COPYRIGHT "Copyright Ole-Andre Rodlie, INRIA, FxArena DA. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 
 if(CMAKE_BUILD_TYPE MATCHES RELEASE)

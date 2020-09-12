@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.2.3
+VERSION = 1.2.99
 
 SOURCES += \
     src/main.cpp \
@@ -79,7 +79,7 @@ DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
-QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, INRIA"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, INRIA, FxArena DA"
 
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
