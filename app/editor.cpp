@@ -542,6 +542,30 @@ void Editor::writeProject(const QString &filename, bool setFilename)
     }
 }
 
+void Editor::writeProjectPSD(const QString &filename, bool setFilename)
+{
+    Q_UNUSED(setFilename)
+    qDebug() << "save project psd" << filename;
+    if (filename.isEmpty() || !getCurrentCanvas()) { return; }
+    bool success = CyanImageFormat::writePSD(getCurrentCanvas()->getCanvasProject(),
+                                             filename/*,
+                                             Magick::RLECompression*/);
+    qDebug() << "SUCCESS?" << success;
+    if (success) {
+        /*QMessageBox::information(this, tr("Exported PSD"),
+                                 QString("%1 %2")
+                                 .arg(filename)
+                                 .arg(tr("was saved to disk.")));*/
+        emit statusMessage(QString("%1 %2")
+                           .arg(filename)
+                           .arg(tr("was saved to disk.")));
+    } else {
+        QMessageBox::warning(this,
+                             tr("Save error"),
+                             tr("Failed to save the project!"));
+    }
+}
+
 /*void Editor::saveImage(const QString &filename)
 {
     qDebug() << "save image" << filename;
@@ -795,6 +819,13 @@ void Editor::saveImageDialog(bool ignoreExisting, bool setFilename)
     {
         QtConcurrent::run(this,
                           &Editor::writeProject,
+                          filename,
+                          setFilename);
+    } else if (filename.endsWith(".psd",
+                                 Qt::CaseInsensitive))
+    {
+        QtConcurrent::run(this,
+                          &Editor::writeProjectPSD,
                           filename,
                           setFilename);
     } else {
