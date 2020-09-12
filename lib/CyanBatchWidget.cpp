@@ -51,7 +51,7 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     _intent = new QComboBox(this);
 
     QLabel *intentLabel = new QLabel(this);
-    intentLabel->setText(tr("Rendering Intent"));
+    intentLabel->setText(tr("Intent"));
     intentLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _blackpoint = new QCheckBox(this);
@@ -76,11 +76,16 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     _compression = new QComboBox(this);
 
     QLabel *qualityLabel = new QLabel(this);
-    qualityLabel->setText(tr("Quality"));
+    qualityLabel->setText(tr("JPEG Quality"));
     qualityLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _quality = new QSpinBox(this);
     _quality->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    compressionLabel->setHidden(true);
+    _compression->setHidden(true);
+    qualityLabel->setHidden(true);
+    _quality->setHidden(true);
 
     _tree = new QTreeWidget(this);
 
@@ -131,7 +136,7 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
 
 void CyanBatchWidget::setupUI()
 {
-    populateIntent(/*CyanCommon::PerceptualRenderingIntent*/);
+    populateIntentFromSettings();
     populateFormat(/*CyanCommon::OutputFormatConverterTiff*/);
     _quality->setRange(0, 100);
     _quality->setValue(100);
@@ -141,20 +146,37 @@ void CyanBatchWidget::setupUI()
 void CyanBatchWidget::populateIntent(CyanCommon::RenderingIntent intent)
 {
     _intent->clear();
-    _intent->addItem(QIcon::fromTheme("video-display"), tr("Undefined"), CyanCommon::UndefinedRenderingIntent);
-    _intent->addItem(QIcon::fromTheme("video-display"), tr("Saturation"), CyanCommon::SaturationRenderingIntent);
-    _intent->addItem(QIcon::fromTheme("video-display"), tr("Perceptual"), CyanCommon::PerceptualRenderingIntent);
-    _intent->addItem(QIcon::fromTheme("video-display"), tr("Absolute"), CyanCommon::AbsoluteRenderingIntent);
-    _intent->addItem(QIcon::fromTheme("video-display"), tr("Relative"), CyanCommon::RelativeRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Undefined"),
+                     CyanCommon::UndefinedRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Saturation"),
+                     CyanCommon::SaturationRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Perceptual"),
+                     CyanCommon::PerceptualRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Absolute"),
+                     CyanCommon::AbsoluteRenderingIntent);
+    _intent->addItem(QIcon::fromTheme("video-display"), tr("Relative"),
+                     CyanCommon::RelativeRenderingIntent);
     _intent->setCurrentIndex(intent);
+}
+
+void CyanBatchWidget::populateIntentFromSettings()
+{
+    QSettings settings;
+    settings.beginGroup(QString("color"));
+    populateIntent(static_cast<CyanCommon::RenderingIntent>(settings.value(QString("intent"),
+                                                                           CyanCommon::PerceptualRenderingIntent).toInt()));
+    settings.endGroup();
 }
 
 void CyanBatchWidget::populateFormat(CyanCommon::OutputFormatConverter format)
 {
     _format->clear();
-    _format->addItem(QIcon::fromTheme("document-new"), tr("TIFF"), CyanCommon::OutputFormatConverterTiff);
-    _format->addItem(QIcon::fromTheme("document-new"), tr("JPEG"), CyanCommon::OutputFormatConverterJpeg);
-    _format->addItem(QIcon::fromTheme("document-new"), tr("PSD"), CyanCommon::OutputFormatConverterPsd);
+    _format->addItem(QIcon::fromTheme("document-new"), tr("TIFF"),
+                     CyanCommon::OutputFormatConverterTiff);
+    _format->addItem(QIcon::fromTheme("document-new"), tr("JPEG"),
+                     CyanCommon::OutputFormatConverterJpeg);
+    _format->addItem(QIcon::fromTheme("document-new"), tr("PSD"),
+                     CyanCommon::OutputFormatConverterPsd);
     _format->setCurrentIndex(format);
 }
 

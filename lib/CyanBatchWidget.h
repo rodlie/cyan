@@ -32,6 +32,7 @@ private:
 private slots:
     void setupUI();
     void populateIntent(CyanCommon::RenderingIntent intent = CyanCommon::UndefinedRenderingIntent);
+    void populateIntentFromSettings();
     void populateFormat(CyanCommon::OutputFormatConverter format = CyanCommon::OutputFormatConverterTiff);
     void populateProfiles(const QString &defaultProfile = QString(),
                           Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
