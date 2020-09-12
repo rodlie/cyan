@@ -147,6 +147,9 @@ public:
     static bool writeCanvas(CyanCanvas canvas,
                             const QString &filename,
                             Magick::CompressionType compress = Magick::NoCompression);
+    static bool writePSD(CyanCanvas canvas,
+                         const QString &filename,
+                         Magick::CompressionType compress = Magick::NoCompression);
     static CyanCanvas readCanvas(const QString &filename);
     static CyanCanvas readUnknownCanvas(const QString &filename);
     static CyanCanvas readImage(const QString &filename);

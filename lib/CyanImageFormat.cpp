@@ -553,6 +553,88 @@ bool CyanImageFormat::writeCanvas(CyanImageFormat::CyanCanvas canvas,
     return false;
 }
 
+bool CyanImageFormat::writePSD(CyanImageFormat::CyanCanvas canvas,
+                               const QString &filename,
+                               Magick::CompressionType compress)
+{
+    if (filename.isEmpty() || !canvas.image.isValid()) { return false; }
+    std::list<Magick::Image> images;
+    Magick::Image image(renderCanvasToImage(canvas));
+    image.magick("PSD");
+
+    // compress(?)
+    try { image.compressType(compress); }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    // add color profile
+    try { image.profile("ICC", canvas.profile); }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    // add comp as first image
+    images.push_back(image);
+
+    // add layers
+    QList<QPair<int, CyanLayer> > slayers;
+    QMapIterator<int, CyanLayer> layers(canvas.layers);
+    while (layers.hasNext()) {
+        layers.next();
+        QPair<int, CyanLayer> pair(layers.value().order,
+                             layers.value());
+        slayers.append(pair);
+    }
+    std::sort(slayers.begin(),
+              slayers.end(),
+              CyanImageFormat::QPairSortFirst());
+    for (int i=0;i<slayers.size();++i) {
+        CyanLayer slayer = slayers.at(i).second;
+        Magick::Image layer(slayers.at(i).second.image);
+        layer.magick("PSD");
+
+        // add position
+        try {
+            Magick::Geometry layerGeo(image.columns(),
+                                      image.rows(),
+                                      slayer.position.width(),
+                                      slayer.position.height());
+            layer.page(layerGeo);
+        }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+        // add compose mode
+        layer.compose(slayer.composite); // does not seem to work?
+
+        // add opacity? possible?
+
+        // compress(?)
+        try { layer.compressType(compress); }
+        catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+        catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+        // add to project
+        images.push_back(layer);
+    }
+
+    // write project file
+    try {
+        Magick::writeImages(images.begin(),
+                            images.end(),
+                            filename.toStdString());
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); return false; }
+    catch(Magick::Warning &warn_ ) { qWarning() << warn_.what(); }
+
+    if (QFile::exists(filename)) {
+        qDebug() << "GOOD JOB!";
+        return true;
+    }
+    // TODO add more checks
+    qDebug() << "THIS SHOULD NOT HAPPEN!";
+    return false;
+}
+
 CyanImageFormat::CyanCanvas CyanImageFormat::readCanvas(const QString &filename)
 {
     CyanCanvas canvas;
