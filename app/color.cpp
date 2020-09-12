@@ -260,6 +260,9 @@ void Editor::loadDefaultColorIntent()
             action->setChecked(true);
         } else { action->setChecked(false); }
     }
+    if (settings.value(QString("intent")).isNull()) {
+        settings.setValue(QString("intent"), CyanCommon::PerceptualRenderingIntent);
+    }
     settings.endGroup();
 }
 
