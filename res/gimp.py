@@ -9,7 +9,7 @@ import shutil
 import os.path
 import tempfile
 
-cyanversion = "1.2.1"
+cyanversion = "1.3.0"
 cyanbin = "cyan"
 
 def plugin_maketempfile( image, src ):
@@ -20,10 +20,10 @@ def plugin_maketempfile( image, src ):
         print "Could not create temporary image file."
         return None, None, None
 
-    tempfilename = pdb.gimp_temp_name( "tif" )
+    tempfilename = pdb.gimp_temp_name( "psd" )
 
     if sys.platform == "darwin":
-        tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.tif")
+        tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.psd")
 
     if sys.platform.startswith( "win" ):
         tempfilename = tempfilename.replace( "\\", "/" )
@@ -46,7 +46,7 @@ def plugin_export( image, src):
     if tempfilename == None:
         return
     
-    pdb.gimp_image_undo_group_start(image)
+    #pdb.gimp_image_undo_group_start(image)
     pdb.gimp_progress_pulse()
     child = subprocess.Popen( cyanbin + " " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
 
@@ -56,7 +56,7 @@ def plugin_export( image, src):
         time.sleep(0.2)
         
     plugin_tidyup( tempfilename )
-    pdb.gimp_image_undo_group_end(image)
+    #pdb.gimp_image_undo_group_end(image)
 
 def plugin_import(image,src):
 
@@ -65,7 +65,7 @@ def plugin_import(image,src):
     if tempfilename == None:
         return
 
-    pdb.gimp_image_undo_group_start(image)
+    #pdb.gimp_image_undo_group_start(image)
     pdb.gimp_progress_pulse()
     child = subprocess.Popen( cyanbin + " -o " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
 
@@ -78,7 +78,7 @@ def plugin_import(image,src):
     plugin_saveresult( image, dest, tempfilename, tempimage )
 
     plugin_tidyup( tempfilename )
-    pdb.gimp_image_undo_group_end(image)
+    #pdb.gimp_image_undo_group_end(image)
 
 def plugin_saveresult( image, dest, tempfilename, tempimage ):
 
@@ -88,7 +88,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
     if dest == 0 :
         # new image
         try:
-            newimage = pdb.file_tiff_load( tempfilename, "" )
+            newimage = pdb.file_psd_load( tempfilename, "" )
 
             # Write name
             if name != None:
@@ -143,7 +143,7 @@ register(
                 "cyan-export",
                 "Export Image.",
                 "Export Image.",
-                "Ole-Andre Rodlie (olear@dracolinux.org)",
+                "Ole-Andre Rodlie (ole.andre.rodlie@gmail.com)",
                 "Copyright 2017 Ole-Andre Rodlie",
                 "2017",
                 "<Image>/Cyan/Export Image",
@@ -156,8 +156,8 @@ register(
                 "cyan-import",
                 "Import Image.",
                 "Import Image.",
-                "Ole-Andre Rodlie (olear@dracolinux.org)",
-                "Copyright 2017 Ole Andre Rodlie",
+                "Ole-Andre Rodlie (ole.andre.rodlie@gmail.com)",
+                "Copyright 2017 Ole-Andre Rodlie",
                 "2017",
                 "<Image>/Cyan/Import Image",
                 "*", # image types
