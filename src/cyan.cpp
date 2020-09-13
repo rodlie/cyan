@@ -56,20 +56,12 @@
 #include <qtconcurrentrun.h>
 
 #include "helpdialog.h"
-#include "openlayerdialog.h"
-
-#ifdef Q_OS_MAC
-#define CYAN_FONT_SIZE 10
-#else
-#define CYAN_FONT_SIZE 8
-#endif
 
 Cyan::Cyan(QWidget *parent)
     : QMainWindow(parent)
     , scene(Q_NULLPTR)
     , view(Q_NULLPTR)
     , mainBar(Q_NULLPTR)
-    /*, convertBar(Q_NULLPTR)*/
     , profileBar(Q_NULLPTR)
     , rgbProfile(Q_NULLPTR)
     , cmykProfile(Q_NULLPTR)
@@ -126,7 +118,6 @@ Cyan::Cyan(QWidget *parent)
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
         qApp->setPalette(palette);
         setStyleSheet("QToolBar { border: 0; }");
-        //setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
     }
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
@@ -141,7 +132,6 @@ Cyan::Cyan(QWidget *parent)
     setCentralWidget(view);
 
     mainBar = new QToolBar(this);
-    //convertBar = new QToolBar(this);
     profileBar = new QToolBar(this);
 
     mainBar->setObjectName("MainToolbar");
@@ -150,14 +140,8 @@ Cyan::Cyan(QWidget *parent)
     mainBar->setAllowedAreas(Qt::LeftToolBarArea);
     mainBar->setFloatable(false);
     mainBar->setMovable(false);
-    mainBar->setIconSize(QSize(24,24));
-    //mainBar->setContentsMargins(3, 3, 3, 3);
+    //mainBar->setIconSize(QSize(24,24));
     mainBar->layout()->setSpacing(5);
-
-    /*convertBar->setObjectName("ColorConverter");
-    convertBar->setWindowTitle(tr("Color Converter"));
-    convertBar->setFloatable(false);
-    convertBar->setMovable(false);*/
 
     profileBar->setObjectName("ColorManagement");
     profileBar->setWindowTitle(tr("Color Management"));
@@ -250,20 +234,6 @@ Cyan::Cyan(QWidget *parent)
     QLabel *bitDepthLabel = new QLabel(tr("Depth"), this);
     QLabel *qualityLabel = new QLabel(tr("Quality"), this);
 
-    /*if (!nativeStyle) {
-        QString padding = "margin-right:5px;";
-        inputLabel->setStyleSheet(padding);
-        outputLabel->setStyleSheet(padding);
-        monitorLabel->setStyleSheet(padding);
-        renderLabel->setStyleSheet(padding);
-        blackLabel->setStyleSheet(padding);
-        rgbLabel->setStyleSheet(padding);
-        cmykLabel->setStyleSheet(padding);
-        grayLabel->setStyleSheet(padding);
-        bitDepthLabel->setStyleSheet(padding);
-        qualityLabel->setStyleSheet(padding);
-    }*/
-
     inputLabel->setToolTip(tr("Input profile for image"));
     inputLabel->setAlignment(Qt::AlignVCenter);
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -303,10 +273,10 @@ Cyan::Cyan(QWidget *parent)
 
     mainBarLoadButton->setToolTip(tr("Open image"));
     mainBarLoadButton->setIcon(QIcon::fromTheme("document-open", QIcon(":/cyan-open.png")));
-    mainBarLoadButton->setIconSize(QSize(24, 24));
+    //mainBarLoadButton->setIconSize(QSize(24, 24));
     mainBarSaveButton->setToolTip(tr("Save image"));
     mainBarSaveButton->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
-    mainBarSaveButton->setIconSize(QSize(24, 24));
+    //mainBarSaveButton->setIconSize(QSize(24, 24));
 
     mainBar->addWidget(mainBarLoadButton);
     mainBar->addWidget(mainBarSaveButton);
@@ -1040,7 +1010,13 @@ void Cyan::exportPSD(const QString &filename)
     }
 
     // check if input profile exists
-    if (image.iccInputBuffer.size()==0) { return; }
+    if (image.iccInputBuffer.size()==0 || image.iccOutputBuffer.size()==0) {
+        QMessageBox::warning(this,
+                             tr("Missing color profile"),
+                             tr("Need input and output ICC color profile"));
+        enableUI();
+        return;
+    }
 
     // proc
     QtConcurrent::run(this, &Cyan::convertPSD, image, filename);
