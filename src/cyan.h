@@ -73,6 +73,7 @@ public:
 
 signals:
     void finishedConvertingPSD(bool success, const QString &filename);
+    void newImageInfo(QString information);
 
 private:
     QFutureWatcher<FXX::Image> convertWatcher;
@@ -81,7 +82,6 @@ private:
     QGraphicsScene *scene;
     ImageView *view;
     QToolBar *mainBar;
-    //QToolBar *convertBar;
     QToolBar *profileBar;
     QComboBox *rgbProfile;
     QComboBox *cmykProfile;
@@ -93,6 +93,7 @@ private:
     QCheckBox *blackPoint;
     QPushButton *mainBarLoadButton;
     QPushButton *mainBarSaveButton;
+    QPushButton *mainBarInfoButton;
     QMenuBar *menuBar;
     QMenu *fileMenu;
     QMenu *helpMenu;
@@ -103,8 +104,6 @@ private:
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     FXX::Image imageData;
-    //QDockWidget *imageInfoDock;
-    //QTreeWidget *imageInfoTree;
     bool ignoreConvertAction;
     QProgressBar *progBar;
     QMenu *prefsMenu;
@@ -182,7 +181,6 @@ private slots:
 
     int supportedDepth();
     void clearImageBuffer();
-    //void parseImageInfo();
 
     QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
@@ -192,6 +190,10 @@ private slots:
 
     void handleImageHasLayers(std::vector<Magick::Image> layers);
     void handleLoadImageLayer(Magick::Image image);
+
+    void handleImageInfoButton();
+    void getImageInfo(FXX::Image image);
+    void handleImageInfo(QString information);
 
     void handleNativeStyleChanged(bool triggered);
 

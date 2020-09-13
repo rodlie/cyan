@@ -73,6 +73,7 @@ Cyan::Cyan(QWidget *parent)
     , blackPoint(Q_NULLPTR)
     , mainBarLoadButton(Q_NULLPTR)
     , mainBarSaveButton(Q_NULLPTR)
+    , mainBarInfoButton(Q_NULLPTR)
     , menuBar(Q_NULLPTR)
     , fileMenu(Q_NULLPTR)
     , helpMenu(Q_NULLPTR)
@@ -81,8 +82,6 @@ Cyan::Cyan(QWidget *parent)
     , quitAction(Q_NULLPTR)
     , exportEmbeddedProfileAction(Q_NULLPTR)
     , bitDepth(Q_NULLPTR)
-    //, imageInfoDock(Q_NULLPTR)
-    //, imageInfoTree(Q_NULLPTR)
     , ignoreConvertAction(false)
     , progBar(Q_NULLPTR)
     , prefsMenu(Q_NULLPTR)
@@ -150,24 +149,8 @@ Cyan::Cyan(QWidget *parent)
     profileBar->setAllowedAreas(Qt::BottomToolBarArea);
     profileBar->layout()->setSpacing(5);
 
-    /*imageInfoDock = new QDockWidget(this);
-    imageInfoDock->setWindowTitle("Information");
-    imageInfoDock->setObjectName("imageInformation");
-    imageInfoDock->setContentsMargins(0,0,0,0);
-    imageInfoDock->setFeatures(QDockWidget::DockWidgetClosable);
-    imageInfoDock->setTitleBarWidget(new QWidget());*/
-
     addToolBar(Qt::TopToolBarArea, mainBar);
     addToolBar(Qt::BottomToolBarArea, profileBar);
-
-    //addDockWidget(Qt::RightDockWidgetArea, imageInfoDock);
-
-    /*imageInfoTree = new QTreeWidget(this);
-    QStringList imageInfoTreeLabels;
-    imageInfoTreeLabels << tr("Property") << tr("Value");
-    imageInfoTree->setHeaderLabels(imageInfoTreeLabels);
-
-    imageInfoDock->setWidget(imageInfoTree);*/
 
     rgbProfile = new QComboBox(this);
     cmykProfile = new QComboBox(this);
@@ -270,19 +253,20 @@ Cyan::Cyan(QWidget *parent)
 
     mainBarLoadButton = new QPushButton(this);
     mainBarSaveButton = new QPushButton(this);
+    mainBarInfoButton = new QPushButton(this);
 
     mainBarLoadButton->setToolTip(tr("Open image"));
     mainBarLoadButton->setIcon(QIcon::fromTheme("document-open", QIcon(":/cyan-open.png")));
-    //mainBarLoadButton->setIconSize(QSize(24, 24));
     mainBarSaveButton->setToolTip(tr("Save image"));
     mainBarSaveButton->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
-    //mainBarSaveButton->setIconSize(QSize(24, 24));
+    mainBarInfoButton->setToolTip(tr("Get image information"));
+    mainBarInfoButton->setIcon(QIcon::fromTheme("dialog-information", QIcon(":/cyan-info.png")));
 
     mainBar->addWidget(mainBarLoadButton);
     mainBar->addWidget(mainBarSaveButton);
+    mainBar->addWidget(mainBarInfoButton);
     mainBar->addWidget(inputLabel);
     mainBar->addWidget(inputProfile);
-    //mainBar->addSeparator();
     mainBar->addWidget(outputLabel);
     mainBar->addWidget(outputProfile);
     mainBar->addWidget(bitDepthLabel);
@@ -292,20 +276,15 @@ Cyan::Cyan(QWidget *parent)
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
-    //profileBar->addSeparator();
     profileBar->addWidget(cmykLabel);
     profileBar->addWidget(cmykProfile);
-    //profileBar->addSeparator();
     profileBar->addWidget(grayLabel);
     profileBar->addWidget(grayProfile);
-    //profileBar->addSeparator();
     profileBar->addWidget(monitorLabel);
     profileBar->addWidget(monitorProfile);
 
-    //profileBar->addSeparator();
     profileBar->addWidget(renderLabel);
     profileBar->addWidget(renderingIntent);
-    //profileBar->addSeparator();
     profileBar->addWidget(blackLabel);
     profileBar->addWidget(blackPoint);
 
@@ -427,9 +406,12 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)),
             this, SLOT(blackPointUpdated(int)));
-
     connect(this, SIGNAL(finishedConvertingPSD(bool,QString)),
             this, SLOT(handlePSDConverted(bool,QString)));
+    connect(mainBarInfoButton, SIGNAL(released()),
+            this, SLOT(handleImageInfoButton()));
+    connect(this, SIGNAL(newImageInfo(QString)),
+            this, SLOT(handleImageInfo(QString)));
 
     clearImageBuffer();
     QTimer::singleShot(0, this,
@@ -490,10 +472,6 @@ void Cyan::readConfig()
     if (settings.value("max").toBool() == true) {
         this->showMaximized();
     }
-    /*if (settings.value("info_header").isValid()) {
-        imageInfoTree->header()->restoreState(settings.value("info_header")
-                                              .toByteArray());
-    }*/
     settings.endGroup();
 
     if (firstrun) { aboutCyan(); }
@@ -552,8 +530,6 @@ void Cyan::writeConfig()
     } else {
         settings.setValue("max", "false");
     }
-    /*settings.setValue("info_header",
-                      imageInfoTree->header()->saveState());*/
     settings.endGroup();
     settings.sync();
 
@@ -1221,7 +1197,6 @@ void Cyan::enableUI()
 
     menuBar->setEnabled(true);
     mainBar->setEnabled(true);
-    //convertBar->setEnabled(true);
     profileBar->setEnabled(true);
 }
 
@@ -1232,7 +1207,6 @@ void Cyan::disableUI()
 
     menuBar->setDisabled(true);
     mainBar->setDisabled(true);
-    //convertBar->setDisabled(true);
     profileBar->setDisabled(true);
 }
 
@@ -1426,82 +1400,7 @@ int Cyan::supportedDepth()
 void Cyan::clearImageBuffer()
 {
     fx.clearImage(imageData);
-    //imageInfoTree->clear();
 }
-
-/*void Cyan::parseImageInfo()
-{
-    QString info = QString::fromStdString(imageData.info);
-    if (!info.isEmpty()) {
-        //imageInfoTree->clear();
-        QStringList list = info.split("\n", QString::SkipEmptyParts);
-        QVector<QTreeWidgetItem*> level1items;
-        QVector<QTreeWidgetItem*> level2items;
-        QString level1 = "  ";
-        QString level2 = "    ";
-        QString level3 = "      ";
-        bool foundHistogramTag = false;
-        for (int i = 0; i < list.size(); ++i) {
-            QString item = list.at(i);
-            if (item.startsWith(level1)) {
-                QTreeWidgetItem *levelItem = new QTreeWidgetItem();
-                QString section1 = item.section(":",0,0).trimmed();
-                QString section2 = item.section(":",1).trimmed();
-                if (item.startsWith("  Pixels per second:") ||
-                    item.startsWith("  User time:") ||
-                    item.startsWith("  Elapsed time:") ||
-                    item.startsWith("  Version: Image") ||
-                    item.startsWith("  Format: ") ||
-                    item.startsWith("  Class: ") ||
-                    item.startsWith("  Base filename:") ||
-                    item.startsWith("  Mime type:"))
-                {
-                    continue;
-                }
-                levelItem->setText(0,section1);
-                levelItem->setText(1,section2);
-                if (item == "  Histogram:") {
-                    foundHistogramTag = true;
-                }
-                if (foundHistogramTag && (item.startsWith("  Rendering intent:") ||
-                                          item.startsWith("  Gamma:")))
-                {
-                    foundHistogramTag = false;
-                }
-                if (foundHistogramTag) {
-                    continue;
-                }
-                if (item.startsWith(level3)) {
-                    int parentID = level2items.size()-1;
-                    if (parentID<0) {
-                        parentID=0;
-                    }
-                    QTreeWidgetItem *parentItem = level2items.at(parentID);
-                    if (parentItem) {
-                        parentItem->addChild(levelItem);
-                    }
-
-                } else if(item.startsWith(level2)) {
-                    int parentID = level1items.size()-1;
-                    if (parentID<0) {
-                        parentID=0;
-                    }
-                    QTreeWidgetItem *parentItem = level1items.at(parentID);
-                    if (parentItem) {
-                        parentItem->addChild(levelItem);
-                        level2items << levelItem;
-                    }
-                } else if(item.startsWith(level1)) {
-                    level1items << levelItem;
-                }
-                continue;
-            }
-        }
-        imageInfoTree->addTopLevelItems(level1items.toList());
-        level2items.clear();
-        imageInfoTree->expandAll();
-    }
-}*/
 
 QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)
 {
@@ -1568,9 +1467,8 @@ void Cyan::handleConvertWatcher()
     {
         setImage(QByteArray(reinterpret_cast<char*>(image.previewBuffer.data()),
                             static_cast<int>(image.previewBuffer.size())));
-        imageData.info = image.info;
+        //imageData.info = image.info;
         imageData.workBuffer = image.imageBuffer;
-        //parseImageInfo();
     } else {
         QMessageBox::warning(this, tr("Image error"),
                              QString::fromStdString(image.error));
@@ -1629,6 +1527,41 @@ void Cyan::handleLoadImageLayer(Magick::Image image)
     /*if (!image.isValid()) { return; }
     qDebug() << "handle load image layer";
     openImage(image);*/
+}
+
+void Cyan::handleImageInfoButton()
+{
+    if (imageData.imageBuffer.size()<=0) { return; }
+    disableUI();
+    QtConcurrent::run(this, &Cyan::getImageInfo, imageData);
+}
+
+void Cyan::getImageInfo(FXX::Image image)
+{
+    qDebug() << "GET IMAGE INFO";
+    emit newImageInfo(QString::fromStdString(FXX::identify(image.imageBuffer)));
+}
+
+void Cyan::handleImageInfo(QString information)
+{
+    enableUI();
+    QString info = information;
+    info.prepend("<pre>");
+    info.append("</pre>");
+    if (!information.isEmpty()) {
+        QString style = "body {"
+                        "margin: 1em;"
+                        "font-family: sans-serif; }"
+                        "h1, h2, h3, h4 { font-weight: normal; }"
+                        "p, pre, li { font-size: 10pt; }"
+                        "h1#devel { font-size: small; }";
+        HelpDialog *dialog = new HelpDialog(this, tr("About Image"), info, style);
+        dialog->exec();
+    } else {
+        QMessageBox::warning(this,
+                             tr("Failed to identify image"),
+                             tr("Unable to get any image information."));
+    }
 }
 
 void Cyan::handleNativeStyleChanged(bool triggered)
