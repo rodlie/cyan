@@ -64,7 +64,7 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
     sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full zip libfreetype6-dev libfontconfig1-dev
     if [ "$UBUNTU" = "focal" ]; then
-      sudo dpkg --add-architecture i386 -f
+      sudo dpkg --add-architecture i386
       sudo apt-get update
       sudo apt-get install libc6:i386 wine32
       echo "Extracting win64 sdk ..."
