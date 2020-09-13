@@ -67,8 +67,8 @@ if [ "${SETUP}" = 1 ]; then
       echo "Extracting win64 sdk ..."
       mkdir -p ${MXE}
       #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-mingw64_xenial64-gcc7-qt59-static-20191103.tar.xz/download && mv download download.tar.xz
-      wget https://github.com/rodlie/cyan/releases/download/continuous-1.2/cyan-1.3-mxe-usr-focal-20200913.tar.xz && mv download download.tar.xz
-      tar xf download.tar.xz -C ${MXE}/
+      wget https://github.com/rodlie/cyan/releases/download/continuous-1.2/cyan-1.3-mxe-usr-focal-20200913.tar.xz
+      tar xf cyan-1.3-mxe-usr-focal-20200913.tar.xz -C ${MXE}/
       rm -f download.tar.xz
     fi
     if [ "$UBUNTU" = "xenial" ]; then
