@@ -62,7 +62,7 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install scons autoconf automake autopoint bash bison bzip2 gettext git gperf intltool
     sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils wine
     sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
-    sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full zip libfreetype6-dev libfontconfig1-dev
+    sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine wine32 p7zip-full zip libfreetype6-dev libfontconfig1-dev
     if [ "$UBUNTU" = "focal" ]; then
       echo "Extracting win64 sdk ..."
       mkdir -p ${MXE}
