@@ -127,8 +127,8 @@ if [ "${OS}" = "Linux" ]; then
     QT=${MINGW}/qt5
     QMAKE=${QT}/bin/qmake
     STRIP="${MXE}/usr/bin/${TARGET}-strip"
-    PATH="${MXE}/usr/bin:/usr/bin:/bin"
-    PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
+    export PATH="${MXE}/usr/bin:/usr/bin:/bin"
+    export PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
     ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
     make
     ${STRIP} -s build/Cyan.exe
