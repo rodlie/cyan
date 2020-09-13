@@ -43,14 +43,14 @@
 #include <QAction>
 #include <QByteArray>
 #include <QDialog>
-#include <QLineEdit>
+//#include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 #include <QProgressBar>
 #include <QObject>
-#include <QDockWidget>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+//#include <QDockWidget>
+//#include <QTreeWidget>
+//#include <QTreeWidgetItem>
 #include <QMap>
 #include <QThread>
 #include <QFutureWatcher>
@@ -71,6 +71,9 @@ public:
     Cyan(QWidget *parent = Q_NULLPTR);
     ~Cyan();
 
+signals:
+    void finishedConvertingPSD(bool success, const QString &filename);
+
 private:
     QFutureWatcher<FXX::Image> convertWatcher;
     QFutureWatcher<FXX::Image> readWatcher;
@@ -78,7 +81,7 @@ private:
     QGraphicsScene *scene;
     ImageView *view;
     QToolBar *mainBar;
-    QToolBar *convertBar;
+    //QToolBar *convertBar;
     QToolBar *profileBar;
     QComboBox *rgbProfile;
     QComboBox *cmykProfile;
@@ -100,8 +103,8 @@ private:
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     FXX::Image imageData;
-    QDockWidget *imageInfoDock;
-    QTreeWidget *imageInfoTree;
+    //QDockWidget *imageInfoDock;
+    //QTreeWidget *imageInfoTree;
     bool ignoreConvertAction;
     QProgressBar *progBar;
     QMenu *prefsMenu;
@@ -143,6 +146,8 @@ private slots:
 
     void setImage(QByteArray image);
     void exportPSD(QString const &filename);
+    void convertPSD(FXX::Image image, QString const &filename);
+    void handlePSDConverted(bool success, const QString &filename);
     void updateImage();
 
     QByteArray getMonitorProfile();
@@ -177,7 +182,7 @@ private slots:
 
     int supportedDepth();
     void clearImageBuffer();
-    void parseImageInfo();
+    //void parseImageInfo();
 
     QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
