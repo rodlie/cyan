@@ -593,7 +593,7 @@ void Cyan::writeConfig()
 void Cyan::aboutCyan()
 {
     QString html, changelog, style, license;
-    QFile changelogFile(":/docs/ChangeLog");
+    QFile changelogFile(":/docs/ChangeLog.md");
     if (changelogFile.open(QIODevice::ReadOnly)) {
         QByteArray data = changelogFile.readAll();
         changelog.append(data);
@@ -1066,11 +1066,12 @@ void Cyan::handlePSDConverted(bool success, const QString &filename)
         QMessageBox::information(this,
                                  tr("Export PSD success"),
                                  tr("PSD was saved to %1").arg(filename));
-    } else {
+    } else if (!success) {
         QMessageBox::warning(this,
                              tr("Failed to export PSD"),
                              tr("Unable to save PSD file %1").arg(filename));
     }
+    if (!lockedSaveFileName.isEmpty()) { QTimer::singleShot(0, qApp, SLOT(quit())); }
 }
 
 void Cyan::updateImage()
@@ -1351,42 +1352,19 @@ void Cyan::bitDepthChanged(int index)
 
 void Cyan::gimpPlugin()
 {
-    QStringList versions,folders;
+    QStringList versions,folders,gimps;
     versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "3.0";
+    gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/";
     foreach (QString version, versions) {
-        bool hasDir = false;
-        QDir gimpDir;
-        QString gimpPath;
-        gimpPath.append(QDir::homePath());
-        gimpPath.append(QDir::separator());
-#ifndef Q_OS_MAC
-        //gimpPath.append(QString(".gimp-%1").arg(version));
-        gimpPath.append(QString(".config/GIMP-AppImage/%1").arg(version));
-        if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        if (!hasDir) {
-            gimpPath = QString("%1/.config/GIMP/%2").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-        if (!hasDir) {
-            gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-#else
-        gimpPath.append("Library/Application Support/GIMP/"+version);
-        if (gimpDir.exists(gimpPath)) {
-            hasDir = true;
-        }
-#endif
-        if (hasDir) {
-            gimpPath.append(QDir::separator());
-            gimpPath.append("plug-ins");
-            if (!gimpDir.exists(gimpPath)) {
-                gimpDir.mkdir(gimpPath);
+        foreach (QString gimp, gimps) {
+            QString configPath = QString("%1/%2%3/plug-ins")
+                                 .arg(QDir::homePath())
+                                 .arg(gimp)
+                                 .arg(version);
+            if (QFile::exists(configPath)) {
+                folders << QString("%1/cyan.py").arg(configPath);
+                qDebug() << "found GIMP folder" << configPath;
             }
-            QString result = gimpPath;
-            result.append(QDir::separator());
-            result.append("cyan.py");
-            folders << result;
         }
     }
 

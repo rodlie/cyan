@@ -37,14 +37,12 @@ SOURCES += \
     src/FXX.cpp \
     src/imageview.cpp \
     src/profiledialog.cpp \
-    src/openlayerdialog.cpp \
     src/helpdialog.cpp
 HEADERS += \
     src/cyan.h \
     src/FXX.h \
     src/imageview.h \
     src/profiledialog.h \
-    src/openlayerdialog.h \
     src/helpdialog.h
 RESOURCES += \
     res/cyan.qrc \

@@ -45,8 +45,8 @@ add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
-set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/openlayerdialog.cpp src/FXX.cpp res/cyan.qrc docs/docs.qrc)
-set(HEADERS src/cyan.h src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/openlayerdialog.h src/FXX.h)
+set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.cpp res/cyan.qrc docs/docs.qrc)
+set(HEADERS src/cyan.h src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.h)
 set(RESOURCE_FILES res/cyan.qrc docs/docs.qrc)
 set(RESOURCE_FOLDER res)
 
