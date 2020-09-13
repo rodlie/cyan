@@ -64,9 +64,6 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
     sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full zip libfreetype6-dev libfontconfig1-dev
     if [ "$UBUNTU" = "focal" ]; then
-      sudo dpkg --add-architecture i386
-      sudo apt-get update
-      sudo apt-get install libc6:i386 wine32
       echo "Extracting win64 sdk ..."
       mkdir -p ${MXE}
       #wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-mingw64_xenial64-gcc7-qt59-static-20191103.tar.xz/download && mv download download.tar.xz
@@ -181,8 +178,6 @@ if [ "${OS}" = "Linux" ]; then
     xz -9 Cyan-${TAG}-Linux.tar
     mv Cyan-${TAG}-Linux.tar.xz Cyan-${TAG}-Linux.txz
     cp Cyan-${TAG}-Linux.txz ${DEPLOY}/
-    LIN_CHECKSUM=`sha256sum Cyan-${TAG}-Linux.txz | awk '{print $1}'`
-    echo "===> Linux checksum ${LIN_CHECKSUM}"
   fi
   if [ "$UBUNTU" = "focal" ]; then
     mkdir -p Cyan-${TAG}-Windows/third-party
@@ -190,9 +185,7 @@ if [ "${OS}" = "Linux" ]; then
     cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
     cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
     zip -9 -r Cyan-${TAG}-Windows.zip Cyan-${TAG}-Windows
-    WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.zip | awk '{print $1}'`
     cp Cyan-${TAG}-Windows.zip ${DEPLOY}/
-    echo "===> Windows checksum ${WIN_CHECKSUM}"
   fi
 elif [ "${OS}" = "Darwin" ]; then
   mkdir -p Cyan-${TAG}-Mac/third-party
@@ -201,6 +194,4 @@ elif [ "${OS}" = "Darwin" ]; then
   cp -a ${CWD}/mac64/Cyan.app Cyan-${TAG}-Mac/
   hdiutil create -volname "Cyan ${TAG}" -srcfolder Cyan-${TAG}-Mac -ov -format UDBZ Cyan-${TAG}-Mac.dmg
   cp Cyan-${TAG}-Mac.dmg ${DEPLOY}/
-  MAC_CHECKSUM=`shasum -a 256 Cyan-${TAG}-Mac.dmg | awk '{print $1}'`
-  echo "===> Mac checksum ${MAC_CHECKSUM}"
 fi
