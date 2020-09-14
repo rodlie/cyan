@@ -103,6 +103,10 @@ if [ "${OS}" = "Linux" ]; then
     make DESTDIR=`pwd`/pkg install
     tree pkg
 
+    # we build imagemagick on top the binary sdk, this way we can keep the binary sdk and only change the important bits (IM)
+    cd ${CWD}
+    bash res/magick.sh
+
     cd ${CWD}
     export PATH="${SDK}/bin:/usr/bin:/bin"
     export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
