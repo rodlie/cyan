@@ -66,7 +66,7 @@ if [ "${SETUP}" = 1 ]; then
     if [ "$UBUNTU" = "focal" ]; then
       echo "Extracting win64 sdk ..."
       mkdir -p ${MXE}
-      WIN_TAR=cyan-1.x-20200414-mxe-usr-focal.tar.xz
+      WIN_TAR=cyan-1.x-20200914-mxe-usr-focal.tar.xz
       wget https://github.com/rodlie/cyan/releases/download/continuous/$WIN_TAR
       tar xf $WIN_TAR -C ${MXE}/
     fi
