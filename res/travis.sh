@@ -142,6 +142,9 @@ if [ "${OS}" = "Linux" ]; then
   fi
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
+  cd ${CWD}
+  bash res/magick.sh
+  cd ${CWD}
   PKG_CONFIG=${SDK}/bin/pkg-config
   PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
   PATH=${SDK}/bin:/usr/bin:/bin
