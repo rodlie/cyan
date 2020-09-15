@@ -32,8 +32,12 @@ cd ImageMagick
 git checkout $MAGICK
 cd $CWD
 mkdir build-magick && cd build-magick
-LIBS="-lz -llzma" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ../ImageMagick/configure $DEFAULT_CONFIGURE
-sed -i 's/-ltiff/-ltiff -llzma/g' ../ImageMagick/configure
+EXTRA_LDFLAGS=""
+if [ "$OS" = "Darwin" ]; then
+    EXTRA_LDFLAGS="-mmacosx-version-min=$OSX_MIN"
+fi
+LDFLAGS="$EXTRA_LDFLAGS" LIBS="-lz -llzma" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ../ImageMagick/configure $DEFAULT_CONFIGURE
+sed -i'.original' -e 's/-ltiff/-ltiff -llzma/g' ../ImageMagick/configure
 LIBS="-lz -llzma" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ../ImageMagick/configure $DEFAULT_CONFIGURE
 make -j$JOBS || exit 1
 make install || exit 1
