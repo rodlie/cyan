@@ -33,6 +33,7 @@
 #include <QtTest>
 #include <QFile>
 #include <QDebug>
+#include <string>
 
 #include "FXX.h"
 #include "Magick++.h"
@@ -81,11 +82,11 @@ bool Cyan::compareImages(std::vector<unsigned char> image1,
         dst.read(blob2);
     }
     catch(Magick::Error &error_ ) {
-        qDebug() << error_.what();
+        std::cout << error_.what() << std::endl;
         return false;
     }
     catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
+        std::cout << warn_.what() << std::endl;
     }
     try {
         if (!src.compare(dst)) {
@@ -101,17 +102,17 @@ bool Cyan::compareImages(std::vector<unsigned char> image1,
         }
     }
     catch(Magick::Error &error_ ) {
-        qDebug() << error_.what();
+        std::cout << error_.what() << std::endl;
     }
     catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
+        std::cout << warn_.what() << std::endl;
     }
     return false;
 }
 
 void Cyan::test_case1()
 {
-    qDebug() << "Loading original sample image ...";
+    std::cout << "Loading original sample image ..." << std::endl;
     QFile testImage(":/Test_Out-of-Gamut_colors-en.tif");
     QVERIFY(testImage.open(QIODevice::ReadOnly));
     QByteArray result = testImage.readAll();
@@ -120,7 +121,7 @@ void Cyan::test_case1()
     image.imageBuffer = std::vector<unsigned char>(result.begin(),
                                                    result.end());
 
-    qDebug() << "Extract embedded color profile from sample image ...";
+    std::cout << "Extract embedded color profile from sample image ..." << std::endl;
     Magick::Blob magickBlob(result.data(), static_cast<size_t>(result.length()));
     QVERIFY(magickBlob.length()>0);
     Magick::Image magickImage;
@@ -128,11 +129,11 @@ void Cyan::test_case1()
         magickImage.read(magickBlob);
     }
     catch(Magick::Error &error_ ) {
-        qDebug() << error_.what();
+        std::cout << error_.what() << std::endl;
         QVERIFY(false);
     }
     catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
+        std::cout << warn_.what() << std::endl;
     }
     QVERIFY(magickImage.iccColorProfile().length()>0);
     unsigned char *iccBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(magickImage.iccColorProfile().data()));
@@ -142,7 +143,7 @@ void Cyan::test_case1()
     QVERIFY(image.iccInputBuffer.size()>0);
     QVERIFY(fx.getProfileTag(image.iccInputBuffer) == "Adobe RGB (1998)");
 
-    qDebug() << "Loading CMYK sample image ...";
+    std::cout << "Loading CMYK sample image ..." << std::endl;
     QFile sampleCMYKFile(":/sample-CMYK.tif");
     QVERIFY(sampleCMYKFile.open(QIODevice::ReadOnly));
     QByteArray sampleCMYKResult = sampleCMYKFile.readAll();
@@ -151,7 +152,7 @@ void Cyan::test_case1()
     sampleCMYK = std::vector<unsigned char>(sampleCMYKResult.begin(),
                                             sampleCMYKResult.end());
 
-    qDebug() << "Loading GRAY sample image ...";
+    std::cout << "Loading GRAY sample image ..." << std::endl;
     QFile sampleGRAYFile(":/sample-GRAY.tif");
     QVERIFY(sampleGRAYFile.open(QIODevice::ReadOnly));
     QByteArray sampleGRAYResult = sampleGRAYFile.readAll();
@@ -160,7 +161,7 @@ void Cyan::test_case1()
     sampleGRAY = std::vector<unsigned char>(sampleGRAYResult.begin(),
                                             sampleGRAYResult.end());
 
-    qDebug() << "Loading RGB sample profile ...";
+    std::cout << "Loading RGB sample profile ..." << std::endl;
     QFile testICC1(":/icc/rgb.icc");
     QVERIFY(testICC1.open(QIODevice::ReadOnly));
     QByteArray result2 = testICC1.readAll();
@@ -169,7 +170,7 @@ void Cyan::test_case1()
     image.iccRGB = std::vector<unsigned char>(result2.begin(),
                                               result2.end());
 
-    qDebug() << "Loading CMYK sample profile ...";
+    std::cout << "Loading CMYK sample profile ..." << std::endl;
     QFile testICC2(":/icc/cmyk.icc");
     QVERIFY(testICC2.open(QIODevice::ReadOnly));
     QByteArray result3 = testICC2.readAll();
@@ -178,7 +179,7 @@ void Cyan::test_case1()
     image.iccCMYK = std::vector<unsigned char>(result3.begin(),
                                                result3.end());
 
-    qDebug() << "Loading GRAY sample profile ...";
+    std::cout << "Loading GRAY sample profile ..." << std::endl;
     QFile testICC3(":/icc/gray.icc");
     QVERIFY(testICC3.open(QIODevice::ReadOnly));
     QByteArray result4 = testICC3.readAll();
@@ -190,30 +191,30 @@ void Cyan::test_case1()
 
 void Cyan::test_case2()
 {
-    qDebug() << "Checking for JPEG support ...";
+    std::cout << "Checking for JPEG support ..." << std::endl;
     QVERIFY(fx.hasJPEG());
-    qDebug() << "Checking for PNG support ...";
+    std::cout << "Checking for PNG support ..." << std::endl;
     QVERIFY(fx.hasPNG());
-    qDebug() << "Checking for TIFF support ...";
+    std::cout << "Checking for TIFF support ..." << std::endl;
     QVERIFY(fx.hasTIFF());
-    qDebug() << "Checking for LCMS support ...";
+    std::cout << "Checking for LCMS support ..." << std::endl;
     QVERIFY(fx.hasLCMS());
-    qDebug() << "Checking for HDRI support ...";
+    std::cout << "Checking for HDRI support ..." << std::endl;
     QVERIFY(fx.hasHDRI());
-    qDebug() << "Checking for OpenMP support ...";
+    std::cout << "Checking for OpenMP support ..." << std::endl;
     QVERIFY(fx.hasMP());
-    qDebug() << "Checking for Quantum depth ...";
+    std::cout << "Checking for Quantum depth ..." << std::endl;
     QVERIFY(fx.supportedQuantumDepth() == "Q16" || fx.supportedQuantumDepth() == "Q32");
 }
 
 void Cyan::test_case3()
 {
-    qDebug() << "Checking profiles color space ...";
+    std::cout << "Checking profiles color space ..." << std::endl;
     QVERIFY(fx.getProfileColorspace(image.iccRGB) == FXX::RGBColorSpace);
     QVERIFY(fx.getProfileColorspace(image.iccCMYK) == FXX::CMYKColorSpace);
     QVERIFY(fx.getProfileColorspace(image.iccGRAY) == FXX::GRAYColorSpace);
 
-    qDebug() << "Checking profiles tags ...";
+    std::cout << "Checking profiles tags ..." << std::endl;
     QVERIFY(fx.getProfileTag(image.iccRGB) == "sRGB (built-in)");
     QVERIFY(fx.getProfileTag(image.iccRGB,
                              FXX::ICCCopyright) == "This profile is free of known copyright restrictions");
@@ -243,7 +244,7 @@ void Cyan::test_case3()
 
 void Cyan::test_case4()
 {
-    qDebug() << "Converting RGB to CMYK ...";
+    std::cout << "Converting RGB to CMYK ..." << std::endl;
     FXX::Image convertCMYK;
     convertCMYK.imageBuffer = image.imageBuffer;
     convertCMYK.iccInputBuffer = image.iccInputBuffer;
@@ -254,7 +255,7 @@ void Cyan::test_case4()
     QVERIFY(resultCMYK.imageBuffer.size()>0);
     QVERIFY(compareImages(sampleCMYK, resultCMYK.imageBuffer));
 
-    qDebug() << "Converting CMYK to RGB ...";
+    std::cout << "Converting CMYK to RGB ..." << std::endl;
     FXX::Image sampleCMYK2RGB;
     sampleCMYK2RGB.imageBuffer = sampleCMYK;
     sampleCMYK2RGB.iccInputBuffer = image.iccCMYK;
@@ -273,7 +274,7 @@ void Cyan::test_case4()
 
     QVERIFY(compareImages(sampleCMYK2RGBResult.imageBuffer, resultCMYK2RGBResult.imageBuffer));
 
-    qDebug() << "Converting RGB to GRAY ...";
+    std::cout << "Converting RGB to GRAY ..." << std::endl;
     FXX::Image convertGRAY;
     convertGRAY.imageBuffer = image.imageBuffer;
     convertGRAY.iccInputBuffer = image.iccInputBuffer;
