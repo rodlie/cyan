@@ -132,6 +132,7 @@ if [ "${OS}" = "Linux" ]; then
     STRIP="${MXE}/usr/bin/${TARGET}-strip"
     export PATH="${MXE}/usr/bin:/usr/bin:/bin"
     export PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
+    export WINEDEBUG=warn+all
     ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
     make
     ${STRIP} -s build/Cyan.exe
