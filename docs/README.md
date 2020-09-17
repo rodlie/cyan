@@ -122,16 +122,16 @@ This software is governed by the CeCILL license under French law and abiding by 
 
 Cyan requires the following third-party software installed before build:
 
- * [CMake](https://cmake.org/) 3.1+
- * [Qt(Widgets/Concurrent)](https://www.qt.io/) 5.x
+ * [CMake](https://cmake.org/) 3.1+ (optional)
+ * [Qt(Widgets/Concurrent)](https://www.qt.io/) 5.5+
  * [LCMS](http://www.littlecms.com/) 2.x
- * [ImageMagick](http://imagemagick.org/script/index.php) 6.9.9-24+
+ * [ImageMagick](http://imagemagick.org/script/index.php) 7.0.8-68+
    * [LCMS](http://www.littlecms.com/) 2.x
-   * [TIFF](http://www.simplesystems.org/libtiff/) 4.0.x
+   * [TIFF](http://www.simplesystems.org/libtiff/) 4.x
    * [JPEG](https://www.ijg.org/) 9
    * [PNG](http://www.libpng.org/pub/png/libpng.html) 1.6.x
    * With quantum depth 16+
-   * With HDRI
+   * With HDRI (if 16)
    * With OpenMP
 
 Doing a regular build:
