@@ -114,7 +114,7 @@ FXX::Image FXX::readImage(const std::string &file,
             result.depth = image.depth();
             result.created = image.attribute("date:create");
             result.modified = image.attribute("date:modified");
-            result.filename = image.fileName();
+            result.filename = file;
             result.format = image.format();
 
             // write original

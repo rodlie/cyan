@@ -121,7 +121,6 @@ Cyan::Cyan(QWidget *parent)
         qApp->setPalette(palette);
         setStyleSheet("QToolBar { border: 0; }");
     }
-    setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
     setAttribute(Qt::WA_QuitOnClose);
 
@@ -1512,6 +1511,8 @@ void Cyan::handleReadWatcher()
         exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
         //if (!imageData.info.empty()) { parseImageInfo(); }
         getConvertProfiles();
+        QFileInfo fileinfo(QString::fromStdString(image.filename));
+        setWindowTitle(fileinfo.fileName());
         if (!monitorProfile->currentData().toString().isEmpty()) { updateImage(); }
     } else {
         QMessageBox::warning(this, tr("Image error"),
