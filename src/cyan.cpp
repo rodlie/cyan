@@ -1032,12 +1032,12 @@ void Cyan::handlePSDConverted(bool success, const QString &filename)
     enableUI();
     if (success && lockedSaveFileName.isEmpty()) {
         QMessageBox::information(this,
-                                 tr("Export PSD success"),
+                                 tr("Exported PSD"),
                                  tr("PSD was saved to %1").arg(filename));
     } else if (!success) {
         QMessageBox::warning(this,
                              tr("Failed to export PSD"),
-                             tr("Unable to save PSD file %1").arg(filename));
+                             tr("Unable to save PSD to %1").arg(filename));
     }
     if (!lockedSaveFileName.isEmpty()) { QTimer::singleShot(0, qApp, SLOT(quit())); }
 }
@@ -1588,7 +1588,7 @@ void Cyan::switchLayer(int id)
         qDebug() << "id must be >= 0 !";
         return;
     }
-    if (imageData.layers.size()<(id)) {
+    if (imageData.layers.size()<static_cast<size_t>(id)) {
         qDebug() << "can't find that layer!";
         return;
     }
