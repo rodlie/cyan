@@ -91,14 +91,12 @@ private:
     QComboBox *monitorProfile;
     QComboBox *renderingIntent;
     QCheckBox *blackPoint;
-    QPushButton *mainBarLoadButton;
-    QPushButton *mainBarSaveButton;
-    QPushButton *mainBarInfoButton;
     QMenuBar *menuBar;
     QMenu *fileMenu;
     QMenu *helpMenu;
     QAction *openImageAction;
     QAction *saveImageAction;
+    QAction *infoImageAction;
     QAction *quitAction;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;

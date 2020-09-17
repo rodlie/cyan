@@ -33,8 +33,14 @@
 #include "helpdialog.h"
 #include <QIcon>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
 
-HelpDialog::HelpDialog(QWidget *parent, QString title, QString html, QString css)
+HelpDialog::HelpDialog(QWidget *parent,
+                       QString title,
+                       QString html,
+                       QString css,
+                       bool enableCloseButton)
     : QDialog(parent)
     , browser(Q_NULLPTR)
 {
@@ -43,7 +49,7 @@ HelpDialog::HelpDialog(QWidget *parent, QString title, QString html, QString css
     setMinimumSize(QSize(570, 570));
     setAttribute(Qt::WA_DeleteOnClose, true);
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
@@ -53,4 +59,16 @@ HelpDialog::HelpDialog(QWidget *parent, QString title, QString html, QString css
     browser->setHtml(html);
 
     mainLayout->addWidget(browser);
+
+    if (enableCloseButton) {
+        QWidget *footer = new QWidget(this);
+        QHBoxLayout *footerLayout = new QHBoxLayout(footer);
+        QPushButton *closeButton = new QPushButton(this);
+        closeButton->setText(tr("Close")); // TODO: add icon
+        connect(closeButton, SIGNAL(released()), this, SLOT(close()));
+        footer->setContentsMargins(0, 0, 0, 0);
+        footerLayout->addStretch();
+        footerLayout->addWidget(closeButton);
+        mainLayout->addWidget(footer);
+    }
 }

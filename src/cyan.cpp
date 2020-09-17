@@ -71,14 +71,12 @@ Cyan::Cyan(QWidget *parent)
     , monitorProfile(Q_NULLPTR)
     , renderingIntent(Q_NULLPTR)
     , blackPoint(Q_NULLPTR)
-    , mainBarLoadButton(Q_NULLPTR)
-    , mainBarSaveButton(Q_NULLPTR)
-    , mainBarInfoButton(Q_NULLPTR)
     , menuBar(Q_NULLPTR)
     , fileMenu(Q_NULLPTR)
     , helpMenu(Q_NULLPTR)
     , openImageAction(Q_NULLPTR)
     , saveImageAction(Q_NULLPTR)
+    , infoImageAction(Q_NULLPTR)
     , quitAction(Q_NULLPTR)
     , exportEmbeddedProfileAction(Q_NULLPTR)
     , bitDepth(Q_NULLPTR)
@@ -141,7 +139,6 @@ Cyan::Cyan(QWidget *parent)
     mainBar->setAllowedAreas(Qt::LeftToolBarArea);
     mainBar->setFloatable(false);
     mainBar->setMovable(false);
-    //mainBar->setIconSize(QSize(24,24));
     mainBar->layout()->setSpacing(5);
 
     profileBar->setObjectName("ColorManagement");
@@ -165,21 +162,21 @@ Cyan::Cyan(QWidget *parent)
     bitDepth = new QComboBox(this);
 
     rgbProfile->setSizePolicy(QSizePolicy::Expanding,
-                              QSizePolicy::Expanding);
+                              QSizePolicy::Fixed);
     cmykProfile->setSizePolicy(QSizePolicy::Expanding,
-                               QSizePolicy::Expanding);
+                               QSizePolicy::Fixed);
     grayProfile->setSizePolicy(QSizePolicy::Expanding,
-                               QSizePolicy::Expanding);
+                               QSizePolicy::Fixed);
     inputProfile->setSizePolicy(QSizePolicy::Expanding,
-                                QSizePolicy::Expanding);
+                                QSizePolicy::Fixed);
     outputProfile->setSizePolicy(QSizePolicy::Expanding,
-                                 QSizePolicy::Expanding);
+                                 QSizePolicy::Fixed);
     monitorProfile->setSizePolicy(QSizePolicy::Expanding,
-                                  QSizePolicy::Expanding);
+                                  QSizePolicy::Fixed);
     renderingIntent->setSizePolicy(QSizePolicy::Expanding,
-                                   QSizePolicy::Expanding);
+                                   QSizePolicy::Fixed);
     bitDepth->setSizePolicy(QSizePolicy::Expanding,
-                            QSizePolicy::Expanding);
+                            QSizePolicy::Fixed);
 
     renderingIntent->setMaximumWidth(130);
 
@@ -257,31 +254,6 @@ Cyan::Cyan(QWidget *parent)
     selectedLayerLabel = new QLabel(tr("Layer"), this);
     enableLayers(false);
 
-    mainBarLoadButton = new QPushButton(this);
-    mainBarSaveButton = new QPushButton(this);
-    mainBarInfoButton = new QPushButton(this);
-
-    mainBarLoadButton->setToolTip(tr("Open image"));
-    mainBarLoadButton->setIcon(QIcon::fromTheme("document-open", QIcon(":/cyan-open.png")));
-    mainBarSaveButton->setToolTip(tr("Save image"));
-    mainBarSaveButton->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
-    mainBarInfoButton->setToolTip(tr("Get image information"));
-    mainBarInfoButton->setIcon(QIcon::fromTheme("dialog-information", QIcon(":/cyan-info.png")));
-
-    mainBar->addWidget(mainBarLoadButton);
-    mainBar->addWidget(mainBarSaveButton);
-    mainBar->addWidget(mainBarInfoButton);
-    mainBar->addWidget(selectedLayerLabel);
-    mainBar->addWidget(selectedLayer);
-    mainBar->addWidget(inputLabel);
-    mainBar->addWidget(inputProfile);
-    mainBar->addWidget(outputLabel);
-    mainBar->addWidget(outputProfile);
-    mainBar->addWidget(bitDepthLabel);
-    mainBar->addWidget(bitDepth);
-    mainBar->addWidget(qualityLabel);
-    mainBar->addWidget(qualityBox);
-
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
     profileBar->addWidget(cmykLabel);
@@ -341,8 +313,12 @@ Cyan::Cyan(QWidget *parent)
     saveImageAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
     saveImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     fileMenu->addAction(saveImageAction);
-
     fileMenu->addSeparator();
+
+    infoImageAction = new QAction(tr("Image information"), this);
+    infoImageAction->setIcon(QIcon::fromTheme("dialog-information", QIcon(":/cyan-info.png")));
+    infoImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
+    fileMenu->addAction(infoImageAction);
 
     exportEmbeddedProfileAction = new QAction(tr("Save embedded profile"), this);
     exportEmbeddedProfileAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
@@ -367,6 +343,20 @@ Cyan::Cyan(QWidget *parent)
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     fileMenu->addAction(quitAction);
 
+    mainBar->addAction(openImageAction);
+    mainBar->addAction(saveImageAction);
+    mainBar->addAction(infoImageAction);
+    mainBar->addWidget(selectedLayerLabel);
+    mainBar->addWidget(selectedLayer);
+    mainBar->addWidget(inputLabel);
+    mainBar->addWidget(inputProfile);
+    mainBar->addWidget(outputLabel);
+    mainBar->addWidget(outputProfile);
+    mainBar->addWidget(bitDepthLabel);
+    mainBar->addWidget(bitDepth);
+    mainBar->addWidget(qualityLabel);
+    mainBar->addWidget(qualityBox);
+
     qRegisterMetaType<FXX::Image>("FXX::Image");
     qRegisterMetaType<Magick::Image>("Magick::Image");
 
@@ -381,10 +371,6 @@ Cyan::Cyan(QWidget *parent)
     connect(openImageAction, SIGNAL(triggered()),
             this, SLOT(openImageDialog()));
     connect(saveImageAction, SIGNAL(triggered()),
-            this, SLOT(saveImageDialog()));
-    connect(mainBarLoadButton, SIGNAL(released()),
-            this, SLOT(openImageDialog()));
-    connect(mainBarSaveButton, SIGNAL(released()),
             this, SLOT(saveImageDialog()));
     connect(exportEmbeddedProfileAction, SIGNAL(triggered()),
             this, SLOT(exportEmbeddedProfileDialog()));
@@ -416,7 +402,7 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(blackPointUpdated(int)));
     connect(this, SIGNAL(finishedConvertingPSD(bool,QString)),
             this, SLOT(handlePSDConverted(bool,QString)));
-    connect(mainBarInfoButton, SIGNAL(released()),
+    connect(infoImageAction, SIGNAL(triggered()),
             this, SLOT(handleImageInfoButton()));
     connect(this, SIGNAL(newImageInfo(QString)),
             this, SLOT(handleImageInfo(QString)));
@@ -936,8 +922,6 @@ void Cyan::imageClear()
     exportEmbeddedProfileAction->setDisabled(true);
     ignoreConvertAction = false;
     activeLayer = -1;
-    /*selectedLayer->hide();
-    selectedLayerLabel->hide();*/
     selectedLayer->clear();
     enableLayers(false);
 }
@@ -1027,7 +1011,6 @@ void Cyan::convertPSD(FXX::Image image, const QString &filename)
 
 void Cyan::handlePSDConverted(bool success, const QString &filename)
 {
-    qDebug() << "HANDLE PSD CONVERTED" << success << filename;
     enableUI();
     if (success && lockedSaveFileName.isEmpty()) {
         QMessageBox::information(this,
@@ -1427,6 +1410,7 @@ QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
+    folders << qApp->applicationDirPath() + "/../share/color/icc";
     QString cyanICCPath = QDir::homePath() + "/.config/Cyan/icc";
     QDir cyanICCDir(cyanICCPath);
     if (cyanICCDir.exists(cyanICCPath)) {
