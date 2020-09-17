@@ -89,6 +89,9 @@ Cyan::Cyan(QWidget *parent)
     , qualityBox(Q_NULLPTR)
     , magickMemoryResourcesGroup(Q_NULLPTR)
     , memoryMenu(Q_NULLPTR)
+    , activeLayer(-1)
+    , selectedLayer(Q_NULLPTR)
+    , selectedLayerLabel(Q_NULLPTR)
 {
     // get style settings
     QSettings settings;
@@ -251,6 +254,10 @@ Cyan::Cyan(QWidget *parent)
     qualityBox->setRange(0, 100);
     qualityBox->setValue(100);
 
+    selectedLayer = new QComboBox(this);
+    selectedLayerLabel = new QLabel(tr("Layer"), this);
+    enableLayers(false);
+
     mainBarLoadButton = new QPushButton(this);
     mainBarSaveButton = new QPushButton(this);
     mainBarInfoButton = new QPushButton(this);
@@ -265,6 +272,8 @@ Cyan::Cyan(QWidget *parent)
     mainBar->addWidget(mainBarLoadButton);
     mainBar->addWidget(mainBarSaveButton);
     mainBar->addWidget(mainBarInfoButton);
+    mainBar->addWidget(selectedLayerLabel);
+    mainBar->addWidget(selectedLayer);
     mainBar->addWidget(inputLabel);
     mainBar->addWidget(inputProfile);
     mainBar->addWidget(outputLabel);
@@ -412,6 +421,8 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(handleImageInfoButton()));
     connect(this, SIGNAL(newImageInfo(QString)),
             this, SLOT(handleImageInfo(QString)));
+    connect(selectedLayer, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(switchLayer(int)));
 
     clearImageBuffer();
     QTimer::singleShot(0, this,
@@ -925,6 +936,11 @@ void Cyan::imageClear()
     bitDepth->setCurrentIndex(0);
     exportEmbeddedProfileAction->setDisabled(true);
     ignoreConvertAction = false;
+    activeLayer = -1;
+    /*selectedLayer->hide();
+    selectedLayerLabel->hide();*/
+    selectedLayer->clear();
+    enableLayers(false);
 }
 
 void Cyan::resetImageZoom()
@@ -1505,8 +1521,9 @@ void Cyan::handleReadWatcher()
         QMessageBox::warning(this, tr("Image warning"),
                              QString::fromStdString(image.warning));
     }
-    if (image.layers.size()>0) {
-        handleImageHasLayers(image.layers);
+    if (image.layers.size()>1) {
+        enableLayers(true);
+        //handleImageHasLayers(image.layers);
         //imageData.layers.clear();
     }
 }
@@ -1562,6 +1579,46 @@ void Cyan::handleImageInfo(QString information)
                              tr("Failed to identify image"),
                              tr("Unable to get any image information."));
     }
+}
+
+void Cyan::switchLayer(int id)
+{ // WIP
+    qDebug() << "switch to layer" << id;
+    if (id<0) {
+        qDebug() << "id must be >= 0 !";
+        return;
+    }
+    if (imageData.layers.size()<(id)) {
+        qDebug() << "can't find that layer!";
+        return;
+    }
+    Magick::Blob output;
+    imageData.layers[id].write(&output);
+    unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
+    std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
+    imageData.imageBuffer = imgData;
+    updateImage();
+}
+
+void Cyan::enableLayers(bool enable)
+{
+    selectedLayer->setEnabled(enable);
+    selectedLayerLabel->setEnabled(enable);
+    if (!enable) {
+        selectedLayer->clear();
+        return;
+    }
+    selectedLayer->blockSignals(true);
+    for (size_t i = 0; i < imageData.layers.size(); ++i) {
+        QString label = QString::fromStdString(imageData.layers.at(i).label());
+        if (label.isEmpty()) {
+            label = tr("[%1] Layer");
+        } else {
+            label.prepend("[%1] ");
+        }
+        selectedLayer->addItem(label.arg(i));
+    }
+    selectedLayer->blockSignals(false);
 }
 
 void Cyan::handleNativeStyleChanged(bool triggered)

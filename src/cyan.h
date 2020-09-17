@@ -111,6 +111,9 @@ private:
     QSpinBox *qualityBox;
     QActionGroup *magickMemoryResourcesGroup;
     QMenu *memoryMenu;
+    int activeLayer;
+    QComboBox *selectedLayer;
+    QLabel *selectedLayerLabel;
 
 private slots:
     void readConfig();
@@ -194,6 +197,9 @@ private slots:
     void handleImageInfoButton();
     void getImageInfo(FXX::Image image);
     void handleImageInfo(QString information);
+
+    void switchLayer(int id);
+    void enableLayers(bool enable);
 
     void handleNativeStyleChanged(bool triggered);
 
