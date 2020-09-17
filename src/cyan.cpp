@@ -733,8 +733,8 @@ void Cyan::openImage(Magick::Image image)
 
 void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
 {
-    qDebug() << "SAVE PSD?" << imageData.isPSD;
-    if (imageData.isPSD) {
+    QFileInfo imageFile(file);
+    if (imageData.isPSD && imageFile.suffix().toLower() == "psd") {
         exportPSD(file);
         return;
     }
@@ -1604,10 +1604,8 @@ void Cyan::enableLayers(bool enable)
 {
     selectedLayer->setEnabled(enable);
     selectedLayerLabel->setEnabled(enable);
-    if (!enable) {
-        selectedLayer->clear();
-        return;
-    }
+    selectedLayer->clear();
+    if (!enable) { return; }
     selectedLayer->blockSignals(true);
     for (size_t i = 0; i < imageData.layers.size(); ++i) {
         QString label = QString::fromStdString(imageData.layers.at(i).label());
