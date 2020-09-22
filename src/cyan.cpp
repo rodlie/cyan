@@ -278,6 +278,8 @@ Cyan::Cyan(QWidget *parent)
     prefsMenu = new QMenu(tr("Preferences"), this);
     memoryMenu = new QMenu(tr("Memory limit"), this);
 
+    prefsMenu->menuAction()->setMenuRole(QAction::NoRole); // QTBUG-43881
+
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
     //menuBar->setMaximumHeight(20);
