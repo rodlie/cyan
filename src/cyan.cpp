@@ -567,7 +567,7 @@ void Cyan::aboutCyan()
     style = "body {"
             "margin: 1em;"
             "font-family: sans-serif; }"
-            "h1, h2, h3, h4 { font-weight: normal; }"
+            "h1, h2, h3, h4 { font-weight: normal; }";
     if (!nativeStyle) {
         style.append(".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }");
     }
