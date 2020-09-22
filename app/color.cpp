@@ -123,6 +123,7 @@ void Editor::setDefaultColorProfileFromFilename(QActionGroup *group,
         if (!action) { continue; }
         if (action->data().toString() == filename) {
             action->setChecked(true);
+            break;
         }
     }
 }
@@ -136,6 +137,7 @@ void Editor::setDefaultColorProfileFromTitle(QActionGroup *group,
         if (!action) { continue; }
         if (action->text() == title) {
             action->setChecked(true);
+            break;
         }
     }
 }
@@ -169,6 +171,7 @@ Magick::Blob Editor::selectedDefaultColorProfileData(QActionGroup *group)
 
 void Editor::populateColorIntentMenu()
 {
+    // TODO: simplify!
     //QIcon intentIcon = QIcon::fromTheme("video-display");
     QAction *action1 = new QAction(colorIntentMenu);
     action1->setText(tr("Undefined"));
