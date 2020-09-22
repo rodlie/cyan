@@ -41,6 +41,8 @@
 #include "CyanColorConvert.h"
 #include "CyanAboutDialog.h"
 
+
+// TODO: don't force font size
 #ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
 #else
@@ -111,7 +113,7 @@ Editor::Editor(QWidget *parent)
     , _native(false)
 {
     // set window title
-    setWindowTitle(qApp->applicationName());
+    setWindowTitle(qApp->applicationName()); // TODO: don't set app name in title
     setAttribute(Qt::WA_QuitOnClose);
 
     // register Magick Image
@@ -549,7 +551,7 @@ void Editor::writeProjectPSD(const QString &filename, bool setFilename)
     if (filename.isEmpty() || !getCurrentCanvas()) { return; }
     bool success = CyanImageFormat::writePSD(getCurrentCanvas()->getCanvasProject(),
                                              filename/*,
-                                             Magick::RLECompression*/);
+                                             Magick::RLECompression*/); // TODO: can we compress at all? don't seem to work
     qDebug() << "SUCCESS?" << success;
     if (success) {
         /*QMessageBox::information(this, tr("Exported PSD"),
@@ -572,6 +574,7 @@ void Editor::writeProjectPSD(const QString &filename, bool setFilename)
 }*/
 
 // load unknown image
+// TODO: ping file first!
 void Editor::loadImage(const QString &filename)
 {
     qDebug() << "loadImage" << filename;
@@ -592,6 +595,7 @@ void Editor::loadImage(const QString &filename)
 }
 
 // read "regular" new image
+// TODO: ping file first!
 void Editor::readImage(Magick::Blob blob,
                        const QString &filename)
 {
@@ -898,7 +902,7 @@ void Editor::loadImageDialog()
     QMimeDatabase db;
     QMimeType type = db.mimeTypeForFile(filename);
     if (type.name().startsWith(QString("audio")) ||
-        type.name().startsWith(QString("video"))) { return; }
+        type.name().startsWith(QString("video"))) { return; } // TODO! ping file to see if it's a loadable image
     loadImage(filename);
 }
 
@@ -1116,16 +1120,14 @@ void Editor::checkTabsOnClose()
 
 bool Editor::hasDirtyProjects()
 {
-    bool isDirty = false;
     for (int i = 0; i < mdi->subWindowList().size(); ++i) {
-        if (isDirty) { break; }
         QMdiSubWindow *tab = mdi->subWindowList().at(i);
         if (!tab) { continue; }
         View *view = qobject_cast<View*>(tab->widget());
         if (!view) { continue; }
-        if (view->isDirty()) { isDirty = true; }
+        if (view->isDirty()) { return true; }
     }
-    return isDirty;
+    return false;
 }
 
 void Editor::setActionsDisabled(bool disabled)
@@ -1222,12 +1224,12 @@ void Editor::handleOpenImages(const QList<QUrl> &urls)
         QMimeDatabase db;
         QMimeType type = db.mimeTypeForFile(filename);
         if (type.name().startsWith(QString("audio")) ||
-            type.name().startsWith(QString("video"))) { continue; }
+            type.name().startsWith(QString("video"))) { continue; } // TODO! ping file to see if it's a loadable image
         if (CyanImageFormat::isValidCanvas(filename)) { loadProject(filename); }
         else if (CyanImageFormat::hasLayers(filename)>0) { loadUnknownProject(filename); }
         else { readImage(filename); }
     }
-    if (urls.size()>1) {
+    if (urls.size()>1) { // TODO! this should check if any of the above files where images, we don't want to tile if no images was loaded
         mdi->tileSubWindows();
     }
 }
@@ -1253,7 +1255,7 @@ void Editor::handleOpenLayers(const QList<QUrl> &urls)
                 CyanImageFormat::isValidCanvas(filename))
             {
                 continue; // skip
-            }
+            } // TODO! ping file to see if it's a loadable image
             if (CyanImageFormat::hasLayers(filename)>1) {
                 Magick::readImages(&images, filename.toStdString());
             } else {
