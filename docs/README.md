@@ -34,6 +34,3 @@ News and updates related to Cyan.
 ![Promo](https://github.com/rodlie/cyan/raw/1.2/docs/images/cyan-promo-05.png)
 
 This software is governed by the CeCILL license under French law and abiding by the rules of distribution of free software. You can use, modify and / or redistribute the software under the terms of the CeCILL license as circulated by CEA, CNRS and INRIA at the following URL https://www.cecill.info.
-
-![GitHub top language](https://img.shields.io/github/languages/top/rodlie/cyan.svg) ![GitHub language count](https://img.shields.io/github/languages/count/rodlie/cyan.svg) ![SourceForge](https://img.shields.io/sourceforge/dm/prepress.svg) 
-![GitHub Releases](https://img.shields.io/github/downloads/rodlie/cyan/latest/total.svg) ![Travis (.org)](https://img.shields.io/travis/rodlie/cyan.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/rodlie/cyan.svg) ![GitHub issues](https://img.shields.io/github/issues-raw/rodlie/cyan.svg) ![GitHub closed issues](https://img.shields.io/github/issues-closed/rodlie/cyan.svg) [![GitHub release](https://img.shields.io/github/release/rodlie/cyan.svg)](https://github.com/rodlie/cyan/releases) [![Github commits (since latest release)](https://img.shields.io/github/commits-since/rodlie/cyan/latest.svg)](https://github.com/rodlie/cyan)
