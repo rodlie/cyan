@@ -49,6 +49,10 @@
 #include "qtcolorpicker.h"
 #include "qtwindowlistmenu.h"
 
+// TMP
+#include "CyanBatchWidget.h"
+//
+
 class Editor : public QMainWindow
 {
     Q_OBJECT
@@ -252,6 +256,7 @@ private slots:
     void loadProject(const QString &filename);
     void loadUnknownProject(const QString &filename);
     void writeProject(const QString &filename, bool setFilename = true);
+    void writeProjectPSD(const QString &filename, bool setFilename = true);
 
     //void saveImage(const QString &filename);
     void loadImage(const QString &filename);

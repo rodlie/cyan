@@ -38,8 +38,7 @@ void Editor::handleLayersOpacity(double value, int id)
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
-    view->setLayerOpacity(id,
-                          value);
+    view->setLayerOpacity(id, value);
 }
 
 void Editor::handleLayersUpdated()
@@ -62,8 +61,7 @@ void Editor::handleLayerVisibility(int id,
                                    bool visible)
 {
     if (!getCurrentCanvas()) { return; }
-    getCurrentCanvas()->setLayerVisibility(id,
-                                         visible);
+    getCurrentCanvas()->setLayerVisibility(id, visible);
 }
 
 void Editor::handleLayerLabel(int id,
@@ -71,8 +69,7 @@ void Editor::handleLayerLabel(int id,
 {
     if (!getCurrentCanvas()) { return; }
     if (getCurrentCanvas()->getLayerName(id) != label) {
-        getCurrentCanvas()->setLayerName(id,
-                                         label);
+        getCurrentCanvas()->setLayerName(id, label);
     }
 }
 
@@ -80,8 +77,7 @@ void Editor::handleLayerLock(int id, bool lock)
 {
     if (!getCurrentCanvas()) { return; }
     qDebug() << "handle layer lock changed" << id << lock;
-    getCurrentCanvas()->setLayerLock(id,
-                                     lock);
+    getCurrentCanvas()->setLayerLock(id, lock);
 }
 
 void Editor::addLayerToView(Magick::Image image,
@@ -156,8 +152,7 @@ void Editor::handleMoveLayerDown(int id)
     getCurrentCanvas()->setLayerOrder(id, bottomOrder);
     getCurrentCanvas()->setLayerOrder(bottomID, topOrder);
 
-    layersWidget->handleTabActivated(mdi->currentSubWindow(),
-                                     true);
+    layersWidget->handleTabActivated(mdi->currentSubWindow(), true);
 
     getCurrentCanvas()->moveLayerItemDown(id);
 }
@@ -182,8 +177,7 @@ void Editor::handleMoveLayerUp(int id)
     getCurrentCanvas()->setLayerOrder(id, overOrder);
     getCurrentCanvas()->setLayerOrder(overID, currentOrder);
 
-    layersWidget->handleTabActivated(mdi->currentSubWindow(),
-                                     true);
+    layersWidget->handleTabActivated(mdi->currentSubWindow(), true);
 
     getCurrentCanvas()->moveLayerItemUp(id);
 }

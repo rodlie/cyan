@@ -65,7 +65,12 @@ public:
         RelativeRenderingIntent
     };
 
-
+    enum OutputFormatConverter
+    {
+        OutputFormatConverterTiff,
+        OutputFormatConverterJpeg,
+        OutputFormatConverterPsd
+    };
 
     CyanCommon(QObject *parent = nullptr);
 
