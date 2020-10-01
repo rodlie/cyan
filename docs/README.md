@@ -17,6 +17,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 * Convert to and from RGB/CMYK/GRAY
 * Change image bit depth
 * GIMP integration (import/export)
+* Color convert images with layers (PSD/TIFF)
 
 # News
 ![Promo](https://github.com/rodlie/cyan/raw/1.2/docs/images/cyan-promo-02.png)

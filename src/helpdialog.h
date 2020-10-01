@@ -45,7 +45,8 @@ public:
     HelpDialog(QWidget *parent = Q_NULLPTR,
                QString title = QString(),
                QString html = QString(),
-               QString css = QString());
+               QString css = QString(),
+               bool enableCloseButton = true);
 
 private:
     QTextBrowser *browser;

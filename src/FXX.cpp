@@ -53,9 +53,12 @@ FXX::Image FXX::readImage(const std::string &file,
             if (readLayers) {
                 Magick::readImages(&layers, file.c_str());
                 image = layers[0];
-                layers.erase(layers.begin());
+                //layers.erase(layers.begin());
             } else {
                 image.read(file.c_str());
+            }
+            if (image.format() == "Adobe Photoshop bitmap") {
+                result.isPSD = true;
             }
             image.magick("MIFF");
         }
@@ -72,9 +75,9 @@ FXX::Image FXX::readImage(const std::string &file,
 
             // get image layers
             if (layers.size()>0) {
-                for (unsigned long i=0;i<layers.size();++i) {
+                /*for (unsigned long i=0;i<layers.size();++i) {
                     layers[i].magick("MIFF");
-                }
+                }*/
                 result.layers = layers;
             }
 
@@ -111,7 +114,7 @@ FXX::Image FXX::readImage(const std::string &file,
             result.depth = image.depth();
             result.created = image.attribute("date:create");
             result.modified = image.attribute("date:modified");
-            result.filename = image.fileName();
+            result.filename = file;
             result.format = image.format();
 
             // write original
@@ -720,6 +723,84 @@ bool FXX::saveImage(FXX::Image data, int quality)
     }
     catch(Magick::Warning &warn_ ) {
         std::cout << "save image warning! " << warn_.what() << std::endl;
+    }
+    return true;
+}
+
+bool FXX::writePSD(FXX::Image data,
+                  std::string filename)
+{
+    std::cout << "PSD? " << data.layers.size() << " " << data.isPSD << std::endl;
+    if (data.layers.size()<=0 || !data.isPSD) {
+        std::cout << "Not a PSD?" << std::endl;
+        return false;
+    }
+    for (unsigned long i=0;i<data.layers.size();++i) {
+        try {
+
+            // set PSD attributes
+            data.layers[i].defineValue("psd", "additional-info", "all");
+            data.layers[i].defineValue("psd", "preserve-opacity-mask", "true");
+
+            // have ICC profiles?
+            if (data.iccOutputBuffer.size()==0 || data.iccInputBuffer.size()==0) {
+                std::cout << "Missing ICC profiles" << std::endl;
+                return false;
+            }
+
+            // strip existing profiles
+            data.layers[i].profile("ICC", Magick::Blob());
+            data.layers[i].profile("ICM", Magick::Blob());
+
+            // set rendering intent and blackpoint
+            if (data.intent != FXX::UndefinedRenderingIntent) {
+                switch (data.intent) {
+                case FXX::SaturationRenderingIntent:
+                    data.layers[i].renderingIntent(Magick::SaturationIntent);
+                    break;
+                case FXX::PerceptualRenderingIntent:
+                    data.layers[i].renderingIntent(Magick::PerceptualIntent);
+                    break;
+                case FXX::AbsoluteRenderingIntent:
+                    data.layers[i].renderingIntent(Magick::AbsoluteIntent);
+                    break;
+                case FXX::RelativeRenderingIntent:
+                    data.layers[i].renderingIntent(Magick::RelativeIntent);
+                    break;
+                default:;
+                }
+            }
+            data.layers[i].blackPointCompensation(data.blackpoint);
+
+            // apply source color profile
+            Magick::Blob sourceProfile(data.iccInputBuffer.data(),
+                                       data.iccInputBuffer.size());
+            data.layers[i].profile("ICC", sourceProfile);
+
+            // apply destination color profile
+            Magick::Blob destinationProfile(data.iccOutputBuffer.data(),
+                                            data.iccOutputBuffer.size());
+            data.layers[i].profile("ICC", destinationProfile);
+        }
+        catch(Magick::Error &error_ ) {
+            std::cout << "save PSD error!" << error_.what() << std::endl;
+            return false;
+        }
+        catch(Magick::Warning &warn_ ) {
+            std::cout << "save PSD warning! " << warn_.what() << std::endl;
+        }
+    }
+    try {
+        Magick::writeImages(data.layers.begin(),
+                            data.layers.end(),
+                            filename);
+    }
+    catch(Magick::Error &error_ ) {
+        std::cout << "save PSD error!" << error_.what() << std::endl;
+        return false;
+    }
+    catch(Magick::Warning &warn_ ) {
+        std::cout << "save PSD warning! " << warn_.what() << std::endl;
     }
     return true;
 }

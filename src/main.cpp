@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Cyan");
     QCoreApplication::setOrganizationName("Cyan");
+    QGuiApplication::setApplicationDisplayName("Cyan");
     QCoreApplication::setOrganizationDomain("net.fxarena");
     QCoreApplication::setApplicationVersion(CYAN_VERSION);
     Cyan w;

@@ -39,7 +39,7 @@ fi
 
 OS=`uname -s`
 CWD=`pwd`
-MXE=/opt/mxe
+MXE=/opt/cyan-mxe
 SDK=/opt/${OS}
 DEPLOY=/opt/deploy
 
@@ -54,6 +54,7 @@ if [ "${SETUP}" = 1 ]; then
   tar xf download.tar.xz -C /opt
   rm -f download.tar.xz
   if [ "${OS}" = "Linux" ]; then
+    UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
     echo "Setup ubuntu ..."
     sudo apt remove --purge imagemagick imagemagick-common
     sudo apt-get update
@@ -61,20 +62,24 @@ if [ "${SETUP}" = 1 ]; then
     sudo apt-get install scons autoconf automake autopoint bash bison bzip2 gettext git gperf intltool
     sudo apt-get install openssl patch perl pkg-config python ruby sed unzip wget xz-utils wine
     sudo apt-get install libgdk-pixbuf2.0-dev libltdl-dev libssl-dev libtool libxml-parser-perl make
-    sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full libfreetype6-dev libfontconfig1-dev
-    echo "Extracting win64 sdk ..."
-    mkdir -p ${MXE}
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-sdk-mingw64_xenial64-gcc7-qt59-static-20191103.tar.xz/download && mv download download.tar.xz
-    tar xf download.tar.xz -C ${MXE}/
-    rm -f download.tar.xz
-    echo "Extracting xenial64 sdk ..."
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-xenial64.tar.xz/download && mv download download.tar.xz
-    sudo tar xf download.tar.xz -C /
-    rm -f download.tar.xz
-    echo "Extracting linux64 sdk ..."
-    wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-linux64.tar.xz/download && mv download download.tar.xz
-    tar xf download.tar.xz -C /opt
-    rm -f download.tar.xz
+    sudo apt-get install flex g++ g++-multilib libc6-dev-i386 wine p7zip-full zip libfreetype6-dev libfontconfig1-dev
+    if [ "$UBUNTU" = "focal" ]; then
+      echo "Extracting win64 sdk ..."
+      mkdir -p ${MXE}
+      WIN_TAR=cyan-1.x-20200914-mxe-usr-focal.tar.xz
+      wget https://github.com/rodlie/cyan/releases/download/continuous/$WIN_TAR
+      tar xf $WIN_TAR -C ${MXE}/
+    fi
+    if [ "$UBUNTU" = "xenial" ]; then
+      echo "Extracting xenial64 sdk ..."
+      wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-xenial64.tar.xz/download && mv download download.tar.xz
+      sudo tar xf download.tar.xz -C /
+      rm -f download.tar.xz
+      echo "Extracting linux64 sdk ..."
+      wget https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-linux64.tar.xz/download && mv download download.tar.xz
+      tar xf download.tar.xz -C /opt
+      rm -f download.tar.xz
+    fi
   elif [ "${OS}" = "Darwin" ]; then
     curl -L https://sourceforge.net/projects/prepress/files/sdk/cyan-1.2-sdk-mac11clang6.tar.xz/download --output download.tar.xz
     tar xf download.tar.xz -C /opt
@@ -86,48 +91,61 @@ if [ "${SETUP}" = 1 ]; then
 fi
 
 if [ "${OS}" = "Linux" ]; then
-  echo "Building CI ..."
-  mkdir -p $CWD/ci
-  cd $CWD/ci
-  cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-  make
-  make test
-  make DESTDIR=`pwd`/pkg install
-  tree pkg
+  UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
 
-  cd ${CWD}
-  export PATH="${SDK}/bin:/usr/bin:/bin"
-  export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
-  echo "===> Building for Linux64 ..."
-  mkdir -p ${CWD}/linux64 && cd ${CWD}/linux64
-  qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ../cyan.pro
-  make
-  strip -s build/Cyan
-  mv build/Cyan .
-  mkdir -p ${CWD}/linux64-test && cd ${CWD}/linux64-test
-  qmake ../tests.pro
-  make
+  if [ "$UBUNTU" = "xenial" ]; then
+    echo "Building CI ..."
+    mkdir -p $CWD/ci
+    cd $CWD/ci
+    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+    make
+    make test
+    make DESTDIR=`pwd`/pkg install
+    tree pkg
 
-  echo "===> Building win64 ..."
-  mkdir -p ${CWD}/win64
-  cd ${CWD}/win64
-  TARGET=x86_64-w64-mingw32.static
-  MINGW="${MXE}/usr/${TARGET}"
-  CMAKE="${TARGET}-cmake"
-  QT=${MINGW}/qt5
-  QMAKE=${QT}/bin/qmake
-  STRIP="${MXE}/usr/bin/${TARGET}-strip"
-  PATH="${MXE}/usr/bin:/usr/bin:/bin"
-  PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
-  ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
-  make
-  ${STRIP} -s build/Cyan.exe
-  mv build/Cyan.exe .
-  mkdir -p ${CWD}/win64-test && cd ${CWD}/win64-test
-  ${QMAKE} ../tests.pro
-  make
+    # we build imagemagick on top the binary sdk, this way we can keep the binary sdk and only change the important bits (IM)
+    cd ${CWD}
+    bash res/magick.sh
+
+    cd ${CWD}
+    export PATH="${SDK}/bin:/usr/bin:/bin"
+    export PKG_CONFIG_PATH="${SDK}/lib/pkgconfig"
+    echo "===> Building for Linux64 ..."
+    mkdir -p ${CWD}/linux64 && cd ${CWD}/linux64
+    qmake GIT=${COMMIT} CONFIG+=release PREFIX=/usr ../cyan.pro
+    make
+    strip -s build/Cyan
+    mv build/Cyan .
+    mkdir -p ${CWD}/linux64-test && cd ${CWD}/linux64-test
+    qmake ../tests.pro
+    make
+  fi
+  if [ "$UBUNTU" = "focal" ]; then
+    echo "===> Building win64 ..."
+    mkdir -p ${CWD}/win64
+    cd ${CWD}/win64
+    TARGET=x86_64-w64-mingw32.static
+    MINGW="${MXE}/usr/${TARGET}"
+    CMAKE="${TARGET}-cmake"
+    QT=${MINGW}/qt5
+    QMAKE=${QT}/bin/qmake
+    STRIP="${MXE}/usr/bin/${TARGET}-strip"
+    export PATH="${MXE}/usr/bin:/usr/bin:/bin"
+    export PKG_CONFIG_PATH="${MINGW}/lib/pkgconfig"
+    #export WINEDEBUG=warn+all
+    ${QMAKE} GIT=${COMMIT} CONFIG+=release  ../cyan.pro
+    make
+    ${STRIP} -s build/Cyan.exe
+    mv build/Cyan.exe .
+    mkdir -p ${CWD}/win64-test && cd ${CWD}/win64-test
+    ${QMAKE} ../tests.pro
+    make
+  fi
 elif [ "${OS}" = "Darwin" ]; then
   echo "===> Building mac64 ..."
+  cd ${CWD}
+  bash res/magick.sh
+  cd ${CWD}
   PKG_CONFIG=${SDK}/bin/pkg-config
   PKG_CONFIG_PATH="${SDK}/lib/pkgconfig:${PKG_CONFIG_PATH}"
   PATH=${SDK}/bin:/usr/bin:/bin
@@ -154,25 +172,27 @@ if [ "${TRAVIS_TAG}" != "" ]; then
 fi
 
 if [ "${OS}" = "Linux" ]; then
-  mkdir -p Cyan-${TAG}-Windows/third-party Cyan-${TAG}-Linux/third-party
-  cp ${CWD}/LICENSE Cyan-${TAG}-Windows/
-  cp ${CWD}/LICENSE Cyan-${TAG}-Linux/
-  cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
-  cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
-  cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
-  cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
-  cp ${CWD}/res/cyan.desktop Cyan-${TAG}-Linux/
-  cp -a ${CWD}/res/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
-  7za -mx=9 a -r Cyan-${TAG}-Windows.7z Cyan-${TAG}-Windows
-  WIN_CHECKSUM=`sha256sum Cyan-${TAG}-Windows.7z | awk '{print $1}'`
-  cp Cyan-${TAG}-Windows.7z ${DEPLOY}/
-  echo "===> Windows checksum ${WIN_CHECKSUM}"
-  tar cvvf Cyan-${TAG}-Linux.tar Cyan-${TAG}-Linux
-  xz -9 Cyan-${TAG}-Linux.tar
-  mv Cyan-${TAG}-Linux.tar.xz Cyan-${TAG}-Linux.txz
-  cp Cyan-${TAG}-Linux.txz ${DEPLOY}/
-  LIN_CHECKSUM=`sha256sum Cyan-${TAG}-Linux.txz | awk '{print $1}'`
-  echo "===> Linux checksum ${LIN_CHECKSUM}"
+  UBUNTU=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
+  if [ "$UBUNTU" = "xenial" ]; then
+    mkdir -p Cyan-${TAG}-Linux/third-party
+    cp ${CWD}/LICENSE Cyan-${TAG}-Linux/
+    cp -a /opt/legal/Linux/* Cyan-${TAG}-Linux/third-party/
+    cp ${CWD}/linux64/Cyan Cyan-${TAG}-Linux/
+    cp ${CWD}/res/cyan.desktop Cyan-${TAG}-Linux/
+    cp -a ${CWD}/res/hicolor/128x128/apps/cyan.png Cyan-${TAG}-Linux/
+    tar cvvf Cyan-${TAG}-Linux.tar Cyan-${TAG}-Linux
+    xz -9 Cyan-${TAG}-Linux.tar
+    mv Cyan-${TAG}-Linux.tar.xz Cyan-${TAG}-Linux.txz
+    cp Cyan-${TAG}-Linux.txz ${DEPLOY}/
+  fi
+  if [ "$UBUNTU" = "focal" ]; then
+    mkdir -p Cyan-${TAG}-Windows/third-party
+    cp ${CWD}/LICENSE Cyan-${TAG}-Windows/
+    cp -a /opt/legal/Windows/* Cyan-${TAG}-Windows/third-party/
+    cp ${CWD}/win64/Cyan.exe Cyan-${TAG}-Windows/
+    zip -9 -r Cyan-${TAG}-Windows.zip Cyan-${TAG}-Windows
+    cp Cyan-${TAG}-Windows.zip ${DEPLOY}/
+  fi
 elif [ "${OS}" = "Darwin" ]; then
   mkdir -p Cyan-${TAG}-Mac/third-party
   cp ${CWD}/LICENSE Cyan-${TAG}-Mac/
@@ -180,30 +200,4 @@ elif [ "${OS}" = "Darwin" ]; then
   cp -a ${CWD}/mac64/Cyan.app Cyan-${TAG}-Mac/
   hdiutil create -volname "Cyan ${TAG}" -srcfolder Cyan-${TAG}-Mac -ov -format UDBZ Cyan-${TAG}-Mac.dmg
   cp Cyan-${TAG}-Mac.dmg ${DEPLOY}/
-  MAC_CHECKSUM=`shasum -a 256 Cyan-${TAG}-Mac.dmg | awk '{print $1}'`
-  echo "===> Mac checksum ${MAC_CHECKSUM}"
 fi
-
-#transfer.sh is BROKEN!!!
-
-#if [ "${TRAVIS_PULL_REQUEST}" != "false" ] && [ "${TRAVIS_PULL_REQUEST}" != "" ]; then
-#    echo "===> Uploading archives to transfer.sh ..."
-#    if [ "${OS}" = "Linux" ]; then
-#      UPLOAD_WIN=`curl --upload-file ./Cyan-${TAG}-Windows.7z https://transfer.sh/Cyan-${TAG}-Windows.7z`
-#      UPLOAD_LIN=`curl --upload-file ./Cyan-${TAG}-Linux.txz https://transfer.sh/Cyan-${TAG}-Linux.txz`
-#      echo "===> Windows snapshot ${UPLOAD_WIN}"
-#      echo "===> Linux snapshot ${UPLOAD_LIN}"
-#      if [ "${UPLOAD_WIN}" != "" ] && [ "${UPLOAD_LIN}" != "" ]; then
-#          COMMENT="**CI for this pull request:** Windows build is available at ${UPLOAD_WIN} with SHA256 checksum ${WIN_CHECKSUM}. Linux build is available at ${UPLOAD_LIN} with SHA256 checksum ${LIN_CHECKSUM}."
-#          curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
-#      fi
-#    elif [ "${OS}" = "Darwin" ]; then
-#      UPLOAD_MAC=`curl -k --upload-file ./Cyan-${TAG}-Mac.dmg https://transfer.sh/Cyan-${TAG}-Mac.dmg`
-#      echo "===> Mac snapshot ${UPLOAD_MAC}"
-#      if [ "${UPLOAD_MAC}" != "" ]; then
-#        COMMENT="**CI for this pull request:** Mac build is available at ${UPLOAD_MAC} with SHA256 checksum ${MAC_CHECKSUM}."
-#        curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST -d "{\"body\": \"${COMMENT}\"}" "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
-#      fi
-#    fi
-#fi
-

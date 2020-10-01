@@ -2,33 +2,10 @@
 <head></head>
 <body>
 
-<h1 id="cyan">Cyan _VERSION_</h1>
+<p align="center"><img src=":/cyan.png" alt="Promo"></p>
+<h1 id="cyan" align="center">Cyan _VERSION_</h1>
 
-<p align="justify">Cyan is an open source cross-platform image viewer and converter, designed for <a href="https://en.wikipedia.org/wiki/Prepress">prepress</a> (print) work. Like converting an image from <a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a> to <a href="https://en.wikipedia.org/wiki/CMYK_color_model">CMYK</a>, or the other way around. Cyan supports <a href="https://en.wikipedia.org/wiki/ICC_profile">color profiles</a> complying with the <a href="http://www.color.org/index.xalter">International Color Consortium</a> (ICC) standard, and strives to create as color-accurate images as possible, with support for <a href="https://en.wikipedia.org/wiki/RGB_color_model">RGB</a>, <a href="https://en.wikipedia.org/wiki/CMYK_color_model">CMYK</a> and <a href="https://en.wikipedia.org/wiki/Grayscale">GRAY</a> with up to <a href="https://en.wikipedia.org/wiki/32-bit">32-bit</a> image depth.</p>
-
-<p align="center"><img src=":/docs/images/cyan-promo-01.png" alt="Promo"></p>
-
-<h1 id="features">Features</h1>
-
-<ul>
-  <li>Supports RGB/CMYK/GRAY 8/16/32 bit images</li>
-  <li>Supports ICC/ICM v2/v4 color profiles</li>
-  <li>Supports PNG, JPEG, TIFF, XCF and PSD image input</li>
-  <li>Supports TIFF, JPEG and PSD image output</li>
-  <li>Supports TIFF, XCF and PSD image layers</li>
-  <li>Extract embedded ICC color profiles</li>
-  <li>Add ICC color profile to image</li>
-  <li>Edit ICC color profile tags</li>
-  <li>Convert to and from RGB/CMYK/GRAY</li>
-  <li>Change image bit depth</li>
-  <li>GIMP integration (import/export)</li>
-</ul>
-
-<h1 id="changelog">ChangeLog</h1>
-
-<pre>
-_CHANGELOG_
-</pre>
+<p align="justify">Cyan is an open source cross-platform image viewer and converter, designed for prepress (print) work. Like converting an image from RGB to CMYK, or the other way around. Cyan supports color profiles complying with the International Color Consortium (ICC) standard, and strives to create as color-accurate images as possible, with support for RGB, CMYK and GRAY with up to 32-bit image depth.</p>
 
 <h1 id="usage">Usage</h1>
 <p align="center"><img src=":/docs/images/cyan-promo-04.png" alt="Promo"></p>
@@ -63,6 +40,7 @@ _CHANGELOG_
 <ul>
   <li><strong>Ctrl+O</strong> - Open image</li>
   <li><strong>Ctrl+S</strong> - Save image</li>
+  <li><strong>Ctrl+I</strong> - Image information</li>
   <li><strong>Ctrl+E</strong> - Save embedded profile (from loaded image)</li>
   <li><strong>Ctrl+Q</strong> - Quit</li>
   <li><strong>Right mouse button</strong> - Fit-to-view</li>
@@ -72,11 +50,9 @@ _CHANGELOG_
 </ul>
 
 <h1 id="integration">Integration</h1>
-<p align="center"><img src=":/docs/images/cyan-promo-06.png" alt="Promo"></p>
-
-<p align="justify">Cyan offers tight integration with <a href="https://www.gimp.org">GIMP</a> and works as an import/export plug-in in <a href="https://www.gimp.org">GIMP</a> 2.8+. Just select <code class="highlighter-rouge">Cyan/Import Image</code> or <code class="highlighter-rouge">Cyan/Export Image</code>.</p>
-
 <p align="center"><img src=":/docs/images/cyan-promo-07.png" alt="Promo" /></p>
+
+<p align="justify">Cyan offers integration with <a href="https://www.gimp.org">GIMP</a> and works as an import/export plug-in in <a href="https://www.gimp.org">GIMP</a> 2.8+. Just select <code class="highlighter-rouge">Cyan/Import Image</code> or <code class="highlighter-rouge">Cyan/Export Image</code>.</p>
 
 <h2 id="import-cmyk-from-gimp">Import CMYK from GIMP</h2>
 
@@ -92,11 +68,21 @@ _CHANGELOG_
 
 <p align="justify">If you upgrade GIMP and <code class="highlighter-rouge">Cyan/*</code> is gone just launch Cyan manually once to update the plug-in against your new version of GIMP, this will only happen on GIMP feature releases (2.8=&gt;2.10 etc).</p>
 
+<h1 id="changelog">ChangeLog</h1>
+
+<pre>
+_CHANGELOG_
+</pre>
+
 <h1 id="open-source">Open Source</h1>
 
 <p align="center"><img src=":/docs/images/cyan-promo-05.png" alt="Promo"></p>
 
-<p>Cyan is copyright Ole-André Rodlie, INRIA. All rights reserved.</p>
+<ul>
+<li>Cyan is copyright &copy; 2016 Ole-André Rodlie, INRIA.</li>
+<li>Cyan is copyright &copy; 2017-2019 Ole-André Rodlie, FxArena DA.</li>
+<li>Cyan is copyright &copy; 2020 Ole-André Rodlie. All rights reserved.</li>
+</ul>
 
 <p align="justify">This software is governed by the CeCILL license under French law and abiding by the rules of distribution of free software. You can use, modify and / or redistribute the software under the terms of the CeCILL license as circulated by CEA, CNRS and INRIA at the following <a href="https://www.cecill.info">URL</a>.</p>
 
@@ -106,7 +92,7 @@ _CHANGELOG_
 _3RDPARTY_
 </p>
 
-<p align="justify">Hosted on <a href="https://github.com/rodlie/cyan">Github</a> and <a href="https://sourceforge.net/projects/prepress">Sourceforge</a>. <a href="https://travis-ci.org/">Travis CI</a> is used to build and deploy the binaries.</p>
+<p align="justify">Hosted on <a href="https://github.com/rodlie/cyan">Github</a> and <a href="https://sourceforge.net/projects/prepress">Sourceforge</a>. <a href="https://travis-ci.org/">Travis CI</a> is used to build the binaries.</p>
 
 <p></p>
 

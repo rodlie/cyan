@@ -13,5 +13,6 @@
         <file>icc/cmyk.icc</file>
         <file>icc/gray.icc</file>
         <file>icc/rgb.icc</file>
+        <file>cyan-info.png</file>
     </qresource>
 </RCC>

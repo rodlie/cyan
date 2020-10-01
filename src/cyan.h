@@ -43,22 +43,25 @@
 #include <QAction>
 #include <QByteArray>
 #include <QDialog>
-#include <QLineEdit>
+//#include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 #include <QProgressBar>
 #include <QObject>
-#include <QDockWidget>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+//#include <QDockWidget>
+//#include <QTreeWidget>
+//#include <QTreeWidgetItem>
 #include <QMap>
 #include <QThread>
 #include <QFutureWatcher>
 #include <QSpinBox>
+#include <QActionGroup>
 
 #include "imageview.h"
 #include "profiledialog.h"
 #include "FXX.h"
+
+#define RESOURCE_BYTE 1050000000
 
 class Cyan : public QMainWindow
 {
@@ -68,6 +71,10 @@ public:
     Cyan(QWidget *parent = Q_NULLPTR);
     ~Cyan();
 
+signals:
+    void finishedConvertingPSD(bool success, const QString &filename);
+    void newImageInfo(QString information);
+
 private:
     QFutureWatcher<FXX::Image> convertWatcher;
     QFutureWatcher<FXX::Image> readWatcher;
@@ -75,7 +82,6 @@ private:
     QGraphicsScene *scene;
     ImageView *view;
     QToolBar *mainBar;
-    QToolBar *convertBar;
     QToolBar *profileBar;
     QComboBox *rgbProfile;
     QComboBox *cmykProfile;
@@ -85,25 +91,27 @@ private:
     QComboBox *monitorProfile;
     QComboBox *renderingIntent;
     QCheckBox *blackPoint;
-    QPushButton *mainBarLoadButton;
-    QPushButton *mainBarSaveButton;
     QMenuBar *menuBar;
     QMenu *fileMenu;
     QMenu *helpMenu;
     QAction *openImageAction;
     QAction *saveImageAction;
+    QAction *infoImageAction;
     QAction *quitAction;
     QAction *exportEmbeddedProfileAction;
     QComboBox *bitDepth;
     QString lockedSaveFileName;
     FXX::Image imageData;
-    QDockWidget *imageInfoDock;
-    QTreeWidget *imageInfoTree;
     bool ignoreConvertAction;
     QProgressBar *progBar;
     QMenu *prefsMenu;
     bool nativeStyle;
     QSpinBox *qualityBox;
+    QActionGroup *magickMemoryResourcesGroup;
+    QMenu *memoryMenu;
+    int activeLayer;
+    QComboBox *selectedLayer;
+    QLabel *selectedLayerLabel;
 
 private slots:
     void readConfig();
@@ -137,6 +145,9 @@ private slots:
     void resetImageZoom();
 
     void setImage(QByteArray image);
+    void exportPSD(QString const &filename);
+    void convertPSD(FXX::Image image, QString const &filename);
+    void handlePSDConverted(bool success, const QString &filename);
     void updateImage();
 
     QByteArray getMonitorProfile();
@@ -171,7 +182,6 @@ private slots:
 
     int supportedDepth();
     void clearImageBuffer();
-    void parseImageInfo();
 
     QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);
@@ -182,7 +192,20 @@ private slots:
     void handleImageHasLayers(std::vector<Magick::Image> layers);
     void handleLoadImageLayer(Magick::Image image);
 
+    void handleImageInfoButton();
+    void getImageInfo(FXX::Image image);
+    void handleImageInfo(QString information);
+
+    void switchLayer(int id);
+    void enableLayers(bool enable);
+
     void handleNativeStyleChanged(bool triggered);
+
+    int getDiskResource();
+    void setDiskResource(int gib);
+    int getMemoryResource();
+    void setMemoryResource(int gib);
+    void handleMagickMemoryAct(bool triggered);
 };
 
 #endif // CYAN_H

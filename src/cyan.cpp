@@ -56,20 +56,12 @@
 #include <qtconcurrentrun.h>
 
 #include "helpdialog.h"
-#include "openlayerdialog.h"
-
-#ifdef Q_OS_MAC
-#define CYAN_FONT_SIZE 10
-#else
-#define CYAN_FONT_SIZE 8
-#endif
 
 Cyan::Cyan(QWidget *parent)
     : QMainWindow(parent)
     , scene(Q_NULLPTR)
     , view(Q_NULLPTR)
     , mainBar(Q_NULLPTR)
-    , convertBar(Q_NULLPTR)
     , profileBar(Q_NULLPTR)
     , rgbProfile(Q_NULLPTR)
     , cmykProfile(Q_NULLPTR)
@@ -79,23 +71,25 @@ Cyan::Cyan(QWidget *parent)
     , monitorProfile(Q_NULLPTR)
     , renderingIntent(Q_NULLPTR)
     , blackPoint(Q_NULLPTR)
-    , mainBarLoadButton(Q_NULLPTR)
-    , mainBarSaveButton(Q_NULLPTR)
     , menuBar(Q_NULLPTR)
     , fileMenu(Q_NULLPTR)
     , helpMenu(Q_NULLPTR)
     , openImageAction(Q_NULLPTR)
     , saveImageAction(Q_NULLPTR)
+    , infoImageAction(Q_NULLPTR)
     , quitAction(Q_NULLPTR)
     , exportEmbeddedProfileAction(Q_NULLPTR)
     , bitDepth(Q_NULLPTR)
-    , imageInfoDock(Q_NULLPTR)
-    , imageInfoTree(Q_NULLPTR)
     , ignoreConvertAction(false)
     , progBar(Q_NULLPTR)
     , prefsMenu(Q_NULLPTR)
     , nativeStyle(false)
     , qualityBox(Q_NULLPTR)
+    , magickMemoryResourcesGroup(Q_NULLPTR)
+    , memoryMenu(Q_NULLPTR)
+    , activeLayer(-1)
+    , selectedLayer(Q_NULLPTR)
+    , selectedLayerLabel(Q_NULLPTR)
 {
     // get style settings
     QSettings settings;
@@ -119,13 +113,12 @@ Cyan::Cyan(QWidget *parent)
         palette.setColor(QPalette::ButtonText, Qt::white);
         palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Highlight, QColor(0,124,151));
-        palette.setColor(QPalette::HighlightedText, Qt::black);
+        palette.setColor(QPalette::HighlightedText, Qt::white);
         palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
         qApp->setPalette(palette);
-        setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
+        setStyleSheet("QToolBar { border: 0; }");
     }
-    setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
     setAttribute(Qt::WA_QuitOnClose);
 
@@ -138,7 +131,6 @@ Cyan::Cyan(QWidget *parent)
     setCentralWidget(view);
 
     mainBar = new QToolBar(this);
-    convertBar = new QToolBar(this);
     profileBar = new QToolBar(this);
 
     mainBar->setObjectName("MainToolbar");
@@ -147,38 +139,17 @@ Cyan::Cyan(QWidget *parent)
     mainBar->setAllowedAreas(Qt::LeftToolBarArea);
     mainBar->setFloatable(false);
     mainBar->setMovable(false);
-    mainBar->setIconSize(QSize(22,22));
-
-    convertBar->setObjectName("ColorConverter");
-    convertBar->setWindowTitle(tr("Color Converter"));
-    convertBar->setFloatable(false);
-    convertBar->setMovable(false);
+    mainBar->layout()->setSpacing(5);
 
     profileBar->setObjectName("ColorManagement");
     profileBar->setWindowTitle(tr("Color Management"));
     profileBar->setFloatable(false);
     profileBar->setMovable(false);
     profileBar->setAllowedAreas(Qt::BottomToolBarArea);
-
-    imageInfoDock = new QDockWidget(this);
-    imageInfoDock->setWindowTitle("Image Information");
-    imageInfoDock->setObjectName("imageInformation");
-    imageInfoDock->setContentsMargins(0,0,0,0);
-    imageInfoDock->setFeatures(QDockWidget::DockWidgetMovable|
-                               QDockWidget::DockWidgetClosable);
+    profileBar->layout()->setSpacing(5);
 
     addToolBar(Qt::TopToolBarArea, mainBar);
-    addToolBar(Qt::TopToolBarArea, convertBar);
     addToolBar(Qt::BottomToolBarArea, profileBar);
-
-    addDockWidget(Qt::RightDockWidgetArea, imageInfoDock);
-
-    imageInfoTree = new QTreeWidget(this);
-    QStringList imageInfoTreeLabels;
-    imageInfoTreeLabels << tr("Property") << tr("Value");
-    imageInfoTree->setHeaderLabels(imageInfoTreeLabels);
-
-    imageInfoDock->setWidget(imageInfoTree);
 
     rgbProfile = new QComboBox(this);
     cmykProfile = new QComboBox(this);
@@ -217,7 +188,7 @@ Cyan::Cyan(QWidget *parent)
     if (supportedDepth()>=16) {
         bitDepth->addItem(bitDepthIcon, tr("16-bit"), 16);
     }
-    if (supportedDepth()>=32) {
+    if (supportedDepth()>=16 && fx.hasHDRI() ) {
         bitDepth->addItem(bitDepthIcon, tr("32-bit"), 32);
     }
     bitDepth->setMaximumWidth(150);
@@ -236,7 +207,7 @@ Cyan::Cyan(QWidget *parent)
 
     QLabel *inputLabel = new QLabel(tr("Input"), this);
     QLabel *outputLabel = new QLabel(tr("Output"), this);
-    QLabel *monitorLabel = new QLabel(tr("Monitor"), this);
+    QLabel *monitorLabel = new QLabel(tr("Screen"), this);
     QLabel *renderLabel = new QLabel(tr("Intent"), this);
     QLabel *blackLabel = new QLabel(tr("Black Point"), this);
     QLabel *rgbLabel = new QLabel(tr("RGB"), this);
@@ -245,86 +216,59 @@ Cyan::Cyan(QWidget *parent)
     QLabel *bitDepthLabel = new QLabel(tr("Depth"), this);
     QLabel *qualityLabel = new QLabel(tr("Quality"), this);
 
-    if (!nativeStyle) {
-        QString padding = "margin-right:5px;";
-        inputLabel->setStyleSheet(padding);
-        outputLabel->setStyleSheet(padding);
-        monitorLabel->setStyleSheet(padding);
-        renderLabel->setStyleSheet(padding);
-        blackLabel->setStyleSheet(padding);
-        rgbLabel->setStyleSheet(padding);
-        cmykLabel->setStyleSheet(padding);
-        grayLabel->setStyleSheet(padding);
-        bitDepthLabel->setStyleSheet(padding);
-        qualityLabel->setStyleSheet(padding);
-    }
-
     inputLabel->setToolTip(tr("Input profile for image"));
+    inputLabel->setAlignment(Qt::AlignVCenter);
     outputLabel->setToolTip(tr("Profile used to convert image"));
+    outputLabel->setAlignment(Qt::AlignVCenter);
     monitorLabel->setToolTip(tr("Monitor profile, used for proofing"));
+    monitorLabel->setAlignment(Qt::AlignVCenter);
     renderLabel->setToolTip(tr("Rendering intent used"));
+    renderLabel->setAlignment(Qt::AlignVCenter);
     blackLabel->setToolTip(tr("Enable/Disable black point compensation"));
+    blackLabel->setAlignment(Qt::AlignVCenter);
     rgbLabel->setToolTip(tr("Default RGB profile, "
                             "used when image don't have an embedded profile"));
+    rgbLabel->setAlignment(Qt::AlignVCenter);
     cmykLabel->setToolTip(tr("Default CMYK profile, "
                              "used when image don't have an embedded profile"));
+    cmykLabel->setAlignment(Qt::AlignVCenter);
     grayLabel->setToolTip(tr("Default GRAY profile, "
                              "used when image don't have an embedded profile"));
+    grayLabel->setAlignment(Qt::AlignVCenter);
     bitDepthLabel->setToolTip(tr("Adjust image output bit depth"));
+    bitDepthLabel->setAlignment(Qt::AlignVCenter);
     qualityLabel->setToolTip(tr("Compression quality on output image."));
+    qualityLabel->setAlignment(Qt::AlignVCenter);
 
     progBar = new QProgressBar(this);
     progBar->setTextVisible(false);
     progBar->setRange(0,1);
-    progBar->setValue(1);
-    progBar->setMaximumWidth(70);
+    progBar->setValue(0);
+    progBar->setMaximumWidth(90);
 
     qualityBox = new QSpinBox(this);
     qualityBox->setRange(0, 100);
     qualityBox->setValue(100);
 
-    convertBar->addWidget(inputLabel);
-    convertBar->addWidget(inputProfile);
-    convertBar->addSeparator();
-    convertBar->addWidget(outputLabel);
-    convertBar->addWidget(outputProfile);
-    convertBar->addWidget(bitDepthLabel);
-    convertBar->addWidget(bitDepth);
-    convertBar->addWidget(qualityLabel);
-    convertBar->addWidget(qualityBox);
-    convertBar->addWidget(progBar);
+    selectedLayer = new QComboBox(this);
+    selectedLayerLabel = new QLabel(tr("Layer"), this);
+    enableLayers(false);
 
     profileBar->addWidget(rgbLabel);
     profileBar->addWidget(rgbProfile);
-    profileBar->addSeparator();
     profileBar->addWidget(cmykLabel);
     profileBar->addWidget(cmykProfile);
-    profileBar->addSeparator();
     profileBar->addWidget(grayLabel);
     profileBar->addWidget(grayProfile);
-    profileBar->addSeparator();
     profileBar->addWidget(monitorLabel);
     profileBar->addWidget(monitorProfile);
 
-    profileBar->addSeparator();
     profileBar->addWidget(renderLabel);
     profileBar->addWidget(renderingIntent);
-    profileBar->addSeparator();
     profileBar->addWidget(blackLabel);
     profileBar->addWidget(blackPoint);
 
-    profileBar->addSeparator();
-
-    mainBarLoadButton = new QPushButton(this);
-    mainBarSaveButton = new QPushButton(this);
-
-    mainBarLoadButton->setToolTip(tr("Open image"));
-    mainBarLoadButton->setIcon(QIcon(":/cyan-open.png"));
-    mainBarSaveButton->setToolTip(tr("Save image"));
-    mainBarSaveButton->setIcon(QIcon(":/cyan-save.png"));
-
-    mainBar->addWidget(mainBarLoadButton);
-    mainBar->addWidget(mainBarSaveButton);
+    profileBar->addWidget(progBar);
 
     menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
@@ -332,10 +276,27 @@ Cyan::Cyan(QWidget *parent)
     fileMenu = new QMenu(tr("File"), this);
     helpMenu = new QMenu(tr("Help"), this);
     prefsMenu = new QMenu(tr("Preferences"), this);
+    memoryMenu = new QMenu(tr("Memory limit"), this);
+
+    prefsMenu->menuAction()->setMenuRole(QAction::NoRole); // QTBUG-43881
 
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
-    menuBar->setMaximumHeight(20);
+    //menuBar->setMaximumHeight(20);
+
+    prefsMenu->addMenu(memoryMenu);
+
+    magickMemoryResourcesGroup = new QActionGroup(this);
+    for (int i=2;i<33;++i) {
+        QAction *act = new QAction(this);
+        act->setCheckable(true);
+        act->setText(QString("%1 GB").arg(i));
+        act->setToolTip(tr("Amount of RAM that can be used"));
+        act->setData(i);
+        connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
+        magickMemoryResourcesGroup->addAction(act);
+    }
+    memoryMenu->addActions(magickMemoryResourcesGroup->actions());
 
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
@@ -346,19 +307,23 @@ Cyan::Cyan(QWidget *parent)
     helpMenu->addAction(aboutQtAction);
 
     openImageAction = new QAction(tr("Open image"), this);
-    openImageAction->setIcon(QIcon(":/cyan-open.png"));
+    openImageAction->setIcon(QIcon::fromTheme("document-open", QIcon(":/cyan-open.png")));
     openImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
     fileMenu->addAction(openImageAction);
 
     saveImageAction = new QAction(tr("Save image"), this);
-    saveImageAction->setIcon(QIcon(":/cyan-save.png"));
+    saveImageAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
     saveImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     fileMenu->addAction(saveImageAction);
-
     fileMenu->addSeparator();
 
+    infoImageAction = new QAction(tr("Image information"), this);
+    infoImageAction->setIcon(QIcon::fromTheme("dialog-information", QIcon(":/cyan-info.png")));
+    infoImageAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
+    fileMenu->addAction(infoImageAction);
+
     exportEmbeddedProfileAction = new QAction(tr("Save embedded profile"), this);
-    exportEmbeddedProfileAction->setIcon(QIcon(":/cyan-save.png"));
+    exportEmbeddedProfileAction->setIcon(QIcon::fromTheme("document-save", QIcon(":/cyan-save.png")));
     exportEmbeddedProfileAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
     exportEmbeddedProfileAction->setDisabled(true);
     fileMenu->addAction(exportEmbeddedProfileAction);
@@ -380,6 +345,20 @@ Cyan::Cyan(QWidget *parent)
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     fileMenu->addAction(quitAction);
 
+    mainBar->addAction(openImageAction);
+    mainBar->addAction(saveImageAction);
+    mainBar->addAction(infoImageAction);
+    mainBar->addWidget(selectedLayerLabel);
+    mainBar->addWidget(selectedLayer);
+    mainBar->addWidget(inputLabel);
+    mainBar->addWidget(inputProfile);
+    mainBar->addWidget(outputLabel);
+    mainBar->addWidget(outputProfile);
+    mainBar->addWidget(bitDepthLabel);
+    mainBar->addWidget(bitDepth);
+    mainBar->addWidget(qualityLabel);
+    mainBar->addWidget(qualityBox);
+
     qRegisterMetaType<FXX::Image>("FXX::Image");
     qRegisterMetaType<Magick::Image>("Magick::Image");
 
@@ -394,10 +373,6 @@ Cyan::Cyan(QWidget *parent)
     connect(openImageAction, SIGNAL(triggered()),
             this, SLOT(openImageDialog()));
     connect(saveImageAction, SIGNAL(triggered()),
-            this, SLOT(saveImageDialog()));
-    connect(mainBarLoadButton, SIGNAL(released()),
-            this, SLOT(openImageDialog()));
-    connect(mainBarSaveButton, SIGNAL(released()),
             this, SLOT(saveImageDialog()));
     connect(exportEmbeddedProfileAction, SIGNAL(triggered()),
             this, SLOT(exportEmbeddedProfileDialog()));
@@ -427,6 +402,14 @@ Cyan::Cyan(QWidget *parent)
             this, SLOT(renderingIntentUpdated(int)));
     connect(blackPoint, SIGNAL(stateChanged(int)),
             this, SLOT(blackPointUpdated(int)));
+    connect(this, SIGNAL(finishedConvertingPSD(bool,QString)),
+            this, SLOT(handlePSDConverted(bool,QString)));
+    connect(infoImageAction, SIGNAL(triggered()),
+            this, SLOT(handleImageInfoButton()));
+    connect(this, SIGNAL(newImageInfo(QString)),
+            this, SLOT(handleImageInfo(QString)));
+    connect(selectedLayer, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(switchLayer(int)));
 
     clearImageBuffer();
     QTimer::singleShot(0, this,
@@ -442,6 +425,24 @@ void Cyan::readConfig()
 {
     QSettings settings;
     bool firstrun = false;
+
+    settings.beginGroup("engine");
+    setDiskResource(settings.value("disk_limit", 0).toInt());
+    int maxMem = settings.value("memory_limit", 2).toInt();
+    setMemoryResource(maxMem);
+    settings.endGroup();
+    QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
+    bool foundAct = false;
+    for (int i=0;i<memActions.size();++i) {
+        QAction *act = memActions.at(i);
+        if (!act) { continue; }
+        if (act->data().toInt()==maxMem) {
+            act->setChecked(true);
+            foundAct = true;
+            break;
+        }
+    }
+    if (!foundAct) { memoryMenu->setDisabled(true); }
 
     settings.beginGroup("color");
     blackPoint->setChecked(settings.value("black").toBool());
@@ -468,10 +469,6 @@ void Cyan::readConfig()
     }
     if (settings.value("max").toBool() == true) {
         this->showMaximized();
-    }
-    if (settings.value("info_header").isValid()) {
-        imageInfoTree->header()->restoreState(settings.value("info_header")
-                                              .toByteArray());
     }
     settings.endGroup();
 
@@ -503,6 +500,12 @@ void Cyan::readConfig()
 void Cyan::writeConfig()
 {
     QSettings settings;
+
+    settings.beginGroup("engine");
+    settings.setValue("disk_limit", getDiskResource());
+    settings.setValue("memory_limit", getMemoryResource());
+    settings.endGroup();
+
     settings.beginGroup("color");
     settings.setValue("black", blackPoint->isChecked());
 
@@ -525,8 +528,6 @@ void Cyan::writeConfig()
     } else {
         settings.setValue("max", "false");
     }
-    settings.setValue("info_header",
-                      imageInfoTree->header()->saveState());
     settings.endGroup();
     settings.sync();
 
@@ -536,7 +537,7 @@ void Cyan::writeConfig()
 void Cyan::aboutCyan()
 {
     QString html, changelog, style, license;
-    QFile changelogFile(":/docs/ChangeLog");
+    QFile changelogFile(":/docs/ChangeLog.md");
     if (changelogFile.open(QIODevice::ReadOnly)) {
         QByteArray data = changelogFile.readAll();
         changelog.append(data);
@@ -566,9 +567,7 @@ void Cyan::aboutCyan()
     style = "body {"
             "margin: 1em;"
             "font-family: sans-serif; }"
-            "h1, h2, h3, h4 { font-weight: normal; }"
-            "p, pre, li { font-size: 10pt; }"
-            "h1#devel { font-size: small; }";
+            "h1, h2, h3, h4 { font-weight: normal; }";
     if (!nativeStyle) {
         style.append(".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }");
     }
@@ -680,7 +679,7 @@ void Cyan::openImage(QString file)
     QFuture<FXX::Image> future = QtConcurrent::run(FXX::readImage,
                                                    file.toStdString(),
                                                    profiles,
-                                                   true,
+                                                   false,
                                                    true);
     readWatcher.setFuture(future);
 }
@@ -719,6 +718,11 @@ void Cyan::openImage(Magick::Image image)
 
 void Cyan::saveImage(QString file, bool notify, bool closeOnSave)
 {
+    QFileInfo imageFile(file);
+    if (imageData.isPSD && imageFile.suffix().toLower() == "psd") {
+        exportPSD(file);
+        return;
+    }
     if (file.isEmpty()) { return; }
     bool hasWork = imageData.workBuffer.size()>0;
     bool hasMaster = imageData.imageBuffer.size()>0;
@@ -917,6 +921,9 @@ void Cyan::imageClear()
     bitDepth->setCurrentIndex(0);
     exportEmbeddedProfileAction->setDisabled(true);
     ignoreConvertAction = false;
+    activeLayer = -1;
+    selectedLayer->clear();
+    enableLayers(false);
 }
 
 void Cyan::resetImageZoom()
@@ -934,6 +941,87 @@ void Cyan::setImage(QByteArray image)
     scene->clear();
     scene->addPixmap(pixmap);
     scene->setSceneRect(0, 0, pixmap.width(), pixmap.height());
+}
+
+void Cyan::exportPSD(const QString &filename)
+{
+    if (ignoreConvertAction || convertWatcher.isRunning() || readWatcher.isRunning()) {
+        return;
+    }
+
+    disableUI();
+    FXX::Image image = imageData;
+    QString selectedInputProfile = inputProfile->itemData(inputProfile->currentIndex())
+                                   .toString();
+    QString selectedOutputProfile = outputProfile->itemData(outputProfile->currentIndex())
+                                    .toString();
+    int currentDepth = bitDepth->itemData(bitDepth->currentIndex()).toInt();
+
+    image.intent = static_cast<FXX::RenderingIntent>(renderingIntent->itemData(renderingIntent->currentIndex())
+                                                     .toInt());
+    image.blackpoint = blackPoint->isChecked();
+    image.depth = static_cast<size_t>(currentDepth);
+
+    // add input profile
+    if (!selectedInputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedInputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccInputBuffer = buffer;
+        }
+    } else {
+        image.iccInputBuffer = imageData.iccInputBuffer;
+    }
+
+    // add output profile
+    if (!selectedOutputProfile.isEmpty()) {
+        QByteArray profile = readColorProfile(selectedOutputProfile);
+        if (profile.size()>0) {
+            std::vector<unsigned char> buffer(profile.begin(), profile.end());
+            image.iccOutputBuffer = buffer;
+        }
+    } else {
+        image.iccOutputBuffer = imageData.iccOutputBuffer;
+    }
+
+    // check if input profile exists
+    if (image.iccInputBuffer.size()==0 || image.iccOutputBuffer.size()==0) {
+        QMessageBox::warning(this,
+                             tr("Missing color profile"),
+                             tr("Need input and output ICC color profile"));
+        enableUI();
+        return;
+    }
+
+    // proc
+    QtConcurrent::run(this, &Cyan::convertPSD, image, filename);
+}
+
+void Cyan::convertPSD(FXX::Image image, const QString &filename)
+{
+    if (filename.isEmpty()) {
+        emit finishedConvertingPSD(false, filename);
+        return;
+    }
+    emit finishedConvertingPSD(FXX::writePSD(image,
+                                             filename.toStdString())
+                               && QFile::exists(filename),
+                               filename);
+}
+
+void Cyan::handlePSDConverted(bool success, const QString &filename)
+{
+    enableUI();
+    if (success && lockedSaveFileName.isEmpty()) {
+        QMessageBox::information(this,
+                                 tr("Exported PSD"),
+                                 tr("PSD was saved to %1").arg(filename));
+    } else if (!success) {
+        QMessageBox::warning(this,
+                             tr("Failed to export PSD"),
+                             tr("Unable to save PSD to %1").arg(filename));
+    }
+    if (!lockedSaveFileName.isEmpty()) { QTimer::singleShot(0, qApp, SLOT(quit())); }
 }
 
 void Cyan::updateImage()
@@ -995,7 +1083,7 @@ void Cyan::updateImage()
     disableUI();
     QFuture<FXX::Image> future = QtConcurrent::run(FXX::convertImage,
                                                    image,
-                                                   true);
+                                                   false);
     convertWatcher.setFuture(future);
 }
 
@@ -1103,11 +1191,10 @@ void Cyan::outputProfileChanged(int)
 void Cyan::enableUI()
 {
     progBar->setRange(0,1);
-    progBar->setValue(1);
+    progBar->setValue(0);
 
     menuBar->setEnabled(true);
     mainBar->setEnabled(true);
-    convertBar->setEnabled(true);
     profileBar->setEnabled(true);
 }
 
@@ -1118,7 +1205,6 @@ void Cyan::disableUI()
 
     menuBar->setDisabled(true);
     mainBar->setDisabled(true);
-    convertBar->setDisabled(true);
     profileBar->setDisabled(true);
 }
 
@@ -1214,41 +1300,19 @@ void Cyan::bitDepthChanged(int index)
 
 void Cyan::gimpPlugin()
 {
-    QStringList versions,folders;
+    QStringList versions,folders,gimps;
     versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "3.0";
+    gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/";
     foreach (QString version, versions) {
-        bool hasDir = false;
-        QDir gimpDir;
-        QString gimpPath;
-        gimpPath.append(QDir::homePath());
-        gimpPath.append(QDir::separator());
-#ifndef Q_OS_MAC
-        gimpPath.append(QString(".gimp-%1").arg(version));
-        if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        if (!hasDir) {
-            gimpPath = QString("%1/.config/GIMP/%2").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-        if (!hasDir) {
-            gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-#else
-        gimpPath.append("Library/Application Support/GIMP/"+version);
-        if (gimpDir.exists(gimpPath)) {
-            hasDir = true;
-        }
-#endif
-        if (hasDir) {
-            gimpPath.append(QDir::separator());
-            gimpPath.append("plug-ins");
-            if (!gimpDir.exists(gimpPath)) {
-                gimpDir.mkdir(gimpPath);
+        foreach (QString gimp, gimps) {
+            QString configPath = QString("%1/%2%3/plug-ins")
+                                 .arg(QDir::homePath())
+                                 .arg(gimp)
+                                 .arg(version);
+            if (QFile::exists(configPath)) {
+                folders << QString("%1/cyan.py").arg(configPath);
+                qDebug() << "found GIMP folder" << configPath;
             }
-            QString result = gimpPath;
-            result.append(QDir::separator());
-            result.append("cyan.py");
-            folders << result;
         }
     }
 
@@ -1334,81 +1398,6 @@ int Cyan::supportedDepth()
 void Cyan::clearImageBuffer()
 {
     fx.clearImage(imageData);
-    imageInfoTree->clear();
-}
-
-void Cyan::parseImageInfo()
-{
-    QString info = QString::fromStdString(imageData.info);
-    if (!info.isEmpty()) {
-        imageInfoTree->clear();
-        QStringList list = info.split("\n", QString::SkipEmptyParts);
-        QVector<QTreeWidgetItem*> level1items;
-        QVector<QTreeWidgetItem*> level2items;
-        QString level1 = "  ";
-        QString level2 = "    ";
-        QString level3 = "      ";
-        bool foundHistogramTag = false;
-        for (int i = 0; i < list.size(); ++i) {
-            QString item = list.at(i);
-            if (item.startsWith(level1)) {
-                QTreeWidgetItem *levelItem = new QTreeWidgetItem();
-                QString section1 = item.section(":",0,0).trimmed();
-                QString section2 = item.section(":",1).trimmed();
-                if (item.startsWith("  Pixels per second:") ||
-                    item.startsWith("  User time:") ||
-                    item.startsWith("  Elapsed time:") ||
-                    item.startsWith("  Version: Image") ||
-                    item.startsWith("  Format: ") ||
-                    item.startsWith("  Class: ") ||
-                    item.startsWith("  Base filename:") ||
-                    item.startsWith("  Mime type:"))
-                {
-                    continue;
-                }
-                levelItem->setText(0,section1);
-                levelItem->setText(1,section2);
-                if (item == "  Histogram:") {
-                    foundHistogramTag = true;
-                }
-                if (foundHistogramTag && (item.startsWith("  Rendering intent:") ||
-                                          item.startsWith("  Gamma:")))
-                {
-                    foundHistogramTag = false;
-                }
-                if (foundHistogramTag) {
-                    continue;
-                }
-                if (item.startsWith(level3)) {
-                    int parentID = level2items.size()-1;
-                    if (parentID<0) {
-                        parentID=0;
-                    }
-                    QTreeWidgetItem *parentItem = level2items.at(parentID);
-                    if (parentItem) {
-                        parentItem->addChild(levelItem);
-                    }
-
-                } else if(item.startsWith(level2)) {
-                    int parentID = level1items.size()-1;
-                    if (parentID<0) {
-                        parentID=0;
-                    }
-                    QTreeWidgetItem *parentItem = level1items.at(parentID);
-                    if (parentItem) {
-                        parentItem->addChild(levelItem);
-                        level2items << levelItem;
-                    }
-                } else if(item.startsWith(level1)) {
-                    level1items << levelItem;
-                }
-                continue;
-            }
-        }
-        imageInfoTree->addTopLevelItems(level1items.toList());
-        level2items.clear();
-        imageInfoTree->expandAll();
-    }
 }
 
 QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)
@@ -1421,6 +1410,7 @@ QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)
     folders << "/usr/share/color/icc";
     folders << "/usr/local/share/color/icc";
     folders << QDir::homePath() + "/.color/icc";
+    folders << qApp->applicationDirPath() + "/../share/color/icc";
     QString cyanICCPath = QDir::homePath() + "/.config/Cyan/icc";
     QDir cyanICCDir(cyanICCPath);
     if (cyanICCDir.exists(cyanICCPath)) {
@@ -1476,9 +1466,8 @@ void Cyan::handleConvertWatcher()
     {
         setImage(QByteArray(reinterpret_cast<char*>(image.previewBuffer.data()),
                             static_cast<int>(image.previewBuffer.size())));
-        imageData.info = image.info;
+        //imageData.info = image.info;
         imageData.workBuffer = image.imageBuffer;
-        parseImageInfo();
     } else {
         QMessageBox::warning(this, tr("Image error"),
                              QString::fromStdString(image.error));
@@ -1504,8 +1493,10 @@ void Cyan::handleReadWatcher()
                             static_cast<int>(image.previewBuffer.size())));
         imageData = image;
         exportEmbeddedProfileAction->setDisabled(imageData.iccInputBuffer.size()==0);
-        if (!imageData.info.empty()) { parseImageInfo(); }
+        //if (!imageData.info.empty()) { parseImageInfo(); }
         getConvertProfiles();
+        QFileInfo fileinfo(QString::fromStdString(image.filename));
+        setWindowTitle(fileinfo.fileName());
         if (!monitorProfile->currentData().toString().isEmpty()) { updateImage(); }
     } else {
         QMessageBox::warning(this, tr("Image error"),
@@ -1515,26 +1506,102 @@ void Cyan::handleReadWatcher()
         QMessageBox::warning(this, tr("Image warning"),
                              QString::fromStdString(image.warning));
     }
-    if (image.layers.size()>0) {
-        handleImageHasLayers(image.layers);
-        imageData.layers.clear();
+    if (image.layers.size()>1) {
+        enableLayers(true);
+        //handleImageHasLayers(image.layers);
+        //imageData.layers.clear();
     }
 }
 
 void Cyan::handleImageHasLayers(std::vector<Magick::Image> layers)
 {
-    qDebug()  << "image has layers!" << layers.size();
+    Q_UNUSED(layers)
+    /*qDebug()  << "image has layers!" << layers.size();
     OpenLayerDialog *dialog = new OpenLayerDialog(this, layers);
     connect(dialog, SIGNAL(loadLayer(Magick::Image)),
             this, SLOT(handleLoadImageLayer(Magick::Image)));
-    dialog->exec();
+    dialog->exec();*/
 }
 
 void Cyan::handleLoadImageLayer(Magick::Image image)
 {
-    if (!image.isValid()) { return; }
+    Q_UNUSED(image)
+    /*if (!image.isValid()) { return; }
     qDebug() << "handle load image layer";
-    openImage(image);
+    openImage(image);*/
+}
+
+void Cyan::handleImageInfoButton()
+{
+    if (imageData.imageBuffer.size()<=0) { return; }
+    disableUI();
+    QtConcurrent::run(this, &Cyan::getImageInfo, imageData);
+}
+
+void Cyan::getImageInfo(FXX::Image image)
+{
+    qDebug() << "GET IMAGE INFO";
+    emit newImageInfo(QString::fromStdString(FXX::identify(image.imageBuffer)));
+}
+
+void Cyan::handleImageInfo(QString information)
+{
+    enableUI();
+    QString info = information;
+    info.prepend("<pre>");
+    info.append("</pre>");
+    if (!information.isEmpty()) {
+        QString style = "body {"
+                        "margin: 1em;"
+                        "font-family: sans-serif; }"
+                        "h1, h2, h3, h4 { font-weight: normal; }"
+                        "p, pre, li { font-size: 10pt; }"
+                        "h1#devel { font-size: small; }";
+        HelpDialog *dialog = new HelpDialog(this, tr("About Image"), info, style);
+        dialog->exec();
+    } else {
+        QMessageBox::warning(this,
+                             tr("Failed to identify image"),
+                             tr("Unable to get any image information."));
+    }
+}
+
+void Cyan::switchLayer(int id)
+{ // WIP
+    qDebug() << "switch to layer" << id;
+    if (id<0) {
+        qDebug() << "id must be >= 0 !";
+        return;
+    }
+    if (imageData.layers.size()<static_cast<size_t>(id)) {
+        qDebug() << "can't find that layer!";
+        return;
+    }
+    Magick::Blob output;
+    imageData.layers[id].write(&output);
+    unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
+    std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
+    imageData.imageBuffer = imgData;
+    updateImage();
+}
+
+void Cyan::enableLayers(bool enable)
+{
+    selectedLayer->setEnabled(enable);
+    selectedLayerLabel->setEnabled(enable);
+    selectedLayer->clear();
+    if (!enable) { return; }
+    selectedLayer->blockSignals(true);
+    for (size_t i = 0; i < imageData.layers.size(); ++i) {
+        QString label = QString::fromStdString(imageData.layers.at(i).label());
+        if (label.isEmpty()) {
+            label = tr("[%1] Layer");
+        } else {
+            label.prepend("[%1] ");
+        }
+        selectedLayer->addItem(label.arg(i));
+    }
+    selectedLayer->blockSignals(false);
 }
 
 void Cyan::handleNativeStyleChanged(bool triggered)
@@ -1550,4 +1617,51 @@ void Cyan::handleNativeStyleChanged(bool triggered)
     QMessageBox::information(this,
                              tr("Restart is required"),
                              tr("Restart Cyan to apply settings."));
+}
+
+int Cyan::getDiskResource()
+{
+    return qRound(static_cast<double>(Magick::ResourceLimits::disk()/RESOURCE_BYTE));
+}
+
+void Cyan::setDiskResource(int gib)
+{
+    try {
+        Magick::ResourceLimits::disk(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+int Cyan::getMemoryResource()
+{
+    int memMax =  qRound(static_cast<double>(Magick::ResourceLimits::memory()/RESOURCE_BYTE));
+    qDebug() << "Get ImageMagick memory limit" << memMax;
+    return memMax;
+}
+
+void Cyan::setMemoryResource(int gib)
+{
+    qDebug() << "Set ImageMagick memory limit" << gib;
+    try {
+        Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+        Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+void Cyan::handleMagickMemoryAct(bool triggered)
+{
+    Q_UNUSED(triggered)
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action) { return; }
+    QSettings settings;
+    if (action->data().toInt()>=2) {
+        setMemoryResource(action->data().toInt());
+    }
 }

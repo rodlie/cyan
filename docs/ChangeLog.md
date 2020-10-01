@@ -1,3 +1,9 @@
+## 1.3.0 - TBA
+
+ * Enhanced layer support
+ * UI changes
+ * Better GIMP detection
+
 ## 1.2.2 - 20191103
 
  * Added support for output compression quality

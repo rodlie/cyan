@@ -9,10 +9,10 @@ import shutil
 import os.path
 import tempfile
 
-cyanversion = "1.2.1"
+cyanversion = "1.3.0"
 cyanbin = "cyan"
 
-def plugin_maketempfile( image, src ):
+def plugin_maketempfile( image, src, type ):
 
     tempimage = pdb.gimp_image_duplicate( image )
 
@@ -20,10 +20,16 @@ def plugin_maketempfile( image, src ):
         print "Could not create temporary image file."
         return None, None, None
 
-    tempfilename = pdb.gimp_temp_name( "tif" )
+    if type == 1 :
+        tempfilename = pdb.gimp_temp_name( "psd" )
+    else:
+        tempfilename = pdb.gimp_temp_name( "tif" )
 
     if sys.platform == "darwin":
-        tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.tif")
+        if type == 1 :
+            tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.psd")
+        else:
+            tempfilename = os.path.join(tempfile.gettempdir(), "cyan-tmp.tif")
 
     if sys.platform.startswith( "win" ):
         tempfilename = tempfilename.replace( "\\", "/" )
@@ -41,12 +47,12 @@ def plugin_maketempfile( image, src ):
 
 def plugin_export( image, src):
 
-    tempfilename, tempdrawable, tempimage = plugin_maketempfile( image, 0 )
+    tempfilename, tempdrawable, tempimage = plugin_maketempfile( image, 0, 0 )
     
     if tempfilename == None:
         return
     
-    pdb.gimp_image_undo_group_start(image)
+    #pdb.gimp_image_undo_group_start(image)
     pdb.gimp_progress_pulse()
     child = subprocess.Popen( cyanbin + " " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
 
@@ -56,11 +62,33 @@ def plugin_export( image, src):
         time.sleep(0.2)
         
     plugin_tidyup( tempfilename )
-    pdb.gimp_image_undo_group_end(image)
+    #pdb.gimp_image_undo_group_end(image)
 
 def plugin_import(image,src):
 
-    tempfilename, tempdrawable, tempimage = plugin_maketempfile( image, src )
+    tempfilename, tempdrawable, tempimage = plugin_maketempfile( image, src, 0 )
+
+    if tempfilename == None:
+        return
+
+    pdb.gimp_image_undo_group_start(image)
+    pdb.gimp_progress_pulse()
+    child = subprocess.Popen( cyanbin + " -o " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
+
+    pdb.gimp_progress_set_text( "Waiting on Cyan ..." )
+    while child.poll() is None:
+        pdb.gimp_progress_pulse()
+        time.sleep(0.2)
+
+    dest = 0;
+    plugin_saveresult( image, dest, tempfilename, tempimage )
+
+    plugin_tidyup( tempfilename )
+    pdb.gimp_image_undo_group_end(image)
+
+def plugin_import_psd(image,src):
+
+    tempfilename, tempdrawable, tempimage = plugin_maketempfile( image, src, 1 )
 
     if tempfilename == None:
         return
@@ -88,7 +116,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
     if dest == 0 :
         # new image
         try:
-            newimage = pdb.file_tiff_load( tempfilename, "" )
+            newimage = pdb.gimp_file_load( tempfilename, "" )
 
             # Write name
             if name != None:
@@ -96,7 +124,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
 	    gimp.Display( newimage )
 
 	except:
-            print "Could not load tmep file as new image."
+            print "Could not load temp file as new image."
 
     elif dest == 1:
         # Replace current layer
@@ -143,7 +171,7 @@ register(
                 "cyan-export",
                 "Export Image.",
                 "Export Image.",
-                "Ole-Andre Rodlie (olear@dracolinux.org)",
+                "Ole-Andre Rodlie (ole.andre.rodlie@gmail.com)",
                 "Copyright 2017 Ole-Andre Rodlie",
                 "2017",
                 "<Image>/Cyan/Export Image",
@@ -156,8 +184,8 @@ register(
                 "cyan-import",
                 "Import Image.",
                 "Import Image.",
-                "Ole-Andre Rodlie (olear@dracolinux.org)",
-                "Copyright 2017 Ole Andre Rodlie",
+                "Ole-Andre Rodlie (ole.andre.rodlie@gmail.com)",
+                "Copyright 2017 Ole-Andre Rodlie",
                 "2017",
                 "<Image>/Cyan/Import Image",
                 "*", # image types
@@ -165,7 +193,19 @@ register(
                 [],
                 plugin_import,
                 )
-
+register(
+                "cyan-import-psd",
+                "Import PSD.",
+                "Import PSD.",
+                "Ole-Andre Rodlie (ole.andre.rodlie@gmail.com)",
+                "Copyright 2020 Ole-Andre Rodlie",
+                "2020",
+                "<Image>/Cyan/Import PSD",
+                "*", # image types
+		[],
+                [],
+                plugin_import_psd,
+                )
 main()
   
 #----------------------------------------------------------------------------------

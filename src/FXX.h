@@ -92,6 +92,7 @@ public:
         bool blackpoint = false;
         bool hasEXIF = false;
         bool hasIPTC = false;
+        bool isPSD = false;
     };
 
     FXX();
@@ -140,6 +141,9 @@ public:
 
     void clearImage(FXX::Image data);
     bool saveImage(FXX::Image data, int quality = 100);
+
+    static bool writePSD(FXX::Image data,
+                         std::string filename);
 
     bool hasJPEG();
     bool hasPNG();

@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.2.2
+VERSION = 1.2.99
 
 SOURCES += \
     src/main.cpp \
@@ -37,14 +37,12 @@ SOURCES += \
     src/FXX.cpp \
     src/imageview.cpp \
     src/profiledialog.cpp \
-    src/openlayerdialog.cpp \
     src/helpdialog.cpp
 HEADERS += \
     src/cyan.h \
     src/FXX.h \
     src/imageview.h \
     src/profiledialog.h \
-    src/openlayerdialog.h \
     src/helpdialog.h
 RESOURCES += \
     res/cyan.qrc \
@@ -79,7 +77,7 @@ DEFINES += CYAN_GIT=\"\\\"$${GIT}\\\"\"
 QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
-QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, INRIA"
+QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie, INRIA, FxArena DA"
 
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
