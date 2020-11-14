@@ -27,6 +27,7 @@
 #include <QMap>
 #include <QColor>
 #include <QPair>
+#include <QUuid>
 
 #include <Magick++.h>
 
@@ -126,6 +127,7 @@ public:
         bool dirty = true;
         QMap<int, CyanGuideItem*> guides;
         QString filename;
+        QString uid = QUuid::createUuid().toString();
     };
     struct QPairSortFirst
     {

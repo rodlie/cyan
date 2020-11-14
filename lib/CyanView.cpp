@@ -1025,8 +1025,7 @@ void View::enableLayers(bool enable)
 
 const QString View::getCanvasID()
 {
-    //return _canvas.timestamp;
-    return QString();
+    return _canvas.uid;
 }
 
 void View::refreshTiles()

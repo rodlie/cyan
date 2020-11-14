@@ -134,9 +134,13 @@ void LayerTree::handleTabActivated(QMdiSubWindow *tab, bool force)
     if (!tab) { return; }
     View *view = qobject_cast<View*>(tab->widget());
     if (!view) { return; }
-    bool equalID = getCanvasID().isEmpty() && (getCanvasID() == view->getCanvasID());
-    if (force) { equalID = false; }
+    bool equalID = getCanvasID() == view->getCanvasID()?true:false;
+    if (force) {
+        qDebug() << "force populate layers";
+        equalID = false;
+    }
     if (!equalID || view->getLayerCount() != topLevelItemCount()) {
+        qDebug() << "populate layers";
         populateTree(view);
     }
 }
