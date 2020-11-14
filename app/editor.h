@@ -49,9 +49,9 @@
 #include "qtcolorpicker.h"
 #include "qtwindowlistmenu.h"
 
-// TMP
+#ifdef BATCH
 #include "CyanBatchWidget.h"
-//
+#endif
 
 class Editor : public QMainWindow
 {

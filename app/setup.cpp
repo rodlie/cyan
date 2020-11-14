@@ -244,11 +244,10 @@ void Editor::setupUI()
     middleSplitter->addWidget(mdi);
     middleSplitter->addWidget(bottomSplitter);
 
-
-    // TMP
+#ifdef BATCH
     CyanBatchWidget *batch = new CyanBatchWidget(this);
     leftSplitter->addWidget(batch);
-    //
+#endif
 
     setCentralWidget(mainSplitter);
 }
