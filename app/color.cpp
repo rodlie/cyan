@@ -335,13 +335,24 @@ void Editor::handleColorConvert(bool ignoreColor,
         return;
     }
     if (getCurrentCanvas()->getCanvasProject().layers.size()>1 &&
-        colorspace == Magick::CMYKColorspace)
+        (colorspace == Magick::CMYKColorspace || colorspace == Magick::GRAYColorspace))
     {
-        // warn when converting to CMYK with multiple layers
+        // warn when converting to CMYK/GRAY with multiple layers
         QMessageBox question;
-        question.setWindowTitle(tr("Convert to CMYK?"));
+        QString warnType;
+        switch (colorspace) {
+        case Magick::CMYKColorspace:
+            warnType = "CMYK";
+            break;
+        case Magick::GRAYColorspace:
+            warnType = "GRAY";
+            break;
+        default:
+            warnType = tr("unknown");
+        }
+        question.setWindowTitle(tr("Convert to %1?").arg(warnType));
         question.setIconPixmap(QIcon::fromTheme("colors").pixmap(QSize(32, 32)));
-        question.setText(tr("Working in CMYK color space with multiple layers are not recommended. Convert to CMYK anyway?"));
+        question.setText(tr("Working in %1 color space with multiple layers are not recommended. Convert to %1 anyway?").arg(warnType));
         question.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
         question.setDefaultButton(QMessageBox::No);
         int reply = question.exec();

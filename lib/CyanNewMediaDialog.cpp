@@ -27,6 +27,7 @@
 #include <QColor>
 #include <QDateTime>
 #include <QtConcurrent/qtconcurrentrun.h>
+#include <QMessageBox>
 
 #include "CyanImageFormat.h"
 #include "CyanColorConvert.h"
@@ -283,6 +284,8 @@ Magick::Image NewMediaDialog::getImage()
 void NewMediaDialog::handleOk()
 {
     Magick::ColorspaceType type = _colorspace;
+    bool warnColorspace = false;
+    QString warncolorspaceText;
     if (_type == CyanCommon::newImageDialogType) {
         switch (_select->currentData().toInt()) {
         case 0:
@@ -295,6 +298,28 @@ void NewMediaDialog::handleOk()
             type = Magick::GRAYColorspace;
             break;
         }
+    }
+    switch(_colorspace) {
+        case Magick::CMYKColorspace:
+        warnColorspace = true;
+        warncolorspaceText = "CMYK";
+        break;
+    case Magick::GRAYColorspace:
+        warnColorspace = true;
+        warncolorspaceText = "GRAY";
+        break;
+    default:
+        warncolorspaceText = tr("unknown");
+    }
+    if (warnColorspace) {
+        QMessageBox question;
+        question.setWindowTitle(tr("Add layer to %1 project?").arg(warncolorspaceText));
+        question.setIconPixmap(QIcon::fromTheme("colors").pixmap(QSize(32, 32)));
+        question.setText(tr("Working in %1 color space with multiple layers are not recommended. Add new layer anyway?").arg(warncolorspaceText));
+        question.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+        question.setDefaultButton(QMessageBox::No);
+        int reply = question.exec();
+        if (reply != QMessageBox::Yes) { QDialog::reject(); return; }
     }
     int depth = _bitBox->currentData().toInt();
     if (depth > CyanImageFormat::supportedQuantumDepth()) {
