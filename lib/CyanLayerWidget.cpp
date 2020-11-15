@@ -201,6 +201,40 @@ void CyanLayerWidget::setTextSupport(bool enabled)
     layerTree->setTextSupport(enabled);
 }
 
+void CyanLayerWidget::moveCurrentLayerUp(bool triggered)
+{
+    Q_UNUSED(triggered)
+    int id = getCurrentLayer()->getLayerID();
+    moveLayerUp(id);
+}
+
+void CyanLayerWidget::moveCurrentLayerDown(bool triggered)
+{
+    Q_UNUSED(triggered)
+    int id = getCurrentLayer()->getLayerID();
+    moveLayerDown(id);
+}
+
+void CyanLayerWidget::duplicateCurrentLayer(bool triggered)
+{
+    Q_UNUSED(triggered)
+    int id = getCurrentLayer()->getLayerID();
+    duplicateLayer(id);
+}
+
+void CyanLayerWidget::removeCurrentLayer(bool triggered)
+{
+    Q_UNUSED(triggered)
+    int id = getCurrentLayer()->getLayerID();
+    removeLayer(id);
+}
+
+void CyanLayerWidget::createNewLayer(bool triggered)
+{
+    Q_UNUSED(triggered);
+    newLayer(false);
+}
+
 void CyanLayerWidget::populateCompositeBox()
 {
     layerCompositeBox->clear();

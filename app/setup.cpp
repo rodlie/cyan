@@ -88,6 +88,7 @@ void Editor::setupUI()
     mainMenu->addMenu(editMenu);
     mainMenu->addMenu(colorMenu);
     mainMenu->addMenu(viewMenu);
+    mainMenu->addMenu(layersMenu);
     mainMenu->addMenu(windowsMenu);
     mainMenu->addMenu(optMenu);
     mainMenu->addMenu(helpMenu);
@@ -99,6 +100,8 @@ void Editor::setupUI()
     mainToolBar->addWidget(saveButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(interactButton);
+    mainToolBar->addWidget(layersButton);
+    mainToolBar->addWidget(colorsButton);
     mainToolBar->addSeparator();
     mainToolBar->addWidget(colorPicker);
 
@@ -145,6 +148,15 @@ void Editor::setupUI()
     viewMenu->addSeparator();
     viewMenu->addAction(viewZoom100Act);
     viewMenu->addAction(viewZoomFitAct);
+
+    layersMenu->addAction(newImageLayerAct);
+    layersMenu->addAction(removeLayerAct);
+    layersMenu->addAction(duplicateLayerAct);
+    layersMenu->addAction(moveUpLayerAct);
+    layersMenu->addAction(moveDownLayerAct);
+
+    layersButton->addActions(layersMenu->actions());
+    colorsButton->addActions(colorMenu->actions());
 
 #ifndef Q_OS_MAC
     QAction *viewModeWindows = new QAction(this);
@@ -272,6 +284,9 @@ void Editor::setupMenus()
     colorMenu = new QMenu(this);
     colorMenu->setTitle(tr("Colors"));
 
+    layersMenu = new QMenu(this);
+    layersMenu->setTitle(tr("Layers"));
+
     viewMenu = new QMenu(this);
     viewMenu->setTitle(tr("View"));
 
@@ -373,6 +388,16 @@ void Editor::setupWidgets(bool native)
     interactButton->setPopupMode(QToolButton::InstantPopup);
     interactButton->setText(tr("Tool"));
     interactButton->setToolTip(tr("Tool"));
+
+    layersButton = new QToolButton(this);
+    layersButton->setPopupMode(QToolButton::InstantPopup);
+    layersButton->setText(tr("Layers"));
+    layersButton->setToolTip(tr("Layers"));
+
+    colorsButton = new QToolButton(this);
+    colorsButton->setPopupMode(QToolButton::InstantPopup);
+    colorsButton->setText(tr("Colors"));
+    colorsButton->setToolTip(tr("Colors"));
 }
 
 
@@ -462,6 +487,12 @@ void Editor::setupActions()
     showGuidesAct = new QAction(this);
     showGuidesAct->setText(tr("Show guides"));
     showGuidesAct->setCheckable(true);
+
+    newImageLayerAct = new QAction(tr("New Layer"), this);
+    removeLayerAct = new QAction(tr("Remove layer"), this);
+    moveUpLayerAct = new QAction(tr("Move up"), this);
+    moveDownLayerAct = new QAction(tr("Move down"), this);
+    duplicateLayerAct = new QAction(tr("Duplicate layer"), this);
 }
 
 void Editor::setupConnections()
@@ -553,6 +584,32 @@ void Editor::setupConnections()
     connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
     connect(addGuideVAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideVAct(bool)));
     connect(showGuidesAct, SIGNAL(triggered(bool)), this, SLOT(handleShowGuidesAct(bool)));
+
+
+    connect(newImageLayerAct,
+            SIGNAL(triggered(bool)),
+            layersWidget,
+            SLOT(createNewLayer(bool)));
+    /*connect(newTextLayerAct,
+            SIGNAL(triggered(bool)),
+            this,
+            SLOT(handleNewTextAct(bool)));*/
+    connect(removeLayerAct,
+            SIGNAL(triggered(bool)),
+            layersWidget,
+            SLOT(removeCurrentLayer(bool)));
+    connect(moveUpLayerAct,
+            SIGNAL(triggered(bool)),
+            layersWidget,
+            SLOT(moveCurrentLayerUp(bool)));
+    connect(moveDownLayerAct,
+            SIGNAL(triggered(bool)),
+            layersWidget,
+            SLOT(moveCurrentLayerDown(bool)));
+    connect(duplicateLayerAct,
+            SIGNAL(triggered(bool)),
+            layersWidget,
+            SLOT(duplicateCurrentLayer(bool)));
 }
 
 void Editor::setupIcons()
@@ -595,6 +652,16 @@ void Editor::setupIcons()
     newButton->setIcon(QIcon::fromTheme("document-new"));
     openButton->setIcon(QIcon::fromTheme("document-open"));
     interactButton->setIcon(QIcon::fromTheme("transform_move"));
+
+
+    newImageLayerAct->setIcon(QIcon::fromTheme("layer",
+                                               QIcon::fromTheme("document-new")));
+    removeLayerAct->setIcon(QIcon::fromTheme("edit-delete"));
+    moveUpLayerAct->setIcon(QIcon::fromTheme("go-up"));
+    moveDownLayerAct->setIcon(QIcon::fromTheme("go-down"));
+    duplicateLayerAct->setIcon(QIcon::fromTheme("layers"));
+    layersButton->setIcon(QIcon::fromTheme("layers"));
+    colorsButton->setIcon(colorsIcon);
 }
 
 void Editor::setupShortcuts()
@@ -610,6 +677,12 @@ void Editor::setupShortcuts()
 
     addGuideHAct->setShortcut(QKeySequence(tr("Ctrl+Shift+G")));
     addGuideVAct->setShortcut(QKeySequence(tr("Ctrl+G")));
+
+    newImageLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+N")));
+    removeLayerAct->setShortcut(QKeySequence(tr("Ctrl+D")));
+    duplicateLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+D")));
+    moveUpLayerAct->setShortcut(Qt::Key_PageUp);
+    moveDownLayerAct->setShortcut(Qt::Key_PageDown);
 }
 
 void Editor::setupOptions()

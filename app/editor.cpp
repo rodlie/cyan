@@ -63,6 +63,11 @@ Editor::Editor(QWidget *parent)
     //, saveProjectAct(nullptr)
     //, saveProjectAsAct(nullptr)
     , quitAct(nullptr)
+    , newImageLayerAct(nullptr)
+    , removeLayerAct(nullptr)
+    , moveUpLayerAct(nullptr)
+    , moveDownLayerAct(nullptr)
+    , duplicateLayerAct(nullptr)
     , viewMoveAct(nullptr)
     , viewDrawAct(nullptr)
     , viewZoom100Act(nullptr)
@@ -90,6 +95,7 @@ Editor::Editor(QWidget *parent)
     , colorProfileCMYKMenu(nullptr)
     , colorProfileGRAYMenu(nullptr)
     , colorIntentMenu(nullptr)
+    , layersMenu(nullptr)
     , viewMenu(nullptr)
     , guideMenu(nullptr)
     , memoryMenu(nullptr)
@@ -99,6 +105,8 @@ Editor::Editor(QWidget *parent)
     , openButton(nullptr)
     , saveButton(nullptr)
     , interactButton(nullptr)
+    , layersButton(nullptr)
+    , colorsButton(nullptr)
     , layersWidget(nullptr)
     , colorPicker(nullptr)
     , currentZoomStatusIcon(nullptr)
@@ -1137,6 +1145,8 @@ void Editor::setActionsDisabled(bool disabled)
     saveImageAct->setDisabled(disabled);
     //saveProjectAsAct->setDisabled(disabled);
     interactButton->setDisabled(disabled);
+    layersButton->setDisabled(disabled);
+    colorsButton->setDisabled(disabled);
     saveButton->setDisabled(disabled);
     layersWidget->setDisabled(disabled);
     convertCMYKAct->setDisabled(disabled);

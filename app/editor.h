@@ -80,6 +80,12 @@ private:
     QAction *blackPointAct;
     QAction *quitAct;
 
+    QAction *newImageLayerAct;
+    QAction *removeLayerAct;
+    QAction *moveUpLayerAct;
+    QAction *moveDownLayerAct;
+    QAction *duplicateLayerAct;
+
     QAction *viewMoveAct;
     QAction *viewDrawAct;
     QAction *viewZoom100Act;
@@ -113,6 +119,7 @@ private:
     QMenu *colorProfileCMYKMenu;
     QMenu *colorProfileGRAYMenu;
     QMenu *colorIntentMenu;
+    QMenu *layersMenu;
     QMenu *viewMenu;
     QMenu *guideMenu;
     QMenu *memoryMenu;
@@ -123,6 +130,8 @@ private:
     QToolButton *openButton;
     QToolButton *saveButton;
     QToolButton *interactButton;
+    QToolButton *layersButton;
+    QToolButton *colorsButton;
 
     CyanLayerWidget *layersWidget;
     QtColorPicker *colorPicker;

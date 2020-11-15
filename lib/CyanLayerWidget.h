@@ -64,6 +64,11 @@ public slots:
                             bool force = false);
     void clearTree();
     void setTextSupport(bool enabled);
+    void moveCurrentLayerUp(bool triggered);
+    void moveCurrentLayerDown(bool triggered);
+    void duplicateCurrentLayer(bool triggered);
+    void removeCurrentLayer(bool triggered);
+    void createNewLayer(bool triggered);
 
 private:
     LayerTree *layerTree;
