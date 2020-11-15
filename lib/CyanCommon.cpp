@@ -155,6 +155,7 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
             switch (colorspace) {
             case Magick::RGBColorspace:
             case Magick::scRGBColorspace:
+            case Magick::YCbCrColorspace: /* heic */
                 colorspace = Magick::sRGBColorspace;
                 break;
             default:;
@@ -314,6 +315,9 @@ const QString CyanCommon::colorspaceToString(Magick::ColorspaceType colorspace)
         break;
     case Magick::Rec709YCbCrColorspace:
         result = "Rec709YCbCr";
+        break;
+    case Magick::YCbCrColorspace:
+        result = "YCbCr";
         break;
     default:
         result = QObject::tr("Other");

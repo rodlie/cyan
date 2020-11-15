@@ -33,6 +33,10 @@ Magick::Image ColorConvert::convertColorspace(Magick::Image image,
     if (output.length()>0) {
         try {
             image.quiet(true);
+            if (image.colorSpace() == Magick::YCbCrColorspace) {
+                qDebug() << "convert ycbcr to srgb";
+                image.colorSpace(Magick::sRGBColorspace);
+            }
             image.renderingIntent(intent);
             image.blackPointCompensation(blackpoint);
             if (input.length()>0) { image.profile("ICC", input); }
