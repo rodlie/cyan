@@ -295,7 +295,8 @@ void Editor::loadSettings()
     settings.beginGroup("engine");
     CyanCommon::setDiskResource(settings
                             .value("disk_limit", 0).toInt());
-    int maxMem = settings.value("memory_limit", 2).toInt();
+    int maxMem = settings.value("memory_limit",
+                                CyanImageFormat::supportedQuantumDepth()>8?4:2).toInt();
     CyanCommon::setMemoryResource(maxMem);
     settings.endGroup();
 
@@ -1294,8 +1295,8 @@ void Editor::closeEvent(QCloseEvent *e)
 {
     if (hasDirtyProjects()) {
         int ret = QMessageBox::question(this,
-                                        tr("Unsaved projects"),
-                                        tr("You have unsaved project open, are you sure you want to quit?"),
+                                        tr("Unsaved project(s)"),
+                                        tr("You have unsaved project(s) open, are you sure you want to quit?"),
                                         QMessageBox::Yes|QMessageBox::No,
                                         QMessageBox::No);
         if (ret == QMessageBox::No) { e->ignore(); }

@@ -138,7 +138,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
             .arg(tr("Pixel Viewer, Editor and Converter."));
    textString.append(QString("<p style=\"text-align:justify;font-size:small;font-weight:normal;\">%3 %4</p>"
                              "<p style=\"text-align:center;font-size:small;/*font-weight:bold;*/\">"
-                             "%1 &copy; 2016-2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
+                             "%1 &copy; 2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
                              "</p>")
                      .arg(tr("Copyright"))
                      .arg(tr("All rights reserved"))

@@ -279,7 +279,7 @@ void Editor::setupMenus()
     guideMenu->setTitle(tr("Guides"));
 
     memoryMenu = new QMenu(this);
-    memoryMenu->setTitle(tr("ImageMagick memory limit"));
+    memoryMenu->setTitle(tr("Engine memory limit"));
 
     editMenu = new QMenu(this);
     editMenu->setTitle(tr("Edit"));
