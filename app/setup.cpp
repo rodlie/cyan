@@ -490,8 +490,8 @@ void Editor::setupActions()
 
     newImageLayerAct = new QAction(tr("New Layer"), this);
     removeLayerAct = new QAction(tr("Remove layer"), this);
-    moveUpLayerAct = new QAction(tr("Move up"), this);
-    moveDownLayerAct = new QAction(tr("Move down"), this);
+    moveUpLayerAct = new QAction(tr("Move layer up"), this);
+    moveDownLayerAct = new QAction(tr("Move layer down"), this);
     duplicateLayerAct = new QAction(tr("Duplicate layer"), this);
 }
 
