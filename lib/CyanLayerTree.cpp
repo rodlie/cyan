@@ -151,6 +151,23 @@ void LayerTree::setTextSupport(bool enabled)
     newTextLayerAct->setEnabled(enabled);
 }
 
+QList<QAction *> LayerTree::getLeftActions()
+{
+    QList<QAction *> list;
+    list.append(newImageLayerAct);
+    list.append(duplicateLayerAct);
+    list.append(moveUpLayerAct);
+    list.append(moveDownLayerAct);
+    return list;
+}
+
+QList<QAction *> LayerTree::getRightActions()
+{
+    QList<QAction *> list;
+    list.append(removeLayerAct);
+    return list;
+}
+
 void LayerTree::populateTree(View *view)
 {
     if (!view) { return; }

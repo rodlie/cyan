@@ -71,6 +71,8 @@ public slots:
     const QString getCanvasID();
     void handleTabActivated(QMdiSubWindow *tab, bool force = false);
     void setTextSupport(bool enabled);
+    QList<QAction*> getLeftActions();
+    QList<QAction*> getRightActions();
 
 private slots:
     void populateTree(View *view);

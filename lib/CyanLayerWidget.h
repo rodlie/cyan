@@ -23,6 +23,7 @@
 #include <QSlider>
 #include <QDoubleSpinBox>
 #include <QMdiSubWindow>
+#include <QToolBar>
 
 #include <Magick++.h>
 
@@ -76,6 +77,7 @@ private:
     //QSlider *layerOpacitySlider;
     QDoubleSpinBox *layerOpacitySpin;
     bool _textSupport;
+    QToolBar *actionBar;
 
 private slots:
     void populateCompositeBox();

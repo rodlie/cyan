@@ -34,6 +34,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent,
   //, layerOpacitySlider(nullptr)
   , layerOpacitySpin(nullptr)
   , _textSupport(false)
+  , actionBar(nullptr)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -96,6 +97,15 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent,
     mainLayout->addWidget(compositeWidget);
     //mainLayout->addWidget(opacityWidget);
     mainLayout->addWidget(layerTree);
+
+    actionBar = new QToolBar(this);
+    actionBar->setIconSize(QSize(16, 16));
+    QWidget *spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    actionBar->addActions(layerTree->getLeftActions());
+    actionBar->addWidget(spacer);
+    actionBar->addActions(layerTree->getRightActions());
+    mainLayout->addWidget(actionBar);
 
     mainLayout->setContentsMargins(0, 10, 0, 0);
     //mainLayout->setSpacing(0);
