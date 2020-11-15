@@ -12,7 +12,7 @@ APT=${APT:-1}
 PKG_DIR="${CWD}/build-pkg"
 CLEAN=${CLEAN:-1}
 DATE=`date "+%Y%m%d"`
-DISTRO=`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`
+DISTRO=${DISTRO:-`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`}
 WIN32=${WIN32:-0}
 WIN64=${WIN64:-0}
 LINUX=${LINUX:-1}
@@ -262,12 +262,14 @@ if [ "${WIN32}" = 1 ]; then
     $STRIP -s Cyan.exe
     cd $CWD
     mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
-    cp -a $MXE/usr/legal $WIN_PKG/
+    if [ -d "$MXE/usr/legal" ]; then
+      cp -a $MXE/usr/legal $WIN_PKG/
+    fi
     cp $WIN_BUILD/Cyan.exe $WIN_PKG/
     cp -a $WIN_BUILD/etc $WIN_PKG/
     cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
     cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
-    cp $CWD/COPYING $WIN_PKG/
+    cp $CWD/COPYING* $WIN_PKG/
     cp $CWD/docs/README.md $WIN_PKG/
     cp $CWD/share/icc/* $WIN_PKG/profiles/
     zip -9 -r ${WIN_PKG}.zip $WIN_PKG
@@ -292,12 +294,14 @@ if [ "${WIN64}" = 1 ]; then
     $STRIP -s Cyan.exe
     cd $CWD
     mkdir -p $WIN_PKG/platforms $WIN_PKG/profiles
-    cp -a $MXE/usr/legal $WIN_PKG/
+    if [ -d "$MXE/usr/legal" ]; then
+      cp -a $MXE/usr/legal $WIN_PKG/
+    fi
     cp $WIN_BUILD/Cyan.exe $WIN_PKG/
     cp -a $WIN_BUILD/etc $WIN_PKG/
     cp $MXE/usr/$MXE_TC/qt5/plugins/platforms/qwindows.dll $WIN_PKG/platforms/
     cp $MXE/usr/$MXE_TC/qt5/bin/{Qt5Concurrent.dll,Qt5Core.dll,Qt5Gui.dll,Qt5Widgets.dll} $WIN_PKG/
-    cp $CWD/COPYING $WIN_PKG/
+    cp $CWD/COPYING* $WIN_PKG/
     cp $CWD/docs/README.md $WIN_PKG/
     cp $CWD/share/icc/* $WIN_PKG/profiles/
     zip -9 -r ${WIN_PKG}.zip $WIN_PKG
