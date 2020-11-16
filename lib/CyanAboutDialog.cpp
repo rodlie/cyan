@@ -32,8 +32,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
 {
     setWindowTitle(tr("About Cyan"));
     setAttribute(Qt::WA_DeleteOnClose);
-    setMaximumSize(770, 420);
-    setMinimumSize(770, 420);
+    setMinimumSize(790, 480);
 
     bool hasHdri= QString(MagickCore::GetMagickFeatures()).contains("HDRI");
     size_t magickQ;
@@ -71,7 +70,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     QLabel *magickLabel = new QLabel(this);
     magickLabel->setWordWrap(true);
     magickLabel->setOpenExternalLinks(true);
-    magickLabel->setText(QString("<p style=\"text-align:left;font-size:small;\"><table>"
+    magickLabel->setText(QString("<p style=\"text-align:left;\"><table>"
                                  "<tr><td><b>%1</b></td><td>&nbsp;:&nbsp;</td><td<td>%2</td></tr>"
                                  "<tr><td><b>%3</b></td><td>&nbsp;:&nbsp;</td><td>%4</td></tr>"
                                  "<tr><td><b>%5</b></td><td>&nbsp;:&nbsp;</td><td>%6</td></tr>"
@@ -81,7 +80,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                                  "<tr><td><b>%13</b></td><td>&nbsp;:&nbsp;</td><td>%14</td></tr>"
                                  "<tr><td><b>%15</b></td><td>&nbsp;:&nbsp;</td><td>%16</td></tr>"
                                  "</table></p>"
-                                 "<p style=\"text-align:center;font-size:small;\">"
+                                 "<p style=\"text-align:center;\">"
                                  "%17 <a href=\"%18\">%19</a> %20<br>%21 %22"
                                  "<br><br>"
                                  "%17 <a href=\"http://www.littlecms.com/\">Little CMS %23</a><br>%21 &copy; 2020 Marti Maria Saguer.<br>%24."
@@ -132,12 +131,12 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                          "<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a>"
                          "</p>");
 
-    QString textString = QString("<h2 align=\"center\">%1 %2<div style=\"font-size:small;text-transform: uppercase;\">%3</div></h2>")
+    QString textString = QString("<h3 align=\"center\">%1 %2</h3><h4 align=\"center\" style=\"text-transform: uppercase;\">%3</h4>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION)
             .arg(tr("Pixel Viewer, Editor and Converter."));
-   textString.append(QString("<p style=\"text-align:justify;font-size:small;font-weight:normal;\">%3 %4</p>"
-                             "<p style=\"text-align:center;font-size:small;/*font-weight:bold;*/\">"
+   textString.append(QString("<p style=\"text-align:justify;font-weight:normal;\">%3 %4</p>"
+                             "<p style=\"text-align:center;/*font-weight:bold;*/\">"
                              "%1 &copy; 2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
                              "</p>")
                      .arg(tr("Copyright"))

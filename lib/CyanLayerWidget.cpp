@@ -99,7 +99,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent,
     mainLayout->addWidget(layerTree);
 
     actionBar = new QToolBar(this);
-    actionBar->setIconSize(QSize(16, 16));
+    actionBar->setIconSize(QSize(22, 22));
     QWidget *spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     actionBar->addActions(layerTree->getLeftActions());
@@ -107,7 +107,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent,
     actionBar->addActions(layerTree->getRightActions());
     mainLayout->addWidget(actionBar);
 
-    mainLayout->setContentsMargins(0, 10, 0, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     //mainLayout->setSpacing(0);
 
     populateCompositeBox();

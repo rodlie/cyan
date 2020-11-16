@@ -41,14 +41,6 @@
 #include "CyanColorConvert.h"
 #include "CyanAboutDialog.h"
 
-
-// TODO: don't force font size
-#ifdef Q_OS_MAC
-#define CYAN_FONT_SIZE 10
-#else
-#define CYAN_FONT_SIZE 8
-#endif
-
 Editor::Editor(QWidget *parent)
     : QMainWindow(parent)
     , pluginHandler(nullptr)
