@@ -11,7 +11,7 @@ PREFIX=${PREFIX:-"/usr"}
 APT=${APT:-1}
 PKG_DIR="${CWD}/build-pkg"
 CLEAN=${CLEAN:-1}
-DATE=`date "+%Y%m%d"`
+DATE=`date "+%Y%m%d%H%M"`
 DISTRO=${DISTRO:-`cat /etc/os-release | sed '/UBUNTU_CODENAME/!d;s/UBUNTU_CODENAME=//'`}
 WIN32=${WIN32:-0}
 WIN64=${WIN64:-0}
@@ -250,7 +250,7 @@ if [ "${WIN32}" = 1 ]; then
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
     WIN_BUILD=build-win32
-    WIN_PKG=Cyan-$VERSION.$BTAG-Windows-x32
+    WIN_PKG=Cyan-$VERSION.$BTAG-$DATE-Windows-x32
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
 
@@ -282,7 +282,7 @@ if [ "${WIN64}" = 1 ]; then
     CMAKE=${MXE_TC}-cmake
     STRIP=${MXE_TC}-strip
     WIN_BUILD=build-win64
-    WIN_PKG=Cyan-$VERSION.$BTAG-Windows-x64
+    WIN_PKG=Cyan-$VERSION.$BTAG-$DATE-Windows-x64
     export PATH=$MXE/usr/bin:$PATH_ORIG
     export PKG_CONFIG_PATH="${MXE}/usr/${MXE_TC}/lib/pkgconfig"
 
