@@ -34,6 +34,11 @@ const QString CyanImageFormat::getVersion()
 
 QMap<Magick::CompositeOperator, QPair<QString, int> > CyanImageFormat::compositeModes()
 {
+    // counter is used to give each mode an id for use in projects (load/save)
+    // never change this order as this will break older projects! Append new modes at bottom.
+
+    // note that we currently don't depend on the id's for projects load/save, but we will ...
+
     int counter = 0;
     QMap<Magick::CompositeOperator, QPair<QString, int> > result;
     {
