@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <MagickCore/composite.h>
 
 CyanImageFormat::CyanImageFormat()
 {
@@ -33,264 +34,531 @@ const QString CyanImageFormat::getVersion()
 
 QMap<Magick::CompositeOperator, QPair<QString, int> > CyanImageFormat::compositeModes()
 {
+    int counter = 0;
     QMap<Magick::CompositeOperator, QPair<QString, int> > result;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Normal");
-        info.second = 0;
+        info.second = counter;
         result[Magick::OverCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Overlay");
-        info.second = 1;
+        info.second = counter;
         result[Magick::OverlayCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Screen");
-        info.second = 2;
+        info.second = counter;
         result[Magick::ScreenCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Dissolve");
-        info.second = 3;
+        info.second = counter;
         result[Magick::DissolveCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Multiply");
-        info.second = 4;
+        info.second = counter;
         result[Magick::MultiplyCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Addition");
-        info.second = 5;
+        info.second = counter;
         result[Magick::PlusCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Minus (src)");
-        info.second = 6;
+        info.first = QObject::tr("Minus Src");
+        info.second = counter;
         result[Magick::MinusSrcCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Minus (dst)");
-        info.second = 7;
+        info.first = QObject::tr("Minus Dst");
+        info.second = counter;
         result[Magick::MinusDstCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Divide (src)");
-        info.second = 8;
+        info.first = QObject::tr("Divide Src");
+        info.second = counter;
         result[Magick::DivideSrcCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Divide (dst)");
-        info.second = 9;
+        info.first = QObject::tr("Divide Dst");
+        info.second = counter;
         result[Magick::DivideDstCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Difference");
-        info.second = 10;
+        info.second = counter;
         result[Magick::DifferenceCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("XOR");
-        info.second = 11;
+        info.second = counter;
         result[Magick::XorCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Burn");
-        info.second = 12;
+        info.second = counter;
         result[Magick::ColorBurnCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Dodge");
-        info.second = 13;
+        info.second = counter;
         result[Magick::ColorDodgeCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Hard light");
-        info.second = 14;
+        info.second = counter;
         result[Magick::HardLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Lighten only");
-        info.second = 15;
+        info.second = counter;
         result[Magick::LightenCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Lighten intensity");
-        info.second = 16;
+        info.second = counter;
         result[Magick::LightenIntensityCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Darken only");
-        info.second = 17;
+        info.second = counter;
         result[Magick::DarkenCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Darken intensity");
-        info.second = 18;
+        info.second = counter;
         result[Magick::DarkenIntensityCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Vivid light");
-        info.second = 19;
+        info.second = counter;
         result[Magick::VividLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Pin light");
-        info.second = 20;
+        info.second = counter;
         result[Magick::PinLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Soft light");
-        info.second = 21;
+        info.second = counter;
         result[Magick::SoftLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Pegtop light");
-        info.second = 22;
+        info.second = counter;
         result[Magick::PegtopLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Black");
-        info.second = 23;
+        info.second = counter;
         result[Magick::CopyBlackCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Blue");
-        info.second = 24;
+        info.second = counter;
         result[Magick::CopyBlueCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Cyan");
-        info.second = 25;
+        info.second = counter;
         result[Magick::CopyCyanCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Green");
-        info.second = 26;
+        info.second = counter;
         result[Magick::CopyGreenCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Magenta");
-        info.second = 27;
+        info.second = counter;
         result[Magick::CopyMagentaCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Red");
-        info.second = 28;
+        info.second = counter;
         result[Magick::CopyRedCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Copy Yellow");
-        info.second = 29;
+        info.second = counter;
         result[Magick::CopyYellowCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Hue");
-        info.second = 30;
+        info.second = counter;
         result[Magick::HueCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Saturation");
-        info.second = 31;
+        info.second = counter;
         result[Magick::SaturateCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Substract");
-        info.second = 32;
+        info.second = counter;
         result[Magick::MinusSrcCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Divide");
-        info.second = 33;
+        info.second = counter;
         result[Magick::DivideSrcCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Burn (linear)");
-        info.second = 34;
+        info.first = QObject::tr("Burn Linear");
+        info.second = counter;
         result[Magick::LinearBurnCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Dodge (linear)");
-        info.second = 35;
+        info.first = QObject::tr("Dodge Linear");
+        info.second = counter;
         result[Magick::LinearDodgeCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Threshold");
-        info.second = 36;
+        info.second = counter;
         result[Magick::ThresholdCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Replace");
-        info.second = 37;
+        info.second = counter;
         result[Magick::ReplaceCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Modulate");
-        info.second = 38;
+        info.second = counter;
         result[Magick::ModulateCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Luminize");
-        info.second = 39;
+        info.second = counter;
         result[Magick::LuminizeCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Linear light");
-        info.second = 40;
+        info.first = QObject::tr("Linear Light");
+        info.second = counter;
         result[Magick::LinearLightCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
-        info.first = QObject::tr("Hard mix");
-        info.second = 41;
+        info.first = QObject::tr("Hard Mix");
+        info.second = counter;
         result[Magick::HardMixCompositeOp] = info;
     }
+    counter++;
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Exclusion");
-        info.second = 42;
+        info.second = counter;
         result[Magick::ExclusionCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Alpha");
+        info.second = counter;
+        result[Magick::AlphaCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Blend");
+        info.second = counter;
+        result[Magick::BlendCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Blur");
+        info.second = counter;
+        result[Magick::BlurCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Bumpmap");
+        info.second = counter;
+        result[Magick::BumpmapCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Change Mask");
+        info.second = counter;
+        result[Magick::ChangeMaskCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Clear");
+        info.second = counter;
+        result[Magick::ClearCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Copy");
+        info.second = counter;
+        result[Magick::CopyCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Copy Alpha");
+        info.second = counter;
+        result[Magick::CopyAlphaCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Displace");
+        info.second = counter;
+        result[Magick::DisplaceCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Distort");
+        info.second = counter;
+        result[Magick::DistortCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Dst Atop");
+        info.second = counter;
+        result[Magick::DstAtopCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Dst");
+        info.second = counter;
+        result[Magick::DstCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Dst In");
+        info.second = counter;
+        result[Magick::DstInCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Dst Out");
+        info.second = counter;
+        result[Magick::DstOutCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Dst Over");
+        info.second = counter;
+        result[Magick::DstOverCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("In");
+        info.second = counter;
+        result[Magick::InCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Mathematics");
+        info.second = counter;
+        result[Magick::MathematicsCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Modulus");
+        info.second = counter;
+        result[Magick::ModulusAddCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Modulus Sustract");
+        info.second = counter;
+        result[Magick::ModulusSubtractCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Src Atop");
+        info.second = counter;
+        result[Magick::SrcAtopCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Src");
+        info.second = counter;
+        result[Magick::SrcCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Src In");
+        info.second = counter;
+        result[Magick::SrcInCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Src Out");
+        info.second = counter;
+        result[Magick::SrcOutCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Src Over");
+        info.second = counter;
+        result[Magick::SrcOverCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Stereo");
+        info.second = counter;
+        result[Magick::CompositeOperator::StereoCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Freeze");
+        info.second = counter;
+        result[Magick::CompositeOperator::FreezeCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Interpolate");
+        info.second = counter;
+        result[Magick::CompositeOperator::InterpolateCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Negate");
+        info.second = counter;
+        result[Magick::CompositeOperator::NegateCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Reflect");
+        info.second = counter;
+        result[Magick::CompositeOperator::ReflectCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Soft Burn");
+        info.second = counter;
+        result[Magick::CompositeOperator::SoftBurnCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Soft Doge");
+        info.second = counter;
+        result[Magick::CompositeOperator::SoftDodgeCompositeOp] = info;
+    }
+    counter++;
+    {
+        QPair<QString, int> info;
+        info.first = QObject::tr("Stamp");
+        info.second = counter;
+        result[Magick::CompositeOperator::StampCompositeOp] = info;
     }
     return result;
 }
