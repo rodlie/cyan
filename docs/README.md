@@ -4,6 +4,28 @@
 
 Cyan 2 *(1.99.x)* aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
 
+## Download
+
+Latest **experimental** snapshots are available on [GitHub](https://github.com/rodlie/cyan/releases/tag/continuous).
+
+## Source
+
+* CMake *>= 3.0*
+* Qt *>= 5.5*
+  * *Core, Gui, Widgets, Concurrent, Test*
+* (Image)Magick++ *>= 7.0.10*
+  * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib*
+* lcms2
+* fontconfig
+* pkg-config/pkgconf
+
+```
+git clone https://github.com/rodlie/cyan
+cd cyan
+mkdir build && cd build
+cmake .. && make
+```
+
 ## Shortcuts
 
 | Shortcut           | Action                             |
