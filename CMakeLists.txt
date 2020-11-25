@@ -97,7 +97,7 @@ add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 add_definitions(-DCYAN_LIBRARY)
 
-find_package(Qt5 REQUIRED Core Gui Widgets Concurrent Test)
+find_package(Qt5 5.5 REQUIRED Core Gui Widgets Concurrent Test)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.10)
 pkg_search_module(LCMS2 REQUIRED lcms2)
