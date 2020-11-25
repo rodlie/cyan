@@ -214,28 +214,36 @@ void CyanLayerWidget::setTextSupport(bool enabled)
 void CyanLayerWidget::moveCurrentLayerUp(bool triggered)
 {
     Q_UNUSED(triggered)
-    int id = getCurrentLayer()->getLayerID();
+    CyanLayerTreeItem *item = getCurrentLayer();
+    if (!item) { return; }
+    int id = item->getLayerID();
     moveLayerUp(id);
 }
 
 void CyanLayerWidget::moveCurrentLayerDown(bool triggered)
 {
     Q_UNUSED(triggered)
-    int id = getCurrentLayer()->getLayerID();
+    CyanLayerTreeItem *item = getCurrentLayer();
+    if (!item) { return; }
+    int id = item->getLayerID();
     moveLayerDown(id);
 }
 
 void CyanLayerWidget::duplicateCurrentLayer(bool triggered)
 {
     Q_UNUSED(triggered)
-    int id = getCurrentLayer()->getLayerID();
+    CyanLayerTreeItem *item = getCurrentLayer();
+    if (!item) { return; }
+    int id = item->getLayerID();
     duplicateLayer(id);
 }
 
 void CyanLayerWidget::removeCurrentLayer(bool triggered)
 {
     Q_UNUSED(triggered)
-    int id = getCurrentLayer()->getLayerID();
+    CyanLayerTreeItem *item = getCurrentLayer();
+    if (!item) { return; }
+    int id = item->getLayerID();
     removeLayer(id);
 }
 
@@ -370,6 +378,35 @@ void CyanLayerWidget::populateCompositeBox()
                                CyanImageFormat::compositeModes()[Magick::SaturateCompositeOp].first,
                                CyanImageFormat::compositeModes()[Magick::SaturateCompositeOp].second);
 
+    layerCompositeBox->insertSeparator(layerCompositeBox->count());
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyRedCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyRedCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyGreenCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyGreenCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyBlueCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyBlueCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyAlphaCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyAlphaCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyCyanCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyCyanCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyMagentaCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyMagentaCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyYellowCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyYellowCompositeOp].second);
+    layerCompositeBox->addItem(icon,
+                               CyanImageFormat::compositeModes()[Magick::CopyBlackCompositeOp].first,
+                               CyanImageFormat::compositeModes()[Magick::CopyBlackCompositeOp].second);
+
     // add the "rest"
     layerCompositeBox->insertSeparator(layerCompositeBox->count());
 
@@ -385,7 +422,7 @@ void CyanLayerWidget::populateCompositeBox()
         }
     }
 
-    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(QString("Normal")));
+    layerCompositeBox->setCurrentIndex(layerCompositeBox->findText(QString("Normal (Over)")));
 }
 
 void CyanLayerWidget::handleLayerActivated(QTreeWidgetItem *item,
