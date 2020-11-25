@@ -99,7 +99,7 @@ add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5 REQUIRED Core Gui Widgets Concurrent Test)
 find_package(PkgConfig REQUIRED)
-pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
+pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.10)
 pkg_search_module(LCMS2 REQUIRED lcms2)
 pkg_search_module(FONTCONF REQUIRED fontconfig)
 
