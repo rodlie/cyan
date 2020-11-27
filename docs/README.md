@@ -13,7 +13,7 @@ Latest **experimental** snapshots are available on [GitHub](https://github.com/r
 * CMake *>= 3.0*
 * Qt *>= 5.5*
   * *Core, Gui, Widgets, Concurrent, Test*
-* (Image)Magick++ *>= 7.0.10*
+* (Image)Magick++ *>= 7.0.8 (7.0.10 recommended)*
   * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib*
 * lcms2
 * fontconfig

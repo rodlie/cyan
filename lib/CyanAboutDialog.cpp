@@ -128,6 +128,8 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     footerLabel->setText("<p style=\"text-align:right;\">"
                          "<a href=\"https://github.com/rodlie/cyan\"><img src=\":/icons/GitHub-Mark-Light-32px.png\"></a>"
                          "&nbsp;&nbsp;&nbsp;"
+                         "<a href=\"https://qt.io\"><img src=\":/icons/built-with-Qt_Horizontal.png\"></a>"
+                         "&nbsp;&nbsp;&nbsp;"
                          "<a href=\"https://www.paypal.me/orodlie\"><img src=\":/icons/paypal.png\"></a>"
                          "</p>");
 

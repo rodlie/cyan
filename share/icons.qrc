@@ -7,6 +7,7 @@
         <file>icons/hicolor/512x512/apps/Cyan.png</file>
         <file>icons/hicolor/36x36/apps/Cyan.png</file>
         <file>icons/hicolor/32x32/apps/Cyan.png</file>
+        <file>icons/hicolor/32x32/actions/batch.png</file>
         <file>icons/hicolor/32x32/actions/zoom-original.png</file>
         <file>icons/hicolor/32x32/actions/applications-graphics.png</file>
         <file>icons/hicolor/32x32/actions/zoom-fit-best.png</file>
@@ -62,6 +63,7 @@
         <file>icons/hicolor/256x256/apps/Cyan.png</file>
         <file>icons/hicolor/128x128/apps/Cyan.png</file>
         <file>icons/hicolor/16x16/apps/Cyan.png</file>
+        <file>icons/hicolor/16x16/actions/batch.png</file>
         <file>icons/hicolor/16x16/actions/zoom-original.png</file>
         <file>icons/hicolor/16x16/actions/applications-graphics.png</file>
         <file>icons/hicolor/16x16/actions/zoom-fit-best.png</file>
@@ -110,5 +112,6 @@
         <file>icons/hicolor/48x48/apps/Cyan.png</file>
         <file>icons/paypal.png</file>
         <file>icons/GitHub-Mark-Light-32px.png</file>
+        <file>icons/built-with-Qt_Horizontal.png</file>
     </qresource>
 </RCC>

@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <QSettings>
+#include <QDebug>
 
 CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     QWidget(parent)
@@ -18,6 +19,7 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
   , _format(nullptr)
   , _compression(nullptr)
   , _quality(nullptr)
+  , _working(false)
 {
     setAcceptDrops(true);
 
@@ -76,16 +78,16 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
     _compression = new QComboBox(this);
 
     QLabel *qualityLabel = new QLabel(this);
-    qualityLabel->setText(tr("JPEG Quality"));
+    qualityLabel->setText(tr("Quality"));
     qualityLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     _quality = new QSpinBox(this);
     _quality->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    compressionLabel->setHidden(true);
+    /*compressionLabel->setHidden(true);
     _compression->setHidden(true);
     qualityLabel->setHidden(true);
-    _quality->setHidden(true);
+    _quality->setHidden(true);*/
 
     _tree = new QTreeWidget(this);
 
@@ -136,11 +138,9 @@ CyanBatchWidget::CyanBatchWidget(QWidget *parent) :
 
 void CyanBatchWidget::setupUI()
 {
-    populateIntentFromSettings();
-    populateFormat(/*CyanCommon::OutputFormatConverterTiff*/);
     _quality->setRange(0, 100);
     _quality->setValue(100);
-    populateProfilesFromSettings(Magick::CMYKColorspace);
+    reloadSettings();
 }
 
 void CyanBatchWidget::populateIntent(CyanCommon::RenderingIntent intent)
@@ -163,9 +163,30 @@ void CyanBatchWidget::populateIntentFromSettings()
 {
     QSettings settings;
     settings.beginGroup(QString("color"));
-    populateIntent(static_cast<CyanCommon::RenderingIntent>(settings.value(QString("intent"),
-                                                                           CyanCommon::PerceptualRenderingIntent).toInt()));
+    int intent = settings.value(QString("intent"),
+                                CyanCommon::PerceptualRenderingIntent).toInt();
     settings.endGroup();
+    settings.beginGroup(QString("batch"));
+    if (settings.value(QString("blackpoint")).isValid()) {
+        intent = settings.value(QString("intent"),
+                                CyanCommon::PerceptualRenderingIntent).toInt();
+    }
+    settings.endGroup();
+    populateIntent(static_cast<CyanCommon::RenderingIntent>(intent));
+}
+
+void CyanBatchWidget::populateBlackPointFromSettings()
+{
+    QSettings settings;
+    settings.beginGroup(QString("color"));
+    bool blackPointState = settings.value(QString("blackpoint"), true).toBool();
+    settings.endGroup();
+    settings.beginGroup(QString("batch"));
+    if (settings.value(QString("blackpoint")).isValid()) {
+        blackPointState = settings.value(QString("blackpoint"), true).toBool();
+    }
+    settings.endGroup();
+    _blackpoint->setChecked(blackPointState);
 }
 
 void CyanBatchWidget::populateFormat(CyanCommon::OutputFormatConverter format)
@@ -213,6 +234,42 @@ void CyanBatchWidget::populateProfilesFromSettings(Magick::ColorspaceType colors
         profile = settings.value(QString("rgb_profile")).toString();
         ;
     }
-    populateProfiles(profile, colorspace);
     settings.endGroup();
+    settings.beginGroup(QString("batch"));
+    QString batchProfile = settings.value(QString("profile")).toString();
+    settings.endGroup();
+    if (!batchProfile.isEmpty()) { profile = batchProfile; }
+    populateProfiles(profile, colorspace);
+}
+
+void CyanBatchWidget::reloadSettings()
+{
+    populateIntentFromSettings();
+    populateBlackPointFromSettings();
+    populateProfilesFromSettings();
+    populateFormat();
+}
+
+void CyanBatchWidget::handleViewToggled(bool checked)
+{
+    qDebug() << "TOGGLE?" << checked;
+    qDebug() << "VISIBLE?" << isVisible() << !visibleRegion().isEmpty();
+    if (checked && (!isVisible() || visibleRegion().isEmpty()) ) {
+        qDebug() << "SHOW WIDGET";
+        show();
+        emit changedVisibleState(checked);
+    }
+    else if (!checked && (isVisible() || !visibleRegion().isEmpty())) {
+        qDebug() << "HIDE WIDGET";
+        hide();
+        emit changedVisibleState(checked);
+    } else {
+        qDebug() << "IGNORE CHANGE STATE";
+        emit changedVisibleState((isVisible()&&!visibleRegion().isEmpty()));
+    }
+}
+
+bool CyanBatchWidget::isBusy()
+{
+    return _working;
 }

@@ -28,15 +28,25 @@ private:
     QComboBox *_format;
     QComboBox *_compression;
     QSpinBox *_quality;
+    bool _working;
+
+signals:
+    void changedVisibleState(bool checked);
 
 private slots:
     void setupUI();
     void populateIntent(CyanCommon::RenderingIntent intent = CyanCommon::UndefinedRenderingIntent);
     void populateIntentFromSettings();
+    void populateBlackPointFromSettings();
     void populateFormat(CyanCommon::OutputFormatConverter format = CyanCommon::OutputFormatConverterTiff);
     void populateProfiles(const QString &defaultProfile = QString(),
-                          Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
-    void populateProfilesFromSettings(Magick::ColorspaceType colorspace = Magick::sRGBColorspace);
+                          Magick::ColorspaceType colorspace = Magick::UndefinedColorspace);
+    void populateProfilesFromSettings(Magick::ColorspaceType colorspace = Magick::UndefinedColorspace);
+    void reloadSettings();
+
+public slots:
+    void handleViewToggled(bool checked);
+    bool isBusy();
 };
 
 #endif // CYANBATCHWIDGET_H

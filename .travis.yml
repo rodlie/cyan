@@ -5,10 +5,6 @@ matrix:
   include:
     - os: linux
       dist: focal
-    - os: linux
-      dist: bionic
-    - os: linux
-      dist: xenial
 
 before_install:
   - sudo apt remove --purge imagemagick imagemagick-common

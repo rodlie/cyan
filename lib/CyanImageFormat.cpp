@@ -517,54 +517,68 @@ QMap<Magick::CompositeOperator, QPair<QString, int> > CyanImageFormat::composite
         result[Magick::CompositeOperator::StereoCompositeOp] = info;
     }
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Freeze");
         info.second = counter;
         result[Magick::CompositeOperator::FreezeCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Interpolate");
         info.second = counter;
         result[Magick::CompositeOperator::InterpolateCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Negate");
         info.second = counter;
         result[Magick::CompositeOperator::NegateCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Reflect");
         info.second = counter;
         result[Magick::CompositeOperator::ReflectCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Soft Burn");
         info.second = counter;
         result[Magick::CompositeOperator::SoftBurnCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Soft Doge");
         info.second = counter;
         result[Magick::CompositeOperator::SoftDodgeCompositeOp] = info;
     }
+#endif
     counter++;
+#if MagickLibVersion > 0x708
     {
         QPair<QString, int> info;
         info.first = QObject::tr("Stamp");
         info.second = counter;
         result[Magick::CompositeOperator::StampCompositeOp] = info;
     }
+#endif
     return result;
 }
 

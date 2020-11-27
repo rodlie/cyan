@@ -136,6 +136,8 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
 {
     QMap<QString, QString> output;
     QStringList folders = getColorProfilesPath();
+    bool getAll = colorspace == Magick::ColorspaceType::UndefinedColorspace? true : false;
+
     for (int i = 0; i < folders.size(); ++i) {
         QStringList filter;
         filter << "*.icc" << "*.icm";
@@ -160,7 +162,7 @@ QMap<QString, QString> CyanCommon::getColorProfiles(Magick::ColorspaceType color
                 break;
             default:;
             }
-            if (iccColorspace != colorspace) { continue; }
+            if (iccColorspace != colorspace && !getAll) { continue; }
             output[profile] = iccFile;
         }
     }
