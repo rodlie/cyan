@@ -2,11 +2,7 @@
 
 ![screenshot](images/screenshot.png)
 
-Cyan 2 *(1.99.x)* aims to be a simple general-purpose image editor and converter for RGB/CMYK/GRAY using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
-
-## Download
-
-Latest **experimental** snapshots are available on [GitHub](https://github.com/rodlie/cyan/releases/tag/continuous).
+Cyan 2 *(1.99.x)* aims to be a simple general-purpose editor and converter for RGB/CMYK/GRAY images using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
 
 ## Source
 
@@ -23,7 +19,7 @@ Latest **experimental** snapshots are available on [GitHub](https://github.com/r
 git clone https://github.com/rodlie/cyan
 cd cyan
 mkdir build && cd build
-cmake .. && make
+cmake -DCMAKE_BUILD_TYPE=Release .. && make
 ```
 
 ## Shortcuts
