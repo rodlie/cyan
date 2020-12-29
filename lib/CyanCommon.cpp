@@ -121,6 +121,7 @@ int CyanCommon::getTotalRam(int percent)
     int gib = qRound(static_cast<double>((physicalMemory*1024)/RESOURCE_BYTE));
     return qRound(static_cast<double>((gib*percent)/100));
 #endif
+    Q_UNUSED(percent)
     return 0;
 }
 

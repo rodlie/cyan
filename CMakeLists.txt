@@ -104,11 +104,11 @@ add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_
 add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5 5.5 REQUIRED Core Gui Widgets Concurrent Test)
-if(!WIN32)
+if(NOT WIN32)
     find_package(PkgConfig REQUIRED)
     pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.8)
     pkg_search_module(LCMS2 REQUIRED lcms2)
-    pkg_search_module(FONTCONF REQUIRED fontconfig)
+    #pkg_search_module(FONTCONF REQUIRED fontconfig)
 endif()
 
 #if (APPLE)
@@ -128,8 +128,8 @@ endif()
 #)
 
 include_directories(app lib)
-if(!WIN32)
-    include_directories( ${MAGICK_INCLUDE_DIRS} ${LCMS2_INCLUDE_DIRS} ${FONTCONF_INCLUDE_DIRS})
+if(NOT WIN32)
+    include_directories( ${MAGICK_INCLUDE_DIRS} ${LCMS2_INCLUDE_DIRS}) # ${FONTCONF_INCLUDE_DIRS})
     add_compile_options(-Wall -Wextra)
 endif()
 
@@ -234,6 +234,7 @@ if(WIN32)
     endif()
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+    target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
 endif()
 
 if(UNIX AND NOT APPLE)
