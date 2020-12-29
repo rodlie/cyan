@@ -225,7 +225,7 @@ void Editor::setupUI()
     else { appStyle->setChecked(true); }
 
     // magick memory resources
-    optMenu->addMenu(memoryMenu);
+    /*optMenu->addMenu(memoryMenu);
     for (int i=2;i<33;++i) {
         QAction *act = new QAction(this);
         act->setCheckable(true);
@@ -235,7 +235,7 @@ void Editor::setupUI()
         connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
         magickMemoryResourcesGroup->addAction(act);
     }
-    memoryMenu->addActions(magickMemoryResourcesGroup->actions());
+    memoryMenu->addActions(magickMemoryResourcesGroup->actions());*/
 
     // splitters
 
@@ -403,7 +403,7 @@ void Editor::setupWidgets(bool native)
 
 void Editor::setupActions()
 {
-    magickMemoryResourcesGroup = new QActionGroup(this);
+    //magickMemoryResourcesGroup = new QActionGroup(this);
     viewModeGroup = new QActionGroup(this);
 
     profileRGBGroup = new QActionGroup(this);
@@ -687,7 +687,6 @@ void Editor::setupShortcuts()
 
 void Editor::setupOptions()
 {
-
 }
 
 void Editor::handleStyleChange(bool triggered)

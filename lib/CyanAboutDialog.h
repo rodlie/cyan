@@ -30,7 +30,9 @@ class CYANSHARED_EXPORT CyanAboutDialog : public QDialog
 public:
     CyanAboutDialog(QWidget *parent = nullptr);
 
-private:
+private slots:
+    void qtButtonTriggered();
+    void ghButtonTriggered();
 };
 
 #endif // CYANABOUTDIALOG_H

@@ -99,7 +99,7 @@ CyanLayerWidget::CyanLayerWidget(QWidget *parent,
     mainLayout->addWidget(layerTree);
 
     actionBar = new QToolBar(this);
-    actionBar->setIconSize(QSize(22, 22));
+    actionBar->setIconSize(QSize(24, 24));
     QWidget *spacer = new QWidget(this);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     actionBar->addActions(layerTree->getLeftActions());

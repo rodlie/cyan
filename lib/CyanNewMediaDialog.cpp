@@ -269,6 +269,10 @@ NewMediaDialog::NewMediaDialog(QWidget *parent,
             SIGNAL(currentIndexChanged(int)),
             this,
             SLOT(handleColorspaceChanged(int)));
+    connect(this,
+            SIGNAL(createImageFinished()),
+            this,
+            SLOT(handleCreatedImage()));
 }
 
 NewMediaDialog::~NewMediaDialog()
@@ -333,11 +337,14 @@ void NewMediaDialog::handleOk()
 
     QDialog::accept();*/
     this->setEnabled(false);
+    _progbar->setHidden(false);
     QtConcurrent::run(this,
                       &NewMediaDialog::createImage,
                       QSize(_width->value(), _height->value()),
                       type,
-                      depth);
+                      depth,
+                      _label->text(),
+                      _drawOption->currentData().toInt());
 }
 
 void NewMediaDialog::handleCancel()
@@ -347,12 +354,10 @@ void NewMediaDialog::handleCancel()
 
 void NewMediaDialog::createImage(QSize geo,
                                  Magick::ColorspaceType colorspace,
-                                 size_t depth)
+                                 size_t depth,
+                                 QString label,
+                                 int option)
 {
-    _progbar->setHidden(false);
-    QString label = _label->text();
-    if (label.isEmpty()) { label = windowTitle(); }
-    int option = _drawOption->currentData().toInt();
     Magick::Geometry mGeo = Magick::Geometry(static_cast<size_t>(geo.width()),
                                              static_cast<size_t>(geo.height()));
     qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
@@ -482,7 +487,7 @@ void NewMediaDialog::createImage(QSize geo,
         qDebug() << warn_.what();
     }
 
-    QDialog::accept();
+    emit createImageFinished();
 }
 
 void NewMediaDialog::populateProfiles(Magick::ColorspaceType colorspace)
@@ -557,4 +562,9 @@ Magick::Blob NewMediaDialog::selectedProfile()
         }
     }
     return Magick::Blob();
+}
+
+void NewMediaDialog::handleCreatedImage()
+{
+    QDialog::accept();
 }

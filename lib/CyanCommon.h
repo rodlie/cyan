@@ -84,7 +84,7 @@ public:
 
     static int getMemoryResource();
     static void setMemoryResource(int gib);
-
+    static int getTotalRam(int percent = 75);
     static void setThreadResources(int thread);
 
 

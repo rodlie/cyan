@@ -1145,12 +1145,13 @@ Magick::Image CyanImageFormat::renderText(CyanImageFormat::CyanLayer layer)
                                         "align",
                                         QString::number(layer.textAlign).toStdString());
             //}
+            //layer.image.defineValue("pango", "hinting", "full");
             if (layer.textRotate!=0) {
                 layer.image.defineValue("pango",
                                         "rotate",
                                         QString::number(layer.textRotate).toStdString());
             }
-            layer.image.read(QString("PANGO: %1").arg(markup).toStdString());
+            layer.image.read(QString("PANGO: %1").arg(markup).toUtf8().toStdString());
             layer.image.label(layer.label.toStdString());
         }
         catch(Magick::Error &error_) { qWarning() << error_.what(); }

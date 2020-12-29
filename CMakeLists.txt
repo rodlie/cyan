@@ -21,13 +21,19 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(COMPANY "FxArena")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
-option(BUILD_PLUGIN_COLOR_TRIANGLE "Build color triangle plugin" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(RUNTIME_WARNINGS "Show warnings during runtime" OFF)
+
+if(WIN32)
+    set(IMAGEMAGICK_WINDOWS "C:/Users/olear/Documents/ImageMagick-Windows" CACHE STRING "VisualMagick")
+    include_directories(${IMAGEMAGICK_WINDOWS}/ImageMagick/Magick++/lib ${IMAGEMAGICK_WINDOWS}/ImageMagick ${IMAGEMAGICK_WINDOWS}/lcms/include)
+    link_directories(${IMAGEMAGICK_WINDOWS}/VisualMagick/lib ${IMAGEMAGICK_WINDOWS}/VisualMagick/bin)
+endif()
 
 set(HEADERS_API lib/CyanWidgetApi.h)
 set(HEADERS_APP app/editor.h)
@@ -98,36 +104,35 @@ add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_
 add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5 5.5 REQUIRED Core Gui Widgets Concurrent Test)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.8)
-pkg_search_module(LCMS2 REQUIRED lcms2)
-pkg_search_module(FONTCONF REQUIRED fontconfig)
-
-if (APPLE)
-    set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
-    set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
-elseif(WIN32)
-    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir><dir>~/AppData/Local/Microsoft/Windows/Fonts</dir>")
-    set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
-else()
-    set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")
-    set(FC_CACHE_DIR "<cachedir prefix=\"xdg\">fontconfig</cachedir><cachedir>~/.fontconfig</cachedir>")
+if(!WIN32)
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.8)
+    pkg_search_module(LCMS2 REQUIRED lcms2)
+    pkg_search_module(FONTCONF REQUIRED fontconfig)
 endif()
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
-    ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
-    @ONLY
-)
 
-include_directories(
-    app
-    lib
-    ${MAGICK_INCLUDE_DIRS}
-    ${LCMS2_INCLUDE_DIRS}
-    ${FONTCONF_INCLUDE_DIRS}
-)
+#if (APPLE)
+#    set(FC_FONTS_DIR "<dir>/System/Library/Fonts</dir><dir>/Library/Fonts</dir><dir>~/Library/Fonts</dir>")
+#    set(FC_CACHE_DIR "<cachedir>~/.cache/fontconfig</cachedir>")
+#elseif(WIN32)
+#    set(FC_FONTS_DIR "<dir>WINDOWSFONTDIR</dir><dir>~/AppData/Local/Microsoft/Windows/Fonts</dir>")
+#    set(FC_CACHE_DIR "<cachedir>LOCAL_APPDATA_FONTCONFIG_CACHE</cachedir>")
+#else()
+#    set(FC_FONTS_DIR "<dir>/usr/share/fonts/OTF</dir><dir>/usr/share/fonts/TTF</dir><dir>/usr/share/fonts/Type1</dir><dir>/usr/share/fonts/Speedo</dir><dir>/usr/share/fonts/cyrillic</dir><dir>/usr/share/fonts/misc</dir><dir prefix=\"xdg\">fonts</dir>")
+#    set(FC_CACHE_DIR "<cachedir prefix=\"xdg\">fontconfig</cachedir><cachedir>~/.fontconfig</cachedir>")
+#endif()
+#configure_file(
+#    ${CMAKE_CURRENT_SOURCE_DIR}/share/fonts.conf.in
+#    ${CMAKE_CURRENT_BINARY_DIR}/etc/fonts/fonts.conf
+#    @ONLY
+#)
 
-add_compile_options(-Wall -Wextra)
+include_directories(app lib)
+if(!WIN32)
+    include_directories( ${MAGICK_INCLUDE_DIRS} ${LCMS2_INCLUDE_DIRS} ${FONTCONF_INCLUDE_DIRS})
+    add_compile_options(-Wall -Wextra)
+endif()
+
 if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
     add_definitions(-DQT_NO_DEBUG_OUTPUT)
 else()
@@ -213,19 +218,23 @@ else()
         ${RESOURCES})
 endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${MAGICK_STATIC_LIBRARIES}
-    ${LCMS2_LIBRARIES}
-    ${MAGICK_STATIC_LDFLAGS}
-    ${LCMS2_LDFLAGS}
-    ${FONTCONF_LDFLAGS}
 )
+
+if(WIN32)
+    if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
+        target_link_libraries(${PROJECT_NAME} CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
+    else()
+        target_link_libraries(${PROJECT_NAME} CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
+    endif()
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+endif()
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
@@ -318,8 +327,11 @@ if(UNIX AND NOT APPLE)
     )
 endif()
 
-
-# Include Cyan Color Triangle Widget
-if(BUILD_PLUGIN_COLOR_TRIANGLE)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
 endif()
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
+endif()
+

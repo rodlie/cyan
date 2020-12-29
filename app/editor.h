@@ -103,7 +103,7 @@ private:
     QAction *addGuideHAct;
     QAction *showGuidesAct;
 
-    QActionGroup *magickMemoryResourcesGroup;
+    //QActionGroup *magickMemoryResourcesGroup;
     QActionGroup *viewModeGroup;
 
     QActionGroup *profileRGBGroup;

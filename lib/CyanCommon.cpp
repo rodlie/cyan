@@ -26,6 +26,10 @@
 #include <QRegularExpressionMatch>
 #include <QApplication>
 
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
+
 #define RESOURCE_BYTE 1050000000
 
 CyanCommon::CyanCommon(QObject *parent): QObject (parent)
@@ -100,19 +104,29 @@ int CyanCommon::getMemoryResource()
 
 void CyanCommon::setMemoryResource(int gib)
 {
+    if (gib < 2) { gib = 2; }
     try {
         Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
         Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
     }
     catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
-    catch(Magick::Warning &warn_ ) {
-        qDebug() << warn_.what();
-    }
+    catch(Magick::Warning &warn_ ) { qDebug() << warn_.what(); }
+}
+
+int CyanCommon::getTotalRam(int percent)
+{
+#ifdef Q_OS_WIN
+    unsigned long long physicalMemory = 0;
+    GetPhysicallyInstalledSystemMemory(&physicalMemory);
+    int gib = qRound(static_cast<double>((physicalMemory*1024)/RESOURCE_BYTE));
+    return qRound(static_cast<double>((gib*percent)/100));
+#endif
+    return 0;
 }
 
 void CyanCommon::setThreadResources(int thread)
 {
-    if (thread == 0) { return; }
+    if (thread < 1) { return; }
     Magick::ResourceLimits::thread(static_cast<qulonglong>(thread));
 }
 

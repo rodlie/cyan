@@ -86,15 +86,21 @@ private:
     QComboBox *_bitBox;
     QProgressBar *_progbar;
 
+signals:
+    void createImageFinished();
+
 private slots:
     void handleOk();
     void handleCancel();
     void createImage(QSize geo = QSize(1024, 1024),
                      Magick::ColorspaceType colorspace = Magick::sRGBColorspace,
-                     size_t depth = 8);
+                     size_t depth = 8,
+                     QString label = tr("Untitled"),
+                     int option = 0);
     void populateProfiles(Magick::ColorspaceType colorspace);
     void handleColorspaceChanged(int index = -1);
     Magick::Blob selectedProfile();
+    void handleCreatedImage();
 };
 
 #endif // NEWMEDIADIALOG_H

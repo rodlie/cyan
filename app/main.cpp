@@ -24,7 +24,9 @@
 #include <QStringList>
 #include <QFile>
 
+#ifdef USE_FC
 #include <fontconfig/fontconfig.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,8 +90,9 @@ void msgHandler(QtMsgType type,
 
 int main(int argc, char *argv[])
 {
-    // always force fontconfig in pango
+#ifdef USE_FC
     qputenv("PANGOCAIRO_BACKEND", "fc");
+#endif
 
     qInstallMessageHandler(msgHandler);
 
@@ -99,6 +102,7 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
 
+#ifdef USE_FC
     QString fontconfig;
 #ifdef Q_OS_MAC
     fontconfig = QString("%1/../Resources/etc/fonts").arg(QApplication::applicationDirPath());
@@ -115,16 +119,19 @@ int main(int argc, char *argv[])
                          Qt::SplashScreen);
     splash.show();
 #endif
+#endif
 
     // setup imagemagick
     Magick::InitializeMagick(nullptr);
 
+#ifdef USE_FC
     // setup fontconfig
     FcBool success = FcInit();
     if (success) {
         FcConfig *config = FcInitLoadConfigAndFonts();
         FcConfigDestroy(config);
     }
+#endif
 
     // editor
     Editor w;
@@ -134,8 +141,10 @@ int main(int argc, char *argv[])
             w.openConsoleImage(args.at(1));
     }
 
+#ifdef USE_FC
 #ifndef Q_OS_LINUX
     splash.finish(&w);
+#endif
 #endif
 
     return a.exec();

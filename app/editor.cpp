@@ -73,7 +73,7 @@ Editor::Editor(QWidget *parent)
     , addGuideVAct(nullptr)
     , addGuideHAct(nullptr)
     , showGuidesAct(nullptr)
-    , magickMemoryResourcesGroup(nullptr)
+    /*, magickMemoryResourcesGroup(nullptr)*/
     , viewModeGroup(nullptr)
     , profileRGBGroup(nullptr)
     , profileCMYKGroup(nullptr)
@@ -293,14 +293,11 @@ void Editor::loadSettings()
     QSettings settings;
 
     settings.beginGroup("engine");
-    CyanCommon::setDiskResource(settings
-                            .value("disk_limit", 0).toInt());
-    int maxMem = settings.value("memory_limit",
-                                CyanImageFormat::supportedQuantumDepth()>8?4:2).toInt();
-    CyanCommon::setMemoryResource(maxMem);
+    CyanCommon::setDiskResource(0);
+    CyanCommon::setMemoryResource(CyanCommon::getTotalRam());
     settings.endGroup();
 
-    QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
+    /*QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
     bool foundAct = false;
     for (int i=0;i<memActions.size();++i) {
         QAction *act = memActions.at(i);
@@ -311,7 +308,7 @@ void Editor::loadSettings()
             break;
         }
     }
-    if (!foundAct) { memoryMenu->setDisabled(true); }
+    if (!foundAct) { memoryMenu->setDisabled(true); }*/
 
     settings.beginGroup("gui");
     if (settings.value("editor_state").isValid()) {
