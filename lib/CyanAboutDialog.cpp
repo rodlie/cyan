@@ -84,42 +84,36 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     qtButton->setContentsMargins(0,0,0,0);
     qtButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QString textString = QString("<h2 align=\"center\">%1 %2</h2><h3 align=\"center\" style=\"text-transform: uppercase;\">%3</h3>")
+    QString textString = QString("<h2 align=\"center\">%1 %2</h2>")
             .arg(qApp->applicationName())
-            .arg(CYAN_VERSION)
-            .arg(tr("Pixel Viewer, Editor and Converter."));
-   textString.append(QString("<p style=\"text-align:justify;\">%3 %4</p>"
-                             "<p style=\"text-align:center;\">"
+            .arg(CYAN_VERSION);
+   textString.append(QString("<p style=\"text-align:center;\">"
                              "%1 &copy; 2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
                              "</p>"
                              "<p style=\"text-align:center;\">"
-                             "%9 <a href=\"http://www.littlecms.com/\">Little CMS %10</a><br>%1 &copy; Marti Maria Saguer.<br><br>"
-                             "%9 <a href=\"%5\">%6</a> %7<br>%8.<br>"
+                             "%7 <a href=\"%3\">%4</a> %5<br>%6.<br>"
                              "<table>"
-                             "<tr><td><b>%11</b></td><td>&nbsp;:&nbsp;</td><td>%13</td></tr>"
-                             "<tr><td><b>%12</b></td><td>&nbsp;:&nbsp;</td><td>%14</td></tr>"
+                             "<tr><td><b>%8</b></td><td>&nbsp;:&nbsp;</td><td>%10</td></tr>"
+                             "<tr><td><b>%9</b></td><td>&nbsp;:&nbsp;</td><td>%11</td></tr>"
                              "</table>"
                              "</p>")
                      .arg(tr("Copyright")) /* 1 */
                      .arg(tr("All rights reserved")) /* 2 */
-                     .arg(tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version.")) /* 3 */
-                     .arg(tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.")) /* 4 */
-                     .arg(MagickCore::GetMagickLicense()) /* 5 */
-                     .arg(magickInfo) /* 6 */
-                     .arg(magickDepth) /* 7 */
-                     .arg(MagickCore::GetMagickCopyright()) /* 8 */
-                     .arg(tr("Powered by")) /* 9 */
-                     .arg(QString::number(LCMS_VERSION).insert(1,".").remove(2,1).remove(3,1)) /* 10 */
-                     .arg(tr("Memory limit")) /* 11 */
-                     .arg(tr("Thread limit")) /* 12 */
-                     .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory())) /* 13 */
-                     .arg(Magick::ResourceLimits::thread()) /* 14 */
+                     .arg(MagickCore::GetMagickLicense()) /* 3 */
+                     .arg(magickInfo) /* 4 */
+                     .arg(magickDepth) /* 5 */
+                     .arg(MagickCore::GetMagickCopyright()) /* 6 */
+                     .arg(tr("Powered by")) /* 7 */
+                     .arg(tr("Memory limit")) /* 8 */
+                     .arg(tr("Thread limit")) /* 9 */
+                     .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory())) /* 10 */
+                     .arg(Magick::ResourceLimits::thread()) /* 11 */
                      );
     textLabel->setText(textString);
     headerLayout->addWidget(textLabel);
     headerLayout->addStretch();
-    footerLayout->addStretch();
     footerLayout->addWidget(ghButton);
+    footerLayout->addStretch();
     footerLayout->addWidget(qtButton);
     mainLayout->addWidget(headerContainer);
     mainLayout->addWidget(footerWidget);
