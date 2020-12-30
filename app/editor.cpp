@@ -73,7 +73,6 @@ Editor::Editor(QWidget *parent)
     , addGuideVAct(nullptr)
     , addGuideHAct(nullptr)
     , showGuidesAct(nullptr)
-    /*, magickMemoryResourcesGroup(nullptr)*/
     , viewModeGroup(nullptr)
     , profileRGBGroup(nullptr)
     , profileCMYKGroup(nullptr)
@@ -216,13 +215,6 @@ void Editor::saveSettings()
     emit statusMessage(tr("Saving settings ..."));
     QSettings settings;
 
-    settings.beginGroup("engine");
-    settings.setValue("disk_limit",
-                      CyanCommon::getDiskResource());
-    settings.setValue("memory_limit",
-                      CyanCommon::getMemoryResource());
-    settings.endGroup();
-
     settings.beginGroup("gui");
     settings.setValue("editor_state",
                       saveState());
@@ -297,19 +289,6 @@ void Editor::loadSettings()
     CyanCommon::setMemoryResource(CyanCommon::getTotalRam());
     settings.endGroup();
 
-    /*QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
-    bool foundAct = false;
-    for (int i=0;i<memActions.size();++i) {
-        QAction *act = memActions.at(i);
-        if (!act) { continue; }
-        if (act->data().toInt()==maxMem) {
-            act->setChecked(true);
-            foundAct = true;
-            break;
-        }
-    }
-    if (!foundAct) { memoryMenu->setDisabled(true); }*/
-
     settings.beginGroup("gui");
     if (settings.value("editor_state").isValid()) {
         restoreState(settings.value("editor_state").toByteArray());
@@ -381,13 +360,6 @@ void Editor::loadSettings()
 
     if (settings.value("editor_maximized").toBool()) { showMaximized(); }
     settings.endGroup();
-
-    emit statusMessage(QString("%2: %1 GB")
-                       .arg(CyanCommon::getDiskResource())
-                       .arg(tr("Engine disk cache limit")));
-    emit statusMessage(QString("%2: %1 GB")
-                       .arg(CyanCommon::getMemoryResource())
-                       .arg(tr("Engine memory limit")));
 
     // setup color profiles
     qDebug() << "setup color profiles";
@@ -1187,16 +1159,6 @@ void Editor::handleShowGuidesAct(bool triggered)
         View *view = qobject_cast<View*>(tab->widget());
         if (!view) { continue; }
         view->showGuides(showGuidesAct->isChecked());
-    }
-}
-
-void Editor::handleMagickMemoryAct(bool triggered)
-{
-    Q_UNUSED(triggered)
-    QAction *action = qobject_cast<QAction*>(sender());
-    if (!action) { return; }
-    if (action->data().toInt()>=2) {
-        CyanCommon::setMemoryResource(action->data().toInt());
     }
 }
 

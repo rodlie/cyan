@@ -224,21 +224,7 @@ void Editor::setupUI()
     if (_native) { nativeStyle->setChecked(true); }
     else { appStyle->setChecked(true); }
 
-    // magick memory resources
-    /*optMenu->addMenu(memoryMenu);
-    for (int i=2;i<33;++i) {
-        QAction *act = new QAction(this);
-        act->setCheckable(true);
-        act->setText(QString("%1 GB").arg(i));
-        act->setToolTip(tr("Amount of RAM that can be used"));
-        act->setData(i);
-        connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
-        magickMemoryResourcesGroup->addAction(act);
-    }
-    memoryMenu->addActions(magickMemoryResourcesGroup->actions());*/
-
     // splitters
-
     mainSplitter->setOrientation(Qt::Horizontal);
     leftSplitter->setOrientation(Qt::Vertical);
     rightSplitter->setOrientation(Qt::Vertical);
@@ -403,7 +389,6 @@ void Editor::setupWidgets(bool native)
 
 void Editor::setupActions()
 {
-    //magickMemoryResourcesGroup = new QActionGroup(this);
     viewModeGroup = new QActionGroup(this);
 
     profileRGBGroup = new QActionGroup(this);

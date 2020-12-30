@@ -103,7 +103,6 @@ private:
     QAction *addGuideHAct;
     QAction *showGuidesAct;
 
-    //QActionGroup *magickMemoryResourcesGroup;
     QActionGroup *viewModeGroup;
 
     QActionGroup *profileRGBGroup;
@@ -306,9 +305,6 @@ private slots:
     void handleAddGuideHAct(bool triggered);
     void handleAddGuideVAct(bool triggered);
     void handleShowGuidesAct(bool triggered);
-
-    // magick resources
-    void handleMagickMemoryAct(bool triggered);
 
     //
     void handleViewModeAct(bool triggered);
