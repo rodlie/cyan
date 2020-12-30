@@ -403,8 +403,10 @@ void View::addLayer(Magick::Image image,
 
     connect(layer, SIGNAL(movingItem(QPointF,int)),
             this, SLOT(handleLayerMoving(QPointF,int)));
-    connect(layer, SIGNAL(movedItem(QPointF,int)),
-            this, SLOT(handleLayerMoved(QPointF,int)));
+    connect(layer, SIGNAL(movedItem(QPointF,QPointF,int)),
+            this, SLOT(handleLayerMoved(QPointF,QPointF,int)));
+    connect(layer, SIGNAL(movedItem(QPointF,QPointF,int)),
+            this, SLOT(handleLayerMovedUndo(QPointF,QPointF,int)));
     connect(layer, SIGNAL(selectedItem(int)),
             this, SLOT(handleLayerSelected(int)));
     connect(this, SIGNAL(viewClosed()),
@@ -453,8 +455,10 @@ void View::addLayer(int id,
 
     connect(layer, SIGNAL(movingItem(QPointF,int)),
             this, SLOT(handleLayerMoving(QPointF,int)));
-    connect(layer, SIGNAL(movedItem(QPointF,int)),
-            this, SLOT(handleLayerMoved(QPointF,int)));
+    connect(layer, SIGNAL(movedItem(QPointF,QPointF,int)),
+            this, SLOT(handleLayerMoved(QPointF,QPointF,int)));
+    connect(layer, SIGNAL(movedItem(QPointF,QPointF,int)),
+            this, SLOT(handleLayerMovedUndo(QPointF,QPointF,int)));
     connect(layer, SIGNAL(selectedItem(int)),
             this, SLOT(handleLayerSelected(int)));
     connect(this, SIGNAL(viewClosed()),
@@ -1158,7 +1162,6 @@ void View::setUndo()
     if (!_canvas.layers.contains(undo.layer)) { return; }
     qDebug() << "HAVE UNDO LAYER" << undo.layer;
 
-
     _canvas.layers[undo.layer].position = undo.position;
     for (int i=0;i<_scene->items().size();++i) {
         LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
@@ -1292,7 +1295,6 @@ void View::handleLayerMoving(QPointF pos, int id, bool forceRender)
 {
     if (!_canvas.layers.contains(id) || id<0) { return; }
 
-    addUndo(id);
     _canvas.layers[id].position = QSize(static_cast<int>(pos.x()),
                                         static_cast<int>(pos.y()));
 
@@ -1303,13 +1305,25 @@ void View::handleLayerMoving(QPointF pos, int id, bool forceRender)
 }
 
 void View::handleLayerMoved(QPointF pos,
+                            QPointF lpos,
                             int id)
 {
+    Q_UNUSED(lpos)
+    qDebug() << "handleLayerMoved" << pos << id;
     handleLayerMoving(pos,
                       id,
                       true);
-    //addUndo(id);
     handleCanvasChanged();
+}
+
+void View::handleLayerMovedUndo(QPointF pos, QPointF lpos, int id)
+{
+    qDebug() << "handleLayerMovedUndo" << pos << lpos << _canvas.layers[id].position;
+    QSize npos = QSize(-1, -1);
+    if (pos != lpos) {
+        npos = QSize(lpos.x(), lpos.y());
+    }
+    addUndo(id, npos, true);
 }
 
 void View::handleLayerSelected(int id)
@@ -1646,6 +1660,7 @@ void View::paintCanvasBackground()
 void View::moveSelectedLayer(MoveLayer gravity, int skip)
 {
     qDebug() << "move selected layer" << _selectedLayer << gravity;
+    addUndo(_selectedLayer);
     for (int i=0;i<_scene->items().size();++i) {
         LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
         if (!item) { continue; }
@@ -1671,7 +1686,7 @@ void View::moveSelectedLayer(MoveLayer gravity, int skip)
             break;
         }
         item->setPos(pos);
-        handleLayerMoved(pos, _selectedLayer);
+        handleLayerMoved(pos, pos, _selectedLayer);
         handleLayerOverTiles(item);
     }
 
@@ -1705,7 +1720,7 @@ void View::renderLayerText(int id, bool update)
     if (update) { handleLayerOverTiles(id); }
 }
 
-void View::addUndo(int id)
+void View::addUndo(int id, QSize pos, bool usePos)
 {
     if (!_canvas.layers.contains(id)) { return; }
     CyanImageFormat::CyanLayer layer = _canvas.layers[id];
@@ -1713,7 +1728,8 @@ void View::addUndo(int id)
     item.layer = id;
     item.order = layer.order;
     item.locked = layer.locked;
-    item.position = layer.position;
+    if (usePos) { item.position = pos; }
+    else { item.position = layer.position; }
     item.opacity = layer.opacity;
     item.composite = layer.composite;
     _history.addUndo(item);

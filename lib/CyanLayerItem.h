@@ -38,6 +38,7 @@ public:
 signals:
 
     void movedItem(QPointF pos,
+                   QPointF lpos,
                    int layerID);
     void movingItem(QPointF pos,
                     int layerID);

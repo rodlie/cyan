@@ -228,7 +228,11 @@ private slots:
                            int id,
                            bool forceRender = false);
     void handleLayerMoved(QPointF pos,
+                          QPointF lpos,
                           int id);
+    void handleLayerMovedUndo(QPointF pos,
+                              QPointF lpos,
+                              int id);
     void handleLayerSelected(int id);
     int getParentLayer();
     const QString getParentCanvas();
@@ -255,7 +259,7 @@ private slots:
     void handleGuideMoved();
     void renderLayerText(int id, bool update);
 
-    void addUndo(int id);
+    void addUndo(int id, QSize pos = QSize(0, 0), bool usePos = false);
 
 protected:
     void wheelEvent(QWheelEvent* event);

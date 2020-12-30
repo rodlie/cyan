@@ -80,7 +80,7 @@ void LayerItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     lpos = epos;
 
     emit movingItem(this->pos(), data(1).toInt());
-    if (!mouseIsDown) { emit movedItem(this->pos(), data(1).toInt()); }
+    if (!mouseIsDown) { emit movedItem(this->pos(), llpos, data(1).toInt()); }
 }
 
 void LayerItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
