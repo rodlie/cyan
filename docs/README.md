@@ -13,7 +13,7 @@ Cyan 2 *(1.99.x)* aims to be a simple general-purpose editor and converter for R
 * CMake *>= 3.0*
 * Qt *>= 5.5 (5.12 recommended)*
   * *Core, Gui, Widgets, Concurrent, Test*
-* (Image)Magick++ *>= 7.0.10*
+* ImageMagick *>= 7.0.10 (7.0.10-26 is the only supported version)*
   * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib, xml*
 * Little CMS 2.x
 * pkg-config/pkgconf *(Linux/macOS)*

@@ -387,6 +387,9 @@ void Editor::loadSettings()
 
     // check if we have the required color profiles needed to do anything
     QTimer::singleShot(100, this, SLOT(hasColorProfiles()));
+
+    // check if we have a supported version of ImageMagick
+    QTimer::singleShot(500, this, SLOT(hasImageMagick()));
 }
 
 const QString Editor::loadSettingsLastOpenDir()
@@ -1102,6 +1105,16 @@ bool Editor::hasDirtyProjects()
         if (view->isDirty()) { return true; }
     }
     return false;
+}
+
+void Editor::hasImageMagick()
+{
+    QString version = CyanCommon::supportedImageMagickVersion();
+    if (!version.isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("Unsupported ImageMagick version"),
+                             tr("ImageMagick version %1 is not supported. If you continue to use this application you may encounter several issues, use at own risk!").arg(version));
+    }
 }
 
 void Editor::setActionsDisabled(bool disabled)

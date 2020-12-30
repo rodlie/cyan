@@ -25,6 +25,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QApplication>
+#include <QVector>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -350,5 +351,17 @@ const QString CyanCommon::colorspaceToString(Magick::ColorspaceType colorspace)
         result = QObject::tr("Other");
     }
     return result;
+}
+
+const QString CyanCommon::supportedImageMagickVersion()
+{
+    QVector<QString> versions;
+    versions.push_back("7.0.10-26");
+
+    size_t magickV;
+    QString version = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst().split("ImageMagick").takeLast().trimmed();
+
+    if (versions.contains(version)) { return  QString(); }
+    return version;
 }
 

@@ -298,6 +298,8 @@ private slots:
     void checkTabsOnClose();
     bool hasDirtyProjects();
 
+    void hasImageMagick();
+
     void setActionsDisabled(bool disabled);
     void setProjectSaveDisabled(bool disabled);
 

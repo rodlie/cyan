@@ -109,6 +109,7 @@ public:
 
     static const QString colorspaceToString(Magick::ColorspaceType colorspace);
 
+    static const QString supportedImageMagickVersion();
 };
 
 #endif // CYANCOMMON_H
