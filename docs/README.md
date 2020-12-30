@@ -6,14 +6,19 @@ Cyan 2 *(1.99.x)* aims to be a simple general-purpose editor and converter for R
 
 ## Source
 
+### Requirements
+* GCC *>= 5 (Linux)*
+* MSVC *>= 14 (Windows)*
+* Clang *>= 3.8 (macOS)*
 * CMake *>= 3.0*
-* Qt *>= 5.5*
+* Qt *>= 5.5 (5.12 recommended)*
   * *Core, Gui, Widgets, Concurrent, Test*
-* (Image)Magick++ *>= 7.0.8 (7.0.10 recommended)*
+* (Image)Magick++ *>= 7.0.10*
   * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib*
-* lcms2
-* fontconfig
-* pkg-config/pkgconf
+* Little CMS 2.x
+* pkg-config/pkgconf *(Linux/macOS)*
+
+### Build
 
 ```
 git clone https://github.com/rodlie/cyan

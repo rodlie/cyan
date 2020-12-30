@@ -5,7 +5,7 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
+# version 2.0 of the License, or (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -106,7 +106,7 @@ add_definitions(-DCYAN_LIBRARY)
 find_package(Qt5 5.5 REQUIRED Core Gui Widgets Concurrent Test)
 if(NOT WIN32)
     find_package(PkgConfig REQUIRED)
-    pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.8)
+    pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG}>=7.0.10)
     pkg_search_module(LCMS2 REQUIRED lcms2)
     #pkg_search_module(FONTCONF REQUIRED fontconfig)
 endif()
