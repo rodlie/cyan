@@ -64,3 +64,8 @@ void CyanHistory::clearRedo()
 {
     redoStorage.clear();
 }
+
+void CyanHistory::clearLastUndo()
+{
+    addRedo(undoStorage.takeLast());
+}

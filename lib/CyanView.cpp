@@ -1150,6 +1150,34 @@ const QString View::getFilename()
     return _canvas.filename;
 }
 
+void View::setUndo()
+{
+    if (_history.getUndoTotal() < 1) { return; }
+    qDebug() << "GO UNDO!";
+    CyanHistory::CyanHistoryItem undo = _history.getUndo();
+    if (!_canvas.layers.contains(undo.layer)) { return; }
+    qDebug() << "HAVE UNDO LAYER" << undo.layer;
+
+
+    _canvas.layers[undo.layer].position = undo.position;
+    for (int i=0;i<_scene->items().size();++i) {
+        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+        if (!item) { continue; }
+        if (item->getID() != undo.layer) { continue; }
+        item->setPos(undo.position.width(), undo.position.height());
+        qDebug() << item->pos();
+        handleLayerOverTiles(item);
+        break;
+    }
+    handleCanvasChanged();
+    _history.clearLastUndo();
+}
+
+void View::setRedo()
+{
+
+}
+
 // TODO
 void View::setCanvasSpecsFromImage(Magick::Image image)
 {
@@ -1264,6 +1292,7 @@ void View::handleLayerMoving(QPointF pos, int id, bool forceRender)
 {
     if (!_canvas.layers.contains(id) || id<0) { return; }
 
+    addUndo(id);
     _canvas.layers[id].position = QSize(static_cast<int>(pos.x()),
                                         static_cast<int>(pos.y()));
 
@@ -1279,7 +1308,7 @@ void View::handleLayerMoved(QPointF pos,
     handleLayerMoving(pos,
                       id,
                       true);
-    addUndo(id);
+    //addUndo(id);
     handleCanvasChanged();
 }
 

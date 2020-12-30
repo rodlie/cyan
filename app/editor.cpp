@@ -65,6 +65,8 @@ Editor::Editor(QWidget *parent)
     , viewZoom100Act(nullptr)
     , viewZoomFitAct(nullptr)
     , aboutCyanAct(nullptr)
+    , undoAct(nullptr)
+    , redoAct(nullptr)
     , convertRGBAct(nullptr)
     , convertCMYKAct(nullptr)
     , convertGRAYAct(nullptr)
@@ -1146,6 +1148,22 @@ void Editor::setProjectSaveDisabled(bool disabled)
     saveButton->setDisabled(disabled);
     saveImageAct->setDisabled(disabled);
     //saveProjectAct->setDisabled(disabled);
+}
+
+void Editor::setViewUndo()
+{
+    View *view = getCurrentCanvas();
+    if (!view) { return; }
+    qDebug() << "TRIGGER UNDO";
+    view->setUndo();
+}
+
+void Editor::setViewRedo()
+{
+    View *view = getCurrentCanvas();
+    if (!view) { return; }
+    qDebug() << "TRIGGER REDO";
+    view->setRedo();
 }
 
 void Editor::handleAddGuideHAct(bool triggered)

@@ -120,6 +120,9 @@ void Editor::setupUI()
     fileMenu->addAction(quitAct);
 
     helpMenu->addAction(aboutCyanAct);
+
+    editMenu->addAction(undoAct);
+    editMenu->addAction(redoAct);
     /*helpMenu->addAction(aboutImageMagickAct);
     helpMenu->addAction(aboutLcmsAct);
     helpMenu->addAction(aboutQtAct);
@@ -345,6 +348,7 @@ void Editor::setupWidgets(bool native)
     colorPicker = new QtColorPicker(this, -1, true, false);
     colorPicker->setIconSize(QSize(16, 32));
     colorPicker->setStandardColors();
+    //colorPicker->hide();
 
     // toolbar
     mainToolBar = new QToolBar(this);
@@ -435,6 +439,13 @@ void Editor::setupActions()
                           .arg(tr("About"))
                           .arg(qApp->applicationName()));
 
+    undoAct = new QAction(this);
+    undoAct->setText(tr("Undo"));
+    //undoAct->setDisabled(true);
+
+    redoAct = new QAction(this);
+    redoAct->setText(tr("Redo"));
+    //redoAct->setDisabled(true);
 
     convertRGBAct = new QAction(this);
     convertRGBAct->setText(tr("Convert to RGB"));
@@ -499,6 +510,9 @@ void Editor::setupConnections()
     connect(viewDrawAct, SIGNAL(triggered(bool)), this, SLOT(handleSetDrawMode(bool)));
 
     connect(aboutCyanAct, SIGNAL(triggered()), this, SLOT(aboutCyan()));
+
+    connect(undoAct, SIGNAL(triggered()), this, SLOT(setViewUndo()));
+    connect(redoAct, SIGNAL(triggered()), this, SLOT(setViewRedo()));
 
     connect(convertRGBAct, SIGNAL(triggered()), this, SLOT(handleColorConvertRGB()));
     connect(convertCMYKAct, SIGNAL(triggered()), this, SLOT(handleColorConvertCMYK()));
@@ -668,6 +682,9 @@ void Editor::setupShortcuts()
     duplicateLayerAct->setShortcut(QKeySequence(tr("Ctrl+Shift+D")));
     moveUpLayerAct->setShortcut(Qt::Key_PageUp);
     moveDownLayerAct->setShortcut(Qt::Key_PageDown);
+
+    undoAct->setShortcut(QKeySequence(tr("Ctrl+Z")));
+    redoAct->setShortcut(QKeySequence(tr("Ctrl+Shift+Z")));
 }
 
 void Editor::setupOptions()

@@ -220,6 +220,9 @@ public slots:
     void setFilename(const QString &filename);
     const QString getFilename();
 
+    void setUndo();
+    void setRedo();
+
 private slots:
     void handleLayerMoving(QPointF pos,
                            int id,

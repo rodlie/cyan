@@ -56,6 +56,7 @@ public slots:
     int getRedototal();
     void clearUndo();
     void clearRedo();
+    void clearLastUndo();
 };
 
 #endif // CYANHISTORY_H

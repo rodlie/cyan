@@ -93,6 +93,9 @@ private:
 
     QAction *aboutCyanAct;
 
+    QAction *undoAct;
+    QAction *redoAct;
+
     QAction *convertRGBAct;
     QAction *convertCMYKAct;
     QAction *convertGRAYAct;
@@ -302,6 +305,10 @@ private slots:
 
     void setActionsDisabled(bool disabled);
     void setProjectSaveDisabled(bool disabled);
+
+    // history
+    void setViewUndo();
+    void setViewRedo();
 
     // guides
     void handleAddGuideHAct(bool triggered);
