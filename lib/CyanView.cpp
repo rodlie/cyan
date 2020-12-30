@@ -1154,31 +1154,44 @@ const QString View::getFilename()
     return _canvas.filename;
 }
 
-void View::setUndo()
+void View::setUndo(bool state)
 {
-    if (_history.getUndoTotal() < 1) { return; }
-    qDebug() << "GO UNDO!";
-    CyanHistory::CyanHistoryItem undo = _history.getUndo();
-    if (!_canvas.layers.contains(undo.layer)) { return; }
-    qDebug() << "HAVE UNDO LAYER" << undo.layer;
-
-    _canvas.layers[undo.layer].position = undo.position;
-    for (int i=0;i<_scene->items().size();++i) {
-        LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
-        if (!item) { continue; }
-        if (item->getID() != undo.layer) { continue; }
-        item->setPos(undo.position.width(), undo.position.height());
-        qDebug() << item->pos();
-        handleLayerOverTiles(item);
-        break;
+    int total = 0;
+    if (state) {
+        total = _history.getUndoTotal();
+    } else {
+        total = _history.getRedototal();
     }
+    if (total < 1) {
+        emit statusMessage(tr("%1: Buffer is empty").arg(state?tr("Undo"):tr("Redo")));
+        return;
+    }
+    CyanHistory::CyanHistoryItem undo = state?_history.getUndo():_history.getRedo();
+    if (!_canvas.layers.contains(undo.layer)) {
+        emit statusMessage(tr("%1: Layer %2 is not valid anymore").arg(state?tr("Undo"):tr("Redo")).arg(undo.layer));
+        return;
+    }
+
+    if (_canvas.layers[undo.layer].position != undo.position) {
+        _canvas.layers[undo.layer].position = undo.position;
+        for (int i=0;i<_scene->items().size();++i) {
+            LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
+            if (!item) { continue; }
+            if (item->getID() != undo.layer) { continue; }
+            item->setPos(undo.position.width(), undo.position.height());
+            handleLayerOverTiles(item);
+            break;
+        }
+    }
+
     handleCanvasChanged();
-    _history.clearLastUndo();
+    if (state) {_history.clearLastUndo(); }
+    else { _history.clearLastRedo(); }
 }
 
 void View::setRedo()
 {
-
+    setUndo(false);
 }
 
 // TODO
@@ -1309,7 +1322,6 @@ void View::handleLayerMoved(QPointF pos,
                             int id)
 {
     Q_UNUSED(lpos)
-    qDebug() << "handleLayerMoved" << pos << id;
     handleLayerMoving(pos,
                       id,
                       true);
@@ -1318,7 +1330,7 @@ void View::handleLayerMoved(QPointF pos,
 
 void View::handleLayerMovedUndo(QPointF pos, QPointF lpos, int id)
 {
-    qDebug() << "handleLayerMovedUndo" << pos << lpos;
+    qDebug() << "handleLayerMovedUndo" << id << pos << lpos;
     QSize npos = QSize(0, 0);
     bool usePOS = false;
     if (pos != lpos) {
@@ -1730,8 +1742,16 @@ void View::addUndo(int id, QSize pos, bool usePos)
     item.layer = id;
     item.order = layer.order;
     item.locked = layer.locked;
-    if (usePos) { item.position = pos; }
-    else { item.position = layer.position; }
+    if (usePos) {
+        item.position = pos;
+        item.undoPOS = pos;
+        item.redoPOS = layer.position;
+    }
+    else {
+        item.position = layer.position;
+        item.undoPOS = layer.position;
+        item.redoPOS = layer.position;
+    }
     item.opacity = layer.opacity;
     item.composite = layer.composite;
     _history.addUndo(item);

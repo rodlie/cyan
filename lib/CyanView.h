@@ -220,7 +220,7 @@ public slots:
     void setFilename(const QString &filename);
     const QString getFilename();
 
-    void setUndo();
+    void setUndo(bool state = true);
     void setRedo();
 
 private slots:

@@ -1154,7 +1154,6 @@ void Editor::setViewUndo()
 {
     View *view = getCurrentCanvas();
     if (!view) { return; }
-    qDebug() << "TRIGGER UNDO";
     view->setUndo();
 }
 
@@ -1162,7 +1161,6 @@ void Editor::setViewRedo()
 {
     View *view = getCurrentCanvas();
     if (!view) { return; }
-    qDebug() << "TRIGGER REDO";
     view->setRedo();
 }
 

@@ -25,13 +25,13 @@ CyanHistory::CyanHistory(QObject *parent): QObject (parent)
 
 void CyanHistory::addUndo(CyanHistory::CyanHistoryItem history)
 {
-    qDebug() << "ADD UNDO ITEM" << history.layer << history.order << history.locked << history.position << history.composite << history.visibility << "TOTAL" << undoStorage.length();
+    qDebug() << "ADD UNDO" << history.layer << history.position;
     undoStorage.push_back(history);
 }
 
 void CyanHistory::addRedo(CyanHistory::CyanHistoryItem history)
 {
-    qDebug() << "add redo" << history.layer;
+    qDebug() << "ADD REDO" << history.layer << history.position;
     redoStorage.push_back(history);
 }
 
@@ -67,5 +67,24 @@ void CyanHistory::clearRedo()
 
 void CyanHistory::clearLastUndo()
 {
-    addRedo(undoStorage.takeLast());
+    CyanHistoryItem item = undoStorage.takeLast();
+    if (item.redoPOS != item.position) {
+        item.position = item.redoPOS;
+    }
+    addRedo(item);
+}
+
+void CyanHistory::clearLastRedo()
+{
+    CyanHistoryItem item = redoStorage.takeLast();
+    if (item.undoPOS != item.position) {
+        item.position = item.undoPOS;
+    }
+    addUndo(item);
+}
+
+void CyanHistory::clearAll()
+{
+    clearUndo();
+    clearRedo();
 }

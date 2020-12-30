@@ -39,6 +39,8 @@ public:
         Magick::CompositeOperator composite = Magick::OverCompositeOp;
         int order = 0;
         QSize position = QSize(0, 0);
+        QSize redoPOS = QSize(0, 0);
+        QSize undoPOS = QSize(0, 0);
         double opacity = 100.0;
     };
     CyanHistory(QObject *parent = nullptr);
@@ -57,6 +59,8 @@ public slots:
     void clearUndo();
     void clearRedo();
     void clearLastUndo();
+    void clearLastRedo();
+    void clearAll();
 };
 
 #endif // CYANHISTORY_H
