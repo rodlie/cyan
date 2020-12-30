@@ -135,7 +135,7 @@ if [ "${CLEAN}" = 1 ]; then
 --with-gslib=no \
 --with-gvc=no \
 --with-heic=${HEIC} \
---with-jbig=no \
+--with-jbig=yes \
 --with-jpeg=yes \
 --with-lcms=yes \
 --with-lqr=no \
@@ -154,7 +154,7 @@ if [ "${CLEAN}" = 1 ]; then
 --with-webp=yes \
 --with-wmf=no \
 --with-x=no \
---with-xml=no \
+--with-xml=yes \
 --with-zlib=yes \
 --with-zstd=no
 else
