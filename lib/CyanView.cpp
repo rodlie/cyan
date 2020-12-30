@@ -1318,12 +1318,14 @@ void View::handleLayerMoved(QPointF pos,
 
 void View::handleLayerMovedUndo(QPointF pos, QPointF lpos, int id)
 {
-    qDebug() << "handleLayerMovedUndo" << pos << lpos << _canvas.layers[id].position;
-    QSize npos = QSize(-1, -1);
+    qDebug() << "handleLayerMovedUndo" << pos << lpos;
+    QSize npos = QSize(0, 0);
+    bool usePOS = false;
     if (pos != lpos) {
         npos = QSize(lpos.x(), lpos.y());
+        usePOS = true;
     }
-    addUndo(id, npos, true);
+    addUndo(id, npos, usePOS);
 }
 
 void View::handleLayerSelected(int id)
