@@ -28,7 +28,11 @@
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
+#elif defined(Q_OS_LINUX)
+#include <unistd.h>
 #endif
+
+
 
 #define RESOURCE_BYTE 1050000000
 
@@ -104,7 +108,7 @@ int CyanCommon::getMemoryResource()
 
 void CyanCommon::setMemoryResource(int gib)
 {
-    if (gib < 2) { gib = 2; }
+    if (gib < 2) { gib = 2; } // 2 is minimum
     try {
         Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
         Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
@@ -120,9 +124,15 @@ int CyanCommon::getTotalRam(int percent)
     GetPhysicallyInstalledSystemMemory(&physicalMemory);
     int gib = qRound(static_cast<double>((physicalMemory*1024)/RESOURCE_BYTE));
     return qRound(static_cast<double>((gib*percent)/100));
+#elif defined(Q_OS_LINUX)
+#if defined _SC_PHYS_PAGES && defined _SC_PAGESIZE
+    unsigned long long physicalMemory = sysconf(_SC_PHYS_PAGES)*sysconf(_SC_PAGESIZE);
+    int gib = qRound(static_cast<double>(physicalMemory/1024000000));
+    return qRound(static_cast<double>((gib*percent)/100));
+#endif
 #endif
     Q_UNUSED(percent)
-    return 0;
+    return 4; // fallback to 4
 }
 
 void CyanCommon::setThreadResources(int thread)
