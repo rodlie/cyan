@@ -18,15 +18,14 @@ WIN64=${WIN64:-0}
 LINUX=${LINUX:-1}
 HEIC="no"
 QDEPTH=${QDEPTH:-16}
-#HDRI=${HDRI:-"HDRI"}
+HDRI=${HDRI:-"HDRI"}
 PATH_ORIG=$PATH
 SDK_TAR=cyan-mxe-focal-20200816.tar.xz
 SDK_URL=https://github.com/rodlie/cyan/releases/download/1.2.2
 MXE=/opt/cyan-mxe
-MAGICK_RELEASE=7.0.10-28
-MAGICK_SAFE=7.0.8-34
+MAGICK_RELEASE=af9793ebaad6031d0d832df8c194b7b18d16e907
 MAGICK_TYPE=Magick++-7.Q${QDEPTH}${HDRI}
-LOCAL_BUILD=${LOCAL_BUILD:-0}
+LOCAL_BUILD=${LOCAL_BUILD:-1}
 PKG_DEB=${PKG_DEB:-1}
 GIT_SHORT=`git rev-parse --short HEAD`
 BTAG="Q${QDEPTH}${HDRI}.${GIT_SHORT}"
@@ -145,7 +144,7 @@ if [ "${CLEAN}" = 1 ]; then
 --with-magick-plus-plus=yes \
 --with-openexr=no \
 --with-openjp2=yes \
---with-pango=yes \
+--with-pango=no \
 --with-librsvg=no \
 --with-perl=no \
 --with-png=yes \
@@ -213,7 +212,7 @@ if [ "${PKG_DEB}" = 1 ]; then
     export LD_LIBRARY_PATH="`pwd`/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH_ORIG"
     $LIBDEPS usr/bin/Cyan
     DEPENDS_APP="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
-    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.7
+    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.8
     DEPENDS_LIB="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
     rm -rf ${PKG_DIR}/${PREFIX}/bin/DEBIAN
     DEPENDS="${DEPENDS_APP},${DEPENDS_LIB}"

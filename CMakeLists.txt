@@ -328,11 +328,11 @@ if(UNIX AND NOT APPLE)
     )
 endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
-endif()
+#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
+#    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanColorTriangle)
+#endif()
 
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
-endif()
+#if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
+#    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/plugins/CyanTextEditor)
+#endif()
 
