@@ -40,6 +40,7 @@
 //#include "cyan_layeritem.h"
 #include "CyanLayerItem.h"
 //#include "CyanRuler.h"
+#include "CyanHistory.h"
 
 #define TILE_Z 6
 #define LAYER_Z 100
@@ -88,6 +89,7 @@ private:
     //CyanRuler *_vRuler;
     bool _showGuides;
     View::InteractiveMode _mode;
+    CyanHistory _history;
 
 signals:
     void zoomChanged();
@@ -249,6 +251,8 @@ private slots:
     void handleZoomChanged();
     void handleGuideMoved();
     void renderLayerText(int id, bool update);
+
+    void addUndo(int id);
 
 protected:
     void wheelEvent(QWheelEvent* event);

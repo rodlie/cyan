@@ -1279,6 +1279,7 @@ void View::handleLayerMoved(QPointF pos,
     handleLayerMoving(pos,
                       id,
                       true);
+    addUndo(id);
     handleCanvasChanged();
 }
 
@@ -1673,6 +1674,20 @@ void View::renderLayerText(int id, bool update)
     if (!_canvas.layers.contains(id) || id<0) { return; }
     _canvas.layers[id].image = CyanImageFormat::renderText(_canvas.layers[id]);
     if (update) { handleLayerOverTiles(id); }
+}
+
+void View::addUndo(int id)
+{
+    if (!_canvas.layers.contains(id)) { return; }
+    CyanImageFormat::CyanLayer layer = _canvas.layers[id];
+    CyanHistory::CyanHistoryItem item;
+    item.layer = id;
+    item.order = layer.order;
+    item.locked = layer.locked;
+    item.position = layer.position;
+    item.opacity = layer.opacity;
+    item.composite = layer.composite;
+    _history.addUndo(item);
 }
 
 void View::setLockLayers(bool lock)
