@@ -76,9 +76,9 @@ fi
 rm -rf "${PKG_DIR}" || true
 mkdir -p "${PKG_DIR}"
 
-if [ "${DISTRO}" = "xenial" ]; then
-    MAGICK_RELEASE=$MAGICK_SAFE
-fi
+#if [ "${DISTRO}" = "xenial" ]; then
+#    MAGICK_RELEASE=$MAGICK_SAFE
+#fi
 if [ ! -d ImageMagick ] && [ "${LINUX}" = 1 ]; then
     git clone https://github.com/ImageMagick/ImageMagick
     ( cd ImageMagick ; git checkout $MAGICK_RELEASE )
@@ -113,8 +113,8 @@ if [ "${CLEAN}" = 1 ]; then
 --prefix=${PKG_DIR}/usr \
 --libdir=${PKG_DIR}/usr/lib/x86_64-linux-gnu \
 --with-package-release-name=Cyan \
---disable-static \
---enable-shared \
+--enable-static \
+--disable-shared \
 --with-utilities=no \
 --disable-docs \
 --enable-zero-configuration \
@@ -135,7 +135,7 @@ if [ "${CLEAN}" = 1 ]; then
 --with-gslib=no \
 --with-gvc=no \
 --with-heic=${HEIC} \
---with-jbig=yes \
+--with-jbig=no \
 --with-jpeg=yes \
 --with-lcms=yes \
 --with-lqr=no \
@@ -176,17 +176,23 @@ mkdir build-cyan && cd build-cyan
 cmake \
 -DCMAKE_BUILD_TYPE=Release \
 -DMAGICK_PKG_CONFIG=$MAGICK_TYPE \
--DCMAKE_INSTALL_PREFIX=${PREFIX} ..
+-DCMAKE_INSTALL_PREFIX=${PREFIX} -DSTATIC_MAGICK=ON ..
 make -j${MKJOBS}
 make DESTDIR=${PKG_DIR} install
+
+$MAGICK_LICENSE=${PKG_DIR}/$PREFIX/share/doc/Cyan-$VERSION/IMAGEMAGICK_LICENSE
+cat $CWD/ImageMagick/LICENSE > $MAGICK_LICENSE
+echo "" >> $MAGICK_LICENSE
+cat $CWD/ImageMagick/AUTHORS.txt >> $MAGICK_LICENSE
 
 rm -rf ${PKG_DIR}/$PREFIX/{etc,include}
 rm -rf ${PKG_DIR}/$PREFIX/bin/{Magick*,patchelf}
 rm -rf ${PKG_DIR}/$PREFIX/share/{ImageMagick-*,man}
 rm -rf ${PKG_DIR}/$PREFIX/share/doc/patchelf
-rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{ImageMagick-*,pkgconfig}
-rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{*.la,*.so}
-strip -s ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/*
+rm -rf ${PKG_DIR}/$PREFIX/lib
+#rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{ImageMagick-*,pkgconfig}
+#rm -rf ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/{*.la,*.so,*.a}
+#strip -s ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/*
 strip -s ${PKG_DIR}/$PREFIX/bin/*
 
 cd $CWD
@@ -212,10 +218,11 @@ if [ "${PKG_DEB}" = 1 ]; then
     export LD_LIBRARY_PATH="`pwd`/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH_ORIG"
     $LIBDEPS usr/bin/Cyan
     DEPENDS_APP="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
-    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.8
-    DEPENDS_LIB="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
+    #$LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.8
+    #DEPENDS_LIB="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
     rm -rf ${PKG_DIR}/${PREFIX}/bin/DEBIAN
-    DEPENDS="${DEPENDS_APP},${DEPENDS_LIB}"
+    #DEPENDS="${DEPENDS_APP},${DEPENDS_LIB}"
+    DEPENDS="${DEPENDS_APP}"
     IFS=","
     read -a deparr <<< "$DEPENDS"
     printf -v joined '%s,' "${deparr[@]}"
@@ -223,11 +230,11 @@ if [ "${PKG_DEB}" = 1 ]; then
     cat $CONTROL
     sudo chown root:root ${DEB}
     sudo dpkg-deb -b $DEB || exit 1
-    sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-1-${DISTRO}_amd64.deb
+    sudo mv $CWD/build-pkg.deb $CWD/cyan_$VERSION.$BTAG-${DISTRO}_amd64.deb
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH_ORIG"
-    if [ -d "/opt/deploy" ]; then
-        cp $CWD/*.deb /opt/deploy/
-    fi
+    #if [ -d "/opt/deploy" ]; then
+    #    cp $CWD/*.deb /opt/deploy/
+    #fi
 fi
 
 fi # if LINUX=1

@@ -120,8 +120,10 @@ Editor::Editor(QWidget *parent)
 
     // setup UI and load settings
     setupUI();
+#ifdef ENABLE_PLUGINS
     pluginHandler = new CyanPlugins(this);
     initPlugins(pluginHandler->scan());
+#endif
     loadSettings();
 }
 
@@ -129,7 +131,9 @@ Editor::Editor(QWidget *parent)
 Editor::~Editor()
 {
     saveSettings();
+#ifdef ENABLE_PLUGINS
     pluginHandler->removePlugins();
+#endif
 }
 
 // get current active canvas
