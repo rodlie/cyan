@@ -40,6 +40,8 @@ cmake -DCMAKE_BUILD_TYPE=Release .. && make
 | Ctrl + Tab         | Switch image                       |
 | Ctrl + G           | Add vertical guide                 |
 | Ctrl + Shift + G   | Add horizontal guide               |
+| Ctrl + Z           | Undo                               |
+| Ctrl + Shift + Z   | Redo                               |
 | Arrows (+Shift)    | Move selected layer X/Y            |
 | PageUp             | Move selected layer stack up       |
 | PageDown           | Move selected layer stack down     |
@@ -105,6 +107,14 @@ not be
 
 **Release date : TBA**
 
+  * Initial undo/redo
+  * ImageMagick 7.0.10 is now the minimum supported version
+  * Windows fixes
+  * Dropped MinGW for MSVC
+  * macOS binary support put on hold due to issues with ImageMagick 7.x (performance)
+  * Dropped fontconfig (will be added back in the future)
+  * Set ImageMagick memory limit to 75% of total RAM
+  * Warn on unsupported ImageMagick version
   * UI fixes
   * Disabled brush (until core is done)
   * Change layer stacking with PageUp/PageDown keys
