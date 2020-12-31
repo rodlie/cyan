@@ -19,7 +19,7 @@ The following software are required to build Cyan from source:
 * MSVC *>= 14 (Windows)*
 * Clang *>= 3.8 (macOS)*
 * CMake *>= 3.0*
-* Qt *>= 5.5 (5.12 recommended)*
+* Qt *>= 5.5 (5.9/5.12 recommended)*
   * *Core, Gui, Widgets, Concurrent, Test*
 * ImageMagick *>= 7.0.10 (7.0.10-26 is the only supported version)*
   * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib, xml*
@@ -61,7 +61,7 @@ This library is free software; you can redistribute it and/or modify it under th
 
 The copyright holders of Cyan hereby grant permission for non-GPL compatible plug-ins and add-ons to be used and distributed together with Cyan, provided that you also meet the terms and conditions of the licenses of those plug-ins and add-ons.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This program and library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 * Cyan includes icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
 * Cyan logo is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
@@ -100,20 +100,21 @@ not be
 
 Changes, history and roadmap for Cyan.
 
-## 2021.2.x
+## 2021.N
 
 **Release date : TBA**
 
-First usable version.
+Next planned version.
 
   * [ ] Batch image converter (plug-in/standalone)
-  * [ ] Merge/Add missing features from v1.2/v1.3
+  * [ ] Add missing features from v1
+  * [ ] macOS binary support (OS X Yosemite or newer)
 
-## 2021.1.1
+## 2021.1.0
 
 **Release date : TBA**
 
-"Under-the-hood" release. Mostly fixes/re-structure with some new features.
+Mostly fixes/re-structure with some new features. Still a development release.
 
   * New version scheme based on year, fiscal quarter and patch (XXXX.Y.Z)
   * Split into application(s) (GPL2) and library (LGPL2)
