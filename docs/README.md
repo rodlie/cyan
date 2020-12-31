@@ -1,8 +1,8 @@
-# Cyan 1.99.x
+# Cyan
 
 ![screenshot](images/screenshot.png)
 
-Cyan is an simple general-purpose image editor based on [ImageMagick](https://imagemagick.org). This is **experimental** software currently under development, not for regular use.
+Cyan is an simple general-purpose image editor based on [ImageMagick](https://imagemagick.org). This is **experimental** software, not for regular use.
 
 ## Features
 
@@ -61,6 +61,8 @@ This library is free software; you can redistribute it and/or modify it under th
 
 The copyright holders of Cyan hereby grant permission for non-GPL compatible plug-ins and add-ons to be used and distributed together with Cyan, provided that you also meet the terms and conditions of the licenses of those plug-ins and add-ons.
 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 * Cyan includes icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
 * Cyan logo is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
 * Cyan include some components from Nokia Qt Solutions licensed under the GNU Lesser General Public License 2.1+
@@ -98,26 +100,32 @@ not be
 
 Changes, history and roadmap for Cyan.
 
-## 1.99.5
+## 2021.2.x
 
-**ETA Q1 2021**
+**Release date : TBA**
 
-  * Batch image converter (plug-in/standalone)
+First usable version.
 
-## 1.99.4
+  * [ ] Batch image converter (plug-in/standalone)
+  * [ ] Merge/Add missing features from v1.2/v1.3
 
-**ETA January 2021**
+## 2021.1.1
 
+**Release date : TBA**
+
+"Under-the-hood" release. Mostly fixes/re-structure with some new features.
+
+  * New version scheme based on year, fiscal quarter and patch (XXXX.Y.Z)
+  * Split into application(s) (GPL2) and library (LGPL2)
   * Several bug and UI fixes
-  * Initial undo/redo
-    * Not complete, but support the core features
+  * Initial undo/redo support
   * ImageMagick 7.0.10 is now the minimum supported version
     * v7.0.10-26 to be exact
     * Cyan will warn during startup if the version is unsupported
-    * Set ImageMagick memory limit to 75% of total RAM
+  * Set ImageMagick memory limit to 75% of total RAM
   * Several Windows fixes
     * Dropped support for MinGW due to several issues with ImageMagick
-    * Added support for MSVC, this is now the only supported toolchain on Windows
+    * Added support for MSVC
   * macOS binary support put on hold due to issues with ImageMagick 7.x
   * Disabled brush feature (until core is done, was just a test anyway)
   * Change layer stacking with PageUp/PageDown keys
@@ -127,6 +135,8 @@ Changes, history and roadmap for Cyan.
 ## 1.99.3
 
 **Release date : 20191103**
+
+Feature and bugfix release.
 
   * Added support for system theme/style
   * Ui changes
@@ -150,6 +160,8 @@ Changes, history and roadmap for Cyan.
 
 **Release date : 20190929**
 
+Bugfix release.
+
 * UI clean up
 * Bug fixes
 
@@ -165,5 +177,39 @@ First step on the road to version 2.0. This (1.99.x) is a development release, n
 * Initial support for zoom
 * Confirm close/quit if we have unsaved image(s)
 * Complete re-write from ground up, now an image editor (well, it's a start)
-  * The re-write started around the release of version 1.2 and continued until the end of 2018, then the project stalled until August 2019
 * Includes a bunch of bugs and missing features, enjoy :)
+
+## 1.2.2
+
+**Release date : 20191103**
+
+ * Added support for output compression quality
+ * Added support for ImageMagick 7
+ * Support for system theme
+ * Fixed GIMP support on Linux
+
+## 1.2.1
+
+**Release date : 20181204**
+
+ * Fixed GIMP 2.10 Windows support
+ * Fixed broken Cyan Python plug-in
+ * Support XCF (GIMP image format)
+ * Support reading layers from XCF, TIFF, PSD
+
+## 1.2.0
+
+**Release date : 20181203**
+
+ * Major "behind-the-scene" changes
+ * Improved performance
+ * Save to JPEG
+ * Enhanced image information
+ * Third-party software updates
+ * Fixed issues converting HDR images
+
+## 1.0.0
+
+**Release date : 20160814**
+
+ * first public release
