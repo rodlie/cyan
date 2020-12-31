@@ -63,21 +63,11 @@ The copyright holders of Cyan hereby grant permission for non-GPL compatible plu
 
 * Cyan includes icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
 * Cyan logo is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
-* Cyan include some components from Nokia Qt Solutions licensed under LGPL-v2.1+
-
-The following ICC color profiles are included with Cyan:
-
-**sRGB_v4_ICC_preference.icc / sRGB2014.icc**
-
-This profile is made available by the International Color Consortium, and may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile.
+* Cyan include some components from Nokia Qt Solutions licensed under the GNU Lesser General Public License 2.1+
 
 **sRGB_IEC61966-2-1_no_black_scaling.icc**
 
 To anyone who acknowledges that the file "sRGB_IEC61966-2-1_no_black_scaling.icc" is provided "AS IS" WITH NO EXPRESS OR IMPLIED WARRANTY, permission to use, copy and distribute these file for any purpose is hereby granted without fee, provided that the file is not changed including the ICC copyright notice tag, and that the name of ICC shall not be used in advertising or publicity pertaining to distribution of the software without specific, written prior permission. ICC makes no representations about the suitability of this software for any purpose.
-
-**SWOP2006_Coated5v2.icc**
-
-This profile is made available by IDEAlliance, with permission of X-Rite, Inc., and may be used, embedded, exchanged, and shared without restriction. It may not be altered, or sold without written permission of IDEAlliance.
 
 **ISOcoated_v2_300_bas.icc / ISOcoated_v2_grey1c_bas.icc**
 

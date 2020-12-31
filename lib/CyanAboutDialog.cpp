@@ -19,8 +19,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QPixmap>
-#include <QImage>
 #include <QApplication>
 #include <QPushButton>
 #include <QMessageBox>
@@ -49,25 +47,18 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
 
     QWidget *headerWidget = new QWidget(this);
     headerWidget->setContentsMargins(0,0,0,0);
-    QVBoxLayout *headerLayout = new QVBoxLayout(headerWidget);
+    headerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QHBoxLayout *headerLayout = new QHBoxLayout(headerWidget);
     headerLayout->setContentsMargins(0,0,0,0);
-
-    QWidget *headerContainer = new QWidget(this);
-    headerContainer->setContentsMargins(0,0,0,0);
-    QHBoxLayout *headerContainerLayout = new QHBoxLayout(headerContainer);
-    headerContainerLayout->setContentsMargins(0,0,0,0);
-    headerContainerLayout->addWidget(headerWidget);
-
-    QLabel *logoLabel = new QLabel(this);
-    logoLabel->setAlignment(Qt::AlignHCenter);
-    logoLabel->setPixmap(QPixmap::fromImage(QImage(":/icons/hicolor/128x128/apps/Cyan.png")));
-    headerLayout->addWidget(logoLabel);
 
     QLabel *textLabel = new QLabel(this);
     textLabel->setWordWrap(true);
     textLabel->setOpenExternalLinks(true);
+    textLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     QWidget *footerWidget = new QWidget(this);
+    footerWidget->setContentsMargins(0,0,0,0);
+    footerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QHBoxLayout *footerLayout = new QHBoxLayout(footerWidget);
 
     QPushButton *ghButton = new QPushButton(this);
@@ -84,14 +75,23 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     qtButton->setContentsMargins(0,0,0,0);
     qtButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QString textString = QString("<h2 align=\"center\">%1 %2</h2>")
+    QString textString = QString("<p style=\"text-align:center;\"><img src=\":/icons/hicolor/128x128/apps/Cyan.png\"></p><h2 align=\"center\">%1 <span style=\"font-weight:normal;\">%3</span> %2</h2>")
             .arg(qApp->applicationName())
-            .arg(CYAN_VERSION);
+            .arg(CYAN_VERSION)
+            .arg(tr("Pixel Editor"));
    textString.append(QString("<p style=\"text-align:center;\">"
-                             "%1 &copy; 2020 <a href=\"https://github.com/rodlie\">Ole-André Rodlie</a>. %2."
+                             "%1 &copy; 2020 <a href=\"https://github.com/rodlie\" style=\"text-decoration:none;\">Ole-André Rodlie</a>. %2."
+                             "</p>"
+                             "<p style=\"text-align:justify;font-size:small;\">"
+                             "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version."
+                             " This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."
+                             "<br><br>"
+                             "The copyright holders of Cyan hereby grant permission for non-GPL compatible plug-ins and add-ons to be used and distributed together with Cyan, provided that you also meet the terms and conditions of the licenses of those plug-ins and add-ons."
+                             "<br><br>"
+                             "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
                              "</p>"
                              "<p style=\"text-align:center;\">"
-                             "%7 <a href=\"%3\">%4</a> %5<br>%6.<br>"
+                             "%7 <a href=\"%3\" style=\"text-decoration:none;\">%4</a> %5<br>%6.<br>"
                              "<table>"
                              "<tr><td><b>%8</b></td><td>&nbsp;:&nbsp;</td><td>%10</td></tr>"
                              "<tr><td><b>%9</b></td><td>&nbsp;:&nbsp;</td><td>%11</td></tr>"
@@ -110,12 +110,14 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                      .arg(Magick::ResourceLimits::thread()) /* 11 */
                      );
     textLabel->setText(textString);
+
     headerLayout->addWidget(textLabel);
     headerLayout->addStretch();
     footerLayout->addWidget(ghButton);
     footerLayout->addStretch();
     footerLayout->addWidget(qtButton);
-    mainLayout->addWidget(headerContainer);
+
+    mainLayout->addWidget(headerWidget);
     mainLayout->addWidget(footerWidget);
 
     connect(ghButton, SIGNAL(clicked()), this, SLOT(ghButtonTriggered()));
