@@ -1,12 +1,20 @@
-# Cyan
+# Cyan 1.99.x
 
 ![screenshot](images/screenshot.png)
 
-Cyan 2 *(1.99.x)* aims to be a simple general-purpose editor and converter for RGB/CMYK/GRAY images using [ImageMagick](https://imagemagick.org). ***Cyan 2 is EXPERIMENTAL, not for regular use!***
+Cyan is an simple general-purpose image editor based on [ImageMagick](https://imagemagick.org). This is **experimental** software currently under development, not for regular use.
 
-## Source
+## Features
 
-### Requirements
+...
+
+## Download
+
+...
+
+## Open Source
+
+The following software are required to build Cyan from source:
 * GCC *>= 5 (Linux)*
 * MSVC *>= 14 (Windows)*
 * Clang *>= 3.8 (macOS)*
@@ -18,16 +26,9 @@ Cyan 2 *(1.99.x)* aims to be a simple general-purpose editor and converter for R
 * Little CMS 2.x
 * pkg-config/pkgconf *(Linux/macOS)*
 
-### Build
-
-```
-git clone https://github.com/rodlie/cyan
-cd cyan
-mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release .. && make
-```
-
 ## Shortcuts
+
+Currently the supported shortcuts in Cyan are:
 
 | Shortcut           | Action                             |
 | ------------------ | ---------------------------------- |
@@ -54,13 +55,15 @@ cmake -DCMAKE_BUILD_TYPE=Release .. && make
 
 Copyright (c) Ole-André Rodlie. All rights reserved.
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version.
 
-* Cyan include icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
-* Cyan Logo by Ole-André Rodlie is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+
+The copyright holders of Cyan hereby grant permission for non-GPL compatible plug-ins and add-ons to be used and distributed together with Cyan, provided that you also meet the terms and conditions of the licenses of those plug-ins and add-ons.
+
+* Cyan includes icons from [FatCow](https://www.fatcow.com) Hosting that are licensed under [CC Attribution 3.0 US](http://creativecommons.org/licenses/by/3.0/us/)
+* Cyan logo is licensed under [CC Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/)
 * Cyan include some components from Nokia Qt Solutions licensed under LGPL-v2.1+
-
-Source code for third-party software included in the official builds are available on [SourceForge](https://sourceforge.net/projects/prepress/files/sdk/source/).
 
 The following ICC color profiles are included with Cyan:
 
@@ -103,23 +106,33 @@ not be
 
 ## Changelog
 
+Changes, history and roadmap for Cyan.
+
+## 1.99.5
+
+**ETA Q1 2021**
+
+  * Batch image converter (plug-in/standalone)
+
 ## 1.99.4
 
-**Release date : TBA**
+**ETA January 2021**
 
+  * Several bug and UI fixes
   * Initial undo/redo
+    * Not complete, but support the core features
   * ImageMagick 7.0.10 is now the minimum supported version
-  * Windows fixes
-  * Dropped MinGW for MSVC
-  * macOS binary support put on hold due to issues with ImageMagick 7.x (performance)
-  * Dropped fontconfig (will be added back in the future)
-  * Set ImageMagick memory limit to 75% of total RAM
-  * Warn on unsupported ImageMagick version
-  * UI fixes
-  * Disabled brush (until core is done)
+    * v7.0.10-26 to be exact
+    * Cyan will warn during startup if the version is unsupported
+    * Set ImageMagick memory limit to 75% of total RAM
+  * Several Windows fixes
+    * Dropped support for MinGW due to several issues with ImageMagick
+    * Added support for MSVC, this is now the only supported toolchain on Windows
+  * macOS binary support put on hold due to issues with ImageMagick 7.x
+  * Disabled brush feature (until core is done, was just a test anyway)
   * Change layer stacking with PageUp/PageDown keys
-  * Bug fixes
-  * Dropped FFmpeg support (focus on primary functions instead)
+  * Disabled fontconfig (not needed yet)
+  * Dropped FFmpeg support (avoid feature creep)
 
 ## 1.99.3
 
