@@ -147,7 +147,8 @@ public slots:
     QSize getCanvasSize();
     CyanImageFormat::CyanCanvas getCanvasProject();
     void setLayerVisibility(int layer,
-                            bool layerIsVisible);
+                            bool layerIsVisible,
+                            bool addToUndo = false);
     bool getLayerVisibility(int layer);
     void setLayerLock(int layer,
                       bool layerIsLocked);

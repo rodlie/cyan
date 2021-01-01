@@ -1,13 +1,13 @@
 #
 # Cyan <https://cyan.fxarena.net>
-# Copyright Ole-André Rodlie, FxArena DA.
+# Copyright (c) Ole-André Rodlie. All rights reserved.
 #
-# This program is free software; you can redistribute it and/or
+# This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.0 of the License, or (at your option) any later version.
+# version 2.1 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This file is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
@@ -15,7 +15,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(Cyan VERSION 1.99.4)
+project(Cyan VERSION 2021.1.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -26,15 +26,22 @@ set(COMPANY "FxArena")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
+set(PROJECT_EDITION "Development Release" CACHE STRING "Edition")
 option(STATIC_MAGICK "Link against static ImageMagick" OFF)
 option(PLUGINS_SUPPORT "Experimental plug-ins support" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(RUNTIME_WARNINGS "Show warnings during runtime" OFF)
+option(LINUX_DEPLOY "Linux deploy (internal use)" OFF)
 
 if(WIN32)
     set(IMAGEMAGICK_WINDOWS "C:/Users/olear/Documents/ImageMagick-Windows" CACHE STRING "VisualMagick")
     include_directories(${IMAGEMAGICK_WINDOWS}/ImageMagick/Magick++/lib ${IMAGEMAGICK_WINDOWS}/ImageMagick ${IMAGEMAGICK_WINDOWS}/lcms/include)
     link_directories(${IMAGEMAGICK_WINDOWS}/VisualMagick/lib ${IMAGEMAGICK_WINDOWS}/VisualMagick/bin)
+endif()
+
+if(${LINUX_DEPLOY})
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/x86_64-linux-gnu")
+    #find_package(Threads REQUIRED)
 endif()
 
 set(HEADERS_API lib/CyanWidgetApi.h)
@@ -104,7 +111,11 @@ set(RESOURCES
 )
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
-add_definitions(-DCYAN_IMAGE_FORMAT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+add_definitions(-DCYAN_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}")
+add_definitions(-DCYAN_VERSION_MINOR="${PROJECT_VERSION_MINOR}")
+add_definitions(-DCYAN_VERSION_PATCH="${PROJECT_VERSION_PATCH}")
+add_definitions(-DCYAN_EDITION="${PROJECT_EDITION}")
+add_definitions(-DCYAN_PROJECT_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 add_definitions(-DCYAN_LIBRARY)
 
 find_package(Qt5 5.5 REQUIRED Core Gui Widgets Concurrent Test)
@@ -189,41 +200,78 @@ if(WIN32)
     )
 endif()
 
+add_library(
+    ${PROJECT_NAME}
+    SHARED
+    ${SOURCES_LIB}
+    ${HEADERS_LIB}
+    ${HEADERS_API}
+)
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    VERSION
+    ${PROJECT_VERSION}
+)
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    SOVERSION
+    ${PROJECT_VERSION_MAJOR}
+)
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    SOVERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+)
+
 if(APPLE)
     add_executable(
-        ${PROJECT_NAME}
+        ${PROJECT_NAME}App
         MACOSX_BUNDLE
         ${ICON_FILE}
         ${SOURCES_APP}
-        ${SOURCES_LIB}
+        #${SOURCES_LIB}
         ${HEADERS_APP}
-        ${HEADERS_LIB}
+        #${HEADERS_LIB}
         ${HEADERS_API}
         ${RESOURCES}
     )
 elseif(WIN32)
     add_executable(
-        ${PROJECT_NAME}
+        ${PROJECT_NAME}App
         WIN32
         ${ICON_FILE}
         ${WINDOWS_RESOURCE_FILE}
         ${SOURCES_APP}
-        ${SOURCES_LIB}
+        #${SOURCES_LIB}
         ${HEADERS_APP}
-        ${HEADERS_LIB}
+        #${HEADERS_LIB}
         ${HEADERS_API}
         ${RESOURCES}
     )
 else()
     add_executable(
-        ${PROJECT_NAME}
+        ${PROJECT_NAME}App
         ${SOURCES_APP}
-        ${SOURCES_LIB}
+        #${SOURCES_LIB}
         ${HEADERS_APP}
-        ${HEADERS_LIB}
+        #${HEADERS_LIB}
         ${HEADERS_API}
         ${RESOURCES})
 endif()
+
+set_target_properties(${PROJECT_NAME}App PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+
+target_link_libraries(
+    ${PROJECT_NAME}App
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Concurrent
+    ${PROJECT_NAME}
+)
 
 target_link_libraries(
     ${PROJECT_NAME}
@@ -235,23 +283,39 @@ target_link_libraries(
 
 if(WIN32)
     if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
+        target_link_libraries(${PROJECT_NAME}App CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
         target_link_libraries(${PROJECT_NAME} CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
     else()
+        target_link_libraries(${PROJECT_NAME}App CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
         target_link_libraries(${PROJECT_NAME} CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
     endif()
 else()
     if(${STATIC_MAGICK})
+        target_compile_options(${PROJECT_NAME}App PRIVATE ${MAGICK_STATIC_CFLAGS})
         target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
+        target_link_libraries(${PROJECT_NAME}App ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
         target_link_libraries(${PROJECT_NAME} ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
     else()
+        target_compile_options(${PROJECT_NAME}App PRIVATE ${MAGICK_CFLAGS})
         target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
+        target_link_libraries(${PROJECT_NAME}App ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
         target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
     endif()
 endif()
 
+#if(${LINUX_DEPLOY})
+#    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
+#endif()
+
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
-    install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+    else()
+        set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+    endif()
+    install(TARGETS ${PROJECT_NAME} DESTINATION ${LIB_INSTALL_DIR})
+    install(TARGETS ${PROJECT_NAME}App DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/128x128
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor

@@ -589,10 +589,12 @@ CyanImageFormat::CyanCanvas View::getCanvasProject()
 }
 
 void View::setLayerVisibility(int layer,
-                              bool layerIsVisible)
+                              bool layerIsVisible,
+                              bool addToUndo)
 {
     if (!_canvas.layers.contains(layer)) { return; }
     if (_canvas.layers[layer].visible != layerIsVisible) {
+        if (addToUndo) { addUndo(layer); }
         _canvas.layers[layer].visible = layerIsVisible;
         handleLayerOverTiles(layer);
     }
@@ -1172,7 +1174,9 @@ void View::setUndo(bool state)
         return;
     }
 
+    // position
     if (_canvas.layers[undo.layer].position != undo.position) {
+        qDebug() << "SET POSITION";
         _canvas.layers[undo.layer].position = undo.position;
         for (int i=0;i<_scene->items().size();++i) {
             LayerItem *item = dynamic_cast<LayerItem*>(_scene->items().at(i));
@@ -1183,6 +1187,13 @@ void View::setUndo(bool state)
             break;
         }
     }
+
+    // visibility
+    /*if (_canvas.layers[undo.layer].visible != undo.visibility) {
+        qDebug() << "SET VISIBILITY";
+        setLayerVisibility(undo.layer, undo.visibility, false);
+        emit updatedLayers();
+    }*/
 
     handleCanvasChanged();
     if (state) {_history.clearLastUndo(); }
@@ -1740,19 +1751,29 @@ void View::addUndo(int id, QSize pos, bool usePos)
     CyanImageFormat::CyanLayer layer = _canvas.layers[id];
     CyanHistory::CyanHistoryItem item;
     item.layer = id;
-    item.order = layer.order;
-    item.locked = layer.locked;
+    //item.order = layer.order;
+    //item.locked = layer.locked;
     if (usePos) {
+        // LEGACY
         item.position = pos;
         item.undoPOS = pos;
         item.redoPOS = layer.position;
+        // NEW
+        item.pos.state = QPointF(pos.width(), pos.height());
+        item.pos.undo = item.pos.state;
+        item.pos.redo = QPointF(layer.position.width(), layer.position.height());
     }
     else {
+        // LEGACY
         item.position = layer.position;
         item.undoPOS = layer.position;
         item.redoPOS = layer.position;
+        // NEW
+        item.pos.state = QPointF(layer.position.width(), layer.position.height());
+        item.pos.undo = item.pos.state;
+        item.pos.redo = item.pos.state;
     }
-    item.opacity = layer.opacity;
+    //item.opacity = layer.opacity;
     item.composite = layer.composite;
     _history.addUndo(item);
 }

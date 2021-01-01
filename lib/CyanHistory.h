@@ -21,6 +21,7 @@
 #include <QObject>
 #include <QVector>
 #include <QSize>
+#include <QPointF>
 
 #include <Magick++.h>
 
@@ -31,18 +32,67 @@ class CYANSHARED_EXPORT CyanHistory: public QObject
     Q_OBJECT
 
 public:
+    enum CyanHistoryType
+    {
+        CyanHistoryTypeDefault,
+        CyanHistoryTypePosition,
+        CyanHistoryTypeVisibility,
+        CyanHistoryTypeLocked,
+        CyanHistoryTypeOrder,
+        CyanHistoryTypeOpacity
+    };
+
+    struct CyanHistoryPosition
+    {
+        QPointF state = QPointF(0, 0);
+        QPointF undo = QPointF(0, 0);
+        QPointF redo = QPointF(0, 0);
+    };
+
+    struct CyanHistoryVisibility
+    {
+        bool state = true;
+        bool undo = true;
+        bool redo = true;
+    };
+
+    struct CyanHistoryLocked
+    {
+        bool state = false;
+        bool undo = false;
+        bool redo = false;
+    };
+
+    struct CyanHistoryOrder
+    {
+        int state = -1;
+        int undo = -1;
+        int redo = -1;
+    };
+
+    struct CyanHistoryOpacity
+    {
+        double state = 100.0;
+        double undo = 100.0;
+        double redo = 100.0;
+    };
+
     struct CyanHistoryItem
     {
-        int layer = 0;
-        bool visibility = true;
-        bool locked = false;
+        int layer = -1;
+        CyanHistoryVisibility visibility;
+        CyanHistoryLocked locked;
         Magick::CompositeOperator composite = Magick::OverCompositeOp;
-        int order = 0;
+        CyanHistoryOrder order;
+        CyanHistoryPosition pos;
+        CyanHistoryOpacity opacity;
+        CyanHistoryType type = CyanHistoryTypeDefault;
+
         QSize position = QSize(0, 0);
         QSize redoPOS = QSize(0, 0);
         QSize undoPOS = QSize(0, 0);
-        double opacity = 100.0;
     };
+
     CyanHistory(QObject *parent = nullptr);
 
 private:
@@ -52,14 +102,19 @@ private:
 public slots:
     void addUndo(CyanHistoryItem history);
     void addRedo(CyanHistoryItem history);
+
     CyanHistoryItem getUndo();
     CyanHistoryItem getRedo();
+
     int getUndoTotal();
     int getRedototal();
+
     void clearUndo();
     void clearRedo();
+
     void clearLastUndo();
     void clearLastRedo();
+
     void clearAll();
 };
 

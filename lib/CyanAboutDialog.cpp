@@ -75,26 +75,25 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     qtButton->setContentsMargins(0,0,0,0);
     qtButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QString textString = QString("<p style=\"text-align:center;\"><img src=\":/icons/hicolor/128x128/apps/Cyan.png\"></p><h2 align=\"center\">%1 <span style=\"font-weight:normal;\">%3</span> %2</h2>")
+    QString textString = QString("<p style=\"text-align:center;\"><img src=\":/icons/hicolor/128x128/apps/Cyan.png\"></p><h2 align=\"center\" style=\"font-weight:normal;\">%1<br><span style=\"font-size:medium;font-weight:bold\">Version %2 Q%3 Patch %4</span><br><span style=\"font-size:medium;font-weight:bold\">%5</span></h2>")
             .arg(qApp->applicationName())
-            .arg(CYAN_VERSION)
-            .arg(tr("Pixel Editor"));
-   textString.append(QString("<p style=\"text-align:center;\">"
-                             "%1 &copy; <a href=\"https://github.com/rodlie\" style=\"text-decoration:none;\">Ole-André Rodlie</a>. %2."
-                             "</p>"
-                             "<p style=\"text-align:center;font-size:small;\">"
-                             "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version."
-                             " This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+            .arg(CYAN_VERSION_MAJOR)
+            .arg(CYAN_VERSION_MINOR)
+            .arg(CYAN_VERSION_PATCH)
+            .arg(CYAN_EDITION);
+   textString.append(QString("<p style=\"text-align:center;font-size:small;\">"
+                             "Cyan is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version."
                              " The copyright holders of Cyan hereby grant permission for non-GPL compatible plug-ins and add-ons to be used and distributed together with Cyan, provided that you also meet the terms and conditions of the licenses of those plug-ins and add-ons."
-                             "</p>"
-                             "<p style=\"text-align:center;\">"
+                             " Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+                             "<br><br>"
+                             "Cyan %1 &copy; <a href=\"https://github.com/rodlie\" style=\"text-decoration:none;\">Ole-André Rodlie</a>. %2.<br>"
                              "%7 <a href=\"%3\" style=\"text-decoration:none;\">%4</a> %5<br>%6.<br>"
                              "<table>"
                              "<tr><td><b>%8</b></td><td>&nbsp;:&nbsp;</td><td>%10</td></tr>"
                              "<tr><td><b>%9</b></td><td>&nbsp;:&nbsp;</td><td>%11</td></tr>"
                              "</table>"
                              "</p>")
-                     .arg(tr("Copyright")) /* 1 */
+                     .arg(tr("is copyright")) /* 1 */
                      .arg(tr("All rights reserved")) /* 2 */
                      .arg(MagickCore::GetMagickLicense()) /* 3 */
                      .arg(magickInfo) /* 4 */
