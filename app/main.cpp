@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QString("FxArena"));
     QApplication::setOrganizationDomain(QString("fxarena.net"));
     QApplication::setApplicationVersion(QString(CYAN_VERSION));
+    QStringList args = QApplication::arguments();
 
 #ifdef USE_FC
     QString fontconfig;
@@ -133,11 +134,31 @@ int main(int argc, char *argv[])
     }
 #endif
 
+    // renderer
+    if (args.size() == 4 && args.at(1) == "--render") {
+        QString input = args.at(2);
+        QString output = args.at(3);
+        if (CyanImageFormat::isValidCanvas(input)) {
+            CyanImageFormat::CyanCanvas project = CyanImageFormat::readCanvas(input);
+            if (project.error.isEmpty()) {
+                if (!CyanImageFormat::renderCanvasToFile(project, output)) {
+                    fprintf(stdout, "Failed to render.\n");
+                }
+            } else {
+                fprintf(stdout,
+                        "Failed to read project: %s\n",
+                        project.error.toStdString().c_str());
+            }
+        } else {
+            fprintf(stdout, "Not a project file.\n");
+        }
+        return 0;
+    }
+
     // editor
     Editor w;
     w.show();
-    QStringList args = QApplication::arguments();
-    if (args.size()>1 && QFile::exists(args.at(1))) {
+    if (args.size() == 2 && QFile::exists(args.at(1))) {
             w.openConsoleImage(args.at(1));
     }
 
