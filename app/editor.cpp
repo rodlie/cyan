@@ -807,11 +807,23 @@ void Editor::saveImageDialog(bool ignoreExisting, bool setFilename)
     } else if (filename.endsWith(".psd",
                                  Qt::CaseInsensitive))
     {
+        int ret = QMessageBox::question(this,
+                                        tr("Export to PSD"),
+                                        tr("Are you sure you want to export to PSD?"),
+                                        QMessageBox::Yes|QMessageBox::No,
+                                        QMessageBox::No);
+        if (ret != QMessageBox::Yes) { return; }
         QtConcurrent::run(this,
                           &Editor::writeProjectPSD,
                           filename,
                           setFilename);
     } else {
+        int ret = QMessageBox::question(this,
+                                        tr("Export to %1").arg(fileInfo.suffix().toUpper()),
+                                        tr("Are you sure you want to export to %1?").arg(fileInfo.suffix().toUpper()),
+                                        QMessageBox::Yes|QMessageBox::No,
+                                        QMessageBox::No);
+        if (ret != QMessageBox::Yes) { return; }
         QtConcurrent::run(this,
                           &Editor::writeImage,
                           filename,
