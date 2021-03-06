@@ -59,7 +59,7 @@ export PKG_CONFIG_PATH=${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/pkgconfig
 cd $CWD
 rm -rf build-cyan || true
 mkdir build-cyan && cd build-cyan
-cmake -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=$MAGICK_TYPE -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
+cmake -DLINUX_DEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DMAGICK_PKG_CONFIG=$MAGICK_TYPE -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
 make -j${MKJOBS}
 make DESTDIR=${PKG_DIR} install
 

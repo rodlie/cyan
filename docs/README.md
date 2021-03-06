@@ -100,15 +100,14 @@ not be
 
 Changes, history and roadmap for Cyan.
 
-## 2021.N
+## 2021.2.0
 
 **Release date : TBA**
 
-Next planned version.
+Planned features:
 
   * [ ] Batch image converter (plug-in/standalone)
   * [ ] Add missing features from v1
-  * [ ] macOS binary support (OS X Yosemite or newer)
 
 ## 2021.1.0
 
