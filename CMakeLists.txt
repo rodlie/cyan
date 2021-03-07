@@ -44,7 +44,7 @@ if(${LINUX_DEPLOY})
     #find_package(Threads REQUIRED)
 endif()
 
-set(HEADERS_API lib/CyanWidgetApi.h)
+set(HEADERS_API lib/CyanWidgetApi.h lib/CyanEffectApi.h)
 set(HEADERS_APP app/editor.h)
 set(SOURCES_LIB
     lib/CyanAboutDialog.cpp

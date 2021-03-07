@@ -96,10 +96,16 @@ public:
     {
         CyanGuideItem *rect;
     };
+    struct CyanEffect
+    {
+        QString id;
+        QMap<QString, QVariant> values;
+    };
     struct CyanLayer
     {
         Magick::Image image;
         QMap<int, CyanLayer> layers;
+        QMap<int, CyanEffect> effects;
         Magick::CompositeOperator composite = Magick::OverCompositeOp;
         QSize position = QSize(0, 0);
         bool visible = true;
