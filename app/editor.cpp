@@ -101,7 +101,7 @@ Editor::Editor(QWidget *parent)
     , layersButton(nullptr)
     , colorsButton(nullptr)
     , layersWidget(nullptr)
-    , colorPicker(nullptr)
+    //, colorPicker(nullptr)
     , currentZoomStatusIcon(nullptr)
     , currentZoomStatusLabel(nullptr)
     , mainSplitter(nullptr)
@@ -162,14 +162,14 @@ void Editor::initPlugins(QList<QPluginLoader *> plugins)
         CyanWidgetPlugin *widgetPlugin = qobject_cast<CyanWidgetPlugin*>(plugin);
         if (widgetPlugin) {
             initWidgetPlugin(widgetPlugin);
-            connect(colorPicker,
+            /*connect(colorPicker,
                     SIGNAL(colorChanged(QColor)),
                     plugin,
                     SLOT(setCurrentColor(QColor)));
             connect(plugin,
                     SIGNAL(currentColorChanged(QColor)),
                     colorPicker,
-                    SLOT(setCurrentColor(QColor)));
+                    SLOT(setCurrentColor(QColor)));*/
             if (widgetPlugin->isText()) {
                 hasTextSupport = true;
                 connect(this,
@@ -212,7 +212,7 @@ void Editor::initWidgetPlugin(CyanWidgetPlugin *plugin)
         break;
     default:;
     }
-    plugin->setCurrentColor(colorPicker->currentColor());
+    //plugin->setCurrentColor(colorPicker->currentColor());
 }
 
 // save global settings

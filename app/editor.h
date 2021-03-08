@@ -46,7 +46,7 @@
 #include "CyanLayerWidget.h"
 
 #include "CyanCommon.h"
-#include "qtcolorpicker.h"
+//#include "qtcolorpicker.h"
 #include "qtwindowlistmenu.h"
 
 #ifdef BATCH
@@ -136,7 +136,7 @@ private:
     QToolButton *colorsButton;
 
     CyanLayerWidget *layersWidget;
-    QtColorPicker *colorPicker;
+    //QtColorPicker *colorPicker;
 
     QLabel *currentZoomStatusIcon;
     QLabel *currentZoomStatusLabel;

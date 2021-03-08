@@ -37,7 +37,7 @@ void Editor::newTab(CyanImageFormat::CyanCanvas canvas)
     view->setCanvasSpecsFromImage(canvas.image);
     view->setLayersFromCanvas(canvas);
     view->setFit(viewZoomFitAct->isChecked());
-    view->setBrushColor(colorPicker->currentColor());
+    //view->setBrushColor(colorPicker->currentColor());
 
     // add guides
     if (!vguides.isEmpty()) {
@@ -113,7 +113,7 @@ void Editor::newTab(Magick::Image image, QSize geo)
     if (geo.width()>0) { view->addLayer(view->getCanvas()); }
     else { view->addLayer(image); }
     view->setFit(viewZoomFitAct->isChecked());
-    view->setBrushColor(colorPicker->currentColor());
+    //view->setBrushColor(colorPicker->currentColor());
 
     tab->setWidget(view);
     tab->showMaximized();

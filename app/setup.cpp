@@ -102,8 +102,8 @@ void Editor::setupUI()
     mainToolBar->addWidget(interactButton);
     mainToolBar->addWidget(layersButton);
     mainToolBar->addWidget(colorsButton);
-    mainToolBar->addSeparator();
-    mainToolBar->addWidget(colorPicker);
+    //mainToolBar->addSeparator();
+    //mainToolBar->addWidget(colorPicker);
 
     interactButton->addAction(viewMoveAct);
     interactButton->addAction(viewDrawAct);
@@ -345,9 +345,9 @@ void Editor::setupWidgets(bool native)
     mainStatusBar->addPermanentWidget(currentZoomStatusIcon);
 
     // main color picker
-    colorPicker = new QtColorPicker(this, -1, true, false);
+    /*colorPicker = new QtColorPicker(this, -1, true, false);
     colorPicker->setIconSize(QSize(16, 32));
-    colorPicker->setStandardColors();
+    colorPicker->setStandardColors();*/
     //colorPicker->hide();
 
     // toolbar
@@ -577,7 +577,7 @@ void Editor::setupConnections()
             this,
             SLOT(handleLayerCompChanged(Magick::CompositeOperator,int)));
 
-    connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
+    //connect(colorPicker, SIGNAL(colorChanged(QColor)), this, SLOT(handleColorChanged(QColor)));
     connect(newButton, SIGNAL(clicked(bool)), this, SLOT(newImageDialog()));
 
     connect(addGuideHAct, SIGNAL(triggered(bool)), this, SLOT(handleAddGuideHAct(bool)));
