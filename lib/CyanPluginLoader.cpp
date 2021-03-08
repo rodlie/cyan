@@ -36,8 +36,9 @@ void CyanPlugins::scanPluginsFolder(const QString &folder,
             continue;
         }
         CyanWidgetPlugin *cwp =qobject_cast<CyanWidgetPlugin*>(plugin);
-        if (!cwp) {
-            qDebug() << "not a valid plugin widget" << fileName;
+        CyanEffectPlugin *cep =qobject_cast<CyanEffectPlugin*>(plugin);
+        if (!cwp && !cep) {
+            qDebug() << "not a valid plugin" << fileName;
             removePlugin(loader);
             continue;
         }
@@ -61,23 +62,39 @@ void CyanPlugins::loadPlugin(QPluginLoader *loader)
         return;
     }
     CyanWidgetPlugin *cwp =qobject_cast<CyanWidgetPlugin*>(plugin);
-    if (!cwp) {
-        qDebug() << "not a cwp plugin";
+    CyanWidgetPlugin *cep =qobject_cast<CyanWidgetPlugin*>(plugin);
+    if (!cwp && !cep) {
+        qDebug() << "not a valid plugin";
         removePlugin(loader);
         return;
     }
-    qDebug() << "is cwp plugin" << cwp->uuid() << cwp->version();
+    //qDebug() << "is cwp plugin" << cwp->uuid() << cwp->version();
 
-    CyanWidgetPlugin *ocwp = getWidgetPlugin(cwp->uuid());
-    if (ocwp) {
-        qDebug() << "already loaded plugin" << ocwp->uuid() << ocwp->version();
-        if (cwp->version()<=ocwp->version()) { // existing is better or same
-            qDebug() << "existing plugin" << ocwp->uuid() << ocwp->version() << "is better or same than new plugin" << cwp->uuid() << cwp->version();
-            removePlugin(loader);
-            return;
-        } else { // existing plugin is older
-            qDebug() << "new plugin" << cwp->uuid() << cwp->version() << " is better, remove old plugin"  << ocwp->uuid() << ocwp->version();
-            removePlugin(cwp->uuid());
+    if (cwp) {
+        CyanWidgetPlugin *ocwp = getWidgetPlugin(cwp->uuid());
+        if (ocwp) {
+            qDebug() << "already loaded plugin" << ocwp->uuid() << ocwp->version();
+            if (cwp->version()<=ocwp->version()) { // existing is better or same
+                qDebug() << "existing plugin" << ocwp->uuid() << ocwp->version() << "is better or same than new plugin" << cwp->uuid() << cwp->version();
+                removePlugin(loader);
+                return;
+            } else { // existing plugin is older
+                qDebug() << "new plugin" << cwp->uuid() << cwp->version() << " is better, remove old plugin"  << ocwp->uuid() << ocwp->version();
+                removePlugin(cwp->uuid());
+            }
+        }
+    } else if (cep) {
+        CyanEffectPlugin *ocep = getEffectPlugin(cep->uuid());
+        if (ocep) {
+            qDebug() << "already loaded plugin" << ocep->uuid() << ocep->version();
+            if (cep->version()<=ocep->version()) { // existing is better or same
+                qDebug() << "existing plugin" << ocep->uuid() << ocep->version() << "is better or same than new plugin" << cwp->uuid() << cwp->version();
+                removePlugin(loader);
+                return;
+            } else { // existing plugin is older
+                qDebug() << "new plugin" << cep->uuid() << cep->version() << " is better, remove old plugin"  << ocep->uuid() << ocep->version();
+                removePlugin(cep->uuid());
+            }
         }
     }
     addPlugin(loader);
@@ -99,7 +116,8 @@ void CyanPlugins::addPlugin(QPluginLoader *loader)
         return;
     }
     CyanWidgetPlugin *cwp =qobject_cast<CyanWidgetPlugin*>(plugin);
-    if (!cwp) {
+    CyanEffectPlugin *cep =qobject_cast<CyanEffectPlugin*>(plugin);
+    if (!cwp && !cep) {
         removePlugin(loader);
         return;
     }
@@ -136,8 +154,10 @@ QPluginLoader *CyanPlugins::getLoader(const QString &uuid)
         QObject *plugin = plugins.at(i)->instance();
         if (!plugin) { continue; }
         CyanWidgetPlugin *cwp = qobject_cast<CyanWidgetPlugin*>(plugin);
-        if (!cwp) { continue; }
-        if (cwp->uuid()==uuid) { return plugins.at(i); }
+        CyanEffectPlugin *cep = qobject_cast<CyanEffectPlugin*>(plugin);
+        if (!cwp && !cep) { continue; }
+        if (cwp && cwp->uuid()==uuid) { return plugins.at(i); }
+        if (cep && cep->uuid()==uuid) { return plugins.at(i); }
     }
     return nullptr;
 }
@@ -167,9 +187,29 @@ CyanWidgetPlugin *CyanPlugins::getWidgetPlugin(QPluginLoader *loader)
     return cwp;
 }
 
+CyanEffectPlugin *CyanPlugins::getEffectPlugin(int index)
+{
+    if (plugins.at(index)) {
+        QObject *plugin = plugins.at(index)->instance();
+        if (!plugin) { return nullptr; }
+        CyanEffectPlugin *p = qobject_cast<CyanEffectPlugin*>(plugin);
+        return p;
+    }
+    return  nullptr;
+}
+
+CyanEffectPlugin *CyanPlugins::getEffectPlugin(QPluginLoader *loader)
+{
+    if (!loader) { return nullptr; }
+    QObject *plugin = loader->instance();
+    if (!plugin) { return nullptr; }
+    CyanEffectPlugin *p = qobject_cast<CyanEffectPlugin*>(plugin);
+    return p;
+}
+
 CyanWidgetPlugin *CyanPlugins::getWidgetPlugin(const QString &uuid)
 {
-    qDebug() << "get plugin with uuid" << uuid;
+    qDebug() << "get widget plugin with uuid" << uuid;
     for (int i=0;i<plugins.size();++i) {
         QObject *plugin = plugins.at(i)->instance();
         if (!plugin) { continue; }
@@ -178,6 +218,20 @@ CyanWidgetPlugin *CyanPlugins::getWidgetPlugin(const QString &uuid)
         qDebug() << "plugin" << cwp->uuid() << "vs" << uuid;
         if (cwp->uuid()==uuid) { return cwp; }
         //return cwp;
+    }
+    return nullptr;
+}
+
+CyanEffectPlugin *CyanPlugins::getEffectPlugin(const QString &uuid)
+{
+    qDebug() << "get effect plugin with uuid" << uuid;
+    for (int i=0;i<plugins.size();++i) {
+        QObject *plugin = plugins.at(i)->instance();
+        if (!plugin) { continue; }
+        CyanEffectPlugin *p = qobject_cast<CyanEffectPlugin*>(plugin);
+        if (!p) { continue; }
+        qDebug() << "plugin" << p->uuid() << "vs" << uuid;
+        if (p->uuid()==uuid) { return p; }
     }
     return nullptr;
 }

@@ -73,6 +73,7 @@ public:
     virtual QVector<CyanEffectOption> options() const = 0;
 
 public slots:
+    // just testing
     virtual Magick::Image render(Magick::Image image,
                                  CyanImageFormat::CyanEffect options) = 0;
 

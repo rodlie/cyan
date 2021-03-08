@@ -24,6 +24,7 @@
 #include <QList>
 
 #include "CyanWidgetApi.h"
+#include "CyanEffectApi.h"
 
 #include "CyanGlobal.h"
 
@@ -50,10 +51,13 @@ private slots:
     QPluginLoader *getLoader(int index);
     CyanWidgetPlugin *getWidgetPlugin(int index);
     CyanWidgetPlugin *getWidgetPlugin(QPluginLoader *loader);
+    CyanEffectPlugin *getEffectPlugin(int index);
+    CyanEffectPlugin *getEffectPlugin(QPluginLoader *loader);
 
 public slots:
     void removePlugins();
     CyanWidgetPlugin *getWidgetPlugin(const QString &uuid);
+    CyanEffectPlugin *getEffectPlugin(const QString &uuid);
     QList<QPluginLoader*> scan();
 };
 
