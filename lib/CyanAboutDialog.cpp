@@ -87,7 +87,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                              " Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
                              "<br><br>"
                              "Cyan %1 &copy; <a href=\"https://github.com/rodlie\" style=\"text-decoration:none;\">Ole-André Rodlie</a>. %2.<br>"
-                             "%7 <a href=\"%3\" style=\"text-decoration:none;\">%4</a> %5<br>%6.<br>"
+                             "%7 <a href=\"%3\" style=\"text-decoration:none;\">%4</a> %5<br>[ %12 ]<br>%6.<br>"
                              "<table>"
                              "<tr><td><b>%8</b></td><td>&nbsp;:&nbsp;</td><td>%10</td></tr>"
                              "<tr><td><b>%9</b></td><td>&nbsp;:&nbsp;</td><td>%11</td></tr>"
@@ -104,6 +104,7 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
                      .arg(tr("Thread limit")) /* 9 */
                      .arg(CyanCommon::humanFileSize(Magick::ResourceLimits::memory())) /* 10 */
                      .arg(Magick::ResourceLimits::thread()) /* 11 */
+                     .arg(MagickCore::GetMagickFeatures()) /* 12 */
                      );
     textLabel->setText(textString);
 

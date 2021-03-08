@@ -28,7 +28,7 @@ LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH}"
 VERSION=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
 
 if [ "${APT}" = 1 ]; then
-    sudo apt-get install git dpkg dpkg-dev debhelper build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev liblzma-dev libbz2-dev libheif-dev
+    sudo apt-get install git dpkg dpkg-dev debhelper build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev liblzma-dev libbz2-dev libheif-dev libgoogle-perftools-dev
 fi
 
 rm -rf "${PKG_DIR}" || true
@@ -47,7 +47,7 @@ if [ "${CLEAN}" = 1 ]; then
     fi
     rm -rf build-magick || true
     mkdir build-magick && cd build-magick
-    ../ImageMagick/configure --prefix=${PKG_DIR}/usr --libdir=${PKG_DIR}/usr/lib/x86_64-linux-gnu --with-package-release-name=Cyan --disable-static --enable-shared --with-utilities=no --disable-docs --enable-zero-configuration --${ENABLE_HDRI}-hdri --enable-largefile --disable-deprecated --disable-legacy-support --with-quantum-depth=${QDEPTH} --with-bzlib=yes --with-autotrace=no --with-djvu=no --with-dps=no --with-fftw=no --with-flif=no --with-fpx=no --with-fontconfig=no --with-freetype=no --with-gslib=no --with-gvc=no --with-heic=${HEIC} --with-jbig=no --with-jpeg=yes --with-lcms=yes --with-lqr=no --with-ltdl=no --with-lzma=yes --with-magick-plus-plus=yes --with-openexr=no --with-openjp2=yes --with-pango=no --with-librsvg=no --with-perl=no --with-png=yes --with-raqm=no --with-raw=no --with-tiff=yes --with-webp=yes --with-wmf=no --with-x=no --with-xml=yes --with-zlib=yes --with-zstd=no
+    ../ImageMagick/configure --prefix=${PKG_DIR}/usr --libdir=${PKG_DIR}/usr/lib/x86_64-linux-gnu --with-package-release-name=Cyan --disable-static --enable-shared --with-utilities=no --disable-docs --enable-zero-configuration --${ENABLE_HDRI}-hdri --enable-largefile --disable-deprecated --disable-legacy-support --with-quantum-depth=${QDEPTH} --with-tcmalloc=yes --with-bzlib=yes --with-autotrace=no --with-djvu=no --with-dps=no --with-fftw=no --with-flif=no --with-fpx=no --with-fontconfig=no --with-freetype=no --with-gslib=no --with-gvc=no --with-heic=${HEIC} --with-jbig=no --with-jpeg=yes --with-lcms=yes --with-lqr=no --with-ltdl=no --with-lzma=yes --with-magick-plus-plus=yes --with-openexr=no --with-openjp2=yes --with-pango=no --with-librsvg=no --with-perl=no --with-png=yes --with-raqm=no --with-raw=no --with-tiff=yes --with-webp=yes --with-wmf=no --with-x=no --with-xml=yes --with-zlib=yes --with-zstd=no
 else
     cd build-magick
 fi
