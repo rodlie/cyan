@@ -357,6 +357,7 @@ const QString CyanCommon::supportedImageMagickVersion()
 {
     QVector<QString> versions;
     versions.push_back("7.0.10-26");
+    versions.push_back("7.0.11-4");
 
     size_t magickV;
     QString version = QString(MagickCore::GetMagickVersion(&magickV)).split("Q").takeFirst().split("ImageMagick").takeLast().trimmed();
