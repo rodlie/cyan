@@ -12,7 +12,23 @@ Cyan is an simple image editor for Windows and Linux based on [ImageMagick](http
 
 ## Download
 
-...
+* Windows 7/8/10 x64
+* Ubuntu 20.04 x86_64
+* Source code
+
+## Requirements
+
+Minimum:
+
+* Dual Core x86_64 CPU
+* 4GB RAM
+
+Recommended:
+
+* Quad Core x86_64 CPU
+* 8GB+ RAM
+
+*General rule of thumb: The more cores the faster things go, the more memory you have the more layers and images can be used at the same time.*
 
 ## Open Source
 
@@ -22,7 +38,7 @@ The following software are required to build Cyan from source:
 * CMake *>= 3.0*
 * Qt *>= 5.5 (5.12 recommended)*
   * *Core, Gui, Widgets, Concurrent, Test*
-* ImageMagick *>= 7.0.10*
+* ImageMagick (Magick++) *>= 7.0.10*
 * Little CMS *>=2.0*
 * pkg-config/pkgconf *(Linux)*
 
