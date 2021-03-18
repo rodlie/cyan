@@ -2,7 +2,9 @@
 
 ![screenshot](images/screenshot.png)
 
-Cyan is an simple general-purpose image editor based on [ImageMagick](https://imagemagick.org). This is **experimental** software, not for regular use.
+Cyan is an simple image editor for Windows and Linux based on [ImageMagick](https://imagemagick.org).
+
+**This is experimental software, not for regular use**.
 
 ## Features
 
@@ -17,14 +19,12 @@ Cyan is an simple general-purpose image editor based on [ImageMagick](https://im
 The following software are required to build Cyan from source:
 * GCC *>= 5 (Linux)*
 * MSVC *>= 14 (Windows)*
-* Clang *>= 3.8 (macOS)*
 * CMake *>= 3.0*
-* Qt *>= 5.5 (5.9/5.12 recommended)*
+* Qt *>= 5.5 (5.12 recommended)*
   * *Core, Gui, Widgets, Concurrent, Test*
-* ImageMagick *>= 7.0.10 (7.0.10-26 is the only supported version)*
-  * *Q16HDRI, OpenMP, bzlib, heic, jp2, jpeg, lcms, lzma, png, tiff, webp, zlib, xml*
-* Little CMS 2.x
-* pkg-config/pkgconf *(Linux/macOS)*
+* ImageMagick *>= 7.0.10*
+* Little CMS *>=2.0*
+* pkg-config/pkgconf *(Linux)*
 
 ## Shortcuts
 
@@ -100,33 +100,30 @@ not be
 
 Changes, history and roadmap for Cyan.
 
-## 2021.2.0
+## 2021 Q2
 
-**Release date : TBA**
+**Release date : TBA *(end of Q2)***
 
 Planned features:
 
   * [ ] Batch image converter (plug-in/standalone)
+  * [ ] Effects initial support
   * [ ] Add missing features from v1
 
-## 2021.1.0
+## 2021 Q1
 
-**Release date : TBA**
+**Release date : TBA *(end of Q1)***
 
 Mostly fixes/re-structure with some new features. Still a development release.
 
-  * New version scheme based on year, fiscal quarter and patch (XXXX.Y.Z)
+  * New version scheme based on year, fiscal quarter and optional patch
   * Split into application(s) (GPL2) and library (LGPL2)
   * Several bug and UI fixes
-  * Initial undo/redo support
+  * Initial undo/redo support (very limited)
   * ImageMagick 7.0.10 is now the minimum supported version
-    * v7.0.10-26 to be exact
-    * Cyan will warn during startup if the version is unsupported
   * Set ImageMagick memory limit to 75% of total RAM
-  * Several Windows fixes
-    * Dropped support for MinGW due to several issues with ImageMagick
-    * Added support for MSVC
-  * macOS binary support put on hold due to issues with ImageMagick 7.x
+  * Several Windows fixes (MinGW is not supported anymore)
+  * macOS support dropped due to issues with ImageMagick 7.x
   * Disabled brush feature (until core is done, was just a test anyway)
   * Change layer stacking with PageUp/PageDown keys
   * Disabled fontconfig (not needed yet)
