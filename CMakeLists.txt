@@ -27,11 +27,18 @@ set(COPYRIGHT "Copyright Ole-Andre Rodlie. All rights reserved.")
 set(IDENTIFIER "net.fxarena.cyan")
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
 set(PROJECT_EDITION "Development Release" CACHE STRING "Edition")
-option(STATIC_MAGICK "Link against static ImageMagick" OFF)
 option(PLUGINS_SUPPORT "Experimental plug-ins support" OFF)
 option(DEBUG_TILES "Show tiles for debug purpose" OFF)
 option(RUNTIME_WARNINGS "Show warnings during runtime" OFF)
 option(LINUX_DEPLOY "Linux deploy (internal use)" OFF)
+
+if(NOT WIN32)
+    set(CYAN_APP_BIN "${PROJECT_NAME}App")
+    set(CYAN_LIB_BIN "${PROJECT_NAME}")
+else()
+    set(CYAN_APP_BIN "${PROJECT_NAME}")
+    set(CYAN_LIB_BIN "lib${PROJECT_NAME}")
+endif()
 
 if(WIN32)
     set(IMAGEMAGICK_WINDOWS "C:/Users/olear/Documents/ImageMagick-Windows" CACHE STRING "VisualMagick")
@@ -41,7 +48,6 @@ endif()
 
 if(${LINUX_DEPLOY})
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/x86_64-linux-gnu")
-    #find_package(Threads REQUIRED)
 endif()
 
 set(HEADERS_API lib/CyanWidgetApi.h lib/CyanEffectApi.h)
@@ -201,26 +207,26 @@ if(WIN32)
 endif()
 
 add_library(
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
     SHARED
     ${SOURCES_LIB}
     ${HEADERS_LIB}
     ${HEADERS_API}
 )
 set_target_properties(
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
     PROPERTIES
     VERSION
     ${PROJECT_VERSION}
 )
 set_target_properties(
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
     PROPERTIES
     SOVERSION
     ${PROJECT_VERSION_MAJOR}
 )
 set_target_properties(
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
     PROPERTIES
     SOVERSION
     ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -228,7 +234,7 @@ set_target_properties(
 
 if(APPLE)
     add_executable(
-        ${PROJECT_NAME}App
+        ${CYAN_APP_BIN}
         MACOSX_BUNDLE
         ${ICON_FILE}
         ${SOURCES_APP}
@@ -240,7 +246,7 @@ if(APPLE)
     )
 elseif(WIN32)
     add_executable(
-        ${PROJECT_NAME}App
+        ${CYAN_APP_BIN}
         WIN32
         ${ICON_FILE}
         ${WINDOWS_RESOURCE_FILE}
@@ -253,7 +259,7 @@ elseif(WIN32)
     )
 else()
     add_executable(
-        ${PROJECT_NAME}App
+        ${CYAN_APP_BIN}
         ${SOURCES_APP}
         #${SOURCES_LIB}
         ${HEADERS_APP}
@@ -262,19 +268,21 @@ else()
         ${RESOURCES})
 endif()
 
-set_target_properties(${PROJECT_NAME}App PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+if(NOT WIN32)
+    set_target_properties(${CYAN_APP_BIN} PROPERTIES OUTPUT_NAME ${CYAN_LIB_BIN})
+endif()
 
 target_link_libraries(
-    ${PROJECT_NAME}App
+    ${CYAN_APP_BIN}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Concurrent
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
 )
 
 target_link_libraries(
-    ${PROJECT_NAME}
+    ${CYAN_LIB_BIN}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -283,29 +291,18 @@ target_link_libraries(
 
 if(WIN32)
     if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
-        target_link_libraries(${PROJECT_NAME}App CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
-        target_link_libraries(${PROJECT_NAME} CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
+        target_link_libraries(${CYAN_APP_BIN} CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
+        target_link_libraries(${CYAN_LIB_BIN} CORE_RL_lcms_ CORE_RL_MagickCore_ CORE_RL_MagickWand_ CORE_RL_Magick++_)
     else()
-        target_link_libraries(${PROJECT_NAME}App CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
-        target_link_libraries(${PROJECT_NAME} CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
+        target_link_libraries(${CYAN_APP_BIN} CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
+        target_link_libraries(${CYAN_LIB_BIN} CORE_DB_lcms_ CORE_DB_MagickCore_ CORE_DB_MagickWand_ CORE_DB_Magick++_)
     endif()
 else()
-    if(${STATIC_MAGICK})
-        target_compile_options(${PROJECT_NAME}App PRIVATE ${MAGICK_STATIC_CFLAGS})
-        target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_STATIC_CFLAGS})
-        target_link_libraries(${PROJECT_NAME}App ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
-        target_link_libraries(${PROJECT_NAME} ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
-    else()
-        target_compile_options(${PROJECT_NAME}App PRIVATE ${MAGICK_CFLAGS})
-        target_compile_options(${PROJECT_NAME} PRIVATE ${MAGICK_CFLAGS})
-        target_link_libraries(${PROJECT_NAME}App ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
-        target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
-    endif()
+    target_compile_options(${CYAN_APP_BIN} PRIVATE ${MAGICK_CFLAGS})
+    target_compile_options(${CYAN_LIB_BIN} PRIVATE ${MAGICK_CFLAGS})
+    target_link_libraries(${CYAN_APP_BIN} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
+    target_link_libraries(${CYAN_LIB_BIN} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
 endif()
-
-#if(${LINUX_DEPLOY})
-#    target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-#endif()
 
 if(UNIX AND NOT APPLE)
     include(GNUInstallDirs)
@@ -314,8 +311,8 @@ if(UNIX AND NOT APPLE)
     else()
         set(LIB_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
     endif()
-    install(TARGETS ${PROJECT_NAME} DESTINATION ${LIB_INSTALL_DIR})
-    install(TARGETS ${PROJECT_NAME}App DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS ${CYAN_LIB_BIN} DESTINATION ${LIB_INSTALL_DIR})
+    install(TARGETS ${CYAN_APP_BIN} DESTINATION ${CMAKE_INSTALL_BINDIR})
     install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/hicolor/128x128
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor
