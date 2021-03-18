@@ -75,11 +75,14 @@ CyanAboutDialog::CyanAboutDialog(QWidget *parent) :
     qtButton->setContentsMargins(0,0,0,0);
     qtButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QString textString = QString("<p style=\"text-align:center;\"><img src=\":/icons/hicolor/128x128/apps/Cyan.png\"></p><h2 align=\"center\" style=\"font-weight:normal;\">%1<br><span style=\"font-size:medium;font-weight:bold\">Version %2 Q%3 Patch %4</span><br><span style=\"font-size:medium;font-weight:bold\">%5</span></h2>")
+    QString cyanPatch = CYAN_VERSION_PATCH;
+    if (cyanPatch.toInt() < 1) { cyanPatch = ""; }
+
+    QString textString = QString("<p style=\"text-align:center;\"><img src=\":/icons/hicolor/128x128/apps/Cyan.png\"></p><h2 align=\"center\" style=\"font-weight:normal;\">%1<br><span style=\"font-size:medium;font-weight:bold\">Version %2 Q%3 %4</span><br><span style=\"font-size:medium;font-weight:bold\">%5</span></h2>")
             .arg(qApp->applicationName())
             .arg(CYAN_VERSION_MAJOR)
             .arg(CYAN_VERSION_MINOR)
-            .arg(CYAN_VERSION_PATCH)
+            .arg(cyanPatch)
             .arg(CYAN_EDITION);
    textString.append(QString("<p style=\"text-align:center;font-size:small;\">"
                              "Cyan is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2.0 of the License, or (at your option) any later version."
