@@ -17,7 +17,7 @@ HEIC="yes"
 QDEPTH=${QDEPTH:-16}
 HDRI=${HDRI:-"HDRI"}
 PATH_ORIG=$PATH
-MAGICK_RELEASE=7.0.10-26 #af9793ebaad6031d0d832df8c194b7b18d16e907
+MAGICK_RELEASE=5da028039d605ccfc5cda978dce30ff65346c2f4 #7.0.10-26 #af9793ebaad6031d0d832df8c194b7b18d16e907
 MAGICK_TYPE=Magick++-7.Q${QDEPTH}${HDRI}
 PKG_DEB=${PKG_DEB:-1}
 GIT_SHORT=`git rev-parse --short HEAD`
@@ -79,7 +79,7 @@ strip -s ${PKG_DIR}/$PREFIX/lib/x86_64-linux-gnu/*
 cd $CWD
 if [ "${PKG_DEB}" = 1 ]; then
     DEB=${PKG_DIR}
-    mkdir $DEB/DEBIAN
+    mkdir $DEB/DEBIAN || true
     CONTROL=$DEB/DEBIAN/control
     DEB_SIZE=`du -ks $DEB/usr|cut -f 1`
     echo "Package: cyan" > $CONTROL || exit 1
@@ -93,13 +93,13 @@ if [ "${PKG_DEB}" = 1 ]; then
     echo "Description: Cyan Pixel Editor" >> $CONTROL || exit 1
     echo "Installed-Size: $DEB_SIZE" >> $CONTROL || exit 1
     cd $DEB
-    mkdir debian
+    mkdir debian || true
     touch debian/control
     mkdir -p ${PKG_DIR}/${PREFIX}/bin/DEBIAN
     export LD_LIBRARY_PATH="`pwd`/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH_ORIG"
     $LIBDEPS usr/bin/Cyan
     DEPENDS_APP="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
-    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.7
+    $LIBDEPS usr/lib/x86_64-linux-gnu/libMagickCore-7.Q${QDEPTH}${HDRI}-Cyan.so.9
     DEPENDS_LIB="`cat debian/substvars | sed 's#shlibs:Depends=# #g'`"
     rm -rf ${PKG_DIR}/${PREFIX}/bin/DEBIAN
     DEPENDS="${DEPENDS_APP},${DEPENDS_LIB}"
