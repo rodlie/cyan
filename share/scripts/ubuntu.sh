@@ -27,6 +27,10 @@ LIBDIR="lib/x86_64-linux-gnu"
 LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH}"
 VERSION=`cat ${CWD}/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
 
+if [ "$DISTRO" = "bionic" ]; then
+    HEIC="no"
+fi
+
 if [ "${APT}" = 1 ]; then
     sudo apt-get install git dpkg dpkg-dev debhelper build-essential cmake pkg-config qtbase5-dev libcairo2-dev libpango1.0-dev libwebp-dev liblcms2-dev libjpeg-dev libpng-dev libtiff-dev liblzma-dev zlib1g-dev libopenjp2-7-dev liblzma-dev libbz2-dev libheif-dev libgoogle-perftools-dev
 fi
