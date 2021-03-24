@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Build and package/deploy Cyan on Ubuntu Focal+
+# Build and package/deploy Cyan on Ubuntu Bionic+
 #
 
 set -e -x
@@ -17,7 +17,7 @@ HEIC="yes"
 QDEPTH=${QDEPTH:-16}
 HDRI=${HDRI:-"HDRI"}
 PATH_ORIG=$PATH
-MAGICK_RELEASE=5da028039d605ccfc5cda978dce30ff65346c2f4 #7.0.10-26 #af9793ebaad6031d0d832df8c194b7b18d16e907
+MAGICK_RELEASE=5da028039d605ccfc5cda978dce30ff65346c2f4
 MAGICK_TYPE=Magick++-7.Q${QDEPTH}${HDRI}
 PKG_DEB=${PKG_DEB:-1}
 GIT_SHORT=`git rev-parse --short HEAD`
