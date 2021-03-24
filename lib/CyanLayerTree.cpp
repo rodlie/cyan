@@ -41,15 +41,15 @@ LayerTree::LayerTree(QWidget *parent,
   , duplicateLayerAct(nullptr)
 {
     if (!native) {
-        setStyleSheet("QTreeView::item:selected { background-color: rgb(33, 33, 33); }");
+        setStyleSheet("QTreeView::item:selected { background-color: rgb(33, 33, 33); } QTreeView::indicator { width: 24px; height: 24px; }");
     }
     setColumnCount(4);
     setHeaderHidden(true);
     setColumnHidden(0, true);
-    setColumnWidth(1, 24);
-    setColumnWidth(2, 24);
-    setIconSize(QSize(24, 24));
-    header()->setMaximumSectionSize(24); // QTBUG-68503
+    setColumnWidth(1, 32);
+    setColumnWidth(2, 32);
+    setIconSize(QSize(32, 32));
+    header()->setMaximumSectionSize(32); // QTBUG-68503
     setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegateForColumn(1, new CyanLayerItemDelegate(this));
     setItemDelegateForColumn(2, new CyanLayerItemDelegate(this));
@@ -207,7 +207,7 @@ void LayerTree::populateTree(View *view)
             layer.quiet(true);
             layer.depth(8);
             //layer.alpha(false);
-            layer.scale(Magick::Geometry(24, 24));
+            layer.scale(Magick::Geometry(32, 32));
             size_t offX = 0;
             size_t offY = 0;
             if (layer.columns()<thumb.columns()) {
@@ -236,7 +236,7 @@ void LayerTree::populateTree(View *view)
         while (layerOrder.size()<3) {
             layerOrder.prepend("0");
         }
-        item->setIconSize(QSize(24, 24));
+        item->setIconSize(QSize(32, 32));
         item->setIcon(3, QIcon(pixmap));
         item->setText(0, layerOrder);
         item->setText(3, layers.value().label);
