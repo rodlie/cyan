@@ -26,6 +26,7 @@
         <file>icons/hicolor/32x32/actions/images.png</file>
         <file>icons/hicolor/32x32/actions/lock.png</file>
         <file>icons/hicolor/32x32/actions/lock_open.png</file>
+        <file>icons/hicolor/32x32/actions/lock_open_gray.png</file>
         <file>icons/hicolor/32x32/actions/go-down.png</file>
         <file>icons/hicolor/32x32/actions/go-home.png</file>
         <file>icons/hicolor/32x32/actions/document-open.png</file>
@@ -36,6 +37,7 @@
         <file>icons/hicolor/32x32/actions/font.png</file>
         <file>icons/hicolor/32x32/actions/eye.png</file>
         <file>icons/hicolor/32x32/actions/eye_close.png</file>
+        <file>icons/hicolor/32x32/actions/eye_close_gray.png</file>
         <file>icons/hicolor/32x32/actions/zoom-in.png</file>
         <file>icons/hicolor/32x32/actions/paintbrush.png</file>
         <file>icons/hicolor/32x32/actions/help-about.png</file>
@@ -80,6 +82,7 @@
         <file>icons/hicolor/16x16/actions/image-x-generic.png</file>
         <file>icons/hicolor/16x16/actions/lock.png</file>
         <file>icons/hicolor/16x16/actions/lock_open.png</file>
+        <file>icons/hicolor/16x16/actions/lock_open_gray.png</file>
         <file>icons/hicolor/16x16/actions/go-up.png</file>
         <file>icons/hicolor/16x16/actions/images.png</file>
         <file>icons/hicolor/16x16/actions/go-down.png</file>
@@ -92,6 +95,7 @@
         <file>icons/hicolor/16x16/actions/font.png</file>
         <file>icons/hicolor/16x16/actions/eye.png</file>
         <file>icons/hicolor/16x16/actions/eye_close.png</file>
+        <file>icons/hicolor/16x16/actions/eye_close_gray.png</file>
         <file>icons/hicolor/16x16/actions/zoom-in.png</file>
         <file>icons/hicolor/16x16/actions/paintbrush.png</file>
         <file>icons/hicolor/16x16/actions/help-about.png</file>

@@ -73,11 +73,11 @@ void CyanLayerItemDelegate::drawCheckBox(QPainter *painter,
     QIcon icon;
     switch (index.column()) {
     case 1:
-        icon = QIcon::fromTheme(checkState==Qt::Checked?"eye":"eye_close");
+        icon = QIcon::fromTheme(checkState==Qt::Checked?"eye":"eye_close_gray");
         icon.paint(painter, checkRect, Qt::AlignCenter|Qt::AlignHCenter);
         break;
     case 2:
-        icon = QIcon::fromTheme(checkState==Qt::Checked?"lock":"lock_open");
+        icon = QIcon::fromTheme(checkState==Qt::Checked?"lock":"lock_open_gray");
         icon.paint(painter, checkRect, Qt::AlignCenter|Qt::AlignHCenter);
         break;
     default:
