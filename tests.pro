@@ -43,7 +43,7 @@ MOC_DIR = $${DESTDIR}/.moc
 RCC_DIR = $${DESTDIR}/.qrc
 
 unix:QMAKE_POST_LINK = ./build/$${TARGET}
-win32-g++:QMAKE_POST_LINK = "wine64 build/$${TARGET}.exe"
+#win32-g++:QMAKE_POST_LINK = "wine64 build/$${TARGET}.exe"
 
 CONFIG += c++11
 QT_CONFIG -= no-pkg-config
@@ -55,7 +55,7 @@ PKG_CONFIG_BIN = pkg-config
 !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
 
 PKGCONFIG += $${MAGICK_CONFIG}
-LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+#LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 
 mac {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
@@ -63,4 +63,4 @@ mac {
     QMAKE_LFLAGS += -fopenmp
 }
 
-win32-g++: LIBS += -lpthread
+#win32-g++: LIBS += -lpthread

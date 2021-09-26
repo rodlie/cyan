@@ -68,7 +68,7 @@ PKG_CONFIG_BIN = pkg-config
 !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
 
 PKGCONFIG += $${MAGICK_CONFIG}
-LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
+#LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 
 isEmpty(PREFIX): PREFIX = /usr/local
 isEmpty(DOCDIR): DOCDIR = $$PREFIX/share/doc
@@ -136,5 +136,5 @@ mac {
 
 win32 {
     RC_ICONS += res/cyan.ico
-    LIBS += -lpthread
+    #LIBS += -lpthread
 }
