@@ -14,7 +14,7 @@ jobs:
       run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
     - name: build/test/install
       run: |
-        sudo mkdir -p /opt/deploy/tests-ubuntu-20.04
+        sudo mkdir -p /opt/deploy/tests
         sudo chmod 777 /opt/deploy
         export CWD=`pwd`
         ./res/magick.sh
@@ -24,20 +24,24 @@ jobs:
         cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make -j2
         strip -s Cyan
-        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
-        make DESTDIR=/opt/deploy/build-ubuntu-20.04 install
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
+        make DESTDIR=/opt/deploy/build install
+        cd /opt/deploy/build
+        mv usr Cyan-focal
+        tar cvvzf Cyan-focal.tgz Cyan-focal
+        rm -rf Cyan-focal
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: tests-ubuntu-20.04-artifacts
-        path: /opt/deploy/tests-ubuntu-20.04/
+        name: cyan-tests-focal
+        path: /opt/deploy/tests/
     - name: upload build artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: build-ubuntu-20.04-artifacts
-        path: /opt/deploy/build-ubuntu-20.04/
+        name: cyan-build-focal
+        path: /opt/deploy/build/
 
   build02:
     runs-on: ubuntu-18.04
@@ -50,7 +54,7 @@ jobs:
       run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
     - name: build/test/install
       run: |
-        sudo mkdir -p /opt/deploy/tests-ubuntu-18.04
+        sudo mkdir -p /opt/deploy/tests
         sudo chmod 777 /opt/deploy
         export CWD=`pwd`
         ./res/magick.sh
@@ -60,17 +64,21 @@ jobs:
         cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make -j2
         strip -s Cyan
-        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
-        make DESTDIR=/opt/deploy/build-ubuntu-18.04 install
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
+        make DESTDIR=/opt/deploy/build install
+        cd /opt/deploy/build
+        mv usr Cyan-bionic
+        tar cvvzf Cyan-bionic.tgz Cyan-bionic
+        rm -rf Cyan-bionic
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: tests-ubuntu-18.04-artifacts
-        path: /opt/deploy/tests-ubuntu-18.04/
+        name: cyan-tests-bionic
+        path: /opt/deploy/tests/
     - name: upload build artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: build-ubuntu-18.04-artifacts
-        path: /opt/deploy/build-ubuntu-18.04/
+        name: cyan-build-bionic
+        path: /opt/deploy/build/
