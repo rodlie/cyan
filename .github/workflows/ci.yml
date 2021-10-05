@@ -25,6 +25,7 @@ jobs:
         make test
         sudo make install
     - name: upload artifacts
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: artifacts
