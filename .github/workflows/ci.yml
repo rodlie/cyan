@@ -9,11 +9,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: apt update
+      run: sudo apt-get update
     - name: apt install
       run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
-    - name: configure
-      run: mkdir build && cd build && cmake ..
-    - name: build
-      run: make && make test
-    - name: install
-      run: sudo make install
+    - name: build/test/install
+      run: |
+        mkdir build && cd build
+        cmake ..
+        make
+        make test
+        sudo make install
+
