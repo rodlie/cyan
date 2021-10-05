@@ -15,9 +15,14 @@ jobs:
       run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
     - name: build/test/install
       run: |
+        sudo mkdir -p /opt/deploy
+        sudo chmod 777 /opt/deploy
         mkdir build && cd build
         cmake ..
         make
-        make test || cat Testing/Temporary/LastTest.log && exit 1
+        make test || cat Testing/Temporary/LastTest.log && cp *.jpg *.tif /opt/deploy/ && exit 1
         sudo make install
-
+    - uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: /opt/deploy
