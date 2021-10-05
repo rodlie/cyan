@@ -58,11 +58,11 @@
 #include "helpdialog.h"
 #include "openlayerdialog.h"
 
-#ifdef Q_OS_MAC
+/*#ifdef Q_OS_MAC
 #define CYAN_FONT_SIZE 10
 #else
 #define CYAN_FONT_SIZE 8
-#endif
+#endif*/
 
 Cyan::Cyan(QWidget *parent)
     : QMainWindow(parent)
@@ -123,7 +123,7 @@ Cyan::Cyan(QWidget *parent)
         palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
         qApp->setPalette(palette);
-        setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
+        //setStyleSheet(QString("*{ font-size: %1pt; }").arg(QString::number(CYAN_FONT_SIZE)));
     }
     setWindowTitle(qApp->applicationName());
     setWindowIcon(QIcon(":/cyan.png"));
@@ -147,7 +147,7 @@ Cyan::Cyan(QWidget *parent)
     mainBar->setAllowedAreas(Qt::LeftToolBarArea);
     mainBar->setFloatable(false);
     mainBar->setMovable(false);
-    mainBar->setIconSize(QSize(22,22));
+    //mainBar->setIconSize(QSize(22,22));
 
     convertBar->setObjectName("ColorConverter");
     convertBar->setWindowTitle(tr("Color Converter"));
@@ -245,7 +245,7 @@ Cyan::Cyan(QWidget *parent)
     QLabel *bitDepthLabel = new QLabel(tr("Depth"), this);
     QLabel *qualityLabel = new QLabel(tr("Quality"), this);
 
-    if (!nativeStyle) {
+    /*if (!nativeStyle) {
         QString padding = "margin-right:5px;";
         inputLabel->setStyleSheet(padding);
         outputLabel->setStyleSheet(padding);
@@ -257,7 +257,7 @@ Cyan::Cyan(QWidget *parent)
         grayLabel->setStyleSheet(padding);
         bitDepthLabel->setStyleSheet(padding);
         qualityLabel->setStyleSheet(padding);
-    }
+    }*/
 
     inputLabel->setToolTip(tr("Input profile for image"));
     outputLabel->setToolTip(tr("Profile used to convert image"));
@@ -335,7 +335,7 @@ Cyan::Cyan(QWidget *parent)
 
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
-    menuBar->setMaximumHeight(20);
+    //menuBar->setMaximumHeight(20);
 
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
