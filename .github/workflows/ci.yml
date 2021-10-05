@@ -17,6 +17,8 @@ jobs:
         sudo mkdir -p /opt/deploy/tests
         sudo chmod 777 /opt/deploy
         export CWD=`pwd`
+        export COMMIT=`git rev-parse --short HEAD`
+        export VERSION=`cat cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
         ./res/magick.sh
         export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
         cd $CWD
@@ -27,9 +29,9 @@ jobs:
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
         make DESTDIR=/opt/deploy/build install
         cd /opt/deploy/build
-        mv usr Cyan-focal
-        tar cvvzf Cyan-focal.tgz Cyan-focal
-        rm -rf Cyan-focal
+        mv usr Cyan-$VERSION-$COMMIT-focal
+        tar cvvzf Cyan-$VERSION-$COMMIT-focal.tgz Cyan-$VERSION-$COMMIT-focal
+        rm -rf Cyan-$VERSION-$COMMIT-focal
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
@@ -57,6 +59,8 @@ jobs:
         sudo mkdir -p /opt/deploy/tests
         sudo chmod 777 /opt/deploy
         export CWD=`pwd`
+        export COMMIT=`git rev-parse --short HEAD`
+        export VERSION=`cat cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
         ./res/magick.sh
         export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
         cd $CWD
@@ -67,9 +71,9 @@ jobs:
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
         make DESTDIR=/opt/deploy/build install
         cd /opt/deploy/build
-        mv usr Cyan-bionic
-        tar cvvzf Cyan-bionic.tgz Cyan-bionic
-        rm -rf Cyan-bionic
+        mv usr Cyan-$VERSION-$COMMIT-bionic
+        tar cvvzf Cyan-$VERSION-$COMMIT-bionic.tgz Cyan-$VERSION-$COMMIT-bionic
+        rm -rf Cyan-$VERSION-$COMMIT-bionic
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
