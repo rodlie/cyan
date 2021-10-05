@@ -29,7 +29,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 TARGET = Cyan
-VERSION = 1.2.2
+VERSION = 1.2.3
 
 SOURCES += \
     src/main.cpp \
@@ -129,9 +129,9 @@ unix:!mac {
 mac {
     ICON = res/Cyan.icns
     QMAKE_INFO_PLIST = res/Info.plist
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-    QMAKE_CXXFLAGS += -fopenmp
-    QMAKE_LFLAGS += -fopenmp
+    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
+    #QMAKE_CXXFLAGS += -fopenmp
+    #QMAKE_LFLAGS += -fopenmp
 }
 
 win32 {

@@ -1,3 +1,10 @@
+## 1.2.3 - 20211106
+
+ * UI fixes
+ * Windows fixes
+ * Gimp fixes
+ * Downgraded to ImageMagick 6
+
 ## 1.2.2 - 20191103
 
  * Added support for output compression quality

@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 3.1)
 enable_testing()
 
-project(Cyan VERSION 1.2.2)
+project(Cyan VERSION 1.2.3)
 
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
@@ -64,7 +64,7 @@ endif()
 
 if(APPLE)
     set(ICON_FILE ${RESOURCE_FOLDER}/${PROJECT_NAME}.icns)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+    #set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
     set_source_files_properties(${PROJECT_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
     set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
