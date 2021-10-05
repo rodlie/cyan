@@ -198,12 +198,10 @@ void Cyan::test_case2()
     QVERIFY(fx.hasTIFF());
     qDebug() << "Checking for LCMS support ...";
     QVERIFY(fx.hasLCMS());
-#ifndef Q_OS_LINUX
     qDebug() << "Checking for HDRI support ...";
     QVERIFY(fx.hasHDRI());
     qDebug() << "Checking for OpenMP support ...";
     QVERIFY(fx.hasMP());
-#endif
     qDebug() << "Checking for Quantum depth ...";
     QVERIFY(fx.supportedQuantumDepth() == "Q16" || fx.supportedQuantumDepth() == "Q32");
 }

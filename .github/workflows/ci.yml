@@ -1,5 +1,4 @@
-name: C/C++ CI
-
+name: CI
 on: [push, pull_request]
 
 jobs:
@@ -23,9 +22,10 @@ jobs:
         cd $CWD
         mkdir build && cd build
         cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
-        make
+        make -j2
+        strip -s Cyan
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
-        make DESTDIR=/opt/build-ubuntu-20-04 install
+        make DESTDIR=/opt/deploy/build-ubuntu-20-04 install
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
@@ -58,9 +58,10 @@ jobs:
         cd $CWD
         mkdir build && cd build
         cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
-        make
+        make -j2
+        strip -s Cyan
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
-        make DESTDIR=/opt/build-ubuntu-18-04 install
+        make DESTDIR=/opt/deploy/build-ubuntu-18-04 install
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
