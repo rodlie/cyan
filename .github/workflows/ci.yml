@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt install
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
+    - name: configure
+      run: mkdir build && cd build && cmake ..
+    - name: build
+      run: make && make test
+    - name: install
+      run: sudo make install
