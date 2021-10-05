@@ -78,7 +78,7 @@ if(WIN32)
     set(ICON_FILE ${CC_RESOURCE_FOLDER}/cyan.ico)
 endif()
 
-find_package(Qt5 5.12 REQUIRED Core Gui Widgets Concurrent Test)
+find_package(Qt5 5.6 REQUIRED Core Gui Widgets Concurrent Test)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../lib/cmake/modules/")
 
