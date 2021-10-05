@@ -3,10 +3,9 @@ name: C/C++ CI
 on: [push, pull_request]
 
 jobs:
-  build:
 
-    runs-on: ubuntu-latest
-
+  build01:
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: apt update
@@ -15,16 +14,40 @@ jobs:
       run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
     - name: build/test/install
       run: |
-        sudo mkdir -p /opt/deploy/tests
+        sudo mkdir -p /opt/deploy/tests-ubuntu-20.04
         sudo chmod 777 /opt/deploy
         mkdir build && cd build
         cmake ..
         make
-        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
         sudo make install
     - name: upload artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: tests-artifacts
-        path: /opt/deploy/tests/
+        name: tests-ubuntu-20.04-artifacts
+        path: /opt/deploy/tests-ubuntu-20.04/
+
+  build02:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt update
+      run: sudo apt-get update
+    - name: apt install
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
+    - name: build/test/install
+      run: |
+        sudo mkdir -p /opt/deploy/tests-ubuntu-18.04
+        sudo chmod 777 /opt/deploy
+        mkdir build && cd build
+        cmake ..
+        make
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
+        sudo make install
+    - name: upload artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: tests-ubuntu-18.04-artifacts
+        path: /opt/deploy/tests-ubuntu-18.04/
