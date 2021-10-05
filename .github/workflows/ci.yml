@@ -17,10 +17,11 @@ jobs:
       run: |
         sudo mkdir -p /opt/deploy
         sudo chmod 777 /opt/deploy
+        cd /opt/deploy
         mkdir build && cd build
         cmake ..
         make
-        make test || cat Testing/Temporary/LastTest.log && cp -a Testing /opt/deploy/ && ls -l /opt/deploy && exit 1
+        make test
         sudo make install
     - uses: actions/upload-artifact@v2
       with:
