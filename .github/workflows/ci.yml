@@ -12,17 +12,21 @@ jobs:
     - name: apt update
       run: sudo apt-get update
     - name: apt install
-      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
     - name: build/test/install
       run: |
         sudo mkdir -p /opt/deploy/tests-ubuntu-20.04
         sudo chmod 777 /opt/deploy
+        export CWD=`pwd`
+        ./res/magick.sh
+        export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
+        cd $CWD
         mkdir build && cd build
-        cmake ..
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
-        sudo make install
-    - name: upload artifacts
+        make DESTDIR=/opt/build-ubuntu-20-04 install
+    - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
@@ -37,17 +41,21 @@ jobs:
     - name: apt update
       run: sudo apt-get update
     - name: apt install
-      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
     - name: build/test/install
       run: |
         sudo mkdir -p /opt/deploy/tests-ubuntu-18.04
         sudo chmod 777 /opt/deploy
+        export CWD=`pwd`
+        ./res/magick.sh
+        export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
+        cd $CWD
         mkdir build && cd build
-        cmake ..
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
-        sudo make install
-    - name: upload artifacts
+        make DESTDIR=/opt/build-ubuntu-18-04 install
+    - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
       with:
