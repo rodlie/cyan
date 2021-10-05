@@ -18,7 +18,6 @@ jobs:
         mkdir build && cd build
         cmake ..
         make
-        make test
-        cat Testing/Temporary/LastTest.log
+        make --output-on-failure test
         sudo make install
 
