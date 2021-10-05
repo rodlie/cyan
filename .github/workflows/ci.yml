@@ -20,9 +20,9 @@ jobs:
         mkdir build && cd build
         cmake ..
         make
-        make test || cat Testing/Temporary/LastTest.log && cp -a Testing /opt/deploy/ && exit 1
+        make test || cat Testing/Temporary/LastTest.log && cp -a Testing /opt/deploy/ && ls -l /opt/deploy && exit 1
         sudo make install
     - uses: actions/upload-artifact@v2
       with:
         name: artifacts
-        path: /opt/deploy
+        path: /opt/deploy/
