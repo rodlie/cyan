@@ -22,7 +22,7 @@ jobs:
         export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
         cd $CWD
         mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
         make DESTDIR=/opt/build-ubuntu-20-04 install
@@ -51,7 +51,7 @@ jobs:
         export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
         cd $CWD
         mkdir build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
         make
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
         make DESTDIR=/opt/build-ubuntu-18-04 install

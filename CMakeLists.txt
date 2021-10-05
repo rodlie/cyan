@@ -86,6 +86,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 option(USE_PKG_CONFIG "Use pkg-config" ON)
+option(DEPLOY "Deploy" OFF)
 
 if(USE_PKG_CONFIG)
     find_package(PkgConfig)
@@ -112,8 +113,13 @@ target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concu
 target_link_libraries(tests Qt5::Core Qt5::Gui Qt5::Test)
 
 if(USE_PKG_CONFIG)
-    target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
-    target_link_libraries(tests ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
+    if (DEPLOY)
+        target_link_libraries(${PROJECT_NAME} ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
+        target_link_libraries(tests ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
+    else()
+        target_link_libraries(${PROJECT_NAME} ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
+        target_link_libraries(tests ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
+    endif()
 else()
     target_link_libraries(${PROJECT_NAME} ${LCMS2_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
