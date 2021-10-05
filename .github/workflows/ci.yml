@@ -17,9 +17,10 @@ jobs:
       run: |
         sudo mkdir -p /opt/deploy
         sudo chmod 777 /opt/deploy
+        export CWD=`pwd`
         cd /opt/deploy
         mkdir build && cd build
-        cmake ..
+        cmake $CWD
         make
         make test
         sudo make install
