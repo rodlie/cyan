@@ -32,6 +32,12 @@ jobs:
       with:
         name: tests-ubuntu-20.04-artifacts
         path: /opt/deploy/tests-ubuntu-20.04/
+    - name: upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-ubuntu-20.04-artifacts
+        path: /opt/deploy/build-ubuntu-20.04/
 
   build02:
     runs-on: ubuntu-18.04
@@ -61,3 +67,9 @@ jobs:
       with:
         name: tests-ubuntu-18.04-artifacts
         path: /opt/deploy/tests-ubuntu-18.04/
+    - name: upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-ubuntu-18.04-artifacts
+        path: /opt/deploy/build-ubuntu-18.04/
