@@ -17,7 +17,7 @@ def plugin_maketempfile( image, src ):
     tempimage = pdb.gimp_image_duplicate( image )
 
     if not tempimage:
-        print "Could not create temporary image file."
+        print("Could not create temporary image file.")
         return None, None, None
 
     tempfilename = pdb.gimp_temp_name( "tif" )
@@ -48,7 +48,7 @@ def plugin_export( image, src):
     
     pdb.gimp_image_undo_group_start(image)
     pdb.gimp_progress_pulse()
-    child = subprocess.Popen( cyanbin + " " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
+    child = subprocess.Popen( [cyanbin, tempfilename], stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
 
     pdb.gimp_progress_set_text( "Waiting on Cyan ..." )
     while child.poll() is None:
@@ -67,7 +67,7 @@ def plugin_import(image,src):
 
     pdb.gimp_image_undo_group_start(image)
     pdb.gimp_progress_pulse()
-    child = subprocess.Popen( cyanbin + " -o " + tempfilename, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
+    child = subprocess.Popen( [cyanbin, "-o", tempfilename], stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True )
 
     pdb.gimp_progress_set_text( "Waiting on Cyan ..." )
     while child.poll() is None:
@@ -96,7 +96,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
 	    gimp.Display( newimage )
 
 	except:
-            print "Could not load tmep file as new image."
+            print("Could not load tmep file as new image.")
 
     elif dest == 1:
         # Replace current layer
@@ -110,7 +110,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
 
             image.add_layer( newlayer, pos )
         except:
-            print "Could not load temp file into existing layer."
+            print("Could not load temp file into existing layer.")
 
     elif dest == 2:
         # Add as a new layer in the opened image
@@ -119,7 +119,7 @@ def plugin_saveresult( image, dest, tempfilename, tempimage ):
 
             image.add_layer( newlayer,0 )
         except:
-            print "Could not load temp file into new layer."
+            print("Could not load temp file into new layer.")
 
     # cleanup
     plugin_tidyup( tempfilename )
