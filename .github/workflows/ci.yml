@@ -25,7 +25,7 @@ jobs:
         make -j2
         strip -s Cyan
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-20.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-20.04/ && exit 1
-        make DESTDIR=/opt/deploy/build-ubuntu-20-04 install
+        make DESTDIR=/opt/deploy/build-ubuntu-20.04 install
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
@@ -61,7 +61,7 @@ jobs:
         make -j2
         strip -s Cyan
         make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests-ubuntu-18.04/ && cp *.tif *.jpg /opt/deploy/tests-ubuntu-18.04/ && exit 1
-        make DESTDIR=/opt/deploy/build-ubuntu-18-04 install
+        make DESTDIR=/opt/deploy/build-ubuntu-18.04 install
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
