@@ -19,5 +19,6 @@ jobs:
         cmake ..
         make
         make test
+        cat Testing/Temporary/LastTest.log
         sudo make install
 
