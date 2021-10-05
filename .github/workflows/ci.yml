@@ -24,7 +24,8 @@ jobs:
         make
         make test
         sudo make install
-    - uses: actions/upload-artifact@v2
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2
       with:
         name: artifacts
         path: /opt/deploy/
