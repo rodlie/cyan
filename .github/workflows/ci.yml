@@ -15,7 +15,10 @@ jobs:
     - name: build/test/install
       run: |
         sudo mkdir -p /opt/deploy/tests
-        sudo chmod 777 /opt/deploy
+        sudo mkdir -p /opt/cyan-mxe
+        sudo chmod 777 /opt/deploy /opt/cyan-mxe
+        wget https://github.com/rodlie/cyan/releases/download/continuous/cyan-mxe-usr-20211005.tar.xz
+        tar xvf cyan-mxe-usr-20211005.tar.xz -C /opt/cyan-mxe/
         export CWD=`pwd`
         export COMMIT=`git rev-parse --short HEAD`
         export VERSION=`cat cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
@@ -32,6 +35,13 @@ jobs:
         mv usr Cyan-$VERSION-$COMMIT-focal
         tar cvvzf Cyan-$VERSION-$COMMIT-focal.tgz Cyan-$VERSION-$COMMIT-focal
         rm -rf Cyan-$VERSION-$COMMIT-focal
+        cd $CWD
+        git clone https://github.com/rodlie/mxe
+        cd mxe
+        git checkout cyan-1.2.3
+        cd $CWD
+        ./mxe/build-win64.sh
+        cd $CWD
     - name: upload tests artifacts
       if: always()
       uses: actions/upload-artifact@v2
