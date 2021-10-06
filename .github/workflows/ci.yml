@@ -40,7 +40,7 @@ jobs:
         cd mxe
         git checkout cyan-1.2.3
         cd $CWD
-        ./mxe/build-win64.sh
+        MXE=/opt/cyan-mxe ./mxe/build-win64.sh
         cd $CWD
     - name: upload tests artifacts
       if: always()
