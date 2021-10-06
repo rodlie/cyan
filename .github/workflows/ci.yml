@@ -11,7 +11,7 @@ jobs:
     - name: apt update
       run: sudo apt-get update
     - name: apt install
-      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev wine64
     - name: build/test/install
       run: |
         sudo mkdir -p /opt/deploy/tests
