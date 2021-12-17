@@ -768,7 +768,7 @@ void Cyan::getColorProfiles(FXX::ColorSpace colorspace,
     }
     settings.endGroup();
 
-    QMap<QString,QString> profiles = genProfiles(colorspace);
+    QMultiMap<QString,QString> profiles = genProfiles(colorspace);
     if (profiles.size() > 0) {
         box->clear();
         QIcon itemIcon(":/cyan-wheel.png");
@@ -921,9 +921,9 @@ void Cyan::imageClear()
 
 void Cyan::resetImageZoom()
 {
-    QMatrix matrix;
-    matrix.scale(1.0, 1.0);
-    view->setMatrix(matrix);
+    QTransform transform;
+    transform.scale(1.0, 1.0);
+    view->setTransform(transform);
 }
 
 void Cyan::setImage(QByteArray image)
@@ -1045,7 +1045,7 @@ void Cyan::getConvertProfiles()
     if (inputColorSpace == FXX::UnknownColorSpace) { return; }
 
     ignoreConvertAction = true;
-    QMap<QString,QString> inputProfiles, outputProfiles;
+    QMultiMap<QString,QString> inputProfiles, outputProfiles;
 
     switch(inputColorSpace) {
     case FXX::RGBColorSpace:
