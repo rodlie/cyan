@@ -61,6 +61,7 @@ FXX::Image FXX::readImage(const std::string &file,
             Magick::ReadOptions options;
             options.quiet(true);
             Magick::readImages(&layers, file, options);
+            if (layers.size() == 1) { layers.clear(); }
             //layers.erase(layers.begin());
         }
     }
