@@ -44,105 +44,90 @@ FXX::Image FXX::readImage(const std::string &file,
                           bool readLayers)
 {
     FXX::Image result;
-    if (!file.empty()) {
-        std::vector<Magick::Image> layers;
-        Magick::Image image;
-        Magick::Blob output;
-        Magick::Blob preview;
-        try {
-            if (readLayers) {
-                Magick::readImages(&layers, file.c_str());
-                image = layers[0];
-                //layers.erase(layers.begin());
-            } else {
-                image.read(file.c_str());
-            }
-            if (image.format() == "Adobe Photoshop bitmap") {
-                result.isPSD = true;
-            }
-            image.magick("MIFF");
-        }
-        catch(Magick::Error &error_ ) {
-            result.error.append(error_.what());
-            return result;
-        }
-        catch(Magick::Warning &warn_ ) {
-            result.warning.append(warn_.what());
-        }
-        try {
-            // get colorspace
-            result.colorspace = readImageColorspaceType(image);
-
-            // get image layers
-            if (layers.size()>0) {
-                /*for (unsigned long i=0;i<layers.size();++i) {
-                    layers[i].magick("MIFF");
-                }*/
-                result.layers = layers;
-            }
-
-            // get image channels
-            result.channels = readImageChannelCount(image);
-
-            // get image profile
-            std::vector<unsigned char> imageProfile = readImageColorProfile(image,
-                                                                            failsafe);
-            if (imageProfile.size()>0) {
-                Magick::Blob profile(imageProfile.data(),
-                                     imageProfile.size());
-                image.profile("ICC", profile);
-                result.iccInputBuffer = imageProfile;
-            } else {
-                result.error = "On input profile!";
-                return  result;
-            }
-
-            // get meta info
-            if (image.profile("exif").length()>0) {
-                result.hasEXIF = true;
-            } else {
-                result.hasEXIF = false;
-            }
-            if (image.profile("IPTC").length()>0) {
-                result.hasIPTC = true;
-            } else {
-                result.hasIPTC = false;
-            }
-            result.comment = image.comment();
-            result.width = image.columns();
-            result.height = image.rows();
-            result.depth = image.depth();
-            result.created = image.attribute("date:create");
-            result.modified = image.attribute("date:modified");
-            result.filename = file;
-            result.format = image.format();
-
-            // write original
-            image.write(&output);
-            unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
-            std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
-            result.imageBuffer = imgData;
-
-            // get image specs
-            if (getInfo) {
-                result.info = identify(imgData);
-            }
-
-            // make a preview
-            if (image.depth()>8) { image.depth(8); }
-            image.magick("BMP");
-            image.write(&preview);
-            unsigned char *preBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(preview.data()));
-            std::vector<unsigned char> preData(preBuffer, preBuffer + preview.length());
-            result.previewBuffer = preData;
-        }
-        catch(Magick::Error &error_ ) {
-            result.error.append(error_.what());
-        }
-        catch(Magick::Warning &warn_ ) {
-            result.warning.append(warn_.what());
+    if (file.empty()) { return result; }
+    std::vector<Magick::Image> layers;
+    Magick::Image image;
+    Magick::Blob output;
+    Magick::Blob preview;
+    image.quiet(true);
+    try { image.read(file); }
+    catch(Magick::Error &error) {
+        result.error.append(error.what());
+        return result;
+    }
+    catch(Magick::Warning &warning ) { result.warning.append(warning.what()); }
+    try {
+        if (readLayers) {
+            Magick::ReadOptions options;
+            options.quiet(true);
+            Magick::readImages(&layers, file, options);
+            //layers.erase(layers.begin());
         }
     }
+    catch(Magick::Error &error_ ) {
+        result.error.append(error_.what());
+        return result;
+    }
+    catch(Magick::Warning &warn_ ) { result.warning.append(warn_.what()); }
+    try {
+        if (image.format() == "Adobe Photoshop bitmap") { result.isPSD = true; }
+        image.magick("MIFF");
+
+        // get colorspace
+        result.colorspace = readImageColorspaceType(image);
+
+        // get image layers
+        if (layers.size() > 0) { result.layers = layers; }
+
+        // get image channels
+        result.channels = readImageChannelCount(image);
+
+        // get image profile
+        std::vector<unsigned char> imageProfile = readImageColorProfile(image,
+                                                                        failsafe);
+        std::cout << "profile??? " << imageProfile.size() << std::endl;
+        if (imageProfile.size()>0) {
+            Magick::Blob profile(imageProfile.data(),
+                                 imageProfile.size());
+            image.profile("ICC", profile);
+            result.iccInputBuffer = imageProfile;
+        } else {
+            result.error = "No input profile!";
+            return  result;
+        }
+
+        // get meta info
+        result.hasEXIF = (image.profile("exif").length() > 0);
+        result.hasEXIF = (image.profile("IPTC").length() > 0);
+        result.comment = image.comment();
+        result.width = image.columns();
+        result.height = image.rows();
+        result.depth = image.depth();
+        result.created = image.attribute("date:create");
+        result.modified = image.attribute("date:modified");
+        result.filename = file;
+        result.format = image.format();
+
+        // write original
+        image.write(&output);
+        unsigned char *imgBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(output.data()));
+        std::vector<unsigned char> imgData(imgBuffer, imgBuffer + output.length());
+        result.imageBuffer = imgData;
+
+        // get image specs
+        if (getInfo) { result.info = identify(imgData); }
+
+        // make a preview
+        if (image.depth()>8) { image.depth(8); }
+        image.magick("BMP");
+        image.write(&preview);
+        unsigned char *preBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(preview.data()));
+        std::vector<unsigned char> preData(preBuffer, preBuffer + preview.length());
+        result.previewBuffer = preData;
+    }
+    catch(Magick::Error &error_ ) { result.error.append(error_.what()); }
+    catch(Magick::Warning &warn_ ) { result.warning.append(warn_.what()); }
+
     return result;
 }
 
@@ -424,31 +409,10 @@ std::vector<unsigned char> FXX::readImageColorProfile(Magick::Image image,
 {
     std::vector<unsigned char> result;
     try {
-        if (image.iccColorProfile().length()>0) { // has embedded color profile?
+        if (image.iccColorProfile().length()>0) { // has embedded color profile
             unsigned char *iccBuffer = reinterpret_cast<unsigned char*>(const_cast<void*>(image.iccColorProfile().data()));
             std::vector<unsigned char> iccData(iccBuffer, iccBuffer + image.iccColorProfile().length());
             result = iccData;
-        } else { // apply failsafe profile if missing input profile
-            if (failsafe.iccRGB.size()==0 ||
-                failsafe.iccCMYK.size()==0 ||
-                failsafe.iccGRAY.size()==0)
-            {
-                std::cout << "no failsafe profiles!" << std::endl;
-                return  result;
-            }
-            Magick::Blob profile;
-            switch(readImageColorspaceType(image)) {
-            case FXX::RGBColorSpace:
-                result = failsafe.iccRGB;
-                break;
-            case FXX::CMYKColorSpace:
-                result = failsafe.iccCMYK;
-                break;
-            case FXX::GRAYColorSpace:
-                result = failsafe.iccGRAY;
-                break;
-            default:;
-            }
         }
     }
     catch(Magick::Error &error_ ) {
@@ -456,6 +420,28 @@ std::vector<unsigned char> FXX::readImageColorProfile(Magick::Image image,
     }
     catch(Magick::Warning &warn_ ) {
         std::cout << warn_.what() << std::endl;
+    }
+    if (result.empty()) { // apply failsafe profile if missing input profile
+        if (failsafe.iccRGB.size()==0 ||
+            failsafe.iccCMYK.size()==0 ||
+            failsafe.iccGRAY.size()==0)
+        {
+            std::cout << "no failsafe profiles!" << std::endl;
+            return  result;
+        }
+        Magick::Blob profile;
+        switch(readImageColorspaceType(image)) {
+        case FXX::RGBColorSpace:
+            result = failsafe.iccRGB;
+            break;
+        case FXX::CMYKColorSpace:
+            result = failsafe.iccCMYK;
+            break;
+        case FXX::GRAYColorSpace:
+            result = failsafe.iccGRAY;
+            break;
+        default:;
+        }
     }
     return result;
 }
