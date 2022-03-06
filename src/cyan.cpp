@@ -1643,14 +1643,3 @@ int Cyan::getTotalRam(int percent)
     if (ram < 4) { ram = 4; }
     return ram;
 }
-
-void Cyan::handleMagickMemoryAct(bool triggered)
-{
-    Q_UNUSED(triggered)
-    QAction *action = qobject_cast<QAction*>(sender());
-    if (!action) { return; }
-    QSettings settings;
-    if (action->data().toInt()>=2) {
-        setMemoryResource(action->data().toInt());
-    }
-}

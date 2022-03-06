@@ -204,7 +204,6 @@ private slots:
     int getMemoryResource();
     void setMemoryResource(int gib);
     int getTotalRam(int percent);
-    void handleMagickMemoryAct(bool triggered);
 };
 
 #endif // CYAN_H
