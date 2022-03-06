@@ -55,6 +55,12 @@
 #include <QMimeType>
 #include <qtconcurrentrun.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#elif defined(Q_OS_LINUX)
+#include <unistd.h>
+#endif
+
 #include "helpdialog.h"
 
 Cyan::Cyan(QWidget *parent)
@@ -85,8 +91,6 @@ Cyan::Cyan(QWidget *parent)
     , prefsMenu(Q_NULLPTR)
     , nativeStyle(false)
     , qualityBox(Q_NULLPTR)
-    , magickMemoryResourcesGroup(Q_NULLPTR)
-    , memoryMenu(Q_NULLPTR)
     , activeLayer(-1)
     , selectedLayer(Q_NULLPTR)
     , selectedLayerLabel(Q_NULLPTR)
@@ -276,27 +280,11 @@ Cyan::Cyan(QWidget *parent)
     fileMenu = new QMenu(tr("File"), this);
     helpMenu = new QMenu(tr("Help"), this);
     prefsMenu = new QMenu(tr("Preferences"), this);
-    memoryMenu = new QMenu(tr("Memory limit"), this);
 
     prefsMenu->menuAction()->setMenuRole(QAction::NoRole); // QTBUG-43881
 
     menuBar->addMenu(fileMenu);
     menuBar->addMenu(helpMenu);
-    //menuBar->setMaximumHeight(20);
-
-    prefsMenu->addMenu(memoryMenu);
-
-    magickMemoryResourcesGroup = new QActionGroup(this);
-    for (int i=2;i<33;++i) {
-        QAction *act = new QAction(this);
-        act->setCheckable(true);
-        act->setText(QString("%1 GB").arg(i));
-        act->setToolTip(tr("Amount of RAM that can be used"));
-        act->setData(i);
-        connect(act, SIGNAL(triggered(bool)), this, SLOT(handleMagickMemoryAct(bool)));
-        magickMemoryResourcesGroup->addAction(act);
-    }
-    memoryMenu->addActions(magickMemoryResourcesGroup->actions());
 
     QAction *aboutAction = new QAction(tr("About %1")
                                        .arg(qApp->applicationName()), this);
@@ -426,23 +414,8 @@ void Cyan::readConfig()
     QSettings settings;
     bool firstrun = false;
 
-    settings.beginGroup("engine");
-    setDiskResource(settings.value("disk_limit", 0).toInt());
-    int maxMem = settings.value("memory_limit", 2).toInt();
-    setMemoryResource(maxMem);
-    settings.endGroup();
-    QList<QAction*> memActions = magickMemoryResourcesGroup->actions();
-    bool foundAct = false;
-    for (int i=0;i<memActions.size();++i) {
-        QAction *act = memActions.at(i);
-        if (!act) { continue; }
-        if (act->data().toInt()==maxMem) {
-            act->setChecked(true);
-            foundAct = true;
-            break;
-        }
-    }
-    if (!foundAct) { memoryMenu->setDisabled(true); }
+    setDiskResource(0);
+    setMemoryResource(getTotalRam(75));
 
     settings.beginGroup("color");
     blackPoint->setChecked(settings.value("black").toBool());
@@ -500,11 +473,6 @@ void Cyan::readConfig()
 void Cyan::writeConfig()
 {
     QSettings settings;
-
-    settings.beginGroup("engine");
-    settings.setValue("disk_limit", getDiskResource());
-    settings.setValue("memory_limit", getMemoryResource());
-    settings.endGroup();
 
     settings.beginGroup("color");
     settings.setValue("black", blackPoint->isChecked());
@@ -1653,6 +1621,27 @@ void Cyan::setMemoryResource(int gib)
     catch(Magick::Warning &warn_ ) {
         qDebug() << warn_.what();
     }
+}
+
+int Cyan::getTotalRam(int percent)
+{
+    int ram = 0;
+#ifdef Q_OS_WIN
+    unsigned long long physicalMemory = 0;
+    GetPhysicallyInstalledSystemMemory(&physicalMemory);
+    int gib = qRound(static_cast<double>((physicalMemory*1024)/RESOURCE_BYTE));
+    ram = qRound(static_cast<double>((gib*percent)/100));
+#elif defined(Q_OS_LINUX)
+#if defined _SC_PHYS_PAGES && defined _SC_PAGESIZE
+    unsigned long long physicalMemory = sysconf(_SC_PHYS_PAGES)*sysconf(_SC_PAGESIZE);
+    int gib = qRound(static_cast<double>(physicalMemory/1024000000));
+    ram = qRound(static_cast<double>((gib*percent)/100));
+#endif
+#endif
+    Q_UNUSED(percent)
+
+    if (ram < 4) { ram = 4; }
+    return ram;
 }
 
 void Cyan::handleMagickMemoryAct(bool triggered)

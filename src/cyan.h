@@ -107,8 +107,6 @@ private:
     QMenu *prefsMenu;
     bool nativeStyle;
     QSpinBox *qualityBox;
-    QActionGroup *magickMemoryResourcesGroup;
-    QMenu *memoryMenu;
     int activeLayer;
     QComboBox *selectedLayer;
     QLabel *selectedLayerLabel;
@@ -205,6 +203,7 @@ private slots:
     void setDiskResource(int gib);
     int getMemoryResource();
     void setMemoryResource(int gib);
+    int getTotalRam(int percent);
     void handleMagickMemoryAct(bool triggered);
 };
 
