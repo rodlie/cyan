@@ -1,9 +1,10 @@
-## 1.2.3 - 20211106
+## 1.2.3 - TBA
 
  * UI fixes
  * Windows fixes
  * Gimp fixes
- * Downgraded to ImageMagick 6
+ * Fixed issues when loading TIFF images
+ * Downgraded to ImageMagick 6 (binaries, still compatible with v7)
 
 ## 1.2.2 - 20191103
 
