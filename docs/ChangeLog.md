@@ -2,7 +2,17 @@
 
  * Enhanced layer support
  * UI changes
- * Better GIMP detection
+
+## 1.2.3 - 20220313
+
+ * Minor UI fixes
+ * Windows fixes
+ * Several Gimp compatibility fixes
+ * Fixed issues when loading some TIFF images
+ * Improved ImageMagick memory resource handler
+ * Downgraded to ImageMagick 6.9 (still compatible with 7.x)
+   * ImageMagick 7.x has OpenMP issues on MinGW and macOS
+ * Updated third-party software (included in binaries)
 
 ## 1.2.2 - 20191103
 
