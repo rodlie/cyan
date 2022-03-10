@@ -1269,8 +1269,8 @@ void Cyan::bitDepthChanged(int index)
 void Cyan::gimpPlugin()
 {
     QStringList versions,folders,gimps;
-    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "3.0";
-    gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/";
+    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "2.99" << "3.0";
+    gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/" << ".var/app/org.gimp.GIMP/config/GIMP/";
     foreach (QString version, versions) {
         foreach (QString gimp, gimps) {
             QString configPath = QString("%1/%2%3/plug-ins")
