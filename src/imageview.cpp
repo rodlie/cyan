@@ -54,7 +54,7 @@ ImageView::ImageView(QWidget* parent) : QGraphicsView(parent)
 void ImageView::wheelEvent(QWheelEvent* event) {
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     double scaleFactor = 1.15;
-    if (event->delta() > 0) { // up
+    if(event->angleDelta().y() > 0) { // up
         fit = false;
         scale(scaleFactor, scaleFactor);
         emit myZoom(scaleFactor, scaleFactor);
