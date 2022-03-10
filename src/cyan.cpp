@@ -223,7 +223,7 @@ Cyan::Cyan(QWidget *parent)
     if (supportedDepth()>=16) {
         bitDepth->addItem(bitDepthIcon, tr("16-bit"), 16);
     }
-    if (supportedDepth()>=32) {
+    if ( (supportedDepth() == 16 && fx.hasHDRI()) || supportedDepth() >= 32 ) {
         bitDepth->addItem(bitDepthIcon, tr("32-bit"), 32);
     }
     bitDepth->setMaximumWidth(150);
