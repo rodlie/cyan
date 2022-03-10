@@ -1,23 +1,97 @@
-name: C/C++ CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+name: CI
+on: [push, pull_request]
 
 jobs:
-  build:
 
-    runs-on: ubuntu-latest
-
+  build01:
+    runs-on: ubuntu-20.04
+    name: Ubuntu 20.04
     steps:
     - uses: actions/checkout@v2
+    - name: apt update
+      run: sudo apt-get update
     - name: apt install
-      run: sudo apt-get install qt5-default qtbase5-dev libmagick++-dev liblcms2-dev
-    - name: configure
-      run: qmake PREFIX=/usr
-    - name: make
-      run: make
-    - name: install
-      run: sudo make install
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev wine64
+    - name: build/test/install
+      run: |
+        sudo mkdir -p /opt/deploy/tests
+        sudo chmod 777 -R /opt
+        export CWD=`pwd`
+        export COMMIT=`git rev-parse --short HEAD`
+        export VERSION=`cat cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
+        ./res/magick.sh
+        export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
+        cd $CWD
+        mkdir build && cd build
+        cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        make -j2
+        strip -s Cyan
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
+        make DESTDIR=/opt/deploy/build install
+        cd /opt/deploy/build
+        mv usr Cyan-$VERSION-$COMMIT-focal
+        tar cvvzf Cyan-$VERSION-$COMMIT-focal.tgz Cyan-$VERSION-$COMMIT-focal
+        rm -rf Cyan-$VERSION-$COMMIT-focal
+        cd $CWD
+        #git clone https://github.com/rodlie/mxe /opt/cyan-mxe
+        #cd /opt/cyan-mxe
+        #git checkout cyan-1.2.3
+        #wget https://github.com/rodlie/cyan/releases/download/continuous/cyan-mxe-usr-20211005.tar.xz
+        #tar xvf cyan-mxe-usr-20211005.tar.xz
+        #cd $CWD
+        #MXE=/opt/cyan-mxe ./opt/cyan-mxe/build-win64.sh
+        cd $CWD
+    - name: upload tests artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: cyan-tests-focal
+        path: /opt/deploy/tests/
+    - name: upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: cyan-build-focal
+        path: /opt/deploy/build/
+
+  build02:
+    runs-on: ubuntu-18.04
+    name: Ubuntu 18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt update
+      run: sudo apt-get update
+    - name: apt install
+      run: sudo apt-get install qt5-default cmake qtbase5-dev libmagick++-dev liblcms2-dev libtiff-dev liblzma-dev zlib1g-dev libpng-dev libjpeg-dev libbz2-dev
+    - name: build/test/install
+      run: |
+        sudo mkdir -p /opt/deploy/tests
+        sudo chmod 777 /opt/deploy
+        export CWD=`pwd`
+        export COMMIT=`git rev-parse --short HEAD`
+        export VERSION=`cat cyan.pro | sed '/VERSION =/!d' | awk '{print $3}'`
+        ./res/magick.sh
+        export PKG_CONFIG_PATH=/opt/Linux/lib/pkgconfig
+        cd $CWD
+        mkdir build && cd build
+        cmake -DDEPLOY=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+        make -j2
+        strip -s Cyan
+        make test || cp Testing/Temporary/LastTest.log /opt/deploy/tests/ && cp *.tif *.jpg /opt/deploy/tests/ && exit 1
+        make DESTDIR=/opt/deploy/build install
+        cd /opt/deploy/build
+        mv usr Cyan-$VERSION-$COMMIT-bionic
+        tar cvvzf Cyan-$VERSION-$COMMIT-bionic.tgz Cyan-$VERSION-$COMMIT-bionic
+        rm -rf Cyan-$VERSION-$COMMIT-bionic
+    - name: upload tests artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: cyan-tests-bionic
+        path: /opt/deploy/tests/
+    - name: upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: cyan-build-bionic
+        path: /opt/deploy/build/
