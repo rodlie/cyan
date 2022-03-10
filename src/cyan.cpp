@@ -1329,7 +1329,11 @@ void Cyan::parseImageInfo()
     QString info = QString::fromStdString(imageData.info);
     if (!info.isEmpty()) {
         imageInfoTree->clear();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QStringList list = info.split("\n", Qt::SkipEmptyParts);
+#else
+        QStringList list = info.split("\n", QString::SkipEmptyParts);
+#endif
         QVector<QTreeWidgetItem*> level1items;
         QVector<QTreeWidgetItem*> level2items;
         QString level1 = "  ";
