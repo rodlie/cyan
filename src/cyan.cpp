@@ -55,6 +55,12 @@
 #include <QMimeType>
 #include <qtconcurrentrun.h>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#elif defined(Q_OS_LINUX)
+#include <unistd.h>
+#endif
+
 #include "helpdialog.h"
 #include "openlayerdialog.h"
 
@@ -442,6 +448,9 @@ void Cyan::readConfig()
 {
     QSettings settings;
     bool firstrun = false;
+
+    setDiskResource(0);
+    setMemoryResource(getTotalRam(75));
 
     settings.beginGroup("color");
     blackPoint->setChecked(settings.value("black").toBool());
@@ -1528,4 +1537,61 @@ void Cyan::handleNativeStyleChanged(bool triggered)
     QMessageBox::information(this,
                              tr("Restart is required"),
                              tr("Restart Cyan to apply settings."));
+}
+
+int Cyan::getDiskResource()
+{
+    return qRound(static_cast<double>(Magick::ResourceLimits::disk()/RESOURCE_BYTE));
+}
+
+void Cyan::setDiskResource(int gib)
+{
+    try {
+        Magick::ResourceLimits::disk(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+int Cyan::getMemoryResource()
+{
+    int memMax =  qRound(static_cast<double>(Magick::ResourceLimits::memory()/RESOURCE_BYTE));
+    qDebug() << "Get ImageMagick memory limit" << memMax;
+    return memMax;
+}
+
+void Cyan::setMemoryResource(int gib)
+{
+    qDebug() << "Set ImageMagick memory limit" << gib;
+    try {
+        Magick::ResourceLimits::memory(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+        Magick::ResourceLimits::map(static_cast<qulonglong>(gib)*static_cast<qulonglong>(RESOURCE_BYTE));
+    }
+    catch(Magick::Error &error_ ) { qWarning() << error_.what(); }
+    catch(Magick::Warning &warn_ ) {
+        qDebug() << warn_.what();
+    }
+}
+
+int Cyan::getTotalRam(int percent)
+{
+    int ram = 0;
+#ifdef Q_OS_WIN
+    unsigned long long physicalMemory = 0;
+    GetPhysicallyInstalledSystemMemory(&physicalMemory);
+    int gib = qRound(static_cast<double>((physicalMemory*1024)/RESOURCE_BYTE));
+    ram = qRound(static_cast<double>((gib*percent)/100));
+#elif defined(Q_OS_LINUX)
+#if defined _SC_PHYS_PAGES && defined _SC_PAGESIZE
+    unsigned long long physicalMemory = sysconf(_SC_PHYS_PAGES)*sysconf(_SC_PAGESIZE);
+    int gib = qRound(static_cast<double>(physicalMemory/1024000000));
+    ram = qRound(static_cast<double>((gib*percent)/100));
+#endif
+#endif
+    Q_UNUSED(percent)
+
+    if (ram < 4) { ram = 4; }
+    return ram;
 }

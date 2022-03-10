@@ -60,6 +60,8 @@
 #include "profiledialog.h"
 #include "FXX.h"
 
+#define RESOURCE_BYTE 1050000000
+
 class Cyan : public QMainWindow
 {
     Q_OBJECT
@@ -183,6 +185,12 @@ private slots:
     void handleLoadImageLayer(Magick::Image image);
 
     void handleNativeStyleChanged(bool triggered);
+
+    int getDiskResource();
+    void setDiskResource(int gib);
+    int getMemoryResource();
+    void setMemoryResource(int gib);
+    int getTotalRam(int percent);
 };
 
 #endif // CYAN_H
