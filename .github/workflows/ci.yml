@@ -33,13 +33,13 @@ jobs:
         tar cvvzf Cyan-$VERSION-$COMMIT-focal.tgz Cyan-$VERSION-$COMMIT-focal
         rm -rf Cyan-$VERSION-$COMMIT-focal
         cd $CWD
-        git clone https://github.com/rodlie/mxe /opt/cyan-mxe
-        cd /opt/cyan-mxe
-        git checkout cyan-1.2.3
-        wget https://github.com/rodlie/cyan/releases/download/continuous/cyan-mxe-usr-20211005.tar.xz
-        tar xvf cyan-mxe-usr-20211005.tar.xz
-        cd $CWD
-        MXE=/opt/cyan-mxe ./opt/cyan-mxe/build-win64.sh
+        #git clone https://github.com/rodlie/mxe /opt/cyan-mxe
+        #cd /opt/cyan-mxe
+        #git checkout cyan-1.2.3
+        #wget https://github.com/rodlie/cyan/releases/download/continuous/cyan-mxe-usr-20211005.tar.xz
+        #tar xvf cyan-mxe-usr-20211005.tar.xz
+        #cd $CWD
+        #MXE=/opt/cyan-mxe ./opt/cyan-mxe/build-win64.sh
         cd $CWD
     - name: upload tests artifacts
       if: always()
