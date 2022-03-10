@@ -137,4 +137,5 @@ mac {
 win32 {
     RC_ICONS += res/cyan.ico
     #LIBS += -lpthread
+    LIBS += -lkernel32
 }

@@ -57,6 +57,9 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#ifdef __MINGW32__
+extern "C" WINBASEAPI BOOL WINAPI GetPhysicallyInstalledSystemMemory (PULONGLONG);
+#endif
 #elif defined(Q_OS_LINUX)
 #include <unistd.h>
 #endif

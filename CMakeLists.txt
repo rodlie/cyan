@@ -112,6 +112,10 @@ add_executable(tests ${TEST_SOURCES} ${TEST_HEADERS} ${TEST_RESOURCES_FILES})
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent)
 target_link_libraries(tests Qt5::Core Qt5::Gui Qt5::Test)
 
+if(MINGW)
+    target_link_libraries(${PROJECT_NAME} kernel32)
+endif()
+
 if(USE_PKG_CONFIG)
     if (DEPLOY)
         target_link_libraries(${PROJECT_NAME} ${MAGICK_STATIC_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_STATIC_LDFLAGS} ${LCMS2_LDFLAGS})
