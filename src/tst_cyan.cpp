@@ -76,6 +76,8 @@ bool Cyan::compareImages(std::vector<unsigned char> image1,
     Magick::Blob blob1(image1.data(), image1.size());
     Magick::Blob blob2(image2.data(), image2.size());
     Magick::Image src,dst;
+    src.quiet(true);
+    dst.quiet(true);
     try {
         src.read(blob1);
         dst.read(blob2);
@@ -93,6 +95,7 @@ bool Cyan::compareImages(std::vector<unsigned char> image1,
             Magick::Image errorImage = src.compare(dst,
                                                   MagickCore::AbsoluteErrorMetric,
                                                   &distortion);
+            errorImage.quiet(true);
             errorImage.write("compare.jpg");
             src.write("src.tif");
             dst.write("dst.tif");
@@ -124,6 +127,7 @@ void Cyan::test_case1()
     Magick::Blob magickBlob(result.data(), static_cast<size_t>(result.length()));
     QVERIFY(magickBlob.length()>0);
     Magick::Image magickImage;
+    magickImage.quiet(true);
     try {
         magickImage.read(magickBlob);
     }
