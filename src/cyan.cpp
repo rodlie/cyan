@@ -1214,41 +1214,19 @@ void Cyan::bitDepthChanged(int index)
 
 void Cyan::gimpPlugin()
 {
-    QStringList versions,folders;
-    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "3.0";
+    QStringList versions,folders,gimps;
+    versions << "2.4" << "2.6" << "2.7" << "2.8" << "2.9" << "2.10" << "2.99" << "3.0";
+    gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/" << ".var/app/org.gimp.GIMP/config/GIMP/";
     foreach (QString version, versions) {
-        bool hasDir = false;
-        QDir gimpDir;
-        QString gimpPath;
-        gimpPath.append(QDir::homePath());
-        gimpPath.append(QDir::separator());
-#ifndef Q_OS_MAC
-        gimpPath.append(QString(".gimp-%1").arg(version));
-        if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        if (!hasDir) {
-            gimpPath = QString("%1/.config/GIMP/%2").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-        if (!hasDir) {
-            gimpPath = QString("%1/AppData/Roaming/GIMP/%2/").arg(QDir::homePath()).arg(version);
-            if (gimpDir.exists(gimpPath)) { hasDir = true; }
-        }
-#else
-        gimpPath.append("Library/Application Support/GIMP/"+version);
-        if (gimpDir.exists(gimpPath)) {
-            hasDir = true;
-        }
-#endif
-        if (hasDir) {
-            gimpPath.append(QDir::separator());
-            gimpPath.append("plug-ins");
-            if (!gimpDir.exists(gimpPath)) {
-                gimpDir.mkdir(gimpPath);
+        foreach (QString gimp, gimps) {
+            QString configPath = QString("%1/%2%3/plug-ins")
+                                 .arg(QDir::homePath())
+                                 .arg(gimp)
+                                 .arg(version);
+            if (QFile::exists(configPath)) {
+                folders << QString("%1/cyan.py").arg(configPath);
+                qDebug() << "found GIMP folder" << configPath;
             }
-            QString result = gimpPath;
-            result.append(QDir::separator());
-            result.append("cyan.py");
-            folders << result;
         }
     }
 

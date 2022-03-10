@@ -4,7 +4,7 @@
  * Windows fixes
  * Gimp fixes
  * Fixed issues when loading TIFF images
- * Downgraded to ImageMagick 6 (binaries, still compatible with v7)
+ * Downgraded to ImageMagick 6 (still compatible with v7)
 
 ## 1.2.2 - 20191103
 
