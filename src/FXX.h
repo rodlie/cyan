@@ -145,6 +145,9 @@ public:
     static bool writePSD(FXX::Image data,
                          std::string filename);
 
+    bool hasDelegate(const std::string &delegate);
+    bool hasFeature(const std::string &feature);
+
     bool hasJPEG();
     bool hasPNG();
     bool hasTIFF();

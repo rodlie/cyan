@@ -640,11 +640,11 @@ std::string FXX::backendInfo()
     result.append(MagickCopyright);
     result.append("<br>");
     result.append("ImageMagick is distributed under the <a href=\"https://www.imagemagick.org/script/license.php\">Apache 2.0 license</a>.<br><br>");
-    result.append("<small><i>");
+    result.append("<i>");
     result.append(MagickCore::GetMagickFeatures());
     result.append(" ");
     result.append(MagickCore::GetMagickDelegates());
-    result.append("</i></small>");
+    result.append("</i>");
     result.append("</p>");
     result.append("<p>Powered by <a href=\"http://www.littlecms.com\">Little CMS</a> ");
     result.append("&copy; Marti Maria Saguer. All rights reserved.<br>");
@@ -792,44 +792,48 @@ bool FXX::writePSD(FXX::Image data,
     return true;
 }
 
+bool FXX::hasDelegate(const std::string &delegate)
+{
+    if (delegate.empty()) { return  false;}
+    std::string result = MagickCore::GetMagickDelegates();
+    if (result.find(delegate) != std::string::npos) { return true; }
+    return false;
+}
+
+bool FXX::hasFeature(const std::string &feature)
+{
+    if (feature.empty()) { return false; }
+    std::string result = MagickCore::GetMagickFeatures();
+    if (result.find(feature) != std::string::npos) { return true; }
+    return false;
+}
+
 bool FXX::hasJPEG()
 {
-    std::string result = MagickCore::GetMagickDelegates();
-    if (result.find("jpeg") != std::string::npos) { return true; }
-    return false;
+    return hasDelegate("jpeg");
 }
 
 bool FXX::hasPNG()
 {
-    std::string result = MagickCore::GetMagickDelegates();
-    if (result.find("png") != std::string::npos) { return true; }
-    return false;
+    return hasDelegate("png");
 }
 
 bool FXX::hasTIFF()
 {
-    std::string result = MagickCore::GetMagickDelegates();
-    if (result.find("tiff") != std::string::npos) { return true; }
-    return false;
+    return hasDelegate("tiff");
 }
 
 bool FXX::hasLCMS()
 {
-    std::string result = MagickCore::GetMagickDelegates();
-    if (result.find("lcms") != std::string::npos) { return true; }
-    return false;
+    return hasDelegate("lcms");
 }
 
 bool FXX::hasHDRI()
 {
-    std::string result = MagickCore::GetMagickFeatures();
-    if (result.find("HDRI") != std::string::npos) { return true; }
-    return false;
+    return hasFeature("HDRI");
 }
 
 bool FXX::hasMP()
 {
-    std::string result = MagickCore::GetMagickFeatures();
-    if (result.find("OpenMP") != std::string::npos) { return true; }
-    return false;
+    return hasFeature("OpenMP");
 }
