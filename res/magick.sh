@@ -10,6 +10,7 @@ CLANG_VER=mp-6.0
 CLANG_PATH=/opt/local/bin
 JOBS=${JOBS:-2}
 TIFF=4.3.0
+LCMS=2.13
 
 DEFAULT_FLAGS="-I$SDK/include -L$SDK/lib"
 if [ "$OS" = "Darwin" ]; then
@@ -37,6 +38,18 @@ git checkout v${TIFF}
 cd $CWD
 mkdir build-tiff && cd build-tiff
 CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ../libtiff/configure --prefix=${SDK} --enable-static --disable-shared
+make -j$JOBS
+make install
+
+cd $CWD
+git clone https://github.com/mm2/Little-CMS lcms2
+cd lcms2
+git checkout lcms${LCMS}
+#./autogen.sh
+
+cd $CWD
+mkdir build-lcms2 && cd build-lcms2
+CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ../lcms2/configure --prefix=${SDK} --enable-static --disable-shared
 make -j$JOBS
 make install
 
