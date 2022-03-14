@@ -4,7 +4,7 @@ set -e -x
 CWD=`pwd`
 OS=`uname -s`
 SDK=${SDK:-/opt/$OS}
-MAGICK=${MAGICK:-"6.9.12-23"}
+MAGICK=${MAGICK:-"6.9.11-62"}
 OSX_MIN=10.7
 CLANG_VER=mp-6.0
 CLANG_PATH=/opt/local/bin
