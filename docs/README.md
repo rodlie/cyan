@@ -1,6 +1,6 @@
 # Cyan
 
-Cyan is an open source cross-platform image viewer and converter, designed for [prepress](https://en.wikipedia.org/wiki/Prepress) (print) work. Like converting an image from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model), or the other way around. Cyan supports [color profiles](https://en.wikipedia.org/wiki/ICC_profile) complying with the [International Color Consortium](http://www.color.org/index.xalter) (ICC) standard, and strives to create as color-accurate images as possible, with support for [RGB](https://en.wikipedia.org/wiki/RGB_color_model), [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model) and [GRAY](https://en.wikipedia.org/wiki/Grayscale) with up to [32-bit](https://en.wikipedia.org/wiki/32-bit) image depth.
+Cyan is an open source cross-platform image viewer and converter, designed for [prepress](https://en.wikipedia.org/wiki/Prepress) (print) work. Like converting an image from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model), or the other way around. Cyan supports [color profiles](https://en.wikipedia.org/wiki/ICC_profile) complying with the [International Color Consortium](http://www.color.org/index.xalter) (ICC) standard, and strives to create as color-accurate images as possible, with support for [RGB](https://en.wikipedia.org/wiki/RGB_color_model), [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model) and [GRAY](https://en.wikipedia.org/wiki/Grayscale).
 
 ![Promo](images/cyan-promo-01.png)
 
@@ -9,7 +9,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 # Features
 
-* Supports RGB/CMYK/GRAY 8/16/32 bit images
+* Supports RGB/CMYK/GRAY images
 * Supports ICC/ICM v2/v4 color profiles
 * Supports PNG, JPEG, TIFF, XCF and PSD image input
 * Supports TIFF, JPEG and PSD image output
@@ -26,6 +26,7 @@ Cyan is an open source cross-platform image viewer and converter, designed for [
 
 News and updates related to Cyan.
 
+ * [Cyan 1.2.3 released](https://github.com/rodlie/cyan/releases/tag/1.2.3)
  * [Cyan 1.2.2 released](https://github.com/rodlie/cyan/releases/tag/1.2.2)
  * [Cyan 1.2.1 released](https://github.com/rodlie/cyan/releases/tag/1.2.1)
  * [Cyan 1.2.0 released](https://github.com/rodlie/cyan/releases/tag/1.2.0)

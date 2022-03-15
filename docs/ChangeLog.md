@@ -1,12 +1,14 @@
-## 1.2.3 - 202203XX
+## 1.2.3 - 20220315
 
  * Fixed some (not all) UI scaling issues
  * Windows fixes
- * Several Gimp compatibility fixes
+ * Gimp compatibility fixes
  * Fixed issues when loading some TIFF images
  * Improved ImageMagick compatibility
  * Fixed compatibility with Qt 5.15
  * Updated third-party software (included in binaries)
+
+This release does not include macOS binaries.
 
 ## 1.2.2 - 20191103
 

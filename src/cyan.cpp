@@ -226,7 +226,7 @@ Cyan::Cyan(QWidget *parent)
     if (supportedDepth()>=16) {
         bitDepth->addItem(bitDepthIcon, tr("16-bit"), 16);
     }
-    if ( (supportedDepth() == 16 && fx.hasHDRI()) || supportedDepth() >= 32 ) {
+    if (supportedDepth() >= 32) {
         bitDepth->addItem(bitDepthIcon, tr("32-bit"), 32);
     }
     bitDepth->setMaximumWidth(150);
@@ -548,7 +548,7 @@ void Cyan::writeConfig()
 void Cyan::aboutCyan()
 {
     QString html, changelog, style, license;
-    QFile changelogFile(":/docs/ChangeLog");
+    QFile changelogFile(":/docs/ChangeLog.md");
     if (changelogFile.open(QIODevice::ReadOnly)) {
         QByteArray data = changelogFile.readAll();
         changelog.append(data);
@@ -579,7 +579,8 @@ void Cyan::aboutCyan()
             "margin: 1em;"
             "font-family: sans-serif; }"
             "h1, h2, h3, h4 { font-weight: normal; }"
-            "p, pre, li { font-size: 10pt; }"
+            "p, li { font-size: 10pt; }"
+            "pre { font-size: 9pt; }"
             "h1#devel { font-size: small; }";
     if (!nativeStyle) {
         style.append(".highlighter-rouge, pre, h1#devel { background-color: #1d1d1d; }");
@@ -1356,7 +1357,8 @@ void Cyan::parseImageInfo()
                     item.startsWith("  Format: ") ||
                     item.startsWith("  Class: ") ||
                     item.startsWith("  Base filename:") ||
-                    item.startsWith("  Mime type:"))
+                    item.startsWith("  Mime type:") ||
+                    item.contains("Filename"))
                 {
                     continue;
                 }
