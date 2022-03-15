@@ -1,6 +1,6 @@
-## 1.2.3 - 20220313
+## 1.2.3 - 202203XX
 
- * Minor UI fixes
+ * Fixed some (not all) UI scaling issues
  * Windows fixes
  * Several Gimp compatibility fixes
  * Fixed issues when loading some TIFF images
