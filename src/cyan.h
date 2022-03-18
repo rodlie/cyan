@@ -180,6 +180,7 @@ private slots:
 
     int supportedDepth();
     void clearImageBuffer();
+    void parseImageInfo();
 
     QMap<QString,QString> genProfiles(FXX::ColorSpace colorspace);
     QByteArray getDefaultProfile(FXX::ColorSpace colorspace);

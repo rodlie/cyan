@@ -53,6 +53,7 @@
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QTreeWidgetItem>
 #include <qtconcurrentrun.h>
 
 #ifdef Q_OS_WIN
@@ -1382,12 +1383,12 @@ int Cyan::supportedDepth()
 void Cyan::clearImageBuffer()
 {
     fx.clearImage(imageData);
-    imageInfoTree->clear();
+    //imageInfoTree->clear();
 }
 
 void Cyan::parseImageInfo()
 {
-    QString info = QString::fromStdString(imageData.info);
+    /*QString info = QString::fromStdString(imageData.info);
     if (!info.isEmpty()) {
         imageInfoTree->clear();
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -1461,7 +1462,7 @@ void Cyan::parseImageInfo()
         imageInfoTree->addTopLevelItems(level1items.toList());
         level2items.clear();
         imageInfoTree->expandAll();
-    }
+    }*/
 }
 
 QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)

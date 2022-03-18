@@ -31,7 +31,7 @@
 cmake_minimum_required(VERSION 3.1)
 enable_testing()
 
-project(Cyan VERSION 1.2.99)
+project(Cyan VERSION 1.2.99.1)
 
 if(NOT PROJECT_VERSION_TWEAK)
     set(PROJECT_VERSION_TWEAK 0)
@@ -45,9 +45,9 @@ add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 add_definitions(-DCYAN_GIT="$ENV{GIT}")
 
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "ImageMagick pkg-config name")
-set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.cpp res/cyan.qrc docs/docs.qrc)
+set(SOURCES src/main.cpp src/cyan.cpp src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.cpp)
 set(HEADERS src/cyan.h src/imageview.cpp src/profiledialog.cpp src/helpdialog.cpp src/FXX.h)
-set(RESOURCE_FILES res/cyan.qrc docs/docs.qrc)
+set(RESOURCES_FILES res/cyan.qrc docs/docs.qrc)
 set(RESOURCE_FOLDER res)
 
 set(TEST_SOURCES src/tst_cyan.cpp src/FXX.cpp res/tests.qrc)
@@ -80,14 +80,12 @@ endif()
 
 find_package(Qt5 5.9 REQUIRED Core Gui Widgets Concurrent Test)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../lib/cmake/modules/")
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
-option(DEPLOY "Deploy" OFF)
-option(USE_PKG_CONFIG "Use pkg-config" ON)
-option(USE_Q32 "Q32 workaround if not using pkg-config" OFF)
+option(BUNDLE_FONT "Bundle font (DejvuSans) with application. Need for static Qt builds" OFF)
+option(DEPLOY "Deploy option used for official binaries" OFF)
+option(USE_PKG_CONFIG "Use pkg-config to find third-party dependencies" ON)
 
 if(DEPLOY)
     if(MINGW OR APPLE)
@@ -135,16 +133,8 @@ if(USE_PKG_CONFIG)
         target_link_libraries(tests ${MAGICK_LIBRARIES} ${LCMS2_LIBRARIES} ${MAGICK_LDFLAGS} ${LCMS2_LDFLAGS})
     endif()
 else()
-    target_link_libraries(${PROJECT_NAME} ${LCMS2_LIBRARY})
-    target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
-    target_link_libraries(${PROJECT_NAME} ${ImageMagick_MagickCore_LIBRARIES})
-    target_link_libraries(${PROJECT_NAME} ${ImageMagick_MagickWand_LIBRARIES})
-    target_link_libraries(${PROJECT_NAME} ${ImageMagick_Magick++_LIBRARIES})
-    target_link_libraries(tests ${LCMS2_LIBRARY})
-    target_link_libraries(tests ${ImageMagick_LIBRARIES})
-    target_link_libraries(tests ${ImageMagick_MagickCore_LIBRARIES})
-    target_link_libraries(tests ${ImageMagick_MagickWand_LIBRARIES})
-    target_link_libraries(tests ${ImageMagick_Magick++_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${LCMS2_LIBRARY} ${ImageMagick_LIBRARIES} ${ImageMagick_MagickCore_LIBRARIES} ${ImageMagick_MagickWand_LIBRARIES} ${ImageMagick_Magick++_LIBRARIES})
+    target_link_libraries(tests ${LCMS2_LIBRARY} ${ImageMagick_LIBRARIES} ${ImageMagick_MagickCore_LIBRARIES} ${ImageMagick_MagickWand_LIBRARIES} ${ImageMagick_Magick++_LIBRARIES})
 endif()
 
 add_test(NAME tests COMMAND tests)
