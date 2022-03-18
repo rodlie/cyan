@@ -86,7 +86,6 @@ FXX::Image FXX::readImage(const std::string &file,
         // get image profile
         std::vector<unsigned char> imageProfile = readImageColorProfile(image,
                                                                         failsafe);
-        std::cout << "profile??? " << imageProfile.size() << std::endl;
         if (imageProfile.size()>0) {
             Magick::Blob profile(imageProfile.data(),
                                  imageProfile.size());
@@ -135,6 +134,7 @@ FXX::Image FXX::readImage(const std::string &file,
 FXX::Image FXX::readImage(Magick::Image image, FXX::Image failsafe, bool getInfo)
 {
     FXX::Image result;
+    image.quiet(true);
     if (image.isValid()) {
         std::vector<Magick::Image> layers;
         Magick::Blob output;
@@ -223,6 +223,7 @@ FXX::Image FXX::readImage(Magick::Image image, FXX::Image failsafe, bool getInfo
 std::vector<unsigned char> FXX::generateThumb(Magick::Image image, int width, int height)
 {
     std::vector<unsigned char> result;
+    image.quiet(true);
     try {
         image.scale(Magick::Geometry(width, height));
         if (image.depth()>8) { image.depth(8); }
@@ -249,6 +250,7 @@ FXX::Image FXX::convertImage(FXX::Image input, bool getInfo)
         input.iccInputBuffer.size()>0)
     {
         Magick::Image image;
+        image.quiet(true);
         try {
             Magick::Blob tmp(input.imageBuffer.data(),
                              input.imageBuffer.size());
