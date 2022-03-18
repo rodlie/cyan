@@ -2,10 +2,9 @@
 
 Cyan is an open source cross-platform image viewer and converter, designed for [prepress](https://en.wikipedia.org/wiki/Prepress) (print) work. Like converting an image from [RGB](https://en.wikipedia.org/wiki/RGB_color_model) to [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model), or the other way around. Cyan supports [color profiles](https://en.wikipedia.org/wiki/ICC_profile) complying with the [International Color Consortium](http://www.color.org/index.xalter) (ICC) standard, and strives to create as color-accurate images as possible, with support for [RGB](https://en.wikipedia.org/wiki/RGB_color_model), [CMYK](https://en.wikipedia.org/wiki/CMYK_color_model) and [GRAY](https://en.wikipedia.org/wiki/Grayscale).
 
-![Promo](images/cyan-promo-01.png)
+<img src="images/oss-users-love-us-white.svg" height="150"><img src="images/oss-community-choice-white.svg" height="150">
 
-<img src="images/oss-users-love-us-white.svg" height="150">
-<img src="images/oss-community-choice-white.svg" height="150">
+[![Download](https://a.fsdn.com/con/app/sf-download-button)](https://github.com/rodlie/cyan/releases/latest)
 
 # Features
 
