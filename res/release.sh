@@ -64,11 +64,9 @@ mkdir tst
 cd tst
 ${QMAKE} ../../tests.pro
 make
-TEXE="./build/tests"
 if [ "${OS}" = "Windows" ]; then
-    TEXE=build/tests.exe
+    ${WINE} build/tests.exe
 fi
-${WINE} ${TEXE}
 
 cd "${BUILD_DIR}"
 

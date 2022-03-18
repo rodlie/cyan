@@ -1,4 +1,4 @@
-## 1.2.3 - 20220315
+## 1.2.3 - 20220318
 
  * Fixed some (not all) UI scaling issues
  * Windows fixes
