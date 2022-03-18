@@ -28,6 +28,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
+# USED FOR OFFICIAL BINARIES, USE CMAKE INSTEAD!
+
 TARGET = Cyan
 VERSION = 1.2.3
 
@@ -48,6 +50,7 @@ HEADERS += \
     src/helpdialog.h
 RESOURCES += \
     res/cyan.qrc \
+    res/fonts.qrc \
     docs/docs.qrc
 
 DESTDIR = build
@@ -80,6 +83,9 @@ QMAKE_TARGET_COMPANY = "$${TARGET}"
 QMAKE_TARGET_PRODUCT = "$${TARGET}"
 QMAKE_TARGET_DESCRIPTION = "$${TARGET}"
 QMAKE_TARGET_COPYRIGHT = "Copyright Ole-Andre Rodlie"
+
+DEFINES += DEPLOY
+unix:!mac: DEFINES += BUNDLE_FONT
 
 CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
