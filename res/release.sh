@@ -121,8 +121,10 @@ fi
 echo "Licenses for included open-source software.\n\nSource code :\n\nhttps://github.com/rodlie/cyan/releases/download/continuous/cyan-sdk-src-${CI}.tar\nhttps://github.com/rodlie/cyan/releases/download/continuous/cyan-mxe-${CI}.tar.xz" > ${ZIP_DIR}/legal/README.TXT
 
 EXT=zip
-
-if [ "${OS}" = "Darwin" ]; then
+if [ "${OS}" = "Linux" ]; then
+    EXT=tgz
+    tar czf ${ZIP_DIR}.${EXT} ${ZIP_DIR}
+elif [ "${OS}" = "Darwin" ]; then
     EXT=dmg
     hdiutil create -volname "Cyan $VERSION" -srcfolder ${ZIP_DIR} -ov -format UDBZ ${ZIP_DIR}.${EXT}
 else
