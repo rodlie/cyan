@@ -5,5 +5,6 @@ logo: https://github.com/rodlie/cyan/raw/1.2/res/hicolor/256x256/apps/cyan.png
 show_downloads: true
 
 github:
-  zip_url: https://sourceforge.net/projects/prepress/files/1.2.3/Cyan-1.2.3-Windows-x64.zip/download
-  tar_url: https://sourceforge.net/projects/prepress/files/1.2.3/Cyan-1.2.3-Linux-x86_64.zip/download
+  zip_url: https://sourceforge.net/projects/prepress/files/1.2.4/Cyan-1.2.4-Windows-x64.zip/download
+  tgz_url: https://sourceforge.net/projects/prepress/files/1.2.4/Cyan-1.2.4-Linux-x86_64.tgz/download
+  dmg_url: https://sourceforge.net/projects/prepress/files/1.2.4/Cyan-1.2.4-macOS-x86_64.dmg/download
