@@ -4,7 +4,7 @@ set -e -x
 
 CWD=`pwd`
 BUILD_DIR=${BUILD_DIR:-"${CWD}/../cyan-tmp"}
-VERSION=${VERSION:-1.2.3}
+VERSION=${VERSION:-1.2.4}
 
 rm -rf "${BUILD_DIR}" || true
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"

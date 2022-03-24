@@ -1,0 +1,22 @@
+--- Makefile.am.orig	2022-03-23 19:22:06.000000000 +0100
++++ Makefile.am	2022-03-23 19:22:30.000000000 +0100
+@@ -34,7 +34,7 @@
+ 	README.md \
+ 	RELEASE-DATE \
+ 	TODO \
+-	VERSION
++	VERSION.txt
+ 
+ EXTRA_DIST = \
+ 	cmake \
+--- Makefile.in.orig	2022-03-23 19:22:13.000000000 +0100
++++ Makefile.in	2022-03-23 19:22:51.000000000 +0100
+@@ -424,7 +424,7 @@
+ 	README.md \
+ 	RELEASE-DATE \
+ 	TODO \
+-	VERSION
++	VERSION.txt
+ 
+ EXTRA_DIST = \
+ 	cmake \

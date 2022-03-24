@@ -53,12 +53,13 @@ if [ "$OS" = "Darwin" ]; then
   # sudo port install clang-$CLANG ld64
   export CC="$CLANG_ROOT/bin/clang-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
   export CXX="$CLANG_ROOT/bin/clang++-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+  export PATH=$SDK/bin:/usr/bin:/usr/sbin:/bin:/sbin
+else
+    export PATH="${SDK}/bin:${PATH}"
 fi
 
-# export common env
+# pkgconfig .pc path
 export PKG_CONFIG_PATH="$SDK/lib/pkgconfig"
-#export PATH=$SDK/bin:/usr/bin:/usr/sbin:/bin:/sbin
-export PATH="${SDK}/bin:${PATH}"
 
 # always clean tmp
 rm -rf "$WRK" || true
@@ -162,7 +163,15 @@ if [ ! -f "$SDK/lib/pkgconfig/libtiff-4.pc" ]; then
     rm -rf tiff-$TIFF || true
     tar xvf $SRC/tiff-$TIFF.tar.gz
     cd tiff-$TIFF
+    if [ "${OS}" = "Darwin" ]; then
+        mv VERSION VERSION.txt
+        patch -p0 < $CWD/res/clang-tiff-version.diff
+    fi
     TIF_CONFIGURE=$DEFAULT_CONFIGURE
+    #TIF_CONFIGURE=$SHARED_CONFIGURE
+    #if [ "${OS}" = "Linux" ]; then
+    #    TIF_CONFIGURE=$DEFAULT_CONFIGURE
+    #fi
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" CPPFLAGS="$DEFAULT_FLAGS" ./configure $TIF_CONFIGURE \
     --without-x --disable-webp --enable-lzma --enable-jpeg12 --with-jpeg12-include-dir=$SDK/include
     make -j$JOBS
@@ -208,7 +217,7 @@ if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
     if [ "$OS" = "Darwin" ]; then
         MAGICK_LDFLAGS="-mmacosx-version-min=$OSX_MIN"
     fi
-    sed -i 's#-ltiff#-ltiff -llzma -ljpeg -lz#g' configure
+    sed -i '' 's#-ltiff#-ltiff -llzma -ljpeg -lz#g' configure
     LDFLAGS="$MAGICK_LDFLAGS" LIBS="-lz -llzma -lbz2" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure --prefix=$SDK \
     --enable-static --disable-shared \
     --with-x=no --disable-docs --disable-modules --without-modules --with-xml --without-gslib \
@@ -237,41 +246,30 @@ if [ "$OS" = "Linux" ] && [ ! -f "$SDK/lib/pkgconfig/xkbcommon.pc" ]; then
 fi
 
 # qtbase
-QT_CONFIGURE="-optimize-size -opensource -release -confirm-license -gui -widgets -strip -static -nomake examples -nomake tests -no-glib -no-dbus  -no-openssl -no-ico -no-icu -no-sql-sqlite -no-sse4.2 -no-avx -no-avx2 -no-avx512 -no-cups -no-gtk -no-libjpeg -no-fontconfig -no-mtdev -no-syslog -no-gif -qt-pcre -qt-freetype -qt-harfbuzz -opengl desktop"
-if [ ! -f "$SDK/bin/qmake" ] && [ "$OS" = "Darwin" ]; then
-    ## we use the legacy LTS release (5.9) on OSX
-    #cd $WRK || exit 1
-    #tar xvf $SRC/qtbase-opensource-src-$QT.tar.xz || exit 1
-    #cd $WRK/qtbase-opensource-src-$QT || exit 1
-    ## set correct compiler
-    #sed -i '' "s#QMAKE_CC                = clang#QMAKE_CC                = $CLANG_ROOT/bin/clang-mp-${CLANG}#" mkspecs/common/clang.conf || exit 1
-    #sed -i '' "s#QMAKE_CXX               = clang++#QMAKE_CXX               = $CLANG_ROOT/bin/clang++-mp-${CLANG}#" mkspecs/common/clang.conf || exit 1
-    #./configure -prefix $SDK -release -opensource -c++std c++11 -framework \
-    #-no-sql-sqlite -no-avx -no-avx2 -force-pkg-config -system-zlib -no-gif -no-libjpeg \
-    #-system-libpng -no-fontconfig -qt-freetype -qt-harfbuzz -no-openssl -qt-pcre -nomake examples \
-    #-gui -widgets -no-glib -no-cups -no-dbus -opengl desktop -no-securetransport -confirm-license -I $SDK/include -L $SDK/lib || exit 1
-    #make -j$JOBS || exit 1
-    #make install || exit 1
-    echo "update me!"
-elif [ ! -f "$SDK/bin/qmake" ] && [ "$OS" = "Linux" ]; then
+QT_CONFIGURE="-static -force-pkg-config -optimize-size -opensource -release -confirm-license -gui -widgets -strip -nomake examples -nomake tests -no-glib -no-dbus  -no-openssl -no-ico -no-icu -no-sql-sqlite -no-sse4.2 -no-avx -no-avx2 -no-avx512 -no-cups -no-gtk -no-libjpeg -no-fontconfig -no-mtdev -no-syslog -no-gif -qt-pcre -qt-freetype -qt-harfbuzz -opengl desktop -system-libpng -system-zlib"
+if [ ! -f "$SDK/bin/qmake" ]; then
     cd $WRK 
     rm -rf qtbase-everywhere-src-$QT
     tar xvf $SRC/qtbase-everywhere-src-$QT.tar.xz
     cd qtbase-everywhere-src-$QT || exit 1
     export LD_LIBRARY_PATH="$SDK/lib:$LD_LIBRARY_PATH"
-    CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE \
-    -no-eglfs -no-kms -no-linuxfb -xkbcommon -qt-xcb -system-libpng -system-zlib \
-    -I $SDK/include -L $SDK/lib || exit 1
-    make -j$JOBS || exit 1
-    make install || exit 1
+    if [ "$OS" = "Darwin" ]; then
+        echo "QMAKE_CC = $CLANG_ROOT/bin/clang-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
+        echo "QMAKE_CXX = $CLANG_ROOT/bin/clang++-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
+        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE -c++std c++14 -no-feature-testlib -no-securetransport -I $SDK/include -L $SDK/lib
+    elif [ "$OS" = "Linux" ]; then
+        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE -no-eglfs -no-kms -no-linuxfb -xkbcommon -qt-xcb -I $SDK/include -L $SDK/lib
+    fi
+    make -j$JOBS
+    make install
 fi
 
 # macdeployqt
 if [ ! -f "$SDK/bin/macdeployqt" ] && [ "$OS" = "Darwin" ]; then
   cd $WRK || exit 1
   rm -rf qttools* || true
-  tar xvf $SRC/qttools-opensource-src-$QT.tar.xz || exit 1
-  cd qttools-opensource-src-$QT || exit 1
+  tar xvf $SRC/qttools-everywhere-src-$QT.tar.xz || exit 1
+  cd qttools-everywhere-src-$QT || exit 1
   $SDK/bin/qmake || exit 1
   make || exit 1
   make install || exit 1

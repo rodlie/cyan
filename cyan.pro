@@ -31,7 +31,7 @@
 # USED FOR OFFICIAL BINARIES, USE CMAKE INSTEAD!
 
 TARGET = Cyan
-VERSION = 1.2.3
+VERSION = 1.2.4
 
 SOURCES += \
     src/main.cpp \
@@ -135,9 +135,12 @@ unix:!mac {
 mac {
     ICON = res/Cyan.icns
     QMAKE_INFO_PLIST = res/Info.plist
-    #QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-    #QMAKE_CXXFLAGS += -fopenmp
-    #QMAKE_LFLAGS += -fopenmp
+    # ugly workaround for static build:
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
+    QMAKE_CFLAGS += -fopenmp
+    QMAKE_CXXFLAGS += -fopenmp
+    QMAKE_LFLAGS += -lomp -liconv
+    LIBS += -L /opt/local/lib/libomp
 }
 
 win32 {

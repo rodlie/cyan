@@ -1,3 +1,8 @@
+## 1.2.4 - 20220324
+
+ * Fixed Gimp path detection bug
+ * Fixed macOS support
+
 ## 1.2.3 - 20220318
 
  * Fixed some (not all) UI scaling issues
@@ -7,8 +12,6 @@
  * Improved ImageMagick compatibility
  * Fixed compatibility with Qt 5.15
  * Updated third-party software (included in binaries)
-
-This release does not include macOS binaries.
 
 ## 1.2.2 - 20191103
 
