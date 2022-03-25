@@ -1,0 +1,3 @@
+[submodule "pixelcore"]
+	path = pixelcore
+	url = https://github.com/rodlie/pixelcore
