@@ -33,6 +33,11 @@
 #include "cyan.h"
 #include <QApplication>
 
+#ifdef BUNDLE_FONT
+#include <QFont>
+#include <QFontDatabase>
+#endif
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -42,6 +47,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("net.fxarena");
     QCoreApplication::setApplicationVersion(CYAN_VERSION);
     Cyan w;
+
+#ifdef BUNDLE_FONT
+    QString fontPath = QString(":/fonts/DejaVuSans.ttf");
+    int fontId = QFontDatabase::addApplicationFont(fontPath);
+    if (fontId != -1) {
+        QFont font("DejaVuSans");
+        if (font.pointSize() == 12) { font.setPointSize(10); }
+        a.setFont(font);
+    }
+#endif
+
     w.show();
 
     return a.exec();

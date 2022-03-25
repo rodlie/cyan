@@ -53,12 +53,19 @@
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QTreeWidgetItem>
 #include <qtconcurrentrun.h>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#ifdef __MINGW32__
+extern "C" WINBASEAPI BOOL WINAPI GetPhysicallyInstalledSystemMemory (PULONGLONG);
+#endif
 #elif defined(Q_OS_LINUX)
 #include <unistd.h>
+#elif defined(Q_OS_MAC)
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #endif
 
 #include "helpdialog.h"
@@ -121,7 +128,6 @@ Cyan::Cyan(QWidget *parent)
         palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
         qApp->setPalette(palette);
-        setStyleSheet("QToolBar { border: 0; }");
     }
     setWindowIcon(QIcon(":/cyan.png"));
     setAttribute(Qt::WA_QuitOnClose);
@@ -192,7 +198,7 @@ Cyan::Cyan(QWidget *parent)
     if (supportedDepth()>=16) {
         bitDepth->addItem(bitDepthIcon, tr("16-bit"), 16);
     }
-    if ( (supportedDepth() == 16 && fx.hasHDRI()) || supportedDepth() >= 32 ) {
+    if (supportedDepth() >= 32) {
         bitDepth->addItem(bitDepthIcon, tr("32-bit"), 32);
     }
     bitDepth->setMaximumWidth(150);
@@ -219,6 +225,20 @@ Cyan::Cyan(QWidget *parent)
     QLabel *grayLabel = new QLabel(tr("GRAY"), this);
     QLabel *bitDepthLabel = new QLabel(tr("Depth"), this);
     QLabel *qualityLabel = new QLabel(tr("Quality"), this);
+
+    /*if (!nativeStyle) {
+        QString padding = "margin-right:5px;";
+        inputLabel->setStyleSheet(padding);
+        outputLabel->setStyleSheet(padding);
+        monitorLabel->setStyleSheet(padding);
+        renderLabel->setStyleSheet(padding);
+        blackLabel->setStyleSheet(padding);
+        rgbLabel->setStyleSheet(padding);
+        cmykLabel->setStyleSheet(padding);
+        grayLabel->setStyleSheet(padding);
+        bitDepthLabel->setStyleSheet(padding);
+        qualityLabel->setStyleSheet(padding);
+    }*/
 
     inputLabel->setToolTip(tr("Input profile for image"));
     inputLabel->setAlignment(Qt::AlignVCenter);
@@ -1273,13 +1293,18 @@ void Cyan::gimpPlugin()
     gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/" << ".var/app/org.gimp.GIMP/config/GIMP/";
     foreach (QString version, versions) {
         foreach (QString gimp, gimps) {
-            QString configPath = QString("%1/%2%3/plug-ins")
+            QString configPath = QString("%1/%2%3")
                                  .arg(QDir::homePath())
                                  .arg(gimp)
                                  .arg(version);
             if (QFile::exists(configPath)) {
+                configPath.append("/plug-ins");
+                if (!QFile::exists(configPath)) {
+                    QDir dir(configPath);
+                    dir.mkdir(configPath);
+                }
                 folders << QString("%1/cyan.py").arg(configPath);
-                qDebug() << "found GIMP folder" << configPath;
+                std::cout << "found GIMP folder: " << configPath.toStdString() << std::endl;
             }
         }
     }
@@ -1366,6 +1391,86 @@ int Cyan::supportedDepth()
 void Cyan::clearImageBuffer()
 {
     fx.clearImage(imageData);
+    //imageInfoTree->clear();
+}
+
+void Cyan::parseImageInfo()
+{
+    /*QString info = QString::fromStdString(imageData.info);
+    if (!info.isEmpty()) {
+        imageInfoTree->clear();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        QStringList list = info.split("\n", Qt::SkipEmptyParts);
+#else
+        QStringList list = info.split("\n", QString::SkipEmptyParts);
+#endif
+        QVector<QTreeWidgetItem*> level1items;
+        QVector<QTreeWidgetItem*> level2items;
+        QString level1 = "  ";
+        QString level2 = "    ";
+        QString level3 = "      ";
+        bool foundHistogramTag = false;
+        for (int i = 0; i < list.size(); ++i) {
+            QString item = list.at(i);
+            if (item.startsWith(level1)) {
+                QTreeWidgetItem *levelItem = new QTreeWidgetItem();
+                QString section1 = item.section(":",0,0).trimmed();
+                QString section2 = item.section(":",1).trimmed();
+                if (item.startsWith("  Pixels per second:") ||
+                    item.startsWith("  User time:") ||
+                    item.startsWith("  Elapsed time:") ||
+                    item.startsWith("  Version: Image") ||
+                    item.startsWith("  Format: ") ||
+                    item.startsWith("  Class: ") ||
+                    item.startsWith("  Base filename:") ||
+                    item.startsWith("  Mime type:") ||
+                    item.contains("Filename"))
+                {
+                    continue;
+                }
+                levelItem->setText(0,section1);
+                levelItem->setText(1,section2);
+                if (item == "  Histogram:") {
+                    foundHistogramTag = true;
+                }
+                if (foundHistogramTag && (item.startsWith("  Rendering intent:") ||
+                                          item.startsWith("  Gamma:")))
+                {
+                    foundHistogramTag = false;
+                }
+                if (foundHistogramTag) {
+                    continue;
+                }
+                if (item.startsWith(level3)) {
+                    int parentID = level2items.size()-1;
+                    if (parentID<0) {
+                        parentID=0;
+                    }
+                    QTreeWidgetItem *parentItem = level2items.at(parentID);
+                    if (parentItem) {
+                        parentItem->addChild(levelItem);
+                    }
+
+                } else if(item.startsWith(level2)) {
+                    int parentID = level1items.size()-1;
+                    if (parentID<0) {
+                        parentID=0;
+                    }
+                    QTreeWidgetItem *parentItem = level1items.at(parentID);
+                    if (parentItem) {
+                        parentItem->addChild(levelItem);
+                        level2items << levelItem;
+                    }
+                } else if(item.startsWith(level1)) {
+                    level1items << levelItem;
+                }
+                continue;
+            }
+        }
+        imageInfoTree->addTopLevelItems(level1items.toList());
+        level2items.clear();
+        imageInfoTree->expandAll();
+    }*/
 }
 
 QMap<QString, QString> Cyan::genProfiles(FXX::ColorSpace colorspace)
@@ -1637,6 +1742,13 @@ int Cyan::getTotalRam(int percent)
     int gib = qRound(static_cast<double>(physicalMemory/1024000000));
     ram = qRound(static_cast<double>((gib*percent)/100));
 #endif
+#elif defined(Q_OS_MAC)
+    int mib [] = { CTL_HW, HW_MEMSIZE };
+    int64_t physicalMemory = 0;
+    size_t length = sizeof(physicalMemory);
+    sysctl(mib, 2, &physicalMemory, &length, NULL, 0);
+    int gib = qRound(static_cast<double>(physicalMemory/1024000000));
+    ram = qRound(static_cast<double>((gib*percent)/100));
 #endif
     Q_UNUSED(percent)
 
