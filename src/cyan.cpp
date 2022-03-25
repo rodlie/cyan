@@ -63,6 +63,9 @@ extern "C" WINBASEAPI BOOL WINAPI GetPhysicallyInstalledSystemMemory (PULONGLONG
 #endif
 #elif defined(Q_OS_LINUX)
 #include <unistd.h>
+#elif defined(Q_OS_MAC)
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #endif
 
 #include "helpdialog.h"
@@ -1290,13 +1293,18 @@ void Cyan::gimpPlugin()
     gimps << ".gimp-" << ".config/GIMP-AppImage/" << ".config/GIMP/" << "AppData/Roaming/GIMP/" << "Library/Application Support/GIMP/" << ".var/app/org.gimp.GIMP/config/GIMP/";
     foreach (QString version, versions) {
         foreach (QString gimp, gimps) {
-            QString configPath = QString("%1/%2%3/plug-ins")
+            QString configPath = QString("%1/%2%3")
                                  .arg(QDir::homePath())
                                  .arg(gimp)
                                  .arg(version);
             if (QFile::exists(configPath)) {
+                configPath.append("/plug-ins");
+                if (!QFile::exists(configPath)) {
+                    QDir dir(configPath);
+                    dir.mkdir(configPath);
+                }
                 folders << QString("%1/cyan.py").arg(configPath);
-                qDebug() << "found GIMP folder" << configPath;
+                std::cout << "found GIMP folder: " << configPath.toStdString() << std::endl;
             }
         }
     }
@@ -1734,6 +1742,13 @@ int Cyan::getTotalRam(int percent)
     int gib = qRound(static_cast<double>(physicalMemory/1024000000));
     ram = qRound(static_cast<double>((gib*percent)/100));
 #endif
+#elif defined(Q_OS_MAC)
+    int mib [] = { CTL_HW, HW_MEMSIZE };
+    int64_t physicalMemory = 0;
+    size_t length = sizeof(physicalMemory);
+    sysctl(mib, 2, &physicalMemory, &length, NULL, 0);
+    int gib = qRound(static_cast<double>(physicalMemory/1024000000));
+    ram = qRound(static_cast<double>((gib*percent)/100));
 #endif
     Q_UNUSED(percent)
 

@@ -3,6 +3,11 @@
  * Enhanced layer support
  * UI changes
 
+## 1.2.4 - 20220324
+
+ * Fixed Gimp path detection bug
+ * Fixed macOS support
+
 ## 1.2.3 - 20220318
 
  * Fixed some (not all) UI scaling issues
