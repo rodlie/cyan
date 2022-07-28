@@ -68,6 +68,9 @@ MAGICK_CONFIG = Magick++
 PKG_CONFIG_BIN = pkg-config
 !isEmpty(CUSTOM_PKG_CONFIG): PKG_CONFIG_BIN = $${CUSTOM_PKG_CONFIG}
 
+OSX_COMPAT = 10.13
+!isEmpty(OSX_MIN): OSX_COMPAT = $${OSX_MIN}
+
 PKGCONFIG += $${MAGICK_CONFIG}
 LIBS += `$${PKG_CONFIG_BIN} --libs --static $${MAGICK_CONFIG}`
 
@@ -134,7 +137,7 @@ mac {
     ICON = res/Cyan.icns
     QMAKE_INFO_PLIST = res/Info.plist
     # ugly workaround for static build:
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = $${OSX_COMPAT}
     QMAKE_CFLAGS += -fopenmp
     QMAKE_CXXFLAGS += -fopenmp
     QMAKE_LFLAGS += -lomp -liconv
