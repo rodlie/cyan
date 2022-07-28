@@ -8,12 +8,13 @@ set -e -x
 # common
 CWD=`pwd`
 OS=`uname -s`
-JOBS=${JOBS:-8}
+JOBS=${JOBS:-2}
 WRK=$CWD/tmp
 KEEP_SDK=${KEEP_SDK:-1}
 KEEP_TMP=${KEEP_TMP:-0}
 SDK=$CWD/${OS}
 SRC=$CWD/3rdparty
+LEGACY_OSX=${LEGACY_OSX:-0}
 
 # components
 XKB=0.7.1
@@ -26,13 +27,21 @@ PNG=1.6.37
 LCMS=2.12 # 2.13(.1) breaks GRAY unit test!
 MAGICK=6.9.11-62
 QT=5.12.12
+QT_TAR="everywhere"
 BZIP=1.0.8
 XML=2.9.12
 
-# on OSX we target High Sierra (10.13) with clang (MP) from macports
+# on macOS we target High Sierra (10.13) with clang (MP) from macports
 OSX_MIN=10.13
 CLANG=9.0
 CLANG_ROOT="/opt/local"
+
+# on OSX we target Yosemite (10.10) with Qt 5.9 and clang (MP) from macports
+if [ "${LEGACY_OSX}" = 1 ]; then
+    QT=5.9.9
+    OSX_MIN=10.10
+    QT_TAR="opensource"
+fi
 
 # always include SDK dir during build
 DEFAULT_FLAGS="-I$SDK/include -L$SDK/lib"
@@ -209,10 +218,10 @@ if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
     rm -rf ImageMagick* || true
     tar xvf $SRC/ImageMagick-$MAGICK.tar.xz || exit 1
     cd ImageMagick-$MAGICK || exit 1
-    if [ ! -f "${CWD}/imagemagick-3-gimp_2_10.patch" ]; then
-        curl -L https://github.com/nettstudio/mxe/raw/Cyan-1.2.3/src/imagemagick-3-gimp_2_10.patch -o "${CWD}/imagemagick-3-gimp_2_10.patch"
+    if [ ! -f "${SRC}/imagemagick-3-gimp_2_10.patch" ]; then
+        curl -L https://github.com/nettstudio/mxe/raw/Cyan-1.2.3/src/imagemagick-3-gimp_2_10.patch -o "${SRC}/imagemagick-3-gimp_2_10.patch"
     fi
-    patch -p1 < "${CWD}/imagemagick-3-gimp_2_10.patch"
+    patch -p1 < "${SRC}/imagemagick-3-gimp_2_10.patch"
     MAGICK_LDFLAGS=""
     if [ "$OS" = "Darwin" ]; then
         MAGICK_LDFLAGS="-mmacosx-version-min=$OSX_MIN"
@@ -249,14 +258,15 @@ fi
 QT_CONFIGURE="-static -force-pkg-config -optimize-size -opensource -release -confirm-license -gui -widgets -strip -nomake examples -nomake tests -no-glib -no-dbus  -no-openssl -no-ico -no-icu -no-sql-sqlite -no-sse4.2 -no-avx -no-avx2 -no-avx512 -no-cups -no-gtk -no-libjpeg -no-fontconfig -no-mtdev -no-syslog -no-gif -qt-pcre -qt-freetype -qt-harfbuzz -opengl desktop -system-libpng -system-zlib"
 if [ ! -f "$SDK/bin/qmake" ]; then
     cd $WRK 
-    rm -rf qtbase-everywhere-src-$QT
-    tar xvf $SRC/qtbase-everywhere-src-$QT.tar.xz
-    cd qtbase-everywhere-src-$QT || exit 1
+    rm -rf qtbase-${QT_TAR}-src-$QT
+    tar xvf $SRC/qtbase-${QT_TAR}-src-$QT.tar.xz
+    cd qtbase-${QT_TAR}-src-$QT || exit 1
     export LD_LIBRARY_PATH="$SDK/lib:$LD_LIBRARY_PATH"
     if [ "$OS" = "Darwin" ]; then
         echo "QMAKE_CC = $CLANG_ROOT/bin/clang-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
         echo "QMAKE_CXX = $CLANG_ROOT/bin/clang++-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
-        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE -c++std c++14 -no-feature-testlib -no-securetransport -I $SDK/include -L $SDK/lib
+        QT_CPP="-c++std c++14"
+        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE $QT_CPP -no-feature-testlib -no-securetransport -I $SDK/include -L $SDK/lib
     elif [ "$OS" = "Linux" ]; then
         CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE -no-eglfs -no-kms -no-linuxfb -xkbcommon -qt-xcb -I $SDK/include -L $SDK/lib
     fi
@@ -268,8 +278,8 @@ fi
 if [ ! -f "$SDK/bin/macdeployqt" ] && [ "$OS" = "Darwin" ]; then
   cd $WRK || exit 1
   rm -rf qttools* || true
-  tar xvf $SRC/qttools-everywhere-src-$QT.tar.xz || exit 1
-  cd qttools-everywhere-src-$QT || exit 1
+  tar xvf $SRC/qttools-${QT_TAR}-src-$QT.tar.xz || exit 1
+  cd qttools-${QT_TAR}-src-$QT || exit 1
   $SDK/bin/qmake || exit 1
   make || exit 1
   make install || exit 1

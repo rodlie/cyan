@@ -1,10 +1,11 @@
 #!/bin/sh
 #
-# Build Cyan release for Windows/macOS/Linux
+# Build Cyan release for Windows/macOS/OSX/Linux
 #
 # Windows release is built on Ubuntu 20.04 using MXE (GCC 7)
 # Linux release is built on CentOS 7 using DTS (GCC 7)
-# macOS release is built on macOS 10.13 (CLANG MP 9 from macports)
+# macOS release is built on macOS 10.13 (CLANG 9.0 from macports)
+# OSX release is built in OSX 10.11 (CLANG 9.0 from macports)
 #
 
 set -e
@@ -28,6 +29,14 @@ OSX_MIN=10.13
 CLANG=9.0
 CLANG_ROOT="/opt/local"
 ARCH="x86_64"
+LEGACY_OSX=${LEGACY_OSX:-0}
+MAC_TAG=macOS
+DMG_FORMAT=UDBZ
+
+if [ "${LEGACY_OSX}" = 1 ]; then
+    OSX_MIN=10.10
+    MAC_TAG=OSX
+fi
 
 if [ "${OS}" = "Windows" ]; then
     ARCH="x64"
@@ -62,7 +71,7 @@ sleep 5
 rm -rf "${BUILD_DIR}" || true
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
-${QMAKE} ../cyan.pro
+${QMAKE} ../cyan.pro OSX_MIN=${OSX_MIN}
 make -j${MKJOBS}
 AEXE=build/Cyan
 if [ "${OS}" = "Windows" ]; then
@@ -101,7 +110,7 @@ if [ ! -d "${CWD}/legal" ]; then
 fi
 
 if [ "${OS}" = "Darwin" ]; then
-    ZIP_DIR=Cyan-${VERSION}-macOS-${ARCH}
+    ZIP_DIR=Cyan-${VERSION}-${MAC_TAG}-${ARCH}
 else
     ZIP_DIR=Cyan-${VERSION}-${OS}-${ARCH}
 fi
@@ -126,7 +135,7 @@ if [ "${OS}" = "Linux" ]; then
     tar czf ${ZIP_DIR}.${EXT} ${ZIP_DIR}
 elif [ "${OS}" = "Darwin" ]; then
     EXT=dmg
-    hdiutil create -volname "Cyan $VERSION" -srcfolder ${ZIP_DIR} -ov -format UDBZ ${ZIP_DIR}.${EXT}
+    hdiutil create -volname "Cyan $VERSION" -srcfolder ${ZIP_DIR} -ov -format ${DMG_FORMAT} ${ZIP_DIR}.${EXT}
 else
     zip -9 -r ${ZIP_DIR}.${EXT} ${ZIP_DIR}
 fi
