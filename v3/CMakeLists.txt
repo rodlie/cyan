@@ -54,8 +54,11 @@ set(PROJECT_SOURCES
     main.cpp
     engine.cpp
     engine.h
+    mdi.cpp
     cyan.cpp
-    cyan.h)
+    cyan.h
+    qtwindowlistmenu.cpp
+    qtwindowlistmenu.h)
 set(TEST_SOURCES
     test.cpp
     engine.cpp

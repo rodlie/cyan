@@ -65,6 +65,7 @@ namespace Cyan
             QString errors;
             QString warnings;
             QString information;
+            QString filename;
         };
 
         Engine(QObject *parent = nullptr);
@@ -114,6 +115,7 @@ namespace Cyan
         static int getMemoryResource();
         static void setMemoryResource(int gib);
         static int getTotalRam(int percent);
+        static const QStringList supportedFormats();
     };
 }
 

@@ -25,9 +25,41 @@
 #define CYAN_H
 
 #include <QMainWindow>
+#include <QMdiArea>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
+#include <QUrl>
+#include <QToolBar>
+#include <QSplitter>
+#include <QStatusBar>
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+
+#include "qtwindowlistmenu.h"
+
+#include "engine.h"
 
 namespace Cyan
 {
+    class Mdi : public QMdiArea
+    {
+        Q_OBJECT
+
+    public:
+        Mdi(QWidget *parent = nullptr);
+
+    signals:
+        void dropped(const QList<QUrl> &urls);
+
+    protected:
+        void dragEnterEvent(QDragEnterEvent *event);
+        void dragMoveEvent(QDragMoveEvent *event);
+        void dragLeaveEvent(QDragLeaveEvent *event);
+        void dropEvent(QDropEvent *event);
+    };
     class Window : public QMainWindow
     {
         Q_OBJECT
@@ -35,6 +67,33 @@ namespace Cyan
     public:
         Window(QWidget *parent = nullptr);
         ~Window();
+
+    public slots:
+        void openImage( bool showDialog = true,
+                        const QString &filename = QString() );
+
+    signals:
+        void openImageReady(const Engine::Image &image);
+
+    private:
+        Mdi *_mdi;
+        QSplitter *_splitter;
+        QSplitter *_splitterLeft;
+        QSplitter *_splitterRight;
+        QToolBar *_toolbar;
+        QStatusBar *_statusbar;
+        QMenuBar *_menubar;
+        QMenu *_menuFile;
+        QMenu *_menuView;
+        QMenu *_menuHelp;
+        QtWindowListMenu *_menuWindows;
+        QAction *_actionOpenImage;
+
+    private slots:
+        void setupTheme(bool native = false,
+                        bool nativeIcons = false);
+        void handleDropped(const QList<QUrl> &urls);
+        void handleActionOpenImage();
     };
 }
 

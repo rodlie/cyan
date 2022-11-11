@@ -551,3 +551,14 @@ Engine::getTotalRam(int percent)
     if (ram < 4) { ram = 4; }
     return ram;
 }
+
+const QStringList
+Engine::supportedFormats()
+{
+    QStringList formats;
+    formats << "*.psd" << "*.xcf";
+    if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
+    if ( hasJPEG() ) { formats << "*.png"; }
+    if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
+    return formats;
+}
