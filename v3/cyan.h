@@ -37,6 +37,8 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QActionGroup>
+#include <QToolButton>
 
 #include "qtwindowlistmenu.h"
 
@@ -86,14 +88,33 @@ namespace Cyan
         QMenu *_menuFile;
         QMenu *_menuView;
         QMenu *_menuHelp;
+        QMenu *_menuColor;
+        QMenu *_menuColorRGB;
+        QMenu *_menuColorCMYK;
+        QMenu *_menuColorGRAY;
+        QMenu *_menuColorIntent;
+        QAction *_menuColorBlackPoint;
+        QActionGroup *_menuColorRGBGroup;
+        QActionGroup *_menuColorCMYKGroup;
+        QActionGroup *_menuColorGRAYGroup;
+        QToolButton *_menuColorButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
 
     private slots:
+        void setupUi();
+        void setupMenus();
+        void setupActions();
         void setupTheme(bool native = false,
                         bool nativeIcons = false);
         void handleDropped(const QList<QUrl> &urls);
         void handleActionOpenImage();
+        void populateColorProfileMenu(QMenu *menu,
+                                      QActionGroup *group,
+                                      Engine::colorSpace colorspace);
+        void handleColorProfileTriggered();
+        void populateColorIntentMenu();
+        void setDefaultColorIntent();
     };
 }
 
