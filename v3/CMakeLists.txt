@@ -54,7 +54,9 @@ set(PROJECT_SOURCES
     main.cpp
     engine.cpp
     engine.h
+    basicview.cpp
     mdi.cpp
+    mdisubwindow.cpp
     cyan.cpp
     cyan.h
     qtwindowlistmenu.cpp

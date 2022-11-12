@@ -33,6 +33,8 @@
 
 #include <vector>
 
+using namespace Cyan;
+
 Cyan::Window::Window(QWidget *parent)
     : QMainWindow(parent)
     , _mdi(nullptr)
@@ -69,8 +71,8 @@ Cyan::Window::~Window()
 }
 
 void
-Cyan::Window::openImage(bool showDialog,
-                        const QString &filename)
+Window::openImage(bool showDialog,
+                  const QString &filename)
 {
     QString dialogFilename;
     if (showDialog) {
@@ -86,7 +88,7 @@ Cyan::Window::openImage(bool showDialog,
 }
 
 void
-Cyan::Window::setupUi()
+Window::setupUi()
 {
     // mdi
     _mdi = new Mdi(this);
@@ -127,7 +129,7 @@ Cyan::Window::setupUi()
 }
 
 void
-Cyan::Window::setupMenus()
+Window::setupMenus()
 {
     _menuFile = new QMenu(tr("File"), this);
     _menuView = new QMenu(tr("View"), this);
@@ -163,7 +165,7 @@ Cyan::Window::setupMenus()
 }
 
 void
-Cyan::Window::setupActions()
+Window::setupActions()
 {
     // open image
     _actionOpenImage = new QAction(QIcon::fromTheme("document-open"),
@@ -209,8 +211,8 @@ Cyan::Window::setupActions()
 }
 
 void
-Cyan::Window::setupTheme(bool native,
-                         bool nativeIcons)
+Window::setupTheme(bool native,
+                   bool nativeIcons)
 {
     if (native) {
         if ( QIcon::themeName().isEmpty() ) { QIcon::setThemeName("hicolor"); }
@@ -250,20 +252,21 @@ Cyan::Window::setupTheme(bool native,
 }
 
 void
-Cyan::Window::handleDropped(const QList<QUrl> &urls)
+Window::handleDropped(const QList<QUrl> &urls)
 {
     for (auto &url : urls) { openImage( false, url.toLocalFile() ); }
 }
 
-void Cyan::Window::handleActionOpenImage()
+void
+Window::handleActionOpenImage()
 {
     openImage();
 }
 
 void
-Cyan::Window::populateColorProfileMenu(QMenu *menu,
-                                       QActionGroup *group,
-                                       Engine::colorSpace colorspace)
+Window::populateColorProfileMenu(QMenu *menu,
+                                 QActionGroup *group,
+                                 Engine::colorSpace colorspace)
 {
     if (!menu || !group) { return; }
     QMapIterator<QString, QString> i( Engine::getProfiles(colorspace) );
@@ -285,7 +288,7 @@ Cyan::Window::populateColorProfileMenu(QMenu *menu,
 }
 
 void
-Cyan::Window::handleColorProfileTriggered()
+Window::handleColorProfileTriggered()
 {
     QAction *action = qobject_cast<QAction*>( sender() );
     if (!action) { return; }
@@ -294,7 +297,7 @@ Cyan::Window::handleColorProfileTriggered()
 }
 
 void
-Cyan::Window::populateColorIntentMenu()
+Window::populateColorIntentMenu()
 {
     std::vector<Engine::RenderingIntent> intents;
     intents.push_back(Engine::UndefinedRenderingIntent);
@@ -332,7 +335,8 @@ Cyan::Window::populateColorIntentMenu()
     }
 }
 
-void Cyan::Window::setDefaultColorIntent()
+void
+Window::setDefaultColorIntent()
 {
     QAction *action = qobject_cast<QAction*>( sender() );
     if (!action) { return; }
@@ -345,4 +349,14 @@ void Cyan::Window::setDefaultColorIntent()
                       action->data().toInt());
     settings.endGroup();
     settings.sync();*/
+}
+
+bool
+Window::isFileOpen(const QString &filename)
+{
+    for (int i = 0; i < _mdi->subWindowList().size(); ++i) {
+        MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->subWindowList().at(i) );
+        if (tab && tab->getFilename() == filename) { return true; }
+    }
+    return false;
 }

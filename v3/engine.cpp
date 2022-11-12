@@ -248,6 +248,100 @@ Engine::getProfiles(colorSpace colorspace,
     return output;
 }
 
+const Engine::Image
+Engine::readImage(const QString &filename,
+                  const QString &fallbackProfileRGB,
+                  const QString &fallbackProfileCMYK,
+                  const QString &fallbackProfileGRAY,
+                  const Engine::RenderingIntent intent,
+                  bool blackPoint,
+                  bool identify)
+{
+    Image result;
+    result.success = false;
+    result.filename = filename;
+    Magick::Image image;
+    try {
+        image.read( filename.toStdString() );
+    }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        result.errors.append( error.what() );
+        return result;
+    }
+    catch(Magick::Warning &warn) {
+        qWarning() << warn.what();
+        result.warnings.append( warn.what() );
+    }
+    try {
+        bool hasProfile = (image.iccColorProfile().length() > 0);
+        if (!hasProfile) {
+            QString fallbackProfile = fallbackProfileRGB;
+            switch ( image.colorSpace() ) {
+            case Magick::CMYColorspace:
+            case Magick::CMYKColorspace:
+                fallbackProfile = fallbackProfileCMYK;
+                break;
+            case Magick::GRAYColorspace:
+                fallbackProfile = fallbackProfileGRAY;
+                break;
+            default:;
+            }
+            switch (intent) {
+            case SaturationRenderingIntent:
+                image.renderingIntent(Magick::SaturationIntent);
+                break;
+            case PerceptualRenderingIntent:
+                image.renderingIntent(Magick::PerceptualIntent);
+                break;
+            case AbsoluteRenderingIntent:
+                image.renderingIntent(Magick::AbsoluteIntent);
+                break;
+            case RelativeRenderingIntent:
+                image.renderingIntent(Magick::RelativeIntent);
+                break;
+            default:;
+            }
+            image.blackPointCompensation(blackPoint);
+            QByteArray profileArray = fileToByteArray(fallbackProfile);
+            Magick::Blob profileBlob( profileArray.data(), profileArray.size() );
+            image.profile("ICC", profileBlob);
+        }
+    }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        result.errors.append( error.what() );
+        return result;
+    }
+    catch(Magick::Warning &warn) {
+        qWarning() << warn.what();
+        result.warnings.append( warn.what() );
+    }
+    try {
+        image.magick("RGBA");
+        if (image.depth() > 8) { image.depth(8); }
+        Magick::Blob blob;
+        image.write(&blob);
+        if ( blob.length() > 0) {
+            result.success = true;
+            result.width = image.columns();
+            result.height = image.rows();
+            result.buffer = QByteArray( (char*)blob.data(), blob.length() );
+        }
+    }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        result.errors.append( error.what() );
+        return result;
+    }
+    catch(Magick::Warning &warn) {
+        qWarning() << warn.what();
+        result.warnings.append( warn.what() );
+    }
+
+    return result;
+}
+
 bool
 Engine::compareImages(const QByteArray image1,
                       const QByteArray image2,

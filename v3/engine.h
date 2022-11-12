@@ -61,6 +61,8 @@ namespace Cyan
         };
         struct Image {
             bool success = false;
+            int width = 0;
+            int height = 0;
             QByteArray buffer;
             QString errors;
             QString warnings;
@@ -85,6 +87,13 @@ namespace Cyan
                                            ICCTag tag = ICCDescription);
         static const QMap<QString, QString> getProfiles(colorSpace colorspace,
                                                         bool returnPaths = false);
+        static const Image readImage(const QString &filename,
+                                     const QString &fallbackProfileRGB = QString(),
+                                     const QString &fallbackProfileCMYK = QString(),
+                                     const QString &fallbackProfileGRAY = QString(),
+                                     const RenderingIntent intent = PerceptualRenderingIntent,
+                                     bool blackPoint = true,
+                                     bool identify = false);
         static bool compareImages( const QByteArray image1,
                                    const QByteArray image2,
                                    const QString &tmpPath = QString() );

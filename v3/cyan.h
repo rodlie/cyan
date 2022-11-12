@@ -39,6 +39,12 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QToolButton>
+#include <QMdiSubWindow>
+#include <QCloseEvent>
+#include <QGraphicsView>
+#include <QWheelEvent>
+#include <QResizeEvent>
+#include <QGraphicsScene>
 
 #include "qtwindowlistmenu.h"
 
@@ -46,6 +52,42 @@
 
 namespace Cyan
 {
+    class BasicView : public QGraphicsView
+    {
+        Q_OBJECT
+
+    public:
+        explicit BasicView(QWidget* parent = nullptr,
+                           bool fit = false,
+                           bool native = false);
+        bool isFit();
+
+    signals:
+        void resetZoom();
+        void zoomChanged(double scaleX, double scaleY);
+        void dropped(const QList<QUrl> &urls);
+
+    public slots:
+        void setZoom(double scaleX, double scaleY);
+        void setFit(bool value);
+        void setImage(const QByteArray &buffer,
+                      int width,
+                      int height);
+
+    private:
+        bool _fit;
+        bool _native;
+
+    protected:
+        void wheelEvent(QWheelEvent* e);
+        void mousePressEvent(QMouseEvent *e);
+        void dragEnterEvent(QDragEnterEvent *e);
+        void dragMoveEvent(QDragMoveEvent *e);
+        void dragLeaveEvent(QDragLeaveEvent *e);
+        void dropEvent(QDropEvent *e);
+        void resizeEvent(QResizeEvent *e);
+    };
+
     class Mdi : public QMdiArea
     {
         Q_OBJECT
@@ -57,11 +99,34 @@ namespace Cyan
         void dropped(const QList<QUrl> &urls);
 
     protected:
-        void dragEnterEvent(QDragEnterEvent *event);
-        void dragMoveEvent(QDragMoveEvent *event);
-        void dragLeaveEvent(QDragLeaveEvent *event);
-        void dropEvent(QDropEvent *event);
+        void dragEnterEvent(QDragEnterEvent *e);
+        void dragMoveEvent(QDragMoveEvent *e);
+        void dragLeaveEvent(QDragLeaveEvent *e);
+        void dropEvent(QDropEvent *e);
     };
+
+    class MdiSubWindow : public QMdiSubWindow
+    {
+        Q_OBJECT
+
+    public:
+        MdiSubWindow( QWidget *parent = nullptr,
+                      const QString &filename = QString(),
+                      Qt::WindowFlags flags = Qt::WindowFlags() );
+        const QString getFilename();
+        BasicView* getView();
+
+    signals:
+
+    private:
+        QString _filename;
+        BasicView *_view;
+        QGraphicsScene *_scene;
+
+    protected:
+        void closeEvent(QCloseEvent *e);
+    };
+
     class Window : public QMainWindow
     {
         Q_OBJECT
@@ -75,7 +140,6 @@ namespace Cyan
                         const QString &filename = QString() );
 
     signals:
-        void openImageReady(const Engine::Image &image);
 
     private:
         Mdi *_mdi;
@@ -115,6 +179,7 @@ namespace Cyan
         void handleColorProfileTriggered();
         void populateColorIntentMenu();
         void setDefaultColorIntent();
+        bool isFileOpen(const QString &filename);
     };
 }
 

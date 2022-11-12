@@ -23,37 +23,36 @@
 
 #include "cyan.h"
 
-#include <QMimeData>
-
 using namespace Cyan;
 
-Mdi::Mdi(QWidget *parent)
-    : QMdiArea(parent)
+MdiSubWindow::MdiSubWindow(QWidget *parent,
+                           const QString &filename,
+                           Qt::WindowFlags flags)
+    : QMdiSubWindow(parent, flags)
+    , _filename(filename)
+    , _view(nullptr)
+    , _scene(nullptr)
 {
-    setAcceptDrops(true);
+    _scene = new QGraphicsScene(this);
+    _view = new BasicView(this, true);
+    _view->setScene(_scene);
+    setWidget(_view);
+}
+
+const QString
+MdiSubWindow::getFilename()
+{
+    return _filename;
+}
+
+BasicView *
+MdiSubWindow::getView()
+{
+    return _view;
 }
 
 void
-Mdi::dragEnterEvent(QDragEnterEvent *e)
+MdiSubWindow::closeEvent(QCloseEvent *e)
 {
-    e->acceptProposedAction();
+    QMdiSubWindow::closeEvent(e);
 }
-
-void
-Mdi::dragMoveEvent(QDragMoveEvent *e)
-{
-    e->acceptProposedAction();
-}
-
-void
-Mdi::dragLeaveEvent(QDragLeaveEvent *e)
-{
-    e->accept();
-}
-
-void
-Mdi::dropEvent(QDropEvent *e)
-{
-    if ( e->mimeData()->hasUrls() ) { emit dropped( e->mimeData()->urls() ); }
-}
-
