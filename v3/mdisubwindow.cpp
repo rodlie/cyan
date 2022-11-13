@@ -23,6 +23,8 @@
 
 #include "cyan.h"
 
+#include <QFileInfo>
+
 using namespace Cyan;
 
 MdiSubWindow::MdiSubWindow(QWidget *parent,
@@ -37,6 +39,8 @@ MdiSubWindow::MdiSubWindow(QWidget *parent,
     _view = new BasicView(this, true);
     _view->setScene(_scene);
     setWidget(_view);
+    QFileInfo fileInfo(_filename);
+    setWindowTitle( fileInfo.completeBaseName() );
 }
 
 const QString

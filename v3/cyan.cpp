@@ -30,6 +30,7 @@
 #include <QIcon>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QtConcurrentRun>
 
 #include <vector>
 
@@ -63,6 +64,12 @@ Cyan::Window::Window(QWidget *parent)
     setupUi();
     setupMenus();
     setupActions();
+
+    qRegisterMetaType<Engine::Image>("Engine::Image");
+    connect( this,
+             SIGNAL( openImageReady(Engine::Image) ),
+             this,
+             SLOT( handleOpenImageReady(Engine::Image) ) );
 }
 
 Cyan::Window::~Window()
@@ -82,9 +89,17 @@ Window::openImage(bool showDialog,
                                                        Engine::supportedFormats().join(" ") );
     }
     QString filePath = showDialog ? dialogFilename : filename;
-    if ( Engine::isValidImage(filePath) ) {
-        qDebug() << "TODO: read image and open a new view";
+    if ( !isFileOpen(filePath) && Engine::isValidImage(filePath) ) {
+        QtConcurrent::run(this, &Window::readImage, filePath);
     }
+}
+
+void
+Window::readImage(const QString &filename)
+{
+    qDebug() << "readImage" << filename;
+    Engine::Image image = Engine::readImage(filename);
+    emit openImageReady(image);
 }
 
 void
@@ -359,4 +374,14 @@ Window::isFileOpen(const QString &filename)
         if (tab && tab->getFilename() == filename) { return true; }
     }
     return false;
+}
+
+void Window::handleOpenImageReady(const Engine::Image &image)
+{
+    qDebug() << "handle open image ready" << image.filename;
+    if ( isFileOpen(image.filename) ) { return; }
+    MdiSubWindow *tab = new MdiSubWindow(_mdi, image.filename);
+    tab->setAttribute(Qt::WA_DeleteOnClose);
+    tab->getView()->setImage(image.buffer, image.width, image.height);
+    tab->showMaximized();
 }

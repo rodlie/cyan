@@ -138,8 +138,10 @@ namespace Cyan
     public slots:
         void openImage( bool showDialog = true,
                         const QString &filename = QString() );
+        void readImage(const QString &filename);
 
     signals:
+        void openImageReady(const Engine::Image &image);
 
     private:
         Mdi *_mdi;
@@ -180,6 +182,7 @@ namespace Cyan
         void populateColorIntentMenu();
         void setDefaultColorIntent();
         bool isFileOpen(const QString &filename);
+        void handleOpenImageReady(const Engine::Image &image);
     };
 }
 

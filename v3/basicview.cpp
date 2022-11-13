@@ -24,6 +24,9 @@
 #include "cyan.h"
 
 #include <QMimeData>
+#include <QPixmap>
+#include <QImage>
+#include <QDebug>
 
 using namespace Cyan;
 
@@ -132,12 +135,14 @@ BasicView::setImage(const QByteArray &buffer,
                     int width,
                     int height)
 {
-    //         QPixmap pix = QPixmap::fromImage(QImage((uchar*)(preview.data()), tmp.columns(), tmp.rows(), QImage::Format_RGBA8888));
-
-    /*if (image.length() == 0) { return; }
-    QPixmap pixmap(QPixmap::fromImage(QImage::fromData(image)));
-    if (pixmap.isNull()) { return; }
+    qDebug() << "setImage" << buffer.size() << width << height;
+    if (buffer.size() < 1 || width < 1 || height < 1) { return; }
+    QPixmap pixmap = QPixmap::fromImage( QImage( (uchar*)( buffer.data() ),
+                                                 width,
+                                                 height,
+                                                 QImage::Format_RGBA8888) );
+    if ( pixmap.isNull() ) { return; }
     scene()->clear();
     scene()->addPixmap(pixmap);
-    scene()->setSceneRect(0, 0, pixmap.width(), pixmap.height());*/
+    scene()->setSceneRect( 0, 0, pixmap.width(), pixmap.height() );
 }
