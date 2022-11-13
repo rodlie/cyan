@@ -50,6 +50,16 @@
 
 #include "engine.h"
 
+#define THEME_ICON_APPLICATIONS_GRAPHICS "applications-graphics"
+#define THEME_ICON_DOCUMENT_OPEN "document-open"
+#define THEME_ICON_VIDEO_DISPLAY "video-display"
+#define THEME_ICON_PREFERENCES_COLOR "preferences-color"
+
+#define CYAN_ICON_SUBWINDOW THEME_ICON_APPLICATIONS_GRAPHICS
+#define CYAN_ICON_COLOR_WHEEL THEME_ICON_PREFERENCES_COLOR
+#define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
+#define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
+
 namespace Cyan
 {
     class BasicView : public QGraphicsView
@@ -159,11 +169,14 @@ namespace Cyan
         QMenu *_menuColorCMYK;
         QMenu *_menuColorGRAY;
         QMenu *_menuColorIntent;
+        QMenu *_menuColorDisplay;
         QAction *_menuColorBlackPoint;
         QActionGroup *_menuColorRGBGroup;
         QActionGroup *_menuColorCMYKGroup;
         QActionGroup *_menuColorGRAYGroup;
+        QActionGroup *_menuColorDisplayGroup;
         QToolButton *_menuColorButton;
+        QToolButton *_menuColorDisplayButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
 

@@ -53,11 +53,14 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorCMYK(nullptr)
     , _menuColorGRAY(nullptr)
     , _menuColorIntent(nullptr)
+    , _menuColorDisplay(nullptr)
     , _menuColorBlackPoint(nullptr)
     , _menuColorRGBGroup(nullptr)
     , _menuColorCMYKGroup(nullptr)
     , _menuColorGRAYGroup(nullptr)
+    , _menuColorDisplayGroup(nullptr)
     , _menuColorButton(nullptr)
+    , _menuColorDisplayButton(nullptr)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
 {
@@ -129,7 +132,7 @@ Window::setupUi()
     _toolbar = new QToolBar(tr("Tools"), this);
     _toolbar->setMovable(false);
     _toolbar->setIconSize( QSize(32, 32) );
-    addToolBar(Qt::LeftToolBarArea, _toolbar);
+    addToolBar(Qt::TopToolBarArea, _toolbar);
 
     // status bar
     _statusbar = new QStatusBar(this);
@@ -155,18 +158,33 @@ Window::setupMenus()
     _menuColorCMYK = new QMenu(tr("Default CMYK profile"), this);
     _menuColorGRAY = new QMenu(tr("Default GRAY profile"), this);
     _menuColorIntent = new QMenu(tr("Rendering Intent"), this);
+    _menuColorDisplay = new QMenu(tr("Display profile"), this);
 
-    _menuColor->setIcon( QIcon::fromTheme("applications-graphics") );
+    _menuColorRGB->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColorCMYK->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColorGRAY->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    //_menuColorIntent->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColorDisplay->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColor->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+
     _menuColor->addMenu(_menuColorRGB);
     _menuColor->addMenu(_menuColorCMYK);
     _menuColor->addMenu(_menuColorGRAY);
+    _menuColor->addMenu(_menuColorDisplay);
     _menuColor->addMenu(_menuColorIntent);
 
     _menuColorButton = new QToolButton(this);
     _menuColorButton->setPopupMode(QToolButton::InstantPopup);
-    _menuColorButton->setIcon( QIcon::fromTheme("applications-graphics") );
+    _menuColorButton->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     _menuColorButton->setText( tr("Colors") );
     _menuColorButton->setMenu(_menuColor);
+
+    _menuColorDisplayButton = new QToolButton(this);
+    _menuColorDisplayButton->setPopupMode(QToolButton::MenuButtonPopup);
+    _menuColorDisplayButton->setCheckable(true);
+    _menuColorDisplayButton->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
+    _menuColorDisplayButton->setText( tr("Display") );
+    _menuColorDisplayButton->setMenu(_menuColorDisplay);
 
     _menuView->addMenu(_menuColor);
 
@@ -183,7 +201,7 @@ void
 Window::setupActions()
 {
     // open image
-    _actionOpenImage = new QAction(QIcon::fromTheme("document-open"),
+    _actionOpenImage = new QAction(QIcon::fromTheme(CYAN_ICON_OPEN_IMAGE),
                                    tr("Open image"),
                                    this);
     _actionOpenImage->setShortcut( QKeySequence( tr("Ctrl+O") ) );
@@ -193,18 +211,23 @@ Window::setupActions()
              SLOT( handleActionOpenImage() ) );
     _menuFile->addAction(_actionOpenImage);
 
-    // tool bar
+    // toolbar
     _toolbar->addAction(_actionOpenImage);
+    _toolbar->addSeparator();
     _toolbar->addWidget(_menuColorButton);
+    _toolbar->addSeparator();
+    _toolbar->addWidget(_menuColorDisplayButton);
 
     // default profiles
     _menuColorRGBGroup = new QActionGroup(this);
     _menuColorCMYKGroup = new QActionGroup(this);
     _menuColorGRAYGroup = new QActionGroup(this);
+    _menuColorDisplayGroup = new QActionGroup(this);
 
     _menuColorRGB->addActions( _menuColorRGBGroup->actions() );
     _menuColorCMYK->addActions( _menuColorCMYKGroup->actions() );
     _menuColorGRAY->addActions( _menuColorGRAYGroup->actions() );
+    _menuColorDisplay->addActions( _menuColorDisplayGroup->actions() );
 
     // default blackpoint
     _menuColorBlackPoint = new QAction(tr("Black point compensation"), this);
@@ -221,6 +244,9 @@ Window::setupActions()
     populateColorProfileMenu(_menuColorGRAY,
                              _menuColorGRAYGroup,
                              Engine::colorSpaceGRAY);
+    populateColorProfileMenu(_menuColorDisplay,
+                             _menuColorDisplayGroup,
+                             Engine::colorSpaceRGB);
 
     populateColorIntentMenu();
 }
@@ -288,7 +314,7 @@ Window::populateColorProfileMenu(QMenu *menu,
     while ( i.hasNext() ) {
         i.next();
         QAction *action = new QAction(menu);
-        //action->setIcon(QIcon::fromTheme("color-wheel"));
+        //action->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
         action->setText( i.key() );
         action->setData( i.value() );
         action->setCheckable(true);
@@ -357,13 +383,7 @@ Window::setDefaultColorIntent()
     if (!action) { return; }
     for ( auto &act : _menuColorIntent->actions() ) { act->setChecked(false); }
     action->setChecked(true);
-
-    /*QSettings settings;
-    settings.beginGroup(QString("color"));
-    settings.setValue(QString("intent"),
-                      action->data().toInt());
-    settings.endGroup();
-    settings.sync();*/
+    // TODO: save settings!
 }
 
 bool
@@ -378,10 +398,14 @@ Window::isFileOpen(const QString &filename)
 
 void Window::handleOpenImageReady(const Engine::Image &image)
 {
-    qDebug() << "handle open image ready" << image.filename;
-    if ( isFileOpen(image.filename) ) { return; }
+    if ( isFileOpen(image.filename) ||
+         !image.success ||
+         image.buffer.length() < 1 ) { return; }
     MdiSubWindow *tab = new MdiSubWindow(_mdi, image.filename);
     tab->setAttribute(Qt::WA_DeleteOnClose);
-    tab->getView()->setImage(image.buffer, image.width, image.height);
+    tab->setWindowIcon( QIcon::fromTheme(CYAN_ICON_SUBWINDOW) );
+    tab->getView()->setImage(image.buffer,
+                             image.width,
+                             image.height);
     tab->showMaximized();
 }
