@@ -296,7 +296,21 @@ Window::setupTheme(bool native,
 void
 Window::handleDropped(const QList<QUrl> &urls)
 {
-    for (auto &url : urls) { openImage( false, url.toLocalFile() ); }
+    for (auto &url : urls) {
+        QFileInfo info( url.toLocalFile() );
+        if ( info.isDir() ) {
+            QDir dir( info.absoluteFilePath() );
+            QStringList images = dir.entryList(Engine::supportedFormats(),
+                                               QDir::Files);
+            QList<QUrl> newUrls;
+            for (auto &image : images) { newUrls.append( QUrl::fromLocalFile( QString("%1/%2")
+                                                                              .arg(info.absoluteFilePath(),
+                                                                                   image) ) ); }
+            handleDropped(newUrls);
+            continue;
+        }
+        openImage( false, url.toLocalFile() );
+    }
 }
 
 void
@@ -417,5 +431,9 @@ Window::handleOpenImageReady(const Engine::Image &image)
     tab->getView()->setImage(image.buffer,
                              image.width,
                              image.height);
+    connect( tab->getView(),
+             SIGNAL( dropped(QList<QUrl>) ),
+             this,
+             SLOT( handleDropped(QList<QUrl>) ) );
     tab->showMaximized();
 }
