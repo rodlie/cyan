@@ -2,9 +2,7 @@
 #
 # Cyan - https://github.com/rodlie/cyan
 #
-# Copyright (c) 2020-2022 Ole-André Rodlie. All rights reserved.
-# Copyright (c) 2018-2019 Ole-André Rodlie, FxArena. All rights reserved.
-# Copyright (c) 2016-2017 Ole-André Rodlie, INRIA. All rights reserved.
+# Copyright (c) Ole-André Rodlie <ole.andre.rodlie@gmail.com>. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -195,6 +193,7 @@ namespace Cyan
         void populateColorIntentMenu();
         void setDefaultColorIntent();
         bool isFileOpen(const QString &filename);
+        MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
     };
 }

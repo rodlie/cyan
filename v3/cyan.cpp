@@ -2,9 +2,7 @@
 #
 # Cyan - https://github.com/rodlie/cyan
 #
-# Copyright (c) 2020-2022 Ole-André Rodlie. All rights reserved.
-# Copyright (c) 2018-2019 Ole-André Rodlie, FxArena. All rights reserved.
-# Copyright (c) 2016-2017 Ole-André Rodlie, INRIA. All rights reserved.
+# Copyright (c) Ole-André Rodlie <ole.andre.rodlie@gmail.com>. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,15 +90,18 @@ Window::openImage(bool showDialog,
                                                        Engine::supportedFormats().join(" ") );
     }
     QString filePath = showDialog ? dialogFilename : filename;
-    if ( !isFileOpen(filePath) && Engine::isValidImage(filePath) ) {
+    bool isOpen = isFileOpen(filePath);
+    if ( !isOpen && Engine::isValidImage(filePath) ) {
         QtConcurrent::run(this, &Window::readImage, filePath);
+    } else if (isOpen) {
+        MdiSubWindow *tab = getTab(filename);
+        if (tab) { _mdi->setActiveSubWindow(tab); }
     }
 }
 
 void
 Window::readImage(const QString &filename)
 {
-    qDebug() << "readImage" << filename;
     Engine::Image image = Engine::readImage(filename);
     emit openImageReady(image);
 }
@@ -314,7 +315,6 @@ Window::populateColorProfileMenu(QMenu *menu,
     while ( i.hasNext() ) {
         i.next();
         QAction *action = new QAction(menu);
-        //action->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
         action->setText( i.key() );
         action->setData( i.value() );
         action->setCheckable(true);
@@ -367,7 +367,6 @@ Window::populateColorIntentMenu()
         }
         action->setData(intent);
         action->setCheckable(true);
-        //action->setIcon(); // TODO
         connect( action,
                  SIGNAL( triggered() ),
                  this,
@@ -396,11 +395,22 @@ Window::isFileOpen(const QString &filename)
     return false;
 }
 
-void Window::handleOpenImageReady(const Engine::Image &image)
+MdiSubWindow *
+Window::getTab(const QString &filename)
 {
-    if ( isFileOpen(image.filename) ||
-         !image.success ||
-         image.buffer.length() < 1 ) { return; }
+    for (int i = 0; i < _mdi->subWindowList().size(); ++i) {
+        MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->subWindowList().at(i) );
+        if (tab && tab->getFilename() == filename) { return tab; }
+    }
+    return nullptr;
+}
+
+void
+Window::handleOpenImageReady(const Engine::Image &image)
+{
+    if (isFileOpen(image.filename) ||
+        !image.success ||
+        image.buffer.length() < 1) { return; }
     MdiSubWindow *tab = new MdiSubWindow(_mdi, image.filename);
     tab->setAttribute(Qt::WA_DeleteOnClose);
     tab->setWindowIcon( QIcon::fromTheme(CYAN_ICON_SUBWINDOW) );
