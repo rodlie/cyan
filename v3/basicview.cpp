@@ -53,11 +53,15 @@ BasicView::wheelEvent(QWheelEvent* e)
     double scaleFactor = 1.15;
     if(e->angleDelta().y() > 0) { // up
         _fit = false;
-        scale(scaleFactor, scaleFactor);
-        emit zoomChanged(scaleFactor, scaleFactor);
+        scale(scaleFactor,
+              scaleFactor);
+        emit zoomChanged(scaleFactor,
+                         scaleFactor);
     } else { // down
-        scale(1.0 / scaleFactor, 1.0 / scaleFactor);
-        emit zoomChanged(1.0 / scaleFactor, 1.0 / scaleFactor);
+        scale(1.0 / scaleFactor,
+              1.0 / scaleFactor);
+        emit zoomChanged(1.0 / scaleFactor,
+                         1.0 / scaleFactor);
     }
 }
 
@@ -114,7 +118,8 @@ void
 BasicView::setZoom(double scaleX,
                    double scaleY)
 {
-    scale(scaleX, scaleY);
+    scale(scaleX,
+          scaleY);
 }
 
 void
@@ -142,7 +147,10 @@ BasicView::setImage(const Engine::Image &image)
     _sourceProfile = image.profile;
     scene()->clear();
     scene()->addPixmap(pixmap);
-    scene()->setSceneRect( 0, 0, pixmap.width(), pixmap.height() );
+    scene()->setSceneRect( 0,
+                           0,
+                           pixmap.width(),
+                           pixmap.height() );
 }
 
 const QString

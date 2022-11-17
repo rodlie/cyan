@@ -74,11 +74,13 @@ namespace Cyan
 
     signals:
         void resetZoom();
-        void zoomChanged(double scaleX, double scaleY);
+        void zoomChanged(double scaleX,
+                         double scaleY);
         void dropped(const QList<QUrl> &urls);
 
     public slots:
-        void setZoom(double scaleX, double scaleY);
+        void setZoom(double scaleX,
+                     double scaleY);
         void setFit(bool value);
         void setImage(const Engine::Image &image);
         const QString getSourceDetails();

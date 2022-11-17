@@ -128,7 +128,8 @@ Engine::colorSpace
 Engine::getFileColorspace(const QString &filename)
 {
     if ( QFile::exists(filename) ) {
-        return getFileColorspace( cmsOpenProfileFromFile(filename.toStdString().c_str(), "r") );
+        return getFileColorspace( cmsOpenProfileFromFile(filename.toStdString().c_str(),
+                                                         "r") );
     }
     return colorSpaceUnknown;
 }
@@ -178,9 +179,7 @@ Engine::getProfileTag(cmsHPROFILE profile,
                                                              "US",
                                                              &buffer[0],
                                                              size);
-            if (size == newsize) {
-                result = buffer.data();
-            }
+            if (size == newsize) { result = buffer.data(); }
         }
     }
     cmsCloseProfile(profile);
@@ -192,7 +191,9 @@ Engine::getProfileTag(const QString &filename,
                       ICCTag tag)
 {
     if ( QFile::exists(filename) ) {
-        return getProfileTag(cmsOpenProfileFromFile(filename.toStdString().c_str(), "r"), tag);
+        return getProfileTag(cmsOpenProfileFromFile(filename.toStdString().c_str(),
+                                                    "r"),
+                             tag);
     }
     return QString();
 }
@@ -201,7 +202,8 @@ const QString Engine::getProfileTag(QByteArray buffer, ICCTag tag)
 {
     if (buffer.size() > 0) {
         return getProfileTag(cmsOpenProfileFromMem( buffer.data(),
-                                                    static_cast<cmsUInt32Number>( buffer.size() ) ),tag);
+                                                    static_cast<cmsUInt32Number>( buffer.size() ) ),
+                             tag);
     }
     return QString();
 }
@@ -312,7 +314,8 @@ Engine::readImage(const QString &filename,
             }
             image.blackPointCompensation(blackPoint);
             QByteArray profileArray = fileToByteArray(fallbackProfile);
-            Magick::Blob profileBlob( profileArray.data(), profileArray.size() );
+            Magick::Blob profileBlob( profileArray.data(),
+                                      profileArray.size() );
             image.profile("ICC", profileBlob);
         }
     }
@@ -334,7 +337,8 @@ Engine::readImage(const QString &filename,
             result.success = true;
             result.width = image.columns();
             result.height = image.rows();
-            result.buffer = QByteArray( (char*)blob.data(), blob.length() );
+            result.buffer = QByteArray( (char*)blob.data(),
+                                        blob.length() );
         }
     }
     catch(Magick::Error &error) {
@@ -471,8 +475,10 @@ Engine::convertImage(const QByteArray &inputFileData,
         result.warnings.append( QString::fromStdString(warn.what() ) );
     }
     try {
-        Magick::Blob inputProfile( inputProfileData.data(), inputProfileData.size() );
-        Magick::Blob outputProfile( outputProfileData.data(), outputProfileData.size() );
+        Magick::Blob inputProfile( inputProfileData.data(),
+                                   inputProfileData.size() );
+        Magick::Blob outputProfile( outputProfileData.data(),
+                                    outputProfileData.size() );
         if (image.iccColorProfile().length() == 0 || forceInputProfile) {
             qWarning() << "image missing color profile or override wanted";
             if (forceInputProfile && assignInputProfile) {
@@ -505,14 +511,15 @@ Engine::convertImage(const QByteArray &inputFileData,
         qWarning() << warn.what();
     }
 
-    if ( checkifValidResult && isValidImage(result.buffer) ) { result.success = true; }
+    if ( checkifValidResult &&
+         isValidImage(result.buffer) ) { result.success = true; }
     return result;
 }
 
 bool
 Engine::hasDelegate(const QString &delegate)
 {
-    if ( delegate.isEmpty() ) { return false;}
+    if ( delegate.isEmpty() ) { return false; }
     std::string result = MagickCore::GetMagickDelegates();
     if ( QString::fromStdString(result).contains(delegate) ) { return true; }
     return false;
@@ -575,7 +582,8 @@ Engine::identify(const QByteArray &buffer)
     if (buffer.size() > 0) {
         MagickCore::MagickWand *wand = MagickCore::NewMagickWand();
         QString result;
-        if ( MagickReadImageBlob( wand, buffer.data(),
+        if ( MagickReadImageBlob( wand,
+                                  buffer.data(),
                                   buffer.size() ) )
         {
             result = MagickIdentifyImage(wand);
@@ -658,7 +666,7 @@ const QStringList
 Engine::supportedReadFormats()
 {
     QStringList formats;
-    formats << "*.psd" << "*.xcf";
+    formats << "*.psd";
     if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
     if ( hasJPEG() ) { formats << "*.png"; }
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }

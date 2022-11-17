@@ -306,18 +306,18 @@ Window::setupTheme(bool native,
 
     // set (dark) colors
     QPalette palette;
-    palette.setColor( QPalette::Window, QColor(53,53,53) );
+    palette.setColor( QPalette::Window, QColor(53, 53, 53) );
     palette.setColor(QPalette::WindowText, Qt::white);
-    palette.setColor( QPalette::Base, QColor(15,15,15) );
-    palette.setColor( QPalette::AlternateBase, QColor(53,53,53) );
+    palette.setColor( QPalette::Base, QColor(15, 15, 15) );
+    palette.setColor( QPalette::AlternateBase, QColor(53, 53, 53) );
     palette.setColor(QPalette::Link, Qt::white);
     palette.setColor(QPalette::LinkVisited, Qt::white);
     palette.setColor(QPalette::ToolTipText, Qt::black);
     palette.setColor(QPalette::Text, Qt::white);
-    palette.setColor( QPalette::Button, QColor(53,53,53) );
+    palette.setColor( QPalette::Button, QColor(53, 53, 53) );
     palette.setColor(QPalette::ButtonText, Qt::white);
     palette.setColor(QPalette::BrightText, Qt::red);
-    palette.setColor( QPalette::Highlight, QColor(196,110,33) );
+    palette.setColor( QPalette::Highlight, QColor(196, 110, 33) );
     palette.setColor(QPalette::HighlightedText, Qt::white);
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
@@ -325,9 +325,9 @@ Window::setupTheme(bool native,
 
     _mdi->setBackground( QBrush( QColor(20, 20, 20) ) );
 
-    setStyleSheet(QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
-                          "QToolBar { border-color: none; }"
-                          "QToolButton::menu-indicator { image: none; }"));
+    setStyleSheet( QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
+                           "QToolBar { border-color: none; }"
+                           "QToolButton::menu-indicator { image: none; }") );
 }
 
 void
