@@ -129,18 +129,30 @@ BasicView::setFit(bool value)
 }
 
 void
-BasicView::setImage(const QByteArray &buffer,
-                    int width,
-                    int height)
+BasicView::setImage(const Engine::Image &image)
 {
-    qDebug() << "setImage" << buffer.size() << width << height;
-    if (buffer.size() < 1 || width < 1 || height < 1) { return; }
-    QPixmap pixmap = QPixmap::fromImage( QImage( (uchar*)( buffer.data() ),
-                                                 width,
-                                                 height,
+    qDebug() << "setImage" << image.buffer.size() << image.width << image.height;
+    if (!image.success || image.buffer.size() < 1 || image.width < 1 || image.height < 1) { return; }
+    QPixmap pixmap = QPixmap::fromImage( QImage( (uchar*)( image.buffer.data() ),
+                                                 image.width,
+                                                 image.height,
                                                  QImage::Format_RGBA8888) );
     if ( pixmap.isNull() ) { return; }
+    _sourceDetails = image.information;
+    _sourceProfile = image.profile;
     scene()->clear();
     scene()->addPixmap(pixmap);
     scene()->setSceneRect( 0, 0, pixmap.width(), pixmap.height() );
+}
+
+const QString
+BasicView::getSourceDetails()
+{
+    return _sourceDetails;
+}
+
+const QByteArray
+BasicView::getSourceProfile()
+{
+    return _sourceProfile;
 }

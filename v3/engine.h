@@ -62,6 +62,8 @@ namespace Cyan
             int width = 0;
             int height = 0;
             QByteArray buffer;
+            QByteArray profile;
+            colorSpace colorspace;
             QString errors;
             QString warnings;
             QString information;
@@ -122,7 +124,7 @@ namespace Cyan
         static int getMemoryResource();
         static void setMemoryResource(int gib);
         static int getTotalRam(int percent);
-        static const QStringList supportedFormats();
+        static const QStringList supportedReadFormats();
     };
 }
 

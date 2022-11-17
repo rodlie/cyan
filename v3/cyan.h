@@ -43,6 +43,8 @@
 #include <QWheelEvent>
 #include <QResizeEvent>
 #include <QGraphicsScene>
+#include <QTabWidget>
+#include <QTreeWidget>
 
 #include "qtwindowlistmenu.h"
 
@@ -78,13 +80,15 @@ namespace Cyan
     public slots:
         void setZoom(double scaleX, double scaleY);
         void setFit(bool value);
-        void setImage(const QByteArray &buffer,
-                      int width,
-                      int height);
+        void setImage(const Engine::Image &image);
+        const QString getSourceDetails();
+        const QByteArray getSourceProfile();
 
     private:
         bool _fit;
         bool _native;
+        QString _sourceDetails;
+        QByteArray _sourceProfile;
 
     protected:
         void wheelEvent(QWheelEvent* e);
@@ -154,6 +158,7 @@ namespace Cyan
     private:
         Mdi *_mdi;
         QSplitter *_splitter;
+        QSplitter *_splitterMiddle;
         QSplitter *_splitterLeft;
         QSplitter *_splitterRight;
         QToolBar *_toolbar;
@@ -177,6 +182,9 @@ namespace Cyan
         QToolButton *_menuColorDisplayButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
+        QTabWidget *_tabs;
+        QTreeWidget *_tabDetails;
+        QString _lastTab;
 
     private slots:
         void setupUi();
@@ -195,6 +203,8 @@ namespace Cyan
         bool isFileOpen(const QString &filename);
         MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
+        void handleWindowActivated(QMdiSubWindow *window);
+        void setImageSourceDetails(const QString &info);
     };
 }
 

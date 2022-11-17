@@ -60,7 +60,7 @@ set(PROJECT_SOURCES
     qtwindowlistmenu.cpp
     qtwindowlistmenu.h)
 set(TEST_SOURCES
-    test.cpp
+    tests.cpp
     engine.cpp
     engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../res/tests.qrc)

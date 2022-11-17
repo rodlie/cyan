@@ -29,8 +29,15 @@
 #include <QShortcut>
 #include <QKeySequence>
 #include <QtConcurrentRun>
+#include <QHeaderView>
 
 #include <vector>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+#define QT_SKIP_EMPTY QString::SkipEmptyParts
+#else
+#define QT_SKIP_EMPTY Qt::SkipEmptyParts
+#endif
 
 using namespace Cyan;
 
@@ -38,6 +45,7 @@ Cyan::Window::Window(QWidget *parent)
     : QMainWindow(parent)
     , _mdi(nullptr)
     , _splitter(nullptr)
+    , _splitterMiddle(nullptr)
     , _splitterLeft(nullptr)
     , _splitterRight(nullptr)
     , _toolbar(nullptr)
@@ -61,6 +69,8 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorDisplayButton(nullptr)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
+    , _tabs(nullptr)
+    , _tabDetails(nullptr)
 {
     setupUi();
     setupMenus();
@@ -87,7 +97,7 @@ Window::openImage(bool showDialog,
         dialogFilename = QFileDialog::getOpenFileName( this,
                                                        tr("Open image"),
                                                        QDir::homePath(),
-                                                       Engine::supportedFormats().join(" ") );
+                                                       Engine::supportedReadFormats().join(" ") );
     }
     QString filePath = showDialog ? dialogFilename : filename;
     bool isOpen = isFileOpen(filePath);
@@ -102,7 +112,14 @@ Window::openImage(bool showDialog,
 void
 Window::readImage(const QString &filename)
 {
-    Engine::Image image = Engine::readImage(filename);
+    // TODO: get settings
+    Engine::Image image = Engine::readImage(filename,
+                                            "",
+                                            "",
+                                            "",
+                                            Engine::PerceptualRenderingIntent,
+                                            true,
+                                            true);
     emit openImageReady(image);
 }
 
@@ -115,27 +132,47 @@ Window::setupUi()
              SIGNAL( dropped(QList<QUrl>) ),
              this,
              SLOT( handleDropped(QList<QUrl>) ) );
+    connect( _mdi,
+             SIGNAL( subWindowActivated(QMdiSubWindow*) ),
+             this,
+             SLOT( handleWindowActivated(QMdiSubWindow*) ) );
+
+    // tabs
+    _tabs = new QTabWidget(this);
+    _tabs->setTabPosition(QTabWidget::East);
+
+    // tab details
+    _tabDetails = new QTreeWidget(this);
+    _tabDetails->setColumnCount(2);
+    _tabDetails->setHeaderHidden(true);
+    _tabDetails->header()->setStretchLastSection(true);
+    _tabDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    _tabs->addTab( _tabDetails, tr("Image Details") ); //TODO: icon
 
     // splitters
     _splitter = new QSplitter(this);
+    _splitterMiddle = new QSplitter(this);
     _splitterLeft = new QSplitter(this);
     _splitterRight = new QSplitter(this);
     _splitter->setOrientation(Qt::Horizontal);
+    _splitterMiddle->setOrientation(Qt::Vertical);
     _splitterLeft->setOrientation(Qt::Vertical);
     _splitterRight->setOrientation(Qt::Vertical);
     _splitter->addWidget(_splitterLeft);
+    _splitter->addWidget(_splitterMiddle);
     _splitter->addWidget(_splitterRight);
-    _splitterLeft->addWidget(_mdi);
+    _splitterMiddle->addWidget(_mdi);
+    _splitterRight->addWidget(_tabs);
 
     setCentralWidget(_splitter);
 
-    // tool bar
+    // toolbar
     _toolbar = new QToolBar(tr("Tools"), this);
     _toolbar->setMovable(false);
-    _toolbar->setIconSize( QSize(32, 32) );
+    //_toolbar->setIconSize( QSize(32, 32) );
     addToolBar(Qt::TopToolBarArea, _toolbar);
 
-    // status bar
+    // statusbar
     _statusbar = new QStatusBar(this);
     setStatusBar(_statusbar);
 
@@ -300,7 +337,7 @@ Window::handleDropped(const QList<QUrl> &urls)
         QFileInfo info( url.toLocalFile() );
         if ( info.isDir() ) {
             QDir dir( info.absoluteFilePath() );
-            QStringList images = dir.entryList(Engine::supportedFormats(),
+            QStringList images = dir.entryList(Engine::supportedReadFormats(),
                                                QDir::Files);
             QList<QUrl> newUrls;
             for (auto &image : images) { newUrls.append( QUrl::fromLocalFile( QString("%1/%2")
@@ -425,15 +462,90 @@ Window::handleOpenImageReady(const Engine::Image &image)
     if (isFileOpen(image.filename) ||
         !image.success ||
         image.buffer.length() < 1) { return; }
-    MdiSubWindow *tab = new MdiSubWindow(_mdi, image.filename);
+    MdiSubWindow *tab = new MdiSubWindow(_mdi,
+                                         image.filename);
     tab->setAttribute(Qt::WA_DeleteOnClose);
     tab->setWindowIcon( QIcon::fromTheme(CYAN_ICON_SUBWINDOW) );
-    tab->getView()->setImage(image.buffer,
-                             image.width,
-                             image.height);
+    tab->getView()->setImage(image);
     connect( tab->getView(),
              SIGNAL( dropped(QList<QUrl>) ),
              this,
              SLOT( handleDropped(QList<QUrl>) ) );
     tab->showMaximized();
+}
+
+void
+Window::handleWindowActivated(QMdiSubWindow *window)
+{
+    MdiSubWindow *tab = qobject_cast<MdiSubWindow*>(window);
+    if (!tab) { return; }
+    qDebug() << "handle window activated" << tab->getFilename();
+    if (tab->getFilename() == _lastTab) { return; }
+    _lastTab = tab->getFilename();
+    setImageSourceDetails( tab->getView()->getSourceDetails() );
+}
+
+void Window::setImageSourceDetails(const QString &info)
+{
+    _tabDetails->clear();
+    if ( info.isEmpty() ) { return; }
+    QStringList list = info.split("\n", QT_SKIP_EMPTY);
+    QVector<QTreeWidgetItem*> level1items;
+    QVector<QTreeWidgetItem*> level2items;
+    QString level1 = "  ";
+    QString level2 = "    ";
+    QString level3 = "      ";
+    bool foundHistogramTag = false;
+    for (int i = 0; i < list.size(); ++i) {
+        QString item = list.at(i);
+        if ( item.startsWith(level1) ) {
+            QString section1 = item.section(":", 0, 0).trimmed();
+            QString section2 = item.section(":", 1).trimmed();
+            if ( item.startsWith("  Pixels per second:") ||
+                 item.startsWith("  User time:") ||
+                 item.startsWith("  Elapsed time:") ||
+                 item.startsWith("  Version: Image") ||
+                 item.startsWith("  Format: ") ||
+                 item.startsWith("  Class: ") ||
+                 item.startsWith("  Base filename:") ||
+                 item.startsWith("  Mime type:") ||
+                 item.startsWith("  Tainted") ||
+                 item.startsWith("  Filesize") ||
+                 item.contains("Filename") )
+            {
+                continue;
+            }
+            if (item == "  Histogram:") { foundHistogramTag = true; }
+            if ( foundHistogramTag && ( item.startsWith("  Rendering intent:") ||
+                                        item.startsWith("  Gamma:") ) )
+            {
+                foundHistogramTag = false;
+            }
+            if (foundHistogramTag) { continue; }
+            QTreeWidgetItem *levelItem = new QTreeWidgetItem();
+            levelItem->setText(0, section1);
+            levelItem->setText(1, section2);
+            if ( item.startsWith(level3) ) {
+                int parentID = level2items.size() - 1;
+                if (parentID < 0) { parentID = 0; }
+                QTreeWidgetItem *parentItem = level2items.at(parentID);
+                if (parentItem) { parentItem->addChild(levelItem); }
+            }
+            else if ( item.startsWith(level2) ) {
+                int parentID = level1items.size() - 1;
+                if (parentID < 0) { parentID = 0; }
+                QTreeWidgetItem *parentItem = level1items.at(parentID);
+                if (parentItem) {
+                    parentItem->addChild(levelItem);
+                    level2items << levelItem;
+                }
+            }
+            else if ( item.startsWith(level1) ) { level1items << levelItem; }
+            else { delete levelItem; }
+            continue;
+        }
+    }
+    _tabDetails->addTopLevelItems( level1items.toList() );
+    level2items.clear();
+    _tabDetails->expandAll();
 }

@@ -218,4 +218,4 @@ void Test::test_case5()
 
 QTEST_APPLESS_MAIN(Test)
 
-#include "test.moc"
+#include "tests.moc"

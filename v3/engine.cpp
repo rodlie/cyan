@@ -271,16 +271,26 @@ Engine::readImage(const QString &filename,
         qWarning() << warn.what();
         result.warnings.append( warn.what() );
     }
+    if (identify) {
+        auto wand = NewMagickWandFromImage( image.constImage() );
+        result.information = MagickIdentifyImage(wand);
+        wand = DestroyMagickWand(wand);
+    }
     try {
         bool hasProfile = (image.iccColorProfile().length() > 0);
+        result.profile = QByteArray( (char*)image.iccColorProfile().data(),
+                                     image.iccColorProfile().length() );
         if (!hasProfile) {
             QString fallbackProfile = fallbackProfileRGB;
+            result.colorspace = colorSpaceRGB;
             switch ( image.colorSpace() ) {
             case Magick::CMYColorspace:
             case Magick::CMYKColorspace:
+                result.colorspace = colorSpaceCMYK;
                 fallbackProfile = fallbackProfileCMYK;
                 break;
             case Magick::GRAYColorspace:
+                result.colorspace = colorSpaceGRAY;
                 fallbackProfile = fallbackProfileGRAY;
                 break;
             default:;
@@ -645,7 +655,7 @@ Engine::getTotalRam(int percent)
 }
 
 const QStringList
-Engine::supportedFormats()
+Engine::supportedReadFormats()
 {
     QStringList formats;
     formats << "*.psd" << "*.xcf";
