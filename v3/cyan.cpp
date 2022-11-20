@@ -128,6 +128,11 @@ Window::setupUi()
 {
     // mdi
     _mdi = new Mdi(this);
+#ifdef Q_OS_DARWIN
+    _mdi->setViewMode(QMdiArea::TabbedView);
+    _mdi->setTabsClosable(true);
+    _mdi->setTabsMovable(true);
+#endif
     connect( _mdi,
              SIGNAL( dropped(QList<QUrl>) ),
              this,
