@@ -125,8 +125,8 @@ void Test::test_case2()
     QVERIFY(Cyan::Engine::hasLCMS());
     //std::cout << "Checking for HDRI support ..." << std::endl;
     //QVERIFY(Cyan::Engine::hasHDRI());
-    std::cout << "Checking for OpenMP support ..." << std::endl;
-    QVERIFY(Cyan::Engine::hasMP());
+    //std::cout << "Checking for OpenMP support ..." << std::endl;
+    //QVERIFY(Cyan::Engine::hasMP());
     std::cout << "Checking for Quantum depth ..." << std::endl;
     QVERIFY(Cyan::Engine::supportedQuantumDepth() == "Q16" || Cyan::Engine::supportedQuantumDepth() == "Q32");
 }
