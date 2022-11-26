@@ -131,6 +131,7 @@ namespace Cyan
         BasicView* getView();
 
     signals:
+        void closed(const QString &filename);
 
     private:
         QString _filename;
@@ -203,10 +204,11 @@ namespace Cyan
         void populateColorIntentMenu();
         void setDefaultColorIntent();
         bool isFileOpen(const QString &filename);
-        MdiSubWindow* getTab(const QString &filename);
+        Cyan::MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
+        void handleClosedWindow(const QString &filename);
     };
 }
 

@@ -56,5 +56,6 @@ MdiSubWindow::getView()
 void
 MdiSubWindow::closeEvent(QCloseEvent *e)
 {
+    emit closed(_filename);
     QMdiSubWindow::closeEvent(e);
 }

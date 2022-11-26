@@ -476,6 +476,10 @@ Window::handleOpenImageReady(const Engine::Image &image)
              SIGNAL( dropped(QList<QUrl>) ),
              this,
              SLOT( handleDropped(QList<QUrl>) ) );
+    connect( tab,
+             SIGNAL( closed(QString) ),
+             this,
+             SLOT( handleClosedWindow(QString) ) );
     tab->showMaximized();
 }
 
@@ -553,4 +557,10 @@ void Window::setImageSourceDetails(const QString &info)
     _tabDetails->addTopLevelItems( level1items.toList() );
     level2items.clear();
     _tabDetails->expandAll();
+}
+
+void
+Window::handleClosedWindow(const QString &filename)
+{
+    if (_lastTab == filename) { _tabDetails->clear(); }
 }
