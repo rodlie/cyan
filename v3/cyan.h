@@ -55,10 +55,12 @@
 #define THEME_ICON_VIDEO_DISPLAY "video-display"
 #define THEME_ICON_PREFERENCES_COLOR "preferences-color"
 
+#define CYAN_ICON "Cyan"
 #define CYAN_ICON_SUBWINDOW THEME_ICON_APPLICATIONS_GRAPHICS
-#define CYAN_ICON_COLOR_WHEEL THEME_ICON_PREFERENCES_COLOR
+#define CYAN_ICON_COLOR_WHEEL "color-wheel"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
 #define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
+#define CYAN_ICON_ZOOM "zoom"
 
 namespace Cyan
 {
@@ -176,6 +178,7 @@ namespace Cyan
         QMenu *_menuColorGRAY;
         QMenu *_menuColorIntent;
         QMenu *_menuColorDisplay;
+        QMenu *_menuZoom;
         QAction *_menuColorBlackPoint;
         QActionGroup *_menuColorRGBGroup;
         QActionGroup *_menuColorCMYKGroup;
@@ -183,6 +186,7 @@ namespace Cyan
         QActionGroup *_menuColorDisplayGroup;
         QToolButton *_menuColorButton;
         QToolButton *_menuColorDisplayButton;
+        QToolButton *_menuZoomButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
         QTabWidget *_tabs;
@@ -209,6 +213,11 @@ namespace Cyan
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
+        const QString getDefaultColorProfile(const Engine::colorSpace &cs);
+        void setDefaultColorProfile(const Engine::colorSpace &cs,
+                                    const QString &filename);
+        void loadColorSettings();
+        void saveColorSettings();
     };
 }
 

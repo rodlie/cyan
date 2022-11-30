@@ -58,7 +58,8 @@ set(PROJECT_SOURCES
     cyan.cpp
     cyan.h
     qtwindowlistmenu.cpp
-    qtwindowlistmenu.h)
+    qtwindowlistmenu.h
+    share/icons.qrc)
 set(TEST_SOURCES
     tests.cpp
     engine.cpp

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Cyan
+GenericName=Cyan Prepress Editor
+Comment=Prepress Prepress Editor
+Categories=Graphics;Viewer;RasterGraphics;2DGraphics;Photography;
+Exec=Cyan %U
+Icon=Cyan
+StartupNotify=false
+Terminal=false
+Type=Application

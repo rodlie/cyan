@@ -30,6 +30,7 @@
 #include <QKeySequence>
 #include <QtConcurrentRun>
 #include <QHeaderView>
+#include <QSettings>
 
 #include <vector>
 
@@ -60,6 +61,7 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorGRAY(nullptr)
     , _menuColorIntent(nullptr)
     , _menuColorDisplay(nullptr)
+    , _menuZoom(nullptr)
     , _menuColorBlackPoint(nullptr)
     , _menuColorRGBGroup(nullptr)
     , _menuColorCMYKGroup(nullptr)
@@ -67,6 +69,7 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorDisplayGroup(nullptr)
     , _menuColorButton(nullptr)
     , _menuColorDisplayButton(nullptr)
+    , _menuZoomButton(nullptr)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
     , _tabs(nullptr)
@@ -75,6 +78,7 @@ Cyan::Window::Window(QWidget *parent)
     setupUi();
     setupMenus();
     setupActions();
+    loadColorSettings();
 
     qRegisterMetaType<Engine::Image>("Engine::Image");
     connect( this,
@@ -126,6 +130,13 @@ Window::readImage(const QString &filename)
 void
 Window::setupUi()
 {
+ #ifdef Q_OS_DARWIN
+    setWindowTitle("Cyan");
+#endif
+
+    QIcon::setThemeName("hicolor");
+    setWindowIcon( QIcon::fromTheme(CYAN_ICON) );
+
     // mdi
     _mdi = new Mdi(this);
 #ifdef Q_OS_DARWIN
@@ -175,7 +186,7 @@ Window::setupUi()
     _toolbar = new QToolBar(tr("Tools"), this);
     _toolbar->setMovable(false);
     //_toolbar->setIconSize( QSize(32, 32) );
-    addToolBar(Qt::TopToolBarArea, _toolbar);
+    addToolBar(Qt::LeftToolBarArea, _toolbar);
 
     // statusbar
     _statusbar = new QStatusBar(this);
@@ -202,12 +213,14 @@ Window::setupMenus()
     _menuColorGRAY = new QMenu(tr("Default GRAY profile"), this);
     _menuColorIntent = new QMenu(tr("Rendering Intent"), this);
     _menuColorDisplay = new QMenu(tr("Display profile"), this);
+    _menuZoom = new QMenu(tr("Zoom"), this);
 
     _menuColorRGB->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     _menuColorCMYK->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     _menuColorGRAY->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     //_menuColorIntent->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
-    _menuColorDisplay->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColorDisplay->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
+    _menuZoom->setIcon( QIcon::fromTheme(CYAN_ICON_ZOOM) );
     _menuColor->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
 
     _menuColor->addMenu(_menuColorRGB);
@@ -223,13 +236,21 @@ Window::setupMenus()
     _menuColorButton->setMenu(_menuColor);
 
     _menuColorDisplayButton = new QToolButton(this);
-    _menuColorDisplayButton->setPopupMode(QToolButton::MenuButtonPopup);
+    _menuColorDisplayButton->setPopupMode(QToolButton::InstantPopup);
     _menuColorDisplayButton->setCheckable(true);
     _menuColorDisplayButton->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
     _menuColorDisplayButton->setText( tr("Display") );
-    _menuColorDisplayButton->setMenu(_menuColorDisplay);
+    //_menuColorDisplayButton->setMenu(_menuColorDisplay);
+
+    _menuZoomButton = new QToolButton(this);
+    _menuZoomButton->setPopupMode(QToolButton::InstantPopup);
+    _menuZoomButton->setCheckable(false);
+    _menuZoomButton->setIcon( QIcon::fromTheme(CYAN_ICON_ZOOM) );
+    _menuZoomButton->setText( tr("Zoom") );
+    _menuZoomButton->setMenu(_menuZoom);
 
     _menuView->addMenu(_menuColor);
+    _menuView->addMenu(_menuZoom);
 
     _menuWindows = new QtWindowListMenu(this);
     _menuWindows->attachToMdiArea(_mdi);
@@ -260,6 +281,8 @@ Window::setupActions()
     _toolbar->addWidget(_menuColorButton);
     _toolbar->addSeparator();
     _toolbar->addWidget(_menuColorDisplayButton);
+    _toolbar->addSeparator();
+    _toolbar->addWidget(_menuZoomButton);
 
     // default profiles
     _menuColorRGBGroup = new QActionGroup(this);
@@ -390,7 +413,7 @@ Window::handleColorProfileTriggered()
     QAction *action = qobject_cast<QAction*>( sender() );
     if (!action) { return; }
     action->setChecked(true);
-    // TODO: save settings!
+
 }
 
 void
@@ -480,7 +503,7 @@ Window::handleOpenImageReady(const Engine::Image &image)
              SIGNAL( closed(QString) ),
              this,
              SLOT( handleClosedWindow(QString) ) );
-    tab->showMaximized();
+    tab->showMaximized(); // TODO: check if current window is maximized or normal and set accordingly
 }
 
 void
@@ -494,6 +517,7 @@ Window::handleWindowActivated(QMdiSubWindow *window)
     setImageSourceDetails( tab->getView()->getSourceDetails() );
 }
 
+// TODO: cleanup
 void Window::setImageSourceDetails(const QString &info)
 {
     _tabDetails->clear();
@@ -563,4 +587,67 @@ void
 Window::handleClosedWindow(const QString &filename)
 {
     if (_lastTab == filename) { _tabDetails->clear(); }
+}
+
+const QString
+Window::getDefaultColorProfile(const Engine::colorSpace &cs)
+{
+    QString filename;
+    QSettings settings;
+    settings.beginGroup("color_settings");
+    QString key;
+    QString fallback;
+    switch(cs) {
+    case Engine::colorSpaceRGB:
+        key = "profile_rgb";
+        fallback = ":/icc/rgb.icc";
+        break;
+    case Engine::colorSpaceCMYK:
+        key = "profile_cmyk";
+        fallback = ":/icc/cmyk.icc";
+        break;
+    case Engine::colorSpaceGRAY:
+        key = "profile_gray";
+        fallback = ":/icc/gray.icc";
+        break;
+    default:;
+    }
+    filename = settings.value(key, fallback).toString();
+    settings.endGroup();
+    return filename;
+}
+
+void
+Window::setDefaultColorProfile(const Engine::colorSpace &cs,
+                               const QString &filename)
+{
+    QSettings settings;
+    settings.beginGroup("color_settings");
+    QString key;
+    switch(cs) {
+    case Engine::colorSpaceRGB:
+        key = "profile_rgb";
+        break;
+    case Engine::colorSpaceCMYK:
+        key = "profile_cmyk";
+        break;
+    case Engine::colorSpaceGRAY:
+        key = "profile_gray";
+        break;
+    default:;
+    }
+    settings.setValue(key, filename);
+    settings.endGroup();
+}
+
+void
+Window::loadColorSettings()
+{
+
+}
+
+void
+Window::saveColorSettings()
+{
+
 }
