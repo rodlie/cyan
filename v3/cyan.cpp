@@ -31,6 +31,8 @@
 #include <QtConcurrentRun>
 #include <QHeaderView>
 #include <QSettings>
+#include <QTimer>
+#include <QMessageBox>
 
 #include <vector>
 
@@ -67,6 +69,7 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorCMYKGroup(nullptr)
     , _menuColorGRAYGroup(nullptr)
     , _menuColorDisplayGroup(nullptr)
+    , _menuColorIntentGroup(nullptr)
     , _menuColorButton(nullptr)
     , _menuColorDisplayButton(nullptr)
     , _menuZoomButton(nullptr)
@@ -78,18 +81,21 @@ Cyan::Window::Window(QWidget *parent)
     setupUi();
     setupMenus();
     setupActions();
-    loadColorSettings();
 
     qRegisterMetaType<Engine::Image>("Engine::Image");
     connect( this,
              SIGNAL( openImageReady(Engine::Image) ),
              this,
              SLOT( handleOpenImageReady(Engine::Image) ) );
+
+    QTimer::singleShot( 0,
+                        this,
+                        SLOT( loadSettings() ) );
 }
 
 Cyan::Window::~Window()
 {
-
+    saveSettings();
 }
 
 void
@@ -133,9 +139,6 @@ Window::setupUi()
  #ifdef Q_OS_DARWIN
     setWindowTitle("Cyan");
 #endif
-
-    QIcon::setThemeName("hicolor");
-    setWindowIcon( QIcon::fromTheme(CYAN_ICON) );
 
     // mdi
     _mdi = new Mdi(this);
@@ -197,7 +200,7 @@ Window::setupUi()
     setMenuBar(_menubar);
 
     // setup theme and icons
-    setupTheme(false, true); // TODO: change to false when we have new icons
+    setupTheme(false, false);
 }
 
 void
@@ -240,7 +243,12 @@ Window::setupMenus()
     _menuColorDisplayButton->setCheckable(true);
     _menuColorDisplayButton->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
     _menuColorDisplayButton->setText( tr("Display") );
+    _menuColorDisplayButton->setToolTip( tr("Apply display color profile") );
+    _menuColorDisplayButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(0, 100, 0); }") );
     //_menuColorDisplayButton->setMenu(_menuColorDisplay);
+    connect( _menuColorDisplayButton,
+             SIGNAL( toggled(bool) ),
+             SLOT( handleColorDisplayButtonTriggered(bool) ) );
 
     _menuZoomButton = new QToolButton(this);
     _menuZoomButton->setPopupMode(QToolButton::InstantPopup);
@@ -289,6 +297,7 @@ Window::setupActions()
     _menuColorCMYKGroup = new QActionGroup(this);
     _menuColorGRAYGroup = new QActionGroup(this);
     _menuColorDisplayGroup = new QActionGroup(this);
+    _menuColorIntentGroup = new QActionGroup(this);
 
     _menuColorRGB->addActions( _menuColorRGBGroup->actions() );
     _menuColorCMYK->addActions( _menuColorCMYKGroup->actions() );
@@ -299,6 +308,10 @@ Window::setupActions()
     _menuColorBlackPoint = new QAction(tr("Black point compensation"), this);
     _menuColorBlackPoint->setCheckable(true);
     _menuColor->addAction(_menuColorBlackPoint);
+    connect( _menuColorBlackPoint,
+             SIGNAL( triggered() ),
+             this,
+             SLOT( handleColorBlackPointTriggered() ) );
 
     // populate default profiles
     populateColorProfileMenu(_menuColorRGB,
@@ -312,7 +325,8 @@ Window::setupActions()
                              Engine::colorSpaceGRAY);
     populateColorProfileMenu(_menuColorDisplay,
                              _menuColorDisplayGroup,
-                             Engine::colorSpaceRGB);
+                             Engine::colorSpaceRGB,
+                             true);
 
     populateColorIntentMenu();
 }
@@ -356,6 +370,8 @@ Window::setupTheme(bool native,
     setStyleSheet( QString("QMenu::separator { background-color: rgb(53, 53, 53); height: 1px; }"
                            "QToolBar { border-color: none; }"
                            "QToolButton::menu-indicator { image: none; }") );
+
+    setWindowIcon( QIcon::fromTheme(CYAN_ICON) );
 }
 
 void
@@ -387,10 +403,24 @@ Window::handleActionOpenImage()
 void
 Window::populateColorProfileMenu(QMenu *menu,
                                  QActionGroup *group,
-                                 Engine::colorSpace colorspace)
+                                 Engine::colorSpace colorspace,
+                                 bool isDisplay)
 {
     if (!menu || !group) { return; }
-    QMapIterator<QString, QString> i( Engine::getProfiles(colorspace) );
+    QString fallback;
+    switch(colorspace) {
+    case Engine::colorSpaceRGB:
+        fallback = CYAN_PROFILE_FALLBACK_RGB;
+        break;
+    case Engine::colorSpaceCMYK:
+        fallback = CYAN_PROFILE_FALLBACK_CMYK;
+        break;
+    case Engine::colorSpaceGRAY:
+        fallback = CYAN_PROFILE_FALLBACK_GRAY;
+        break;
+    default:;
+    }
+    QMapIterator<QString, QString> i( Engine::getProfiles(colorspace, false, fallback) );
     while ( i.hasNext() ) {
         i.next();
         QAction *action = new QAction(menu);
@@ -398,22 +428,20 @@ Window::populateColorProfileMenu(QMenu *menu,
         action->setData( i.value() );
         action->setCheckable(true);
         group->addAction(action);
-        connect( action,
-                 SIGNAL( triggered() ),
-                 this,
-                 SLOT( handleColorProfileTriggered() ) );
+        if (isDisplay) {
+            connect( action,
+                     SIGNAL( triggered() ),
+                     this,
+                     SLOT( handleColorProfileDisplayTriggered() ) );
+        } else {
+            connect( action,
+                     SIGNAL( triggered() ),
+                     this,
+                     SLOT( handleColorProfileTriggered() ) );
+        }
     }
     menu->clear();
     menu->addActions( group->actions() );
-}
-
-void
-Window::handleColorProfileTriggered()
-{
-    QAction *action = qobject_cast<QAction*>( sender() );
-    if (!action) { return; }
-    action->setChecked(true);
-
 }
 
 void
@@ -449,19 +477,53 @@ Window::populateColorIntentMenu()
         connect( action,
                  SIGNAL( triggered() ),
                  this,
-                 SLOT( setDefaultColorIntent() ) );
-        _menuColorIntent->addAction(action);
+                 SLOT( handleColorIntentTriggered() ) );
+        _menuColorIntentGroup->addAction(action);
     }
+    _menuColorIntent->addActions( _menuColorIntentGroup->actions() );
 }
 
 void
-Window::setDefaultColorIntent()
+Window::handleColorProfileTriggered()
 {
-    QAction *action = qobject_cast<QAction*>( sender() );
-    if (!action) { return; }
-    for ( auto &act : _menuColorIntent->actions() ) { act->setChecked(false); }
-    action->setChecked(true);
-    // TODO: save settings!
+    qDebug() << "handle color profile triggered";
+    saveColorSettings();
+}
+
+void
+Window::handleColorProfileDisplayTriggered()
+{
+    qDebug() << "handle display profile triggered";
+    // TODO: also update image (if display is checked)
+    saveColorSettings();
+}
+
+void
+Window::handleColorIntentTriggered()
+{
+    qDebug() << "handle intent triggered";
+    // TODO: should also trigger update image
+    saveColorSettings();
+}
+
+void
+Window::handleColorBlackPointTriggered()
+{
+    qDebug() << "handle black point triggered";
+    // TODO: should also trigger update image
+    saveColorSettings();
+}
+
+void Window::handleColorDisplayButtonTriggered(bool checked)
+{
+    qDebug() << "handle color display button triggered";
+    if ( checked && !canApplyDisplayProfile() ) {
+        QMessageBox::warning( this,
+                              tr("No display profile"),
+                              tr("Select a display profile from the color settings.") );
+        _menuColorDisplayButton->setChecked(false);
+    }
+    // TODO: trigger a image update
 }
 
 bool
@@ -590,7 +652,8 @@ Window::handleClosedWindow(const QString &filename)
 }
 
 const QString
-Window::getDefaultColorProfile(const Engine::colorSpace &cs)
+Window::getDefaultColorProfile(const Engine::colorSpace &cs,
+                               bool isDisplay)
 {
     QString filename;
     QSettings settings;
@@ -600,26 +663,32 @@ Window::getDefaultColorProfile(const Engine::colorSpace &cs)
     switch(cs) {
     case Engine::colorSpaceRGB:
         key = "profile_rgb";
-        fallback = ":/icc/rgb.icc";
+        fallback = CYAN_PROFILE_FALLBACK_RGB;
         break;
     case Engine::colorSpaceCMYK:
         key = "profile_cmyk";
-        fallback = ":/icc/cmyk.icc";
+        fallback = CYAN_PROFILE_FALLBACK_CMYK;
         break;
     case Engine::colorSpaceGRAY:
         key = "profile_gray";
-        fallback = ":/icc/gray.icc";
+        fallback = CYAN_PROFILE_FALLBACK_RGB;
         break;
     default:;
     }
+    if (isDisplay) {
+        key = "profile_display";
+        fallback = CYAN_PROFILE_FALLBACK_RGB;
+    }
     filename = settings.value(key, fallback).toString();
     settings.endGroup();
+    qDebug() << "get default color profile" << filename;
     return filename;
 }
 
 void
 Window::setDefaultColorProfile(const Engine::colorSpace &cs,
-                               const QString &filename)
+                               const QString &filename,
+                               bool isDisplay)
 {
     QSettings settings;
     settings.beginGroup("color_settings");
@@ -636,6 +705,8 @@ Window::setDefaultColorProfile(const Engine::colorSpace &cs,
         break;
     default:;
     }
+    if (isDisplay) { key = "profile_display"; }
+    qDebug() << "set default color profile" << key << filename;
     settings.setValue(key, filename);
     settings.endGroup();
 }
@@ -643,11 +714,54 @@ Window::setDefaultColorProfile(const Engine::colorSpace &cs,
 void
 Window::loadColorSettings()
 {
-
+    qDebug() << "load color settings";
+    QString defaultProfileRGB = getDefaultColorProfile(Engine::colorSpaceRGB);
+    QString defaultProfileDisplay = getDefaultColorProfile(Engine::colorSpaceRGB, true);
+    QString defaultProfileCMYK = getDefaultColorProfile(Engine::colorSpaceCMYK);
+    QString defaultProfileGRAY = getDefaultColorProfile(Engine::colorSpaceGRAY);
+    qDebug() << defaultProfileRGB << defaultProfileDisplay << defaultProfileCMYK << defaultProfileGRAY;
 }
 
 void
 Window::saveColorSettings()
 {
+    qDebug() << "save color settings";
+}
 
+void
+Window::loadUISettings()
+{
+    qDebug() << "load ui settings";
+}
+
+void
+Window::saveUISettings()
+{
+    qDebug() << "save ui settings";
+}
+
+void
+Window::loadSettings()
+{
+    qDebug() << "load settings";
+    loadUISettings();
+    loadColorSettings();
+}
+
+void
+Window::saveSettings()
+{
+    qDebug() << "save settings";
+}
+
+bool
+Window::canApplyDisplayProfile()
+{
+    qDebug() << "can apply display profile?";
+    QAction *action = _menuColorDisplayGroup->checkedAction();
+    if (!action) { return false; }
+    QString filename = action->data().toString();
+    qDebug() << filename;
+    if ( !filename.isEmpty() && _menuColorDisplayButton->isChecked() ) { return true; }
+    return false;
 }

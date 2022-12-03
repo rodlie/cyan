@@ -85,8 +85,9 @@ namespace Cyan
                                            ICCTag tag = ICCDescription);
         static const QString getProfileTag(QByteArray buffer,
                                            ICCTag tag = ICCDescription);
-        static const QMap<QString, QString> getProfiles(colorSpace colorspace,
-                                                        bool returnPaths = false);
+        static const QMap<QString, QString> getProfiles( colorSpace colorspace,
+                                                         bool returnPaths = false,
+                                                         const QString &fallback = QString() );
         static const Image readImage(const QString &filename,
                                      const QString &fallbackProfileRGB = QString(),
                                      const QString &fallbackProfileCMYK = QString(),

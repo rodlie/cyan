@@ -56,11 +56,15 @@
 #define THEME_ICON_PREFERENCES_COLOR "preferences-color"
 
 #define CYAN_ICON "Cyan"
-#define CYAN_ICON_SUBWINDOW THEME_ICON_APPLICATIONS_GRAPHICS
-#define CYAN_ICON_COLOR_WHEEL "color-wheel"
+#define CYAN_ICON_SUBWINDOW "image-x-generic"
+#define CYAN_ICON_COLOR_WHEEL "colors"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
 #define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
 #define CYAN_ICON_ZOOM "zoom"
+
+#define CYAN_PROFILE_FALLBACK_RGB ":/icc/rgb.icc"
+#define CYAN_PROFILE_FALLBACK_CMYK ":/icc/cmyk.icc"
+#define CYAN_PROFILE_FALLBACK_GRAY ":/icc/gray.icc"
 
 namespace Cyan
 {
@@ -184,6 +188,7 @@ namespace Cyan
         QActionGroup *_menuColorCMYKGroup;
         QActionGroup *_menuColorGRAYGroup;
         QActionGroup *_menuColorDisplayGroup;
+        QActionGroup *_menuColorIntentGroup;
         QToolButton *_menuColorButton;
         QToolButton *_menuColorDisplayButton;
         QToolButton *_menuZoomButton;
@@ -203,21 +208,32 @@ namespace Cyan
         void handleActionOpenImage();
         void populateColorProfileMenu(QMenu *menu,
                                       QActionGroup *group,
-                                      Engine::colorSpace colorspace);
-        void handleColorProfileTriggered();
+                                      Engine::colorSpace colorspace,
+                                      bool isDisplay = false);
         void populateColorIntentMenu();
-        void setDefaultColorIntent();
+        void handleColorProfileTriggered();
+        void handleColorProfileDisplayTriggered();
+        void handleColorIntentTriggered();
+        void handleColorBlackPointTriggered();
+        void handleColorDisplayButtonTriggered(bool checked);
         bool isFileOpen(const QString &filename);
         Cyan::MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
-        const QString getDefaultColorProfile(const Engine::colorSpace &cs);
+        const QString getDefaultColorProfile(const Engine::colorSpace &cs,
+                                             bool isDisplay = false);
         void setDefaultColorProfile(const Engine::colorSpace &cs,
-                                    const QString &filename);
+                                    const QString &filename,
+                                    bool isDisplay = false);
         void loadColorSettings();
         void saveColorSettings();
+        void loadUISettings();
+        void saveUISettings();
+        void loadSettings();
+        void saveSettings();
+        bool canApplyDisplayProfile();
     };
 }
 

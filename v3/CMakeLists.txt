@@ -59,7 +59,8 @@ set(PROJECT_SOURCES
     cyan.h
     qtwindowlistmenu.cpp
     qtwindowlistmenu.h
-    share/icons.qrc)
+    share/icons.qrc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../res/icc.qrc)
 set(TEST_SOURCES
     tests.cpp
     engine.cpp
