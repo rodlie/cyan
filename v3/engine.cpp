@@ -211,7 +211,8 @@ const QString Engine::getProfileTag(QByteArray buffer, ICCTag tag)
 const QMap<QString, QString>
 Engine::getProfiles(colorSpace colorspace,
                     bool returnPaths,
-                    const QString &fallback)
+                    const QString &fallback,
+                    bool forceFallback)
 {
     QMap<QString,QString> output;
     QStringList folders;
@@ -246,9 +247,8 @@ Engine::getProfiles(colorSpace colorspace,
             output[profile] = iccFile;
         }
     }
-    if ( output.size() < 1 && !fallback.isEmpty() ) {
+    if ( (output.size() < 1 || forceFallback) && !fallback.isEmpty() ) {
         QString profile = getProfileTag(fileToByteArray(fallback), ICCDescription);
-        qDebug() << profile << fallback;
         output[profile] = fallback;
     }
     return output;
