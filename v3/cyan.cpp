@@ -187,6 +187,7 @@ Window::setupUi()
 
     // toolbar
     _toolbar = new QToolBar(tr("Tools"), this);
+    _toolbar->setObjectName("ToolsBar");
     _toolbar->setMovable(false);
     //_toolbar->setIconSize( QSize(32, 32) );
     addToolBar(Qt::LeftToolBarArea, _toolbar);
@@ -521,6 +522,7 @@ void Window::handleColorDisplayButtonTriggered(bool checked)
         _menuColorDisplayButton->setChecked(false);
     }
     // TODO: also update image
+    saveColorSettings();
 }
 
 bool
@@ -711,7 +713,6 @@ Window::setDefaultColorProfile(const Engine::colorSpace &cs,
 void
 Window::loadColorSettings()
 {
-    qDebug() << "load color settings";
     QString defaultProfileRGB = getDefaultColorProfile(Engine::colorSpaceRGB);
     QString defaultProfileDisplay = getDefaultColorProfile(Engine::colorSpaceRGB, true);
     QString defaultProfileCMYK = getDefaultColorProfile(Engine::colorSpaceCMYK);
@@ -719,12 +720,14 @@ Window::loadColorSettings()
 
     int defaultIntent = Engine::RenderingIntent::UndefinedRenderingIntent;
     bool defaultBlackPoint = false;
+    bool shouldApplyDisplayProfile = false;
 
     QSettings settings;
     settings.beginGroup("color_settings");
     defaultIntent = settings.value("intent",
                                    Engine::RenderingIntent::PerceptualRenderingIntent).toInt();
     defaultBlackPoint = settings.value("black_point", true).toBool();
+    shouldApplyDisplayProfile = settings.value("apply_display_profile", false).toBool();
     settings.endGroup();
 
     _menuColorBlackPoint->setChecked(defaultBlackPoint);
@@ -759,13 +762,15 @@ Window::loadColorSettings()
             break;
         }
     }
+    if (shouldApplyDisplayProfile) {
+        _menuColorDisplayButton->setChecked(shouldApplyDisplayProfile);
+        _menuColorDisplayButton->setChecked( canApplyDisplayProfile() );
+    }
 }
 
 void
 Window::saveColorSettings()
 {
-    qDebug() << "save color settings";
-
     QSettings settings;
     settings.beginGroup("color_settings");
     if ( _menuColorRGBGroup->checkedAction() ) {
@@ -784,25 +789,44 @@ Window::saveColorSettings()
         settings.setValue( "intent", _menuColorIntentGroup->checkedAction()->data().toInt() );
     }
     settings.setValue( "black_point", _menuColorBlackPoint->isChecked() );
+    settings.setValue( "apply_display_profile", _menuColorDisplayButton->isChecked() );
     settings.endGroup();
 }
 
 void
 Window::loadUISettings()
 {
-    qDebug() << "load ui settings";
+    QSettings settings;
+    settings.beginGroup("ui_settings");
+    restoreState( settings.value("window_state").toByteArray() );
+    restoreGeometry( settings.value("window_geometry").toByteArray() );
+    _splitter->restoreState( settings.value("splitter_state").toByteArray() );
+    _splitterLeft->restoreState( settings.value("splitter_left_state").toByteArray() );
+    _splitterRight->restoreState( settings.value("splitter_right_state").toByteArray() );
+    _splitterMiddle->restoreState( settings.value("splitter_middle_state").toByteArray() );
+    bool maximized = settings.value("window_maximized", false).toBool();
+    settings.endGroup();
+    if (maximized) { showMaximized(); }
 }
 
 void
 Window::saveUISettings()
 {
-    qDebug() << "save ui settings";
+    QSettings settings;
+    settings.beginGroup("ui_settings");
+    settings.setValue( "window_state", saveState() );
+    settings.setValue( "window_geometry", saveGeometry() );
+    settings.setValue( "window_maximized", isMaximized() );
+    settings.setValue( "splitter_state", _splitter->saveState() );
+    settings.setValue( "splitter_left_state", _splitterLeft->saveState() );
+    settings.setValue( "splitter_right_state", _splitterRight->saveState() );
+    settings.setValue( "splitter_middle_state", _splitterMiddle->saveState() );
+    settings.endGroup();
 }
 
 void
 Window::loadSettings()
 {
-    qDebug() << "load settings";
     loadUISettings();
     loadColorSettings();
 }
@@ -810,8 +834,8 @@ Window::loadSettings()
 void
 Window::saveSettings()
 {
-    qDebug() << "save settings";
     saveUISettings();
+    // color settings are saved when changed
 }
 
 bool
