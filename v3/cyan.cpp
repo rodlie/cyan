@@ -275,7 +275,9 @@ Window::setupUi()
     _tabDetails->setHeaderHidden(true);
     _tabDetails->header()->setStretchLastSection(true);
     _tabDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    _tabs->addTab( _tabDetails, tr("Image Details") ); //TODO: icon
+    _tabs->addTab( _tabDetails,
+                   QIcon::fromTheme(CYAN_ICON_IMAGE),
+                   tr("Image Details") );
 
     // splitters
     _splitter = new QSplitter(this);
@@ -360,12 +362,12 @@ Window::setupMenus()
              SIGNAL( toggled(bool) ),
              SLOT( handleColorDisplayButtonTriggered(bool) ) );
 
-    _menuZoomButton = new QToolButton(this);
+    /*_menuZoomButton = new QToolButton(this);
     _menuZoomButton->setPopupMode(QToolButton::InstantPopup);
     _menuZoomButton->setCheckable(false);
     _menuZoomButton->setIcon( QIcon::fromTheme(CYAN_ICON_ZOOM) );
     _menuZoomButton->setText( tr("Zoom") );
-    _menuZoomButton->setMenu(_menuZoom);
+    _menuZoomButton->setMenu(_menuZoom);*/
 
     _menuView->addMenu(_menuColor);
     _menuView->addMenu(_menuZoom);
@@ -397,7 +399,7 @@ Window::setupActions()
     _toolbar->addAction(_actionOpenImage);
     _toolbar->addWidget(_menuColorButton);
     _toolbar->addWidget(_menuColorDisplayButton);
-    _toolbar->addWidget(_menuZoomButton);
+    //_toolbar->addWidget(_menuZoomButton);
 
     // default profiles
     _menuColorRGBGroup = new QActionGroup(this);
@@ -527,7 +529,10 @@ Window::populateColorProfileMenu(QMenu *menu,
         break;
     default:;
     }
-    QMapIterator<QString, QString> i( Engine::getProfiles(colorspace, false, fallback, true) );
+    QMapIterator<QString, QString> i( Engine::getProfiles(colorspace,
+                                                          false,
+                                                          fallback,
+                                                          true) );
     while ( i.hasNext() ) {
         i.next();
         QAction *action = new QAction(menu);
@@ -593,14 +598,12 @@ Window::populateColorIntentMenu()
 void
 Window::handleColorProfileTriggered()
 {
-    qDebug() << "handle color profile triggered";
     saveColorSettings(true);
 }
 
 void
 Window::handleColorProfileDisplayTriggered()
 {
-    qDebug() << "handle display profile triggered";
     saveColorSettings(true);
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
 }
@@ -608,7 +611,6 @@ Window::handleColorProfileDisplayTriggered()
 void
 Window::handleColorIntentTriggered()
 {
-    qDebug() << "handle intent triggered";
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
     saveColorSettings();
 }
@@ -616,14 +618,12 @@ Window::handleColorIntentTriggered()
 void
 Window::handleColorBlackPointTriggered()
 {
-    qDebug() << "handle black point triggered";
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
     saveColorSettings();
 }
 
 void Window::handleColorDisplayButtonTriggered(bool checked)
 {
-    qDebug() << "handle color display button triggered";
     if ( checked && !canApplyDisplayProfile() ) {
         QMessageBox::warning( this,
                               tr("No display profile"),

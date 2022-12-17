@@ -56,7 +56,8 @@
 #define THEME_ICON_PREFERENCES_COLOR "preferences-color"
 
 #define CYAN_ICON "Cyan"
-#define CYAN_ICON_SUBWINDOW "image-x-generic"
+#define CYAN_ICON_IMAGE "image-x-generic"
+#define CYAN_ICON_SUBWINDOW CYAN_ICON_IMAGE
 #define CYAN_ICON_COLOR_WHEEL "colors"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
 #define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
