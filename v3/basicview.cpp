@@ -134,7 +134,9 @@ BasicView::setFit(bool value)
 }
 
 void
-BasicView::setImage(const Engine::Image &image)
+BasicView::setImage(const Engine::Image &image,
+                    bool getDetails,
+                    bool getProfile)
 {
     qDebug() << "setImage" << image.buffer.size() << image.width << image.height;
     if (!image.success || image.buffer.size() < 1 || image.width < 1 || image.height < 1) { return; }
@@ -143,8 +145,8 @@ BasicView::setImage(const Engine::Image &image)
                                                  image.height,
                                                  QImage::Format_RGBA8888) );
     if ( pixmap.isNull() ) { return; }
-    _sourceDetails = image.information;
-    _sourceProfile = image.profile;
+    if (getDetails) { _sourceDetails = image.information; }
+    if (getProfile) { _sourceProfile = image.profile; }
     scene()->clear();
     scene()->addPixmap(pixmap);
     scene()->setSceneRect( 0,

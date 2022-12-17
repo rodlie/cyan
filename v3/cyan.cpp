@@ -87,6 +87,18 @@ Cyan::Window::Window(QWidget *parent)
              SIGNAL( openImageReady(Engine::Image) ),
              this,
              SLOT( handleOpenImageReady(Engine::Image) ) );
+    connect( this,
+             SIGNAL( applyDisplayProfileReady(Engine::Image) ),
+             this,
+             SLOT( handleUpdateImageReady(Engine::Image) ) );
+    connect( this,
+             SIGNAL( clearDisplayProfileReady(Engine::Image) ),
+             this,
+             SLOT( handleUpdateImageReady(Engine::Image) ) );
+    connect( this,
+             SIGNAL( showStatusMessage(QString,int) ),
+             _statusbar,
+             SLOT( showMessage(QString,int) ) );
 
     QTimer::singleShot( 0,
                         this,
@@ -112,7 +124,17 @@ Window::openImage(bool showDialog,
     QString filePath = showDialog ? dialogFilename : filename;
     bool isOpen = isFileOpen(filePath);
     if ( !isOpen && Engine::isValidImage(filePath) ) {
-        QtConcurrent::run(this, &Window::readImage, filePath);
+        emit showStatusMessage(tr("Reading image %1 ...").arg(filePath), 0);
+        Profiles profiles;
+        profiles.rgb = getDefaultColorProfile(Engine::colorSpaceRGB);
+        profiles.cmyk = getDefaultColorProfile(Engine::colorSpaceCMYK);
+        profiles.gray = getDefaultColorProfile(Engine::colorSpaceGRAY);
+        QtConcurrent::run( this,
+                           &Window::readImage,
+                           filePath,
+                           profiles,
+                           static_cast<Engine::RenderingIntent>( _menuColorIntentGroup->checkedAction()->data().toInt() ),
+                           _menuColorBlackPoint->isChecked() );
     } else if (isOpen) {
         MdiSubWindow *tab = getTab(filename);
         if (tab) { _mdi->setActiveSubWindow(tab); }
@@ -120,17 +142,104 @@ Window::openImage(bool showDialog,
 }
 
 void
-Window::readImage(const QString &filename)
+Window::readImage(const QString &filename,
+                  Profiles profiles,
+                  const Engine::RenderingIntent intent,
+                  bool blackPoint)
 {
-    // TODO: get settings
     Engine::Image image = Engine::readImage(filename,
-                                            "",
-                                            "",
-                                            "",
-                                            Engine::PerceptualRenderingIntent,
-                                            true,
+                                            profiles.rgb,
+                                            profiles.cmyk,
+                                            profiles.gray,
+                                            intent,
+                                            blackPoint,
                                             true);
     emit openImageReady(image);
+}
+
+void
+Window::applyDisplayProfile(const QString &filename,
+                            const QString &srcProfile,
+                            const QString &dstProfile,
+                            const Engine::RenderingIntent intent,
+                            bool blackPoint)
+{
+    Engine::Image image = Engine::convertImage(Engine::fileToByteArray(filename),
+                                               Engine::fileToByteArray(srcProfile),
+                                               Engine::fileToByteArray(dstProfile),
+                                               intent,
+                                               blackPoint,
+                                               false,
+                                               false,
+                                               true,
+                                               true,
+                                               true,
+                                               true);
+    image.filename = filename;
+    emit applyDisplayProfileReady(image);
+}
+
+void
+Window::updateDisplayProfile()
+{
+    MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() );
+    if (!tab) { return; }
+    updateDisplayProfile( tab->getFilename(),
+                          tab->getColorSpace() );
+}
+
+void
+Window::updateDisplayProfile(const QString &filename,
+                             const Engine::colorSpace &colorSpace)
+{
+    emit showStatusMessage(tr("Update display profile ..."), 0);
+    QtConcurrent::run( this,
+                       &Window::applyDisplayProfile,
+                       filename,
+                       getDefaultColorProfile(colorSpace),
+                       getDefaultColorProfile(Engine::colorSpaceRGB, true),
+                       static_cast<Engine::RenderingIntent>( _menuColorIntentGroup->checkedAction()->data().toInt() ),
+                       _menuColorBlackPoint->isChecked() );
+}
+
+void
+Window::clearDisplayProfile(const QString &filename,
+                            Profiles profiles,
+                            const Engine::RenderingIntent intent,
+                            bool blackPoint)
+{
+    Engine::Image image = Engine::readImage(filename,
+                                            profiles.rgb,
+                                            profiles.cmyk,
+                                            profiles.gray,
+                                            intent,
+                                            blackPoint,
+                                            false);
+    emit clearDisplayProfileReady(image);
+}
+
+void
+Window::resetDisplayProfile()
+{
+    MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() );
+    if (!tab) { return; }
+    resetDisplayProfile( tab->getFilename() );
+}
+
+void
+Window::resetDisplayProfile(const QString &filename)
+{
+    emit showStatusMessage(tr("Clear display profile ..."), 0);
+    Profiles profiles;
+    profiles.rgb = getDefaultColorProfile(Engine::colorSpaceRGB);
+    profiles.cmyk = getDefaultColorProfile(Engine::colorSpaceCMYK);
+    profiles.gray = getDefaultColorProfile(Engine::colorSpaceGRAY);
+    QtConcurrent::run( this,
+                       &Window::clearDisplayProfile,
+                       filename,
+                       profiles,
+                       static_cast<Engine::RenderingIntent>( _menuColorIntentGroup->checkedAction()->data().toInt() ),
+                       _menuColorBlackPoint->isChecked() );
 }
 
 void
@@ -485,22 +594,22 @@ void
 Window::handleColorProfileTriggered()
 {
     qDebug() << "handle color profile triggered";
-    saveColorSettings();
+    saveColorSettings(true);
 }
 
 void
 Window::handleColorProfileDisplayTriggered()
 {
     qDebug() << "handle display profile triggered";
-    // TODO: also update image (if display is checked)
-    saveColorSettings();
+    saveColorSettings(true);
+    if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
 }
 
 void
 Window::handleColorIntentTriggered()
 {
     qDebug() << "handle intent triggered";
-    // TODO: also update image (if display is checked)
+    if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
     saveColorSettings();
 }
 
@@ -508,7 +617,7 @@ void
 Window::handleColorBlackPointTriggered()
 {
     qDebug() << "handle black point triggered";
-    // TODO: also update image (if display is checked)
+    if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
     saveColorSettings();
 }
 
@@ -521,7 +630,8 @@ void Window::handleColorDisplayButtonTriggered(bool checked)
                               tr("Select a display profile from the color settings.") );
         _menuColorDisplayButton->setChecked(false);
     }
-    // TODO: also update image
+    if ( checked && canApplyDisplayProfile() ) { updateDisplayProfile(); }
+    else if (!checked) { resetDisplayProfile(); }
     saveColorSettings();
 }
 
@@ -555,7 +665,9 @@ Window::handleOpenImageReady(const Engine::Image &image)
                                          image.filename);
     tab->setAttribute(Qt::WA_DeleteOnClose);
     tab->setWindowIcon( QIcon::fromTheme(CYAN_ICON_SUBWINDOW) );
+    tab->setColorSpace(image.colorspace);
     tab->getView()->setImage(image);
+
     connect( tab->getView(),
              SIGNAL( dropped(QList<QUrl>) ),
              this,
@@ -565,6 +677,22 @@ Window::handleOpenImageReady(const Engine::Image &image)
              this,
              SLOT( handleClosedWindow(QString) ) );
     tab->showMaximized(); // TODO: check if current window is maximized or normal and set accordingly
+    emit showStatusMessage(tr("Done"), 500);
+
+    if ( canApplyDisplayProfile() ) { updateDisplayProfile(image.filename,
+                                                           image.colorspace); }
+}
+
+void
+Window::handleUpdateImageReady(const Engine::Image &image)
+{
+    emit showStatusMessage(tr("Done"), 500);
+    if (!isFileOpen(image.filename) ||
+        !image.success ||
+        image.buffer.length() < 1) { return; }
+    MdiSubWindow *tab = getTab(image.filename);
+    if (!tab) { return; }
+    tab->getView()->setImage(image, false, false);
 }
 
 void
@@ -572,9 +700,10 @@ Window::handleWindowActivated(QMdiSubWindow *window)
 {
     MdiSubWindow *tab = qobject_cast<MdiSubWindow*>(window);
     if (!tab) { return; }
-    qDebug() << "handle window activated" << tab->getFilename();
+    qDebug() << "handle window activated" << tab->getFilename() << _lastTab;
     if (tab->getFilename() == _lastTab) { return; }
     _lastTab = tab->getFilename();
+    // TODO: check if we need to update image (color settings has changed since last viewed)
     setImageSourceDetails( tab->getView()->getSourceDetails() );
 }
 
@@ -674,12 +803,16 @@ Window::getDefaultColorProfile(const Engine::colorSpace &cs,
         break;
     default:;
     }
+
     if (isDisplay) {
         key = "profile_display";
         fallback = CYAN_PROFILE_FALLBACK_RGB;
     }
-    filename = settings.value(key, fallback).toString();
+    if ( settings.value(key).isValid() ) {
+        filename = settings.value(key, fallback).toString();
+    }
     settings.endGroup();
+    if ( filename.isEmpty() ) { return filename; }
     qDebug() << "get default color profile" << filename;
     return filename;
 }
@@ -769,7 +902,7 @@ Window::loadColorSettings()
 }
 
 void
-Window::saveColorSettings()
+Window::saveColorSettings(bool forceSync)
 {
     QSettings settings;
     settings.beginGroup("color_settings");
@@ -791,6 +924,7 @@ Window::saveColorSettings()
     settings.setValue( "black_point", _menuColorBlackPoint->isChecked() );
     settings.setValue( "apply_display_profile", _menuColorDisplayButton->isChecked() );
     settings.endGroup();
+    if (forceSync) { settings.sync(); }
 }
 
 void
@@ -841,7 +975,6 @@ Window::saveSettings()
 bool
 Window::canApplyDisplayProfile()
 {
-    qDebug() << "can apply display profile?";
     QAction *action = _menuColorDisplayGroup->checkedAction();
     if (!action) { return false; }
     QString filename = action->data().toString();

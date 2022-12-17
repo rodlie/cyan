@@ -288,21 +288,21 @@ Engine::readImage(const QString &filename,
         bool hasProfile = (image.iccColorProfile().length() > 0);
         result.profile = QByteArray( (char*)image.iccColorProfile().data(),
                                      image.iccColorProfile().length() );
+        QString fallbackProfile = fallbackProfileRGB;
+        result.colorspace = colorSpaceRGB;
+        switch ( image.colorSpace() ) {
+        case Magick::CMYColorspace:
+        case Magick::CMYKColorspace:
+            result.colorspace = colorSpaceCMYK;
+            fallbackProfile = fallbackProfileCMYK;
+            break;
+        case Magick::GRAYColorspace:
+            result.colorspace = colorSpaceGRAY;
+            fallbackProfile = fallbackProfileGRAY;
+            break;
+        default:;
+        }
         if (!hasProfile) {
-            QString fallbackProfile = fallbackProfileRGB;
-            result.colorspace = colorSpaceRGB;
-            switch ( image.colorSpace() ) {
-            case Magick::CMYColorspace:
-            case Magick::CMYKColorspace:
-                result.colorspace = colorSpaceCMYK;
-                fallbackProfile = fallbackProfileCMYK;
-                break;
-            case Magick::GRAYColorspace:
-                result.colorspace = colorSpaceGRAY;
-                fallbackProfile = fallbackProfileGRAY;
-                break;
-            default:;
-            }
             switch (intent) {
             case SaturationRenderingIntent:
                 image.renderingIntent(Magick::SaturationIntent);
@@ -336,7 +336,7 @@ Engine::readImage(const QString &filename,
     }
     try {
         image.magick("RGBA");
-        if (image.depth() > 8) { image.depth(8); }
+        if (image.depth() != 8) { image.depth(8); }
         Magick::Blob blob;
         image.write(&blob);
         if ( blob.length() > 0) {
@@ -419,6 +419,7 @@ Engine::convertImage(const QByteArray &inputFileData,
                      bool applyInputProfile,
                      bool applyOutputProfile,
                      bool checkifValidResult,
+                     bool display,
                      const QSize &scale)
 {
     Image result;
@@ -504,6 +505,12 @@ Engine::convertImage(const QByteArray &inputFileData,
         result.warnings.append( QString::fromStdString( warn.what() ) );
     }
     try {
+        result.width = image.columns();
+        result.height = image.rows();
+        if (display) {
+            image.magick("RGBA");
+            if (image.depth() != 8) { image.depth(8); }
+        }
         Magick::Blob outputBlob;
         image.write(&outputBlob);
         result.buffer = QByteArray( (char*)outputBlob.data(),
@@ -517,8 +524,11 @@ Engine::convertImage(const QByteArray &inputFileData,
         qWarning() << warn.what();
     }
 
-    if ( checkifValidResult &&
-         isValidImage(result.buffer) ) { result.success = true; }
+    if (display) { result.success = result.buffer.length() > 0; }
+    else {
+        if ( checkifValidResult &&
+             isValidImage(result.buffer) ) { result.success = true; }
+    }
     return result;
 }
 

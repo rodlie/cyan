@@ -27,9 +27,11 @@ using namespace Cyan;
 
 MdiSubWindow::MdiSubWindow(QWidget *parent,
                            const QString &filename,
+                           const Engine::colorSpace &colorSpace,
                            Qt::WindowFlags flags)
     : QMdiSubWindow(parent, flags)
     , _filename(filename)
+    , _colorSpace(colorSpace)
     , _view(nullptr)
     , _scene(nullptr)
 {
@@ -45,6 +47,18 @@ const QString
 MdiSubWindow::getFilename()
 {
     return _filename;
+}
+
+void
+MdiSubWindow::setColorSpace(const Engine::colorSpace &colorSpace)
+{
+    _colorSpace = colorSpace;
+}
+
+const Engine::colorSpace
+MdiSubWindow::getColorSpace()
+{
+    return _colorSpace;
 }
 
 BasicView *

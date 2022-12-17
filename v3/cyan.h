@@ -89,7 +89,9 @@ namespace Cyan
         void setZoom(double scaleX,
                      double scaleY);
         void setFit(bool value);
-        void setImage(const Engine::Image &image);
+        void setImage(const Engine::Image &image,
+                      bool getDetails = true,
+                      bool getProfile = true);
         const QString getSourceDetails();
         const QByteArray getSourceProfile();
 
@@ -133,8 +135,11 @@ namespace Cyan
     public:
         MdiSubWindow( QWidget *parent = nullptr,
                       const QString &filename = QString(),
+                      const Engine::colorSpace &colorSpace = Engine::colorSpaceRGB,
                       Qt::WindowFlags flags = Qt::WindowFlags() );
         const QString getFilename();
+        void setColorSpace(const Engine::colorSpace &colorSpace);
+        const Engine::colorSpace getColorSpace();
         BasicView* getView();
 
     signals:
@@ -142,6 +147,7 @@ namespace Cyan
 
     private:
         QString _filename;
+        Engine::colorSpace _colorSpace;
         BasicView *_view;
         QGraphicsScene *_scene;
 
@@ -154,16 +160,43 @@ namespace Cyan
         Q_OBJECT
 
     public:
+        struct Profiles
+        {
+            QString rgb;
+            QString cmyk;
+            QString gray;
+        };
         Window(QWidget *parent = nullptr);
         ~Window();
 
     public slots:
         void openImage( bool showDialog = true,
                         const QString &filename = QString() );
-        void readImage(const QString &filename);
+        void readImage(const QString &filename,
+                       Cyan::Window::Profiles profiles,
+                       const Engine::RenderingIntent intent,
+                       bool blackPoint);
+        void applyDisplayProfile(const QString &filename,
+                                 const QString &srcProfile,
+                                 const QString &dstProfile,
+                                 const Engine::RenderingIntent intent,
+                                 bool blackPoint);
+        void updateDisplayProfile();
+        void updateDisplayProfile(const QString &filename,
+                                  const Engine::colorSpace &colorSpace);
+        void clearDisplayProfile(const QString &filename,
+                                 Cyan::Window::Profiles profiles,
+                                 const Engine::RenderingIntent intent,
+                                 bool blackPoint);
+        void resetDisplayProfile();
+        void resetDisplayProfile(const QString &filename);
 
     signals:
         void openImageReady(const Engine::Image &image);
+        //void convertImageReady(const Engine::Image &image);
+        void applyDisplayProfileReady(const Engine::Image &image);
+        void clearDisplayProfileReady(const Engine::Image &image);
+        void showStatusMessage(const QString &message, int timeout = 0);
 
     private:
         Mdi *_mdi;
@@ -220,6 +253,7 @@ namespace Cyan
         bool isFileOpen(const QString &filename);
         Cyan::MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
+        void handleUpdateImageReady(const Engine::Image &image);
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
@@ -229,7 +263,7 @@ namespace Cyan
                                     const QString &filename,
                                     bool isDisplay = false);
         void loadColorSettings();
-        void saveColorSettings();
+        void saveColorSettings(bool forceSync = false);
         void loadUISettings();
         void saveUISettings();
         void loadSettings();

@@ -109,6 +109,7 @@ namespace Cyan
                                    bool applyInputProfile = true,
                                    bool applyOutputProfile = true,
                                    bool checkifValidResult = true,
+                                   bool display = false,
                                    const QSize &scale = QSize() );
         static bool hasDelegate(const QString &delegate);
         static bool hasFeature(const QString &feature);
