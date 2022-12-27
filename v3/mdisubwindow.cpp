@@ -27,11 +27,11 @@ using namespace Cyan;
 
 MdiSubWindow::MdiSubWindow(QWidget *parent,
                            const QString &filename,
-                           const Engine::colorSpace &colorSpace,
+                           const Engine::ColorSettings &colorSettings,
                            Qt::WindowFlags flags)
     : QMdiSubWindow(parent, flags)
     , _filename(filename)
-    , _colorSpace(colorSpace)
+    , _colorSettings(colorSettings)
     , _view(nullptr)
     , _scene(nullptr)
 {
@@ -52,13 +52,102 @@ MdiSubWindow::getFilename()
 void
 MdiSubWindow::setColorSpace(const Engine::colorSpace &colorSpace)
 {
-    _colorSpace = colorSpace;
+    _colorSettings.colorspace = colorSpace;
 }
 
 const Engine::colorSpace
 MdiSubWindow::getColorSpace()
 {
-    return _colorSpace;
+    return _colorSettings.colorspace;
+}
+
+void
+MdiSubWindow::setColorIntent(const Engine::RenderingIntent &intent)
+{
+    _colorSettings.intent = intent;
+}
+
+const Engine::RenderingIntent
+MdiSubWindow::getColorIntent()
+{
+    return _colorSettings.intent;
+}
+
+void
+MdiSubWindow::setColorBlackPoint(bool blackpoint)
+{
+    _colorSettings.blackpoint = blackpoint;
+}
+
+bool
+MdiSubWindow::getColorBlackPoint()
+{
+    return _colorSettings.blackpoint;
+}
+
+void
+MdiSubWindow::setColorProfileRGB(const QString &profile)
+{
+    _colorSettings.profiles.rgb = profile;
+}
+
+void
+MdiSubWindow::setColorProfileCMYK(const QString &profile)
+{
+    _colorSettings.profiles.cmyk = profile;
+}
+
+void
+MdiSubWindow::setColorProfileGRAY(const QString &profile)
+{
+    _colorSettings.profiles.gray = profile;
+}
+
+void
+MdiSubWindow::setColorProfileDisplay(const QString &profile)
+{
+    _colorSettings.profiles.display = profile;
+}
+
+const QString
+MdiSubWindow::getColorProfileRGB()
+{
+    return _colorSettings.profiles.rgb;
+}
+
+const QString
+MdiSubWindow::getColorProfileCMYK()
+{
+    return _colorSettings.profiles.cmyk;
+}
+
+const QString
+MdiSubWindow::getColorProfileGRAY()
+{
+    return _colorSettings.profiles.gray;
+}
+
+const QString
+MdiSubWindow::getColorProfileDisplay()
+{
+    return _colorSettings.profiles.display;
+}
+
+void
+MdiSubWindow::setColorSettings(const Engine::ColorSettings &settings,
+                               bool forceColorspace)
+{
+    Engine::colorSpace cs = _colorSettings.colorspace;
+    _colorSettings = settings;
+    if (!forceColorspace) {
+        _colorSettings.colorspace = cs; // keep image colorspace unless forced
+    }
+}
+
+const Engine::ColorSettings
+MdiSubWindow::getColorSettings()
+{
+    return _colorSettings;
 }
 
 BasicView *

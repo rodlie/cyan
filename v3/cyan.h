@@ -136,11 +136,26 @@ namespace Cyan
     public:
         MdiSubWindow( QWidget *parent = nullptr,
                       const QString &filename = QString(),
-                      const Engine::colorSpace &colorSpace = Engine::colorSpaceRGB,
+                      const Engine::ColorSettings &colorSettings = Engine::ColorSettings(),
                       Qt::WindowFlags flags = Qt::WindowFlags() );
         const QString getFilename();
         void setColorSpace(const Engine::colorSpace &colorSpace);
         const Engine::colorSpace getColorSpace();
+        void setColorIntent(const Engine::RenderingIntent &intent);
+        const Engine::RenderingIntent getColorIntent();
+        void setColorBlackPoint(bool blackpoint);
+        bool getColorBlackPoint();
+        void setColorProfileRGB(const QString &profile);
+        void setColorProfileCMYK(const QString &profile);
+        void setColorProfileGRAY(const QString &profile);
+        void setColorProfileDisplay(const QString &profile);
+        const QString getColorProfileRGB();
+        const QString getColorProfileCMYK();
+        const QString getColorProfileGRAY();
+        const QString getColorProfileDisplay();
+        void setColorSettings(const Engine::ColorSettings &settings,
+                              bool forceColorspace = false);
+        const Engine::ColorSettings getColorSettings();
         BasicView* getView();
 
     signals:
@@ -148,7 +163,7 @@ namespace Cyan
 
     private:
         QString _filename;
-        Engine::colorSpace _colorSpace;
+        Engine::ColorSettings _colorSettings;
         BasicView *_view;
         QGraphicsScene *_scene;
 
@@ -161,12 +176,6 @@ namespace Cyan
         Q_OBJECT
 
     public:
-        struct Profiles
-        {
-            QString rgb;
-            QString cmyk;
-            QString gray;
-        };
         Window(QWidget *parent = nullptr);
         ~Window();
 
@@ -174,7 +183,7 @@ namespace Cyan
         void openImage( bool showDialog = true,
                         const QString &filename = QString() );
         void readImage(const QString &filename,
-                       Cyan::Window::Profiles profiles,
+                       Engine::ColorProfiles profiles,
                        const Engine::RenderingIntent intent,
                        bool blackPoint);
         void applyDisplayProfile(const QString &filename,
@@ -186,7 +195,7 @@ namespace Cyan
         void updateDisplayProfile(const QString &filename,
                                   const Engine::colorSpace &colorSpace);
         void clearDisplayProfile(const QString &filename,
-                                 Cyan::Window::Profiles profiles,
+                                 Engine::ColorProfiles profiles,
                                  const Engine::RenderingIntent intent,
                                  bool blackPoint);
         void resetDisplayProfile();
@@ -258,6 +267,8 @@ namespace Cyan
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
+        bool getDefaultColorBlackPoint();
+        const Engine::RenderingIntent getDefaultColorIntent();
         const QString getDefaultColorProfile(const Engine::colorSpace &cs,
                                              bool isDisplay = false);
         void setDefaultColorProfile(const Engine::colorSpace &cs,

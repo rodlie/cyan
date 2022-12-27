@@ -69,6 +69,18 @@ namespace Cyan
             QString information;
             QString filename;
         };
+        struct ColorProfiles {
+            QString rgb;
+            QString cmyk;
+            QString gray;
+            QString display;
+        };
+        struct ColorSettings {
+            colorSpace colorspace = colorSpaceUnknown;
+            RenderingIntent intent = PerceptualRenderingIntent;
+            bool blackpoint = true;
+            ColorProfiles profiles;
+        };
 
         Engine(QObject *parent = nullptr);
 
