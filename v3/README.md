@@ -1,21 +1,21 @@
 # Cyan
 
-Cyan is an open source [prepress](https://en.wikipedia.org/wiki/Prepress) image viewer and converter.
+Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image viewer.
 
-**v3 is a complete rewrite of Cyan, ETA end of year 2022.**
+**v3 is a complete rewrite of Cyan, ETA early 2023.**
 
 ## Roadmap
 
 ### Planned
 
 * ``[ 90% ]`` **New backend**
-* ``[ 50% ]`` **New frontend**
-* ``[ 00% ]`` **Queue**
+* ``[ 60% ]`` **New frontend**
+* ``[ --- ]`` **Queue**
 
 ### Beyond
 
-* ``[ 00% ]`` **Basic editing features**
-* ``[ 00% ]`` **PDF support**
+* ``[ --- ]`` **Basic editing features**
+* ``[ --- ]`` **PDF support**
 
 ## FAQ
 
