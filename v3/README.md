@@ -4,6 +4,12 @@ Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image vie
 
 **v3 is a complete rewrite of Cyan, ETA early 2023.**
 
+## Color profiles
+
+Cyan requires a minimum of three (RGB/CMYK/GRAY) ICC color profiles to function. Fallback color profiles are included, but it's recommended that you install the [Adobe ICC profiles](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html).
+
+A color calibrated monitor with available color profile is also recommended.
+
 ## Roadmap
 
 ### Planned
