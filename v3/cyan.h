@@ -263,10 +263,6 @@ namespace Cyan
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
-        //bool getDefaultColorBlackPoint();
-        //const Engine::RenderingIntent getDefaultColorIntent();
-        //const QString getDefaultColorProfile(const Engine::colorSpace &cs,
-        //                                     bool isDisplay = false);
         void setDefaultColorProfile(const Engine::colorSpace &cs,
                                     const QString &filename,
                                     bool isDisplay = false);
@@ -278,6 +274,9 @@ namespace Cyan
         void loadSettings();
         void saveSettings();
         bool canApplyDisplayProfile();
+        bool colorSettingsDiffer(const Engine::ColorSettings &cs,
+                                 bool checkColorspace = false,
+                                 bool checkDisplay = false);
     };
 }
 

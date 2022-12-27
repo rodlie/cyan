@@ -631,9 +631,9 @@ Window::handleColorDisplayButtonTriggered(bool checked)
                               tr("Select a display profile from the color settings.") );
         _menuColorDisplayButton->setChecked(false);
     }
+    saveColorSettings(true);
     if ( checked && canApplyDisplayProfile() ) { updateDisplayProfile(); }
     else if (!checked) { resetDisplayProfile(); }
-    saveColorSettings();
 }
 
 bool
@@ -698,6 +698,9 @@ Window::handleUpdateImageReady(const Engine::Image &image)
     MdiSubWindow *tab = getTab(image.filename);
     if (!tab) { return; }
     tab->getView()->setImage(image, false, false);
+    if ( colorSettingsDiffer(tab->getColorSettings(), false, true) ) {
+        tab->setColorSettings( getColorSettings() );
+    }
 }
 
 void
@@ -708,7 +711,15 @@ Window::handleWindowActivated(QMdiSubWindow *window)
     qDebug() << "handle window activated" << tab->getFilename() << _lastTab;
     if (tab->getFilename() == _lastTab) { return; }
     _lastTab = tab->getFilename();
-    // TODO: check if we need to update image (color settings has changed since last viewed)
+
+    if ( colorSettingsDiffer(tab->getColorSettings(), false, true) ) {
+        if ( canApplyDisplayProfile() ) {
+            updateDisplayProfile( tab->getFilename(),
+                                  tab->getColorSpace() );
+        } else if ( tab->getColorSettings().applyDisplayProfile ) {
+            clearDisplayProfile( tab->getFilename(), getColorSettings() );
+        }
+    }
     setImageSourceDetails( tab->getView()->getSourceDetails() );
 }
 
@@ -783,67 +794,6 @@ Window::handleClosedWindow(const QString &filename)
 {
     if (_lastTab == filename) { _tabDetails->clear(); }
 }
-
-/*bool
-Window::getDefaultColorBlackPoint()
-{
-    bool blackpoint = false;
-    QSettings settings;
-    settings.beginGroup("color_settings");
-    blackpoint = settings.value("black_point", true).toBool();
-    settings.endGroup();
-    return blackpoint;
-}
-
-const Engine::RenderingIntent
-Window::getDefaultColorIntent()
-{
-    Engine::RenderingIntent intent = Engine::UndefinedRenderingIntent;
-    QSettings settings;
-    settings.beginGroup("color_settings");
-    intent = static_cast<Engine::RenderingIntent>( settings.value("intent",
-                                                                  Engine::RenderingIntent::PerceptualRenderingIntent).toInt() );
-    settings.endGroup();
-    return intent;
-}
-
-const QString
-Window::getDefaultColorProfile(const Engine::colorSpace &cs,
-                               bool isDisplay)
-{
-    QString filename;
-    QSettings settings;
-    settings.beginGroup("color_settings");
-    QString key;
-    QString fallback;
-    switch(cs) {
-    case Engine::colorSpaceRGB:
-        key = "profile_rgb";
-        fallback = CYAN_PROFILE_FALLBACK_RGB;
-        break;
-    case Engine::colorSpaceCMYK:
-        key = "profile_cmyk";
-        fallback = CYAN_PROFILE_FALLBACK_CMYK;
-        break;
-    case Engine::colorSpaceGRAY:
-        key = "profile_gray";
-        fallback = CYAN_PROFILE_FALLBACK_GRAY;
-        break;
-    default:;
-    }
-
-    if (isDisplay) {
-        key = "profile_display";
-        fallback = CYAN_PROFILE_FALLBACK_RGB;
-    }
-    if ( settings.value(key).isValid() ) {
-        filename = settings.value(key, fallback).toString();
-    }
-    settings.endGroup();
-    if ( filename.isEmpty() ) { return filename; }
-    qDebug() << "get default color profile" << filename;
-    return filename;
-}*/
 
 void
 Window::setDefaultColorProfile(const Engine::colorSpace &cs,
@@ -1011,7 +961,51 @@ Window::canApplyDisplayProfile()
     QAction *action = _menuColorDisplayGroup->checkedAction();
     if (!action) { return false; }
     QString filename = action->data().toString();
-    qDebug() << filename;
     if ( !filename.isEmpty() && _menuColorDisplayButton->isChecked() ) { return true; }
+    return false;
+}
+
+bool
+Window::colorSettingsDiffer(const Engine::ColorSettings &cs,
+                            bool checkColorspace,
+                            bool checkDisplay)
+{
+    auto config = getColorSettings();
+    if (config.blackpoint != cs.blackpoint) {
+        qDebug() << "====> blackpoint" << config.blackpoint << cs.blackpoint;
+        return true;
+    }
+    if (config.intent != cs.intent) {
+        qDebug() << "====> intent" << config.intent << cs.intent;
+        return true;
+    }
+    if (config.profiles.rgb != cs.profiles.rgb) {
+        qDebug() << "====> rgb" << config.profiles.rgb << cs.profiles.rgb;
+        return true;
+    }
+    if (config.profiles.cmyk != cs.profiles.cmyk) {
+        qDebug() << "====> cmyk" << config.profiles.cmyk << cs.profiles.cmyk;
+        return true;
+    }
+    if (config.profiles.gray != cs.profiles.gray) {
+        qDebug() << "====> gray" << config.profiles.gray << cs.profiles.gray;
+        return true;
+    }
+    if (checkColorspace) {
+        if (config.colorspace != cs.colorspace) {
+            qDebug() << "====> colorspace" << config.colorspace << cs.colorspace;
+            return true;
+        }
+    }
+    if (checkDisplay) {
+        if (config.applyDisplayProfile != cs.applyDisplayProfile) {
+            qDebug() << "====> apply" << config.applyDisplayProfile << cs.applyDisplayProfile;
+            return true;
+        }
+        if (config.profiles.display != cs.profiles.display) {
+            qDebug() << "====> display" << config.profiles.display << cs.profiles.display;
+            return true;
+        }
+    }
     return false;
 }
