@@ -666,6 +666,9 @@ Window::handleOpenImageReady(const Engine::Image &image)
     auto cs = getColorSettings();
     cs.colorspace = image.colorspace;
 
+    bool isLastTabMaximized = true;
+    if ( getTab(_lastTab) && !getTab(_lastTab)->isMaximized() ) { isLastTabMaximized = false; }
+
     MdiSubWindow *tab = new MdiSubWindow(_mdi,
                                          image.filename,
                                          cs);
@@ -681,7 +684,12 @@ Window::handleOpenImageReady(const Engine::Image &image)
              SIGNAL( closed(QString) ),
              this,
              SLOT( handleClosedWindow(QString) ) );
-    tab->showMaximized(); // TODO: check if current window is maximized or normal and set accordingly
+    if (isLastTabMaximized) { tab->showMaximized(); }
+    else {
+        tab->setMinimumSize( QSize(320, 256) );
+        tab->showNormal();
+    }
+
     emit showStatusMessage(tr("Done"), 500);
 
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(image.filename,
