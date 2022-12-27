@@ -19,7 +19,7 @@
 #
 */
 
-#include "cyan.h"
+#include "basicview.h"
 
 #include <QMimeData>
 #include <QPixmap>

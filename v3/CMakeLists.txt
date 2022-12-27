@@ -53,8 +53,11 @@ set(PROJECT_SOURCES
     engine.cpp
     engine.h
     basicview.cpp
+    basicview.h
     mdi.cpp
+    mdi.h
     mdisubwindow.cpp
+    mdisubwindow.h
     cyan.cpp
     cyan.h
     qtwindowlistmenu.cpp

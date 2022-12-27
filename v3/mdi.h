@@ -19,39 +19,35 @@
 #
 */
 
-#include "mdi.h"
+#ifndef MDI_H
+#define MDI_H
 
-#include <QMimeData>
+#include <QMdiArea>
+#include <QList>
+#include <QUrl>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDragLeaveEvent>
+#include <QDropEvent>
 
-using namespace Cyan;
-
-Mdi::Mdi(QWidget *parent)
-    : QMdiArea(parent)
+namespace Cyan
 {
-    setAcceptDrops(true);
+    class Mdi : public QMdiArea
+    {
+        Q_OBJECT
+
+    public:
+        Mdi(QWidget *parent = nullptr);
+
+    signals:
+        void dropped(const QList<QUrl> &urls);
+
+    protected:
+        void dragEnterEvent(QDragEnterEvent *e);
+        void dragMoveEvent(QDragMoveEvent *e);
+        void dragLeaveEvent(QDragLeaveEvent *e);
+        void dropEvent(QDropEvent *e);
+    };
 }
 
-void
-Mdi::dragEnterEvent(QDragEnterEvent *e)
-{
-    e->acceptProposedAction();
-}
-
-void
-Mdi::dragMoveEvent(QDragMoveEvent *e)
-{
-    e->acceptProposedAction();
-}
-
-void
-Mdi::dragLeaveEvent(QDragLeaveEvent *e)
-{
-    e->accept();
-}
-
-void
-Mdi::dropEvent(QDropEvent *e)
-{
-    if ( e->mimeData()->hasUrls() ) { emit dropped( e->mimeData()->urls() ); }
-}
-
+#endif // MDI_H

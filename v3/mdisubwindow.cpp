@@ -19,7 +19,7 @@
 #
 */
 
-#include "cyan.h"
+#include "mdisubwindow.h"
 
 #include <QFileInfo>
 

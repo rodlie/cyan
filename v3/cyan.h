@@ -23,11 +23,6 @@
 #define CYAN_H
 
 #include <QMainWindow>
-#include <QMdiArea>
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDragLeaveEvent>
-#include <QDropEvent>
 #include <QUrl>
 #include <QToolBar>
 #include <QSplitter>
@@ -38,17 +33,14 @@
 #include <QActionGroup>
 #include <QToolButton>
 #include <QMdiSubWindow>
-#include <QCloseEvent>
-#include <QGraphicsView>
-#include <QWheelEvent>
-#include <QResizeEvent>
-#include <QGraphicsScene>
 #include <QTabWidget>
 #include <QTreeWidget>
 
 #include "qtwindowlistmenu.h"
 
 #include "engine.h"
+#include "mdi.h"
+#include "mdisubwindow.h"
 
 #define THEME_ICON_APPLICATIONS_GRAPHICS "applications-graphics"
 #define THEME_ICON_DOCUMENT_OPEN "document-open"
@@ -70,107 +62,6 @@
 
 namespace Cyan
 {
-    class BasicView : public QGraphicsView
-    {
-        Q_OBJECT
-
-    public:
-        explicit BasicView(QWidget* parent = nullptr,
-                           bool fit = false,
-                           bool native = false);
-        bool isFit();
-
-    signals:
-        void resetZoom();
-        void zoomChanged(double scaleX,
-                         double scaleY);
-        void dropped(const QList<QUrl> &urls);
-
-    public slots:
-        void setZoom(double scaleX,
-                     double scaleY);
-        void setFit(bool value);
-        void setImage(const Engine::Image &image,
-                      bool getDetails = true,
-                      bool getProfile = true);
-        const QString getSourceDetails();
-        const QByteArray getSourceProfile();
-
-    private:
-        bool _fit;
-        bool _native;
-        QString _sourceDetails;
-        QByteArray _sourceProfile;
-
-    protected:
-        void wheelEvent(QWheelEvent* e);
-        void mousePressEvent(QMouseEvent *e);
-        void dragEnterEvent(QDragEnterEvent *e);
-        void dragMoveEvent(QDragMoveEvent *e);
-        void dragLeaveEvent(QDragLeaveEvent *e);
-        void dropEvent(QDropEvent *e);
-        void resizeEvent(QResizeEvent *e);
-    };
-
-    class Mdi : public QMdiArea
-    {
-        Q_OBJECT
-
-    public:
-        Mdi(QWidget *parent = nullptr);
-
-    signals:
-        void dropped(const QList<QUrl> &urls);
-
-    protected:
-        void dragEnterEvent(QDragEnterEvent *e);
-        void dragMoveEvent(QDragMoveEvent *e);
-        void dragLeaveEvent(QDragLeaveEvent *e);
-        void dropEvent(QDropEvent *e);
-    };
-
-    class MdiSubWindow : public QMdiSubWindow
-    {
-        Q_OBJECT
-
-    public:
-        MdiSubWindow( QWidget *parent = nullptr,
-                      const QString &filename = QString(),
-                      const Engine::ColorSettings &colorSettings = Engine::ColorSettings(),
-                      Qt::WindowFlags flags = Qt::WindowFlags() );
-        const QString getFilename();
-        void setColorSpace(const Engine::colorSpace &colorSpace);
-        const Engine::colorSpace getColorSpace();
-        void setColorIntent(const Engine::RenderingIntent &intent);
-        const Engine::RenderingIntent getColorIntent();
-        void setColorBlackPoint(bool blackpoint);
-        bool getColorBlackPoint();
-        void setColorProfileRGB(const QString &profile);
-        void setColorProfileCMYK(const QString &profile);
-        void setColorProfileGRAY(const QString &profile);
-        void setColorProfileDisplay(const QString &profile);
-        const QString getColorProfileRGB();
-        const QString getColorProfileCMYK();
-        const QString getColorProfileGRAY();
-        const QString getColorProfileDisplay();
-        void setColorSettings(const Engine::ColorSettings &settings,
-                              bool forceColorspace = false);
-        const Engine::ColorSettings getColorSettings();
-        BasicView* getView();
-
-    signals:
-        void closed(const QString &filename);
-
-    private:
-        QString _filename;
-        Engine::ColorSettings _colorSettings;
-        BasicView *_view;
-        QGraphicsScene *_scene;
-
-    protected:
-        void closeEvent(QCloseEvent *e);
-    };
-
     class Window : public QMainWindow
     {
         Q_OBJECT
