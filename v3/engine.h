@@ -79,6 +79,7 @@ namespace Cyan
             colorSpace colorspace = colorSpaceUnknown;
             RenderingIntent intent = PerceptualRenderingIntent;
             bool blackpoint = true;
+            bool applyDisplayProfile = false;
             ColorProfiles profiles;
         };
 

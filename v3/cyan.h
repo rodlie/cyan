@@ -183,9 +183,7 @@ namespace Cyan
         void openImage( bool showDialog = true,
                         const QString &filename = QString() );
         void readImage(const QString &filename,
-                       Engine::ColorProfiles profiles,
-                       const Engine::RenderingIntent intent,
-                       bool blackPoint);
+                       const Engine::ColorSettings &cs);
         void applyDisplayProfile(const QString &filename,
                                  const QString &srcProfile,
                                  const QString &dstProfile,
@@ -195,9 +193,7 @@ namespace Cyan
         void updateDisplayProfile(const QString &filename,
                                   const Engine::colorSpace &colorSpace);
         void clearDisplayProfile(const QString &filename,
-                                 Engine::ColorProfiles profiles,
-                                 const Engine::RenderingIntent intent,
-                                 bool blackPoint);
+                                 const Engine::ColorSettings &cs);
         void resetDisplayProfile();
         void resetDisplayProfile(const QString &filename);
 
@@ -267,15 +263,16 @@ namespace Cyan
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
-        bool getDefaultColorBlackPoint();
-        const Engine::RenderingIntent getDefaultColorIntent();
-        const QString getDefaultColorProfile(const Engine::colorSpace &cs,
-                                             bool isDisplay = false);
+        //bool getDefaultColorBlackPoint();
+        //const Engine::RenderingIntent getDefaultColorIntent();
+        //const QString getDefaultColorProfile(const Engine::colorSpace &cs,
+        //                                     bool isDisplay = false);
         void setDefaultColorProfile(const Engine::colorSpace &cs,
                                     const QString &filename,
                                     bool isDisplay = false);
         void loadColorSettings();
         void saveColorSettings(bool forceSync = false);
+        const Engine::ColorSettings getColorSettings();
         void loadUISettings();
         void saveUISettings();
         void loadSettings();
