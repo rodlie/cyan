@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationDisplayName("Cyan");
     QCoreApplication::setApplicationName("Cyan");
     QCoreApplication::setOrganizationName("Cyan");
-    QCoreApplication::setOrganizationDomain("fxarena.net");
+    QCoreApplication::setOrganizationDomain("cyan.graphics");
     QCoreApplication::setApplicationVersion(CYAN_VERSION);
 
     Magick::InitializeMagick(nullptr);
