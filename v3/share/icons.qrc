@@ -28,6 +28,7 @@
         <file>icons/hicolor/32x32/actions/go-home.png</file>
         <file>icons/hicolor/32x32/actions/document-open.png</file>
         <file>icons/hicolor/32x32/actions/color-wheel.png</file>
+        <file>icons/hicolor/32x32/actions/color_management.png</file>
         <file>icons/hicolor/32x32/actions/hand.png</file>
         <file>icons/hicolor/32x32/actions/user-home.png</file>
         <file>icons/hicolor/32x32/actions/application-x-addon.png</file>
@@ -52,6 +53,8 @@
         <file>icons/hicolor/32x32/actions/emblem-readonly.png</file>
         <file>icons/hicolor/32x32/actions/process-stop.png</file>
         <file>icons/hicolor/32x32/actions/transform_move.png</file>
+        <file>icons/hicolor/32x32/actions/printer.png</file>
+        <file>icons/hicolor/32x32/actions/printer_color.png</file>
         <file>icons/hicolor/192x192/apps/Cyan.png</file>
         <file>icons/hicolor/160x160/apps/Cyan.png</file>
         <file>icons/hicolor/96x96/apps/Cyan.png</file>
@@ -86,6 +89,7 @@
         <file>icons/hicolor/16x16/actions/go-home.png</file>
         <file>icons/hicolor/16x16/actions/document-open.png</file>
         <file>icons/hicolor/16x16/actions/color-wheel.png</file>
+        <file>icons/hicolor/16x16/actions/color_management.png</file>
         <file>icons/hicolor/16x16/actions/hand.png</file>
         <file>icons/hicolor/16x16/actions/user-home.png</file>
         <file>icons/hicolor/16x16/actions/application-x-addon.png</file>
@@ -110,6 +114,8 @@
         <file>icons/hicolor/16x16/actions/emblem-readonly.png</file>
         <file>icons/hicolor/16x16/actions/process-stop.png</file>
         <file>icons/hicolor/16x16/actions/transform_move.png</file>
+        <file>icons/hicolor/16x16/actions/printer.png</file>
+        <file>icons/hicolor/16x16/actions/printer_color.png</file>
         <file>icons/hicolor/48x48/apps/Cyan.png</file>
     </qresource>
 </RCC>
