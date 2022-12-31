@@ -63,15 +63,18 @@ Cyan::Window::Window(QWidget *parent)
     , _menuColorGRAY(nullptr)
     , _menuColorIntent(nullptr)
     , _menuColorDisplay(nullptr)
+    , _menuColorPrint(nullptr)
     , _menuZoom(nullptr)
     , _menuColorBlackPoint(nullptr)
     , _menuColorRGBGroup(nullptr)
     , _menuColorCMYKGroup(nullptr)
     , _menuColorGRAYGroup(nullptr)
     , _menuColorDisplayGroup(nullptr)
+    , _menuColorPrintGroup(nullptr)
     , _menuColorIntentGroup(nullptr)
     , _menuColorButton(nullptr)
     , _menuColorDisplayButton(nullptr)
+    , _menuColorPrintButton(nullptr)
     , _menuZoomButton(nullptr)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
@@ -93,6 +96,14 @@ Cyan::Window::Window(QWidget *parent)
              SLOT( handleUpdateImageReady(Engine::Image) ) );
     connect( this,
              SIGNAL( clearDisplayProfileReady(Engine::Image) ),
+             this,
+             SLOT( handleUpdateImageReady(Engine::Image) ) );
+    connect( this,
+             SIGNAL( applyPrintProfileReady(Engine::Image) ),
+             this,
+             SLOT( handleUpdateImageReady(Engine::Image) ) );
+    connect( this,
+             SIGNAL( clearPrintProfileReady(Engine::Image) ),
              this,
              SLOT( handleUpdateImageReady(Engine::Image) ) );
     connect( this,
@@ -243,6 +254,53 @@ Window::resetDisplayProfile(const QString &filename)
 }
 
 void
+Window::applyPrintProfile(const QString &filename,
+                          const QString &srcProfile,
+                          const QString &dstProfile,
+                          const Engine::RenderingIntent intent,
+                          bool blackpoint)
+{
+    qDebug() << "applyPrintProfile" << filename << srcProfile << dstProfile << intent << blackpoint;
+}
+
+void
+Window::updatePrintProfile()
+{
+    // TODO
+    qDebug() << "updatePrintProfile";
+}
+
+void
+Window::updatePrintProfile(const QString &filename,
+                           const Engine::colorSpace &colorspace)
+{
+    // TODO
+    qDebug() << "updatePrintProfile" << filename << colorspace;
+}
+
+void
+Window::clearPrintProfile(const QString &filename,
+                          const Engine::ColorSettings &cs)
+{
+    // TODO
+    qDebug() << "clearPrintProfile" << filename;
+}
+
+void
+Window::resetPrintProfile()
+{
+    // TODO
+    qDebug() << "resetPrintProfile";
+}
+
+void
+Window::resetPrintProfile(const QString &filename)
+{
+    // TODO
+    qDebug() << "resetPrintProfile" << filename;
+}
+
+void
 Window::setupUi()
 {
  #ifdef Q_OS_DARWIN
@@ -301,7 +359,7 @@ Window::setupUi()
     _toolbar->setObjectName("ToolsBar");
     _toolbar->setMovable(false);
     //_toolbar->setIconSize( QSize(32, 32) );
-    addToolBar(Qt::LeftToolBarArea, _toolbar);
+    addToolBar(Qt::TopToolBarArea, _toolbar);
 
     // statusbar
     _statusbar = new QStatusBar(this);
@@ -328,13 +386,15 @@ Window::setupMenus()
     _menuColorGRAY = new QMenu(tr("Default GRAY profile"), this);
     _menuColorIntent = new QMenu(tr("Rendering Intent"), this);
     _menuColorDisplay = new QMenu(tr("Display profile"), this);
+    _menuColorPrint = new QMenu(tr("Print profile"), this);
     _menuZoom = new QMenu(tr("Zoom"), this);
 
     _menuColorRGB->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     _menuColorCMYK->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
     _menuColorGRAY->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
-    //_menuColorIntent->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
+    _menuColorIntent->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_MAN) );
     _menuColorDisplay->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
+    _menuColorPrint->setIcon( QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR) );
     _menuZoom->setIcon( QIcon::fromTheme(CYAN_ICON_ZOOM) );
     _menuColor->setIcon( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL) );
 
@@ -342,6 +402,7 @@ Window::setupMenus()
     _menuColor->addMenu(_menuColorCMYK);
     _menuColor->addMenu(_menuColorGRAY);
     _menuColor->addMenu(_menuColorDisplay);
+    _menuColor->addMenu(_menuColorPrint);
     _menuColor->addMenu(_menuColorIntent);
 
     _menuColorButton = new QToolButton(this);
@@ -351,16 +412,28 @@ Window::setupMenus()
     _menuColorButton->setMenu(_menuColor);
 
     _menuColorDisplayButton = new QToolButton(this);
-    _menuColorDisplayButton->setPopupMode(QToolButton::InstantPopup);
+    _menuColorDisplayButton->setPopupMode(QToolButton::MenuButtonPopup);
     _menuColorDisplayButton->setCheckable(true);
     _menuColorDisplayButton->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
     _menuColorDisplayButton->setText( tr("Display") );
     _menuColorDisplayButton->setToolTip( tr("Apply display color profile") );
-    _menuColorDisplayButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(0, 100, 0); }") );
-    //_menuColorDisplayButton->setMenu(_menuColorDisplay);
+    _menuColorDisplayButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(27, 101, 162); }") );
+    _menuColorDisplayButton->setMenu(_menuColorDisplay);
     connect( _menuColorDisplayButton,
              SIGNAL( toggled(bool) ),
              SLOT( handleColorDisplayButtonTriggered(bool) ) );
+
+    _menuColorPrintButton = new QToolButton(this);
+    _menuColorPrintButton->setPopupMode(QToolButton::MenuButtonPopup);
+    _menuColorPrintButton->setCheckable(true);
+    _menuColorPrintButton->setIcon( QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR) );
+    _menuColorPrintButton->setText( tr("Printer") );
+    _menuColorPrintButton->setToolTip( tr("Apply printer color profile") );
+    _menuColorPrintButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(27, 101, 162); }") );
+    _menuColorPrintButton->setMenu(_menuColorPrint);
+    connect( _menuColorPrintButton,
+             SIGNAL( toggled(bool) ),
+             SLOT( handleColorPrintButtonTriggered(bool) ) );
 
     /*_menuZoomButton = new QToolButton(this);
     _menuZoomButton->setPopupMode(QToolButton::InstantPopup);
@@ -395,10 +468,17 @@ Window::setupActions()
              SLOT( handleActionOpenImage() ) );
     _menuFile->addAction(_actionOpenImage);
 
+    // toolbar spacer
+    QWidget *toolbarSpacer = new QWidget(this);
+    toolbarSpacer->setSizePolicy(QSizePolicy::Expanding,
+                                 QSizePolicy::Expanding);
+
     // toolbar
     _toolbar->addAction(_actionOpenImage);
     _toolbar->addWidget(_menuColorButton);
+    _toolbar->addWidget(toolbarSpacer);
     _toolbar->addWidget(_menuColorDisplayButton);
+    _toolbar->addWidget(_menuColorPrintButton);
     //_toolbar->addWidget(_menuZoomButton);
 
     // default profiles
@@ -406,12 +486,14 @@ Window::setupActions()
     _menuColorCMYKGroup = new QActionGroup(this);
     _menuColorGRAYGroup = new QActionGroup(this);
     _menuColorDisplayGroup = new QActionGroup(this);
+    _menuColorPrintGroup = new QActionGroup(this);
     _menuColorIntentGroup = new QActionGroup(this);
 
     _menuColorRGB->addActions( _menuColorRGBGroup->actions() );
     _menuColorCMYK->addActions( _menuColorCMYKGroup->actions() );
     _menuColorGRAY->addActions( _menuColorGRAYGroup->actions() );
     _menuColorDisplay->addActions( _menuColorDisplayGroup->actions() );
+    _menuColorPrint->addActions( _menuColorPrintGroup->actions() );
 
     // default blackpoint
     _menuColorBlackPoint = new QAction(tr("Black point compensation"), this);
@@ -435,6 +517,11 @@ Window::setupActions()
     populateColorProfileMenu(_menuColorDisplay,
                              _menuColorDisplayGroup,
                              Engine::colorSpaceRGB,
+                             true);
+    populateColorProfileMenu(_menuColorPrint,
+                             _menuColorPrintGroup,
+                             Engine::colorSpaceCMYK,
+                             false,
                              true);
 
     populateColorIntentMenu();
@@ -468,7 +555,7 @@ Window::setupTheme(bool native,
     palette.setColor( QPalette::Button, QColor(53, 53, 53) );
     palette.setColor(QPalette::ButtonText, Qt::white);
     palette.setColor(QPalette::BrightText, Qt::red);
-    palette.setColor( QPalette::Highlight, QColor(196, 110, 33) );
+    palette.setColor( QPalette::Highlight, QColor(33, 122, 196) );
     palette.setColor(QPalette::HighlightedText, Qt::white);
     palette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
@@ -513,7 +600,8 @@ void
 Window::populateColorProfileMenu(QMenu *menu,
                                  QActionGroup *group,
                                  Engine::colorSpace colorspace,
-                                 bool isDisplay)
+                                 bool isDisplay,
+                                 bool isPrint)
 {
     if (!menu || !group) { return; }
     QString fallback;
@@ -545,6 +633,11 @@ Window::populateColorProfileMenu(QMenu *menu,
                      SIGNAL( triggered() ),
                      this,
                      SLOT( handleColorProfileDisplayTriggered() ) );
+        } else if (isPrint) {
+            connect( action,
+                     SIGNAL( triggered() ),
+                     this,
+                     SLOT( handleColorProfilePrintTriggered() ) );
         } else {
             connect( action,
                      SIGNAL( triggered() ),
@@ -609,6 +702,14 @@ Window::handleColorProfileDisplayTriggered()
 }
 
 void
+Window::handleColorProfilePrintTriggered()
+{
+    qDebug() << "handleColorProfilePrintTriggered";
+    saveColorSettings(true);
+    if ( canApplyPrintProfile() ) { updatePrintProfile(); }
+}
+
+void
 Window::handleColorIntentTriggered()
 {
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
@@ -634,6 +735,20 @@ Window::handleColorDisplayButtonTriggered(bool checked)
     saveColorSettings(true);
     if ( checked && canApplyDisplayProfile() ) { updateDisplayProfile(); }
     else if (!checked) { resetDisplayProfile(); }
+}
+
+void Window::handleColorPrintButtonTriggered(bool checked)
+{
+    qDebug() << "handleColorPrintButtonTriggered";
+    if ( checked && !canApplyPrintProfile() ) {
+        QMessageBox::warning( this,
+                              tr("No print profile"),
+                              tr("Select a print profile from the color settings.") );
+        _menuColorPrintButton->setChecked(false);
+    }
+    saveColorSettings(true);
+    if ( checked && canApplyPrintProfile() ) { updatePrintProfile(); }
+    else if (!checked) { resetPrintProfile(); }
 }
 
 bool
@@ -806,7 +921,8 @@ Window::handleClosedWindow(const QString &filename)
 void
 Window::setDefaultColorProfile(const Engine::colorSpace &cs,
                                const QString &filename,
-                               bool isDisplay)
+                               bool isDisplay,
+                               bool isPrint)
 {
     QSettings settings;
     settings.beginGroup("color_settings");
@@ -824,6 +940,7 @@ Window::setDefaultColorProfile(const Engine::colorSpace &cs,
     default:;
     }
     if (isDisplay) { key = "profile_display"; }
+    else if (isPrint) { key = "profile_print"; }
     qDebug() << "set default color profile" << key << filename;
     settings.setValue(key, filename);
     settings.endGroup();
@@ -854,6 +971,12 @@ Window::loadColorSettings()
             break;
         }
     }
+    for ( auto &profile : _menuColorPrint->actions() ) {
+        if (profile->data().toString() == cs.profiles.print) {
+            profile->setChecked(true);
+            break;
+        }
+    }
     for ( auto &profile : _menuColorGRAY->actions() ) {
         if (profile->data().toString() == cs.profiles.gray) {
             profile->setChecked(true);
@@ -869,6 +992,10 @@ Window::loadColorSettings()
     if (cs.applyDisplayProfile) {
         _menuColorDisplayButton->setChecked(true);
         _menuColorDisplayButton->setChecked( canApplyDisplayProfile() );
+    }
+    if (cs.applyPrintProfile) {
+        _menuColorPrintButton->setChecked(true);
+        _menuColorPrintButton->setChecked( canApplyPrintProfile() );
     }
 }
 
@@ -886,6 +1013,9 @@ Window::saveColorSettings(bool forceSync)
     if ( _menuColorCMYKGroup->checkedAction() ) {
         settings.setValue( "profile_cmyk", _menuColorCMYKGroup->checkedAction()->data().toString() );
     }
+    if ( _menuColorPrintGroup->checkedAction() ) {
+        settings.setValue( "profile_print", _menuColorPrintGroup->checkedAction()->data().toString() );
+    }
     if ( _menuColorGRAYGroup->checkedAction() ) {
         settings.setValue( "profile_gray", _menuColorGRAYGroup->checkedAction()->data().toString() );
     }
@@ -894,6 +1024,7 @@ Window::saveColorSettings(bool forceSync)
     }
     settings.setValue( "black_point", _menuColorBlackPoint->isChecked() );
     settings.setValue( "apply_display_profile", _menuColorDisplayButton->isChecked() );
+    settings.setValue( "apply_print_profile", _menuColorPrintButton->isChecked() );
     settings.endGroup();
     if (forceSync) { settings.sync(); }
 }
@@ -909,10 +1040,12 @@ Window::getColorSettings()
     cs.profiles.cmyk = settings.value("profile_cmyk", CYAN_PROFILE_FALLBACK_CMYK).toString();
     cs.profiles.gray = settings.value("profile_gray", CYAN_PROFILE_FALLBACK_GRAY).toString();
     cs.profiles.display = settings.value("profile_display", CYAN_PROFILE_FALLBACK_RGB).toString();
+    cs.profiles.print = settings.value("profile_print", CYAN_PROFILE_FALLBACK_CMYK).toString();
     cs.intent = static_cast<Engine::RenderingIntent>( settings.value("intent",
                                                                      Engine::RenderingIntent::PerceptualRenderingIntent).toInt() );
     cs.blackpoint = settings.value("black_point", true).toBool();
     cs.applyDisplayProfile = settings.value("apply_display_profile", false).toBool();
+    cs.applyPrintProfile = settings.value("apply_print_profile", false).toBool();
     settings.endGroup();
 
     return cs;
@@ -973,10 +1106,20 @@ Window::canApplyDisplayProfile()
     return false;
 }
 
+bool Window::canApplyPrintProfile()
+{
+    QAction *action = _menuColorPrintGroup->checkedAction();
+    if (!action) { return false; }
+    QString filename = action->data().toString();
+    if ( !filename.isEmpty() && _menuColorPrintButton->isChecked() ) { return true; }
+    return false;
+}
+
 bool
 Window::colorSettingsDiffer(const Engine::ColorSettings &cs,
                             bool checkColorspace,
-                            bool checkDisplay)
+                            bool checkDisplay,
+                            bool checkPrint)
 {
     auto config = getColorSettings();
     if (config.blackpoint != cs.blackpoint) {
@@ -1007,11 +1150,21 @@ Window::colorSettingsDiffer(const Engine::ColorSettings &cs,
     }
     if (checkDisplay) {
         if (config.applyDisplayProfile != cs.applyDisplayProfile) {
-            qDebug() << "====> apply" << config.applyDisplayProfile << cs.applyDisplayProfile;
+            qDebug() << "====> apply display" << config.applyDisplayProfile << cs.applyDisplayProfile;
             return true;
         }
         if (config.profiles.display != cs.profiles.display) {
             qDebug() << "====> display" << config.profiles.display << cs.profiles.display;
+            return true;
+        }
+    }
+    if (checkPrint) {
+        if (config.applyPrintProfile != cs.applyPrintProfile) {
+            qDebug() << "====> apply print" << config.applyPrintProfile << cs.applyPrintProfile;
+            return true;
+        }
+        if (config.profiles.print != cs.profiles.print) {
+            qDebug() << "====> print" << config.profiles.print << cs.profiles.print;
             return true;
         }
     }

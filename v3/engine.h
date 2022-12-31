@@ -74,12 +74,14 @@ namespace Cyan
             QString cmyk;
             QString gray;
             QString display;
+            QString print;
         };
         struct ColorSettings {
             colorSpace colorspace = colorSpaceUnknown;
             RenderingIntent intent = PerceptualRenderingIntent;
             bool blackpoint = true;
             bool applyDisplayProfile = false;
+            bool applyPrintProfile = false;
             ColorProfiles profiles;
         };
 

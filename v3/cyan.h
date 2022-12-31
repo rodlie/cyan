@@ -51,10 +51,13 @@
 #define CYAN_ICON_IMAGE "image-x-generic"
 #define CYAN_ICON_SUBWINDOW CYAN_ICON_IMAGE
 #define CYAN_ICON_COLOR_WHEEL "colors"
+#define CYAN_ICON_COLOR_MAN "color_management"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
 #define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
 #define CYAN_ICON_ZOOM "zoom"
 #define CYAN_ICON_IMAGES "images"
+#define CYAN_ICON_PRINTER "printer"
+#define CYAN_ICON_PRINTER_COLOR "printer_color"
 
 #define CYAN_PROFILE_FALLBACK_RGB ":/icc/rgb.icc"
 #define CYAN_PROFILE_FALLBACK_CMYK ":/icc/cmyk.icc"
@@ -75,6 +78,7 @@ namespace Cyan
                         const QString &filename = QString() );
         void readImage(const QString &filename,
                        const Engine::ColorSettings &cs);
+
         void applyDisplayProfile(const QString &filename,
                                  const QString &srcProfile,
                                  const QString &dstProfile,
@@ -88,11 +92,26 @@ namespace Cyan
         void resetDisplayProfile();
         void resetDisplayProfile(const QString &filename);
 
+        void applyPrintProfile(const QString &filename,
+                               const QString &srcProfile,
+                               const QString &dstProfile,
+                               const Engine::RenderingIntent intent,
+                               bool blackpoint);
+        void updatePrintProfile();
+        void updatePrintProfile(const QString &filename,
+                                const Engine::colorSpace &colorspace);
+        void clearPrintProfile(const QString &filename,
+                               const Engine::ColorSettings &cs);
+        void resetPrintProfile();
+        void resetPrintProfile(const QString &filename);
+
     signals:
         void openImageReady(const Engine::Image &image);
         //void convertImageReady(const Engine::Image &image);
         void applyDisplayProfileReady(const Engine::Image &image);
         void clearDisplayProfileReady(const Engine::Image &image);
+        void applyPrintProfileReady(const Engine::Image &image);
+        void clearPrintProfileReady(const Engine::Image &image);
         void showStatusMessage(const QString &message, int timeout = 0);
 
     private:
@@ -113,15 +132,18 @@ namespace Cyan
         QMenu *_menuColorGRAY;
         QMenu *_menuColorIntent;
         QMenu *_menuColorDisplay;
+        QMenu *_menuColorPrint;
         QMenu *_menuZoom;
         QAction *_menuColorBlackPoint;
         QActionGroup *_menuColorRGBGroup;
         QActionGroup *_menuColorCMYKGroup;
         QActionGroup *_menuColorGRAYGroup;
         QActionGroup *_menuColorDisplayGroup;
+        QActionGroup *_menuColorPrintGroup;
         QActionGroup *_menuColorIntentGroup;
         QToolButton *_menuColorButton;
         QToolButton *_menuColorDisplayButton;
+        QToolButton *_menuColorPrintButton;
         QToolButton *_menuZoomButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
@@ -140,13 +162,16 @@ namespace Cyan
         void populateColorProfileMenu(QMenu *menu,
                                       QActionGroup *group,
                                       Engine::colorSpace colorspace,
-                                      bool isDisplay = false);
+                                      bool isDisplay = false,
+                                      bool isPrint = false);
         void populateColorIntentMenu();
         void handleColorProfileTriggered();
         void handleColorProfileDisplayTriggered();
+        void handleColorProfilePrintTriggered();
         void handleColorIntentTriggered();
         void handleColorBlackPointTriggered();
         void handleColorDisplayButtonTriggered(bool checked);
+        void handleColorPrintButtonTriggered(bool checked);
         bool isFileOpen(const QString &filename);
         Cyan::MdiSubWindow* getTab(const QString &filename);
         void handleOpenImageReady(const Engine::Image &image);
@@ -156,7 +181,8 @@ namespace Cyan
         void handleClosedWindow(const QString &filename);
         void setDefaultColorProfile(const Engine::colorSpace &cs,
                                     const QString &filename,
-                                    bool isDisplay = false);
+                                    bool isDisplay = false,
+                                    bool isPrint = false);
         void loadColorSettings();
         void saveColorSettings(bool forceSync = false);
         const Engine::ColorSettings getColorSettings();
@@ -165,9 +191,11 @@ namespace Cyan
         void loadSettings();
         void saveSettings();
         bool canApplyDisplayProfile();
+        bool canApplyPrintProfile();
         bool colorSettingsDiffer(const Engine::ColorSettings &cs,
                                  bool checkColorspace = false,
-                                 bool checkDisplay = false);
+                                 bool checkDisplay = false,
+                                 bool checkPrint = false);
     };
 }
 
