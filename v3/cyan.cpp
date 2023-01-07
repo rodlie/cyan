@@ -137,10 +137,18 @@ Window::openImage(bool showDialog,
     if ( !isOpen && Engine::isValidImage(filePath) ) {
         emit showStatusMessage(tr("Reading image %1 ...").arg(filePath), 0);
         auto cs = getColorSettings();
-        QtConcurrent::run(this,
-                          &Window::readImage,
-                          filePath,
-                          cs);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QFuture f = QtConcurrent::run(
+                                      &Window::readImage,
+                                      this,
+#else
+        QtConcurrent::run(
+                                      this,
+                                      &Window::readImage,
+#endif
+                                      filePath,
+                                      cs);
     } else if (isOpen) {
         MdiSubWindow *tab = getTab(filename);
         if (tab) { _mdi->setActiveSubWindow(tab); }
@@ -211,13 +219,21 @@ Window::updateDisplayProfile(const QString &filename,
         break;
     default:;
     }
-    QtConcurrent::run(this,
-                      &Window::applyDisplayProfile,
-                      filename,
-                      profile,
-                      cs.profiles.display,
-                      cs.intent,
-                      cs.blackpoint);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QFuture f = QtConcurrent::run(
+                                  &Window::applyDisplayProfile,
+                                  this,
+#else
+    QtConcurrent::run(
+                                  this,
+                                  &Window::applyDisplayProfile,
+#endif
+                                  filename,
+                                  profile,
+                                  cs.profiles.display,
+                                  cs.intent,
+                                  cs.blackpoint);
 }
 
 void
@@ -247,10 +263,18 @@ Window::resetDisplayProfile(const QString &filename)
 {
     emit showStatusMessage(tr("Clear display profile ..."), 0);
     auto cs = getColorSettings();
-    QtConcurrent::run(this,
-                      &Window::clearDisplayProfile,
-                      filename,
-                      cs);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QFuture f = QtConcurrent::run(
+                                  &Window::clearDisplayProfile,
+                                  this,
+#else
+    QtConcurrent::run(
+                                  this,
+                                  &Window::clearDisplayProfile,
+#endif
+                                  filename,
+                                  cs);
 }
 
 void
@@ -417,7 +441,7 @@ Window::setupMenus()
     _menuColorDisplayButton->setIcon( QIcon::fromTheme(CYAN_ICON_DISPLAY) );
     _menuColorDisplayButton->setText( tr("Display") );
     _menuColorDisplayButton->setToolTip( tr("Apply display color profile") );
-    _menuColorDisplayButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(27, 101, 162); }") );
+    _menuColorDisplayButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(95.4, 105.7, 121.1); }") );
     _menuColorDisplayButton->setMenu(_menuColorDisplay);
     connect( _menuColorDisplayButton,
              SIGNAL( toggled(bool) ),
@@ -429,7 +453,7 @@ Window::setupMenus()
     _menuColorPrintButton->setIcon( QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR) );
     _menuColorPrintButton->setText( tr("Printer") );
     _menuColorPrintButton->setToolTip( tr("Apply printer color profile") );
-    _menuColorPrintButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(27, 101, 162); }") );
+    _menuColorPrintButton->setStyleSheet( QString("QToolButton:checked { background-color: rgb(95.4, 105.7, 121.1); }") );
     _menuColorPrintButton->setMenu(_menuColorPrint);
     connect( _menuColorPrintButton,
              SIGNAL( toggled(bool) ),

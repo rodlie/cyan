@@ -39,7 +39,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "Magick++ pkg-config")
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Concurrent Widgets Test REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} 5.9 COMPONENTS Concurrent Widgets Test REQUIRED)
 find_package(PkgConfig)
 
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})

@@ -28,6 +28,7 @@
 #include <QMap>
 #include <QSize>
 
+#define CMS_NO_REGISTER_KEYWORD
 #include <lcms2.h>
 
 namespace Cyan

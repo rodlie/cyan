@@ -50,6 +50,7 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QMenuBar>
+#include <QActionGroup>
 
 /*!
     \class QtWindowListMenu

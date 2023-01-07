@@ -1,4 +1,4 @@
-# Cyan
+# Cyan Graphics
 
 Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image viewer.
 
@@ -6,13 +6,11 @@ Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image vie
 
 ## Color profiles
 
-Cyan requires a minimum of three (RGB/CMYK/GRAY) ICC color profiles to function. Fallback color profiles are included, but it's recommended that you install the [Adobe ICC profiles](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html).
-
-A color calibrated monitor with available color profile is also recommended.
+ICC color profiles are essential for using Cyan. Fallback ICC color profiles are included, but it's recommended that you at least install the [Adobe ICC profiles](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html) (or similar) for a basic set of general ICC color profiles.
 
 ## Roadmap
 
-### Planned
+### v3.0
 
 * ``[ 90% ]`` **New backend**
 * ``[ 60% ]`` **New frontend**
@@ -20,13 +18,4 @@ A color calibrated monitor with available color profile is also recommended.
 
 ### Beyond
 
-* ``[ --- ]`` **Basic editing features**
-* ``[ --- ]`` **PDF support**
-
-## FAQ
-
-### Why v3 and not v2?
-
-v2 already exists, it ended up as a draft for another project (pixelcore) and was more or less a distraction for Cyan. So, we are starting this rewrite as version 3.
-
-**This version will remain in the ``v3`` folder until the first release candidate, then it will replace version 1.x in ``main``.**
+* ``[ --- ]`` **Basic image editing features**

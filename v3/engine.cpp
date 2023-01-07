@@ -682,7 +682,7 @@ const QStringList
 Engine::supportedReadFormats()
 {
     QStringList formats;
-    formats << "*.psd";
+    formats << "*.psd *.xcf";
     if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
     if ( hasJPEG() ) { formats << "*.png"; }
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
