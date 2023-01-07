@@ -6,16 +6,48 @@ Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image vie
 
 ## Color profiles
 
-ICC color profiles are essential for using Cyan. Fallback ICC color profiles are included, but it's recommended that you at least install the [Adobe ICC profiles](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html) (or similar) for a basic set of general ICC color profiles.
+ICC color profiles are essential for using Cyan. It's recommended that you install a basic set of color profiles before using Cyan.
+
+### Resources:
+
+* [Adobe profiles](https://www.adobe.com/support/downloads/iccprofiles/icc_eula_win_end.html)
+* [European Color Initiative (ECI) profiles](http://www.eci.org/doku.php?id=en:downloads)
+* [ICC Profile Registry](https://www.color.org/registry/index.xalter)
+* [ISO/Fogra profiles](https://www.colormanagement.org/en/isoprofile2009.html)
+* [GRACoL profiles](https://www.colormanagement.org/en/gracolprofile.html)
+* [SWOP Profiles](https://www.colormanagement.org/en/swopprofile.html)
+* [OpenICC profiles](https://sourceforge.net/projects/openicc/files/OpenICC-Profiles/)
 
 ## Roadmap
 
 ### v3.0
 
 * ``[ 90% ]`` **New backend**
-* ``[ 60% ]`` **New frontend**
+* ``[ 70% ]`` **New frontend**
 * ``[ --- ]`` **Queue**
 
 ### Beyond
 
 * ``[ --- ]`` **Basic image editing features**
+
+## Source
+
+### Requirements
+
+ * C++11
+ * CMake *(3.5+)*
+ * Qt *(5.9+/6.x)*
+   * Core/Concurrent/Gui/Widgets
+ * LCMS *(2+)*
+ * (Image)Magick++ *(6.9+)*
+   * Q16/HDRI/OpenMP/LCMS/TIFF/JPEG/PNG
+
+### Build
+
+```
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ../v3
+make
+make test
+```
