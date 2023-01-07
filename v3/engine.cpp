@@ -682,9 +682,19 @@ const QStringList
 Engine::supportedReadFormats()
 {
     QStringList formats;
-    formats << "*.psd *.xcf";
+    formats << "*.psd" << "*.xcf" <<  "*.miff" << "*.bmp";
     if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
-    if ( hasJPEG() ) { formats << "*.png"; }
+    if ( hasPNG() ) { formats << "*.png"; }
+    if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
+    return formats;
+}
+
+const QStringList Engine::supportedWriteFormats()
+{
+    QStringList formats;
+    formats << "*.psd";
+    if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
+    //if ( hasPNG() ) { formats << "*.png"; } // can we store an ICC with IM?
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
     return formats;
 }

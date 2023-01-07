@@ -144,6 +144,7 @@ namespace Cyan
         static void setMemoryResource(int gib);
         static int getTotalRam(int percent);
         static const QStringList supportedReadFormats();
+        static const QStringList supportedWriteFormats();
     };
 }
 
