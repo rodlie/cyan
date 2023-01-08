@@ -1,6 +1,6 @@
 /*
 #
-# Cyan - https://github.com/rodlie/cyan
+# Cyan Graphics - https://cyan.graphics - https://github.com/rodlie/cyan
 #
 # Copyright (c) Ole-André Rodlie <ole.andre.rodlie@gmail.com>. All rights reserved.
 #
