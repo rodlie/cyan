@@ -159,13 +159,13 @@ void
 Window::readImage(const QString &filename,
                   const Engine::ColorSettings &cs)
 {
-    Engine::Image image = Engine::readImage(filename,
-                                            cs.profiles.rgb,
-                                            cs.profiles.cmyk,
-                                            cs.profiles.gray,
-                                            cs.intent,
-                                            cs.blackpoint,
-                                            true);
+    auto image = Engine::readImage(filename,
+                                   cs.profiles.rgb,
+                                   cs.profiles.cmyk,
+                                   cs.profiles.gray,
+                                   cs.intent,
+                                   cs.blackpoint,
+                                   true);
     emit openImageReady(image);
 }
 
@@ -176,17 +176,17 @@ Window::applyDisplayProfile(const QString &filename,
                             const Engine::RenderingIntent intent,
                             bool blackPoint)
 {
-    Engine::Image image = Engine::convertImage(Engine::fileToByteArray(filename),
-                                               Engine::fileToByteArray(srcProfile),
-                                               Engine::fileToByteArray(dstProfile),
-                                               intent,
-                                               blackPoint,
-                                               false,
-                                               false,
-                                               true,
-                                               true,
-                                               true,
-                                               true);
+    auto image = Engine::convertImage(Engine::fileToByteArray(filename),
+                                      Engine::fileToByteArray(srcProfile),
+                                      Engine::fileToByteArray(dstProfile),
+                                      intent,
+                                      blackPoint,
+                                      false,
+                                      false,
+                                      true,
+                                      true,
+                                      true,
+                                      true);
     image.filename = filename;
     emit applyDisplayProfileReady(image);
 }
@@ -202,19 +202,19 @@ Window::updateDisplayProfile()
 
 void
 Window::updateDisplayProfile(const QString &filename,
-                             const Engine::colorSpace &colorSpace)
+                             const Engine::ColorSpace &colorspace)
 {
     emit showStatusMessage(tr("Update display profile ..."), 0);
     auto cs = getColorSettings();
     QString profile;
-    switch(colorSpace) {
-    case Engine::colorSpaceRGB:
+    switch(colorspace) {
+    case Engine::ColorSpaceRGB:
         profile = cs.profiles.rgb;
         break;
-    case Engine::colorSpaceCMYK:
+    case Engine::ColorSpaceCMYK:
         profile = cs.profiles.cmyk;
         break;
-    case Engine::colorSpaceGRAY:
+    case Engine::ColorSpaceGRAY:
         profile = cs.profiles.gray;
         break;
     default:;
@@ -240,13 +240,13 @@ void
 Window::clearDisplayProfile(const QString &filename,
                             const Engine::ColorSettings &cs)
 {
-    Engine::Image image = Engine::readImage(filename,
-                                            cs.profiles.rgb,
-                                            cs.profiles.cmyk,
-                                            cs.profiles.gray,
-                                            cs.intent,
-                                            cs.blackpoint,
-                                            false);
+    auto image = Engine::readImage(filename,
+                                   cs.profiles.rgb,
+                                   cs.profiles.cmyk,
+                                   cs.profiles.gray,
+                                   cs.intent,
+                                   cs.blackpoint,
+                                   false);
     emit clearDisplayProfileReady(image);
 }
 
@@ -296,7 +296,7 @@ Window::updatePrintProfile()
 
 void
 Window::updatePrintProfile(const QString &filename,
-                           const Engine::colorSpace &colorspace)
+                           const Engine::ColorSpace &colorspace)
 {
     // TODO
     qDebug() << "updatePrintProfile" << filename << colorspace;
@@ -531,20 +531,20 @@ Window::setupActions()
     // populate default profiles
     populateColorProfileMenu(_menuColorRGB,
                              _menuColorRGBGroup,
-                             Engine::colorSpaceRGB);
+                             Engine::ColorSpaceRGB);
     populateColorProfileMenu(_menuColorCMYK,
                              _menuColorCMYKGroup,
-                             Engine::colorSpaceCMYK);
+                             Engine::ColorSpaceCMYK);
     populateColorProfileMenu(_menuColorGRAY,
                              _menuColorGRAYGroup,
-                             Engine::colorSpaceGRAY);
+                             Engine::ColorSpaceGRAY);
     populateColorProfileMenu(_menuColorDisplay,
                              _menuColorDisplayGroup,
-                             Engine::colorSpaceRGB,
+                             Engine::ColorSpaceRGB,
                              true);
     populateColorProfileMenu(_menuColorPrint,
                              _menuColorPrintGroup,
-                             Engine::colorSpaceCMYK,
+                             Engine::ColorSpaceCMYK,
                              false,
                              true);
 
@@ -623,20 +623,20 @@ Window::handleActionOpenImage()
 void
 Window::populateColorProfileMenu(QMenu *menu,
                                  QActionGroup *group,
-                                 Engine::colorSpace colorspace,
+                                 Engine::ColorSpace colorspace,
                                  bool isDisplay,
                                  bool isPrint)
 {
     if (!menu || !group) { return; }
     QString fallback;
     switch(colorspace) {
-    case Engine::colorSpaceRGB:
+    case Engine::ColorSpaceRGB:
         fallback = CYAN_PROFILE_FALLBACK_RGB;
         break;
-    case Engine::colorSpaceCMYK:
+    case Engine::ColorSpaceCMYK:
         fallback = CYAN_PROFILE_FALLBACK_CMYK;
         break;
-    case Engine::colorSpaceGRAY:
+    case Engine::ColorSpaceGRAY:
         fallback = CYAN_PROFILE_FALLBACK_GRAY;
         break;
     default:;
@@ -833,6 +833,8 @@ Window::handleOpenImageReady(const Engine::Image &image)
 
     if ( canApplyDisplayProfile() ) { updateDisplayProfile(image.filename,
                                                            image.colorspace); }
+    else if ( canApplyPrintProfile() ) { updatePrintProfile(image.filename,
+                                                            image.colorspace); }
 }
 
 void
@@ -943,7 +945,7 @@ Window::handleClosedWindow(const QString &filename)
 }
 
 void
-Window::setDefaultColorProfile(const Engine::colorSpace &cs,
+Window::setDefaultColorProfile(const Engine::ColorSpace &colorspace,
                                const QString &filename,
                                bool isDisplay,
                                bool isPrint)
@@ -951,14 +953,14 @@ Window::setDefaultColorProfile(const Engine::colorSpace &cs,
     QSettings settings;
     settings.beginGroup("color_settings");
     QString key;
-    switch(cs) {
-    case Engine::colorSpaceRGB:
+    switch(colorspace) {
+    case Engine::ColorSpaceRGB:
         key = "profile_rgb";
         break;
-    case Engine::colorSpaceCMYK:
+    case Engine::ColorSpaceCMYK:
         key = "profile_cmyk";
         break;
-    case Engine::colorSpaceGRAY:
+    case Engine::ColorSpaceGRAY:
         key = "profile_gray";
         break;
     default:;

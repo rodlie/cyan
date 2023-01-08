@@ -43,8 +43,8 @@ namespace Cyan
                       const Engine::ColorSettings &colorSettings = Engine::ColorSettings(),
                       Qt::WindowFlags flags = Qt::WindowFlags() );
         const QString getFilename();
-        void setColorSpace(const Engine::colorSpace &colorSpace);
-        const Engine::colorSpace getColorSpace();
+        void setColorSpace(const Engine::ColorSpace &colorspace);
+        const Engine::ColorSpace getColorSpace();
         void setColorIntent(const Engine::RenderingIntent &intent);
         const Engine::RenderingIntent getColorIntent();
         void setColorBlackPoint(bool blackpoint);

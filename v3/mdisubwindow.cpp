@@ -50,12 +50,12 @@ MdiSubWindow::getFilename()
 }
 
 void
-MdiSubWindow::setColorSpace(const Engine::colorSpace &colorSpace)
+MdiSubWindow::setColorSpace(const Engine::ColorSpace &colorspace)
 {
-    _colorSettings.colorspace = colorSpace;
+    _colorSettings.colorspace = colorspace;
 }
 
-const Engine::colorSpace
+const Engine::ColorSpace
 MdiSubWindow::getColorSpace()
 {
     return _colorSettings.colorspace;
@@ -137,10 +137,10 @@ void
 MdiSubWindow::setColorSettings(const Engine::ColorSettings &settings,
                                bool forceColorspace)
 {
-    Engine::colorSpace cs = _colorSettings.colorspace;
+    Engine::ColorSpace colorspace = _colorSettings.colorspace;
     _colorSettings = settings;
     if (!forceColorspace) {
-        _colorSettings.colorspace = cs; // keep image colorspace unless forced
+        _colorSettings.colorspace = colorspace; // keep image colorspace unless forced
     }
 }
 

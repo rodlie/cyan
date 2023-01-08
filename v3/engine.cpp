@@ -101,48 +101,45 @@ bool Engine::isValidImage(const QByteArray &buffer)
 bool
 Engine::isValidProfile(QByteArray buffer)
 {
-    colorSpace cs = getFileColorspace(buffer);
-    if (cs == colorSpaceRGB ||
-        cs == colorSpaceCMYK ||
-        cs == colorSpaceGRAY) { return true; }
+    if (getFileColorspace(buffer) != ColorSpaceUnknown) { return true; }
     return false;
 }
 
-Engine::colorSpace
+Engine::ColorSpace
 Engine::getFileColorspace(cmsHPROFILE profile)
 {
-    colorSpace cs = colorSpaceUnknown;
+    ColorSpace colorspace = ColorSpaceUnknown;
     if (profile) {
         if (cmsGetColorSpace(profile) == cmsSigRgbData) {
-            cs = colorSpaceRGB;
+            colorspace = ColorSpaceRGB;
         } else if (cmsGetColorSpace(profile) == cmsSigCmykData) {
-            cs = colorSpaceCMYK;
+            colorspace = ColorSpaceCMYK;
         } else if (cmsGetColorSpace(profile) == cmsSigGrayData) {
-            cs = colorSpaceGRAY;
+            colorspace = ColorSpaceGRAY;
         }
     }
     cmsCloseProfile(profile);
-    return cs;
+    return colorspace;
 }
 
-Engine::colorSpace
+Engine::ColorSpace
 Engine::getFileColorspace(const QString &filename)
 {
     if ( QFile::exists(filename) ) {
         return getFileColorspace( cmsOpenProfileFromFile(filename.toStdString().c_str(),
                                                          "r") );
     }
-    return colorSpaceUnknown;
+    return ColorSpaceUnknown;
 }
 
-Engine::colorSpace
+Engine::ColorSpace
 Engine::getFileColorspace(QByteArray buffer)
 {
     if (buffer.size() > 0) {
         return getFileColorspace( cmsOpenProfileFromMem( buffer.data(),
                                                          static_cast<cmsUInt32Number>(buffer.size() ) ) );
     }
-    return colorSpaceUnknown;
+    return ColorSpaceUnknown;
 }
 
 const QString
@@ -210,7 +207,7 @@ const QString Engine::getProfileTag(QByteArray buffer, ICCTag tag)
 }
 
 const QMap<QString, QString>
-Engine::getProfiles(colorSpace colorspace,
+Engine::getProfiles(ColorSpace colorspace,
                     bool returnPaths,
                     const QString &fallback,
                     bool forceFallback)
@@ -293,15 +290,15 @@ Engine::readImage(const QString &filename,
         result.profile = QByteArray( (char*)image.iccColorProfile().data(),
                                      image.iccColorProfile().length() );
         QString fallbackProfile = fallbackProfileRGB;
-        result.colorspace = colorSpaceRGB;
+        result.colorspace = ColorSpaceRGB;
         switch ( image.colorSpace() ) {
         case Magick::CMYColorspace:
         case Magick::CMYKColorspace:
-            result.colorspace = colorSpaceCMYK;
+            result.colorspace = ColorSpaceCMYK;
             fallbackProfile = fallbackProfileCMYK;
             break;
         case Magick::GRAYColorspace:
-            result.colorspace = colorSpaceGRAY;
+            result.colorspace = ColorSpaceGRAY;
             fallbackProfile = fallbackProfileGRAY;
             break;
         default:;

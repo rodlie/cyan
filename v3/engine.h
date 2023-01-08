@@ -39,11 +39,11 @@ namespace Cyan
 
     public:
 
-        enum colorSpace {
-            colorSpaceUnknown,
-            colorSpaceRGB,
-            colorSpaceCMYK,
-            colorSpaceGRAY
+        enum ColorSpace {
+            ColorSpaceUnknown,
+            ColorSpaceRGB,
+            ColorSpaceCMYK,
+            ColorSpaceGRAY
         };
         enum ICCTag {
             ICCDescription,
@@ -64,7 +64,7 @@ namespace Cyan
             int height = 0;
             QByteArray buffer;
             QByteArray profile;
-            colorSpace colorspace;
+            ColorSpace colorspace;
             QString errors;
             QString warnings;
             QString information;
@@ -78,7 +78,7 @@ namespace Cyan
             QString print;
         };
         struct ColorSettings {
-            colorSpace colorspace = colorSpaceUnknown;
+            ColorSpace colorspace = ColorSpaceUnknown;
             RenderingIntent intent = PerceptualRenderingIntent;
             bool blackpoint = true;
             bool applyDisplayProfile = false;
@@ -92,16 +92,16 @@ namespace Cyan
         static bool isValidImage(const QString &filename);
         static bool isValidImage(const QByteArray &buffer);
         static bool isValidProfile(QByteArray buffer);
-        static colorSpace getFileColorspace(cmsHPROFILE profile);
-        static colorSpace getFileColorspace(const QString &filename);
-        static colorSpace getFileColorspace(QByteArray buffer);
+        static ColorSpace getFileColorspace(cmsHPROFILE profile);
+        static ColorSpace getFileColorspace(const QString &filename);
+        static ColorSpace getFileColorspace(QByteArray buffer);
         static const QString getProfileTag(cmsHPROFILE profile,
                                            ICCTag tag = ICCDescription);
         static const QString getProfileTag(const QString &filename,
                                            ICCTag tag = ICCDescription);
         static const QString getProfileTag(QByteArray buffer,
                                            ICCTag tag = ICCDescription);
-        static const QMap<QString, QString> getProfiles(colorSpace colorspace,
+        static const QMap<QString, QString> getProfiles(ColorSpace colorspace,
                                                         bool returnPaths = false,
                                                         const QString &fallback = QString(),
                                                         bool forceFallback = false);

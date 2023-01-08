@@ -86,7 +86,7 @@ namespace Cyan
                                  bool blackPoint);
         void updateDisplayProfile();
         void updateDisplayProfile(const QString &filename,
-                                  const Engine::colorSpace &colorSpace);
+                                  const Engine::ColorSpace &colorspace);
         void clearDisplayProfile(const QString &filename,
                                  const Engine::ColorSettings &cs);
         void resetDisplayProfile();
@@ -99,7 +99,7 @@ namespace Cyan
                                bool blackpoint);
         void updatePrintProfile();
         void updatePrintProfile(const QString &filename,
-                                const Engine::colorSpace &colorspace);
+                                const Engine::ColorSpace &colorspace);
         void clearPrintProfile(const QString &filename,
                                const Engine::ColorSettings &cs);
         void resetPrintProfile();
@@ -161,7 +161,7 @@ namespace Cyan
         void handleActionOpenImage();
         void populateColorProfileMenu(QMenu *menu,
                                       QActionGroup *group,
-                                      Engine::colorSpace colorspace,
+                                      Engine::ColorSpace colorspace,
                                       bool isDisplay = false,
                                       bool isPrint = false);
         void populateColorIntentMenu();
@@ -179,7 +179,7 @@ namespace Cyan
         void handleWindowActivated(QMdiSubWindow *window);
         void setImageSourceDetails(const QString &info);
         void handleClosedWindow(const QString &filename);
-        void setDefaultColorProfile(const Engine::colorSpace &cs,
+        void setDefaultColorProfile(const Engine::ColorSpace &colorspace,
                                     const QString &filename,
                                     bool isDisplay = false,
                                     bool isPrint = false);

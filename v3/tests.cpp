@@ -137,9 +137,9 @@ void Test::test_case2()
 void Test::test_case3()
 {
     std::cout << "Checking profiles color space ..." << std::endl;
-    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileRGB) == Cyan::Engine::colorSpaceRGB);
-    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileCMYK) == Cyan::Engine::colorSpaceCMYK);
-    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileGRAY) == Cyan::Engine::colorSpaceGRAY);
+    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileRGB) == Cyan::Engine::ColorSpaceRGB);
+    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileCMYK) == Cyan::Engine::ColorSpaceCMYK);
+    QVERIFY(Cyan::Engine::getFileColorspace(_files.profileGRAY) == Cyan::Engine::ColorSpaceGRAY);
 
     std::cout << "Checking profiles tags ..." << std::endl;
     QVERIFY(Cyan::Engine::getProfileTag(_files.profileRGB) == "sRGB (built-in)");
@@ -218,19 +218,19 @@ void Test::test_case4()
 /*void Test::test_case5()
 {
     std::cout << "Color profiles search paths:" << std::endl;
-    for (auto &path : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceRGB, true)) {
+    for (auto &path : Cyan::Engine::getProfiles(Cyan::Engine::ColorSpaceRGB, true)) {
         std::cout << "   * " << path.toStdString() << std::endl;
     }
     std::cout << "Color profiles RGB:" << std::endl;
-    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceRGB).toStdMap()) {
+    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::ColorSpaceRGB).toStdMap()) {
         std::cout << "   * " << profile.first.toStdString() << " : " << profile.second.toStdString() << std::endl;
     }
     std::cout << "Color profiles CMYK:" << std::endl;
-    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceCMYK).toStdMap()) {
+    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::ColorSpaceCMYK).toStdMap()) {
         std::cout << "   * " << profile.first.toStdString() << " : " << profile.second.toStdString() << std::endl;
     }
     std::cout << "Color profiles GRAY:" << std::endl;
-    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceGRAY).toStdMap()) {
+    for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::ColorSpaceGRAY).toStdMap()) {
         std::cout << "   * " << profile.first.toStdString() << " : " << profile.second.toStdString() << std::endl;
     }
 }*/
