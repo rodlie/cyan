@@ -25,11 +25,17 @@ JPEG=9e
 TIFF=4.3.0
 PNG=1.6.37
 LCMS=2.12 # 2.13(.1) breaks GRAY unit test!
-MAGICK=6.9.11-62
-QT=5.12.12
+MAGICK=${MAGICK:-"6.9.11-62"} # 6.9.10-17, 6.9.10-97
+MAGICK7=${MAGICK7:-"7.1.0-57"}
+IM7=${IM7:-0}
+QT=${QT:-"5.15.8"} # 5.9.9, 5.12.12, 5.15.8
 QT_TAR="everywhere"
 BZIP=1.0.8
 XML=2.9.12
+
+if [ "${IM7}" = 1 ]; then
+    MAGICK=${MAGICK7}
+fi
 
 # on macOS we target High Sierra (10.13) with clang (MP) from macports
 OSX_MIN=10.13
@@ -218,10 +224,12 @@ if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
     rm -rf ImageMagick* || true
     tar xvf $SRC/ImageMagick-$MAGICK.tar.xz || exit 1
     cd ImageMagick-$MAGICK || exit 1
-    if [ ! -f "${SRC}/imagemagick-3-gimp_2_10.patch" ]; then
-        curl -L https://github.com/nettstudio/mxe/raw/Cyan-1.2.3/src/imagemagick-3-gimp_2_10.patch -o "${SRC}/imagemagick-3-gimp_2_10.patch"
+    if [ "${IM7}" != 1 ]; then
+        if [ ! -f "${SRC}/imagemagick-3-gimp_2_10.patch" ]; then
+            curl -L https://github.com/nettstudio/mxe/raw/Cyan-1.2.3/src/imagemagick-3-gimp_2_10.patch -o "${SRC}/imagemagick-3-gimp_2_10.patch"
+        fi
+        patch -p1 < "${SRC}/imagemagick-3-gimp_2_10.patch"
     fi
-    patch -p1 < "${SRC}/imagemagick-3-gimp_2_10.patch"
     MAGICK_LDFLAGS=""
     if [ "$OS" = "Darwin" ]; then
         MAGICK_LDFLAGS="-mmacosx-version-min=$OSX_MIN"
@@ -266,7 +274,10 @@ if [ ! -f "$SDK/bin/qmake" ]; then
         echo "QMAKE_CC = $CLANG_ROOT/bin/clang-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
         echo "QMAKE_CXX = $CLANG_ROOT/bin/clang++-mp-${CLANG} -mmacosx-version-min=$OSX_MIN" >> mkspecs/common/clang.conf
         QT_CPP="-c++std c++14"
-        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE $QT_CPP -no-feature-testlib -no-securetransport -I $SDK/include -L $SDK/lib
+        if [ "${QT}" = "5.12.12" ]; then
+            QT_CONFIGURE="${QT_CONFIGURE} -no-feature-testlib"
+        fi
+        CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE $QT_CPP -no-securetransport -I $SDK/include -L $SDK/lib
     elif [ "$OS" = "Linux" ]; then
         CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure -prefix $SDK $QT_CONFIGURE -no-eglfs -no-kms -no-linuxfb -xkbcommon -qt-xcb -I $SDK/include -L $SDK/lib
     fi

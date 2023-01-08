@@ -22,6 +22,8 @@
 #include <QtTest>
 #include <QDebug>
 #include <QByteArray>
+#include <QElapsedTimer>
+
 #include <iostream>
 
 #include "engine.h"
@@ -52,7 +54,7 @@ private slots:
     void test_case2();
     void test_case3();
     void test_case4();
-    void test_case5();
+    //void test_case5();
 };
 
 Test::Test()
@@ -89,6 +91,7 @@ void Test::test_case1()
     QVERIFY(magickImage.iccColorProfile().length()>0);
     _files.sampleProfile = QByteArray((char*)magickImage.iccColorProfile().data(),
                                       magickImage.iccColorProfile().length());
+
     QVERIFY(_files.sampleProfile.size()>0);
     QVERIFY(Cyan::Engine::getProfileTag(_files.sampleProfile) == "Adobe RGB (1998)");
 
@@ -168,35 +171,51 @@ void Test::test_case3()
 
 void Test::test_case4()
 {
-    std::cout << "Converting RGB to CMYK ..." << std::endl;
+    QElapsedTimer timer;
+    timer.start();
+
+    std::cout << "Converting RGB to CMYK ... ";
     auto convertedCMYK = Cyan::Engine::convertImage(_files.sampleRGB,
                                                     _files.profileRGB,
                                                     _files.profileCMYK);
+
+    std::cout << timer.elapsed() << "ms" << std::endl;
+
     QVERIFY(Cyan::Engine::compareImages(convertedCMYK.buffer,
                                         _files.sampleCMYK));
-    std::cout << Cyan::Engine::identify(convertedCMYK.buffer).toStdString() << std::endl;
+    //std::cout << Cyan::Engine::identify(convertedCMYK.buffer).toStdString() << std::endl;
 
-    std::cout << "Converting CMYK to RGB ..." << std::endl;
+    timer.restart();
+
+    std::cout << "Converting CMYK to RGB ... ";
     auto convertedCMYK2RGB = Cyan::Engine::convertImage(_files.sampleCMYK,
                                                         _files.profileCMYK,
                                                         _files.profileRGB);
     auto resultCMYK2RGB = Cyan::Engine::convertImage(convertedCMYK.buffer,
                                                      _files.profileCMYK,
                                                      _files.profileRGB);
+
+    std::cout << timer.elapsed() << "ms" << std::endl;
+
     QVERIFY(Cyan::Engine::compareImages(convertedCMYK2RGB.buffer,
                                         resultCMYK2RGB.buffer));
-    std::cout << Cyan::Engine::identify(convertedCMYK2RGB.buffer).toStdString() << std::endl;
+    //std::cout << Cyan::Engine::identify(convertedCMYK2RGB.buffer).toStdString() << std::endl;
 
-    std::cout << "Converting RGB to GRAY ..." << std::endl;
+    timer.restart();
+
+    std::cout << "Converting RGB to GRAY ... ";
     auto convertedGRAY = Cyan::Engine::convertImage(_files.sampleRGB,
                                                     _files.profileRGB,
                                                     _files.profileGRAY);
+
+    std::cout << timer.elapsed() << "ms" << std::endl;
+
     QVERIFY(Cyan::Engine::compareImages(convertedGRAY.buffer,
                                         _files.sampleGRAY));
-    std::cout << Cyan::Engine::identify(convertedGRAY.buffer).toStdString() << std::endl;
+    //std::cout << Cyan::Engine::identify(convertedGRAY.buffer).toStdString() << std::endl;
 }
 
-void Test::test_case5()
+/*void Test::test_case5()
 {
     std::cout << "Color profiles search paths:" << std::endl;
     for (auto &path : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceRGB, true)) {
@@ -214,7 +233,7 @@ void Test::test_case5()
     for (auto &profile : Cyan::Engine::getProfiles(Cyan::Engine::colorSpaceGRAY).toStdMap()) {
         std::cout << "   * " << profile.first.toStdString() << " : " << profile.second.toStdString() << std::endl;
     }
-}
+}*/
 
 QTEST_APPLESS_MAIN(Test)
 

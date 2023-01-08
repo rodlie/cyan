@@ -4,6 +4,17 @@ Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image vie
 
 **v3 is a complete rewrite of Cyan, ETA early 2023.**
 
+## Requirements
+
+System requirements for official releases.
+
+* x86_64 SSE 4.1 compatible CPU
+* 4GB RAM
+* Windows 7+
+* OS X 10.10+
+* macOS 10.12+
+* GNU/Linux X11 libgcc 4.8.5+/glibc 2.17+
+
 ## Color profiles
 
 ICC color profiles are essential for using Cyan. It's recommended that you install a basic set of color profiles before using Cyan.
@@ -35,7 +46,7 @@ ICC color profiles are essential for using Cyan. It's recommended that you insta
 ### Requirements
 
  * C++11
- * CMake *(3.5+)*
+ * CMake *(3.9+)*
  * Qt *(5.9+/6.x)*
    * Core/Concurrent/Gui/Widgets
  * LCMS *(2+)*

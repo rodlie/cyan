@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9)
 enable_testing()
 project(Cyan VERSION 3.0.0 LANGUAGES CXX)
 
@@ -37,6 +37,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "Magick++ pkg-config")
+option(STATIC_PKGCONF "Use pkg-config static" OFF)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} 5.9 COMPONENTS Concurrent Widgets Test REQUIRED)
@@ -45,7 +46,13 @@ find_package(PkgConfig)
 pkg_search_module(MAGICK REQUIRED ${MAGICK_PKG_CONFIG})
 pkg_search_module(LCMS2 REQUIRED lcms2)
 
-add_compile_options(${MAGICK_CFLAGS})
+if(${STATIC_PKGCONF})
+    add_compile_options(${MAGICK_STATIC_CFLAGS})
+    find_package(OpenMP REQUIRED)
+else()
+    add_compile_options(${MAGICK_CFLAGS})
+endif()
+
 include_directories(${MAGICK_INCLUDE_DIRS} ${LCMS2_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
@@ -76,18 +83,46 @@ add_executable(tests ${TEST_SOURCES})
 target_link_libraries(${PROJECT_NAME}
                       PRIVATE
                       Qt${QT_VERSION_MAJOR}::Concurrent
-                      Qt${QT_VERSION_MAJOR}::Widgets
-                      ${MAGICK_LIBRARIES}
-                      ${LCMS2_LIBRARIES}
-                      ${MAGICK_LDFLAGS}
-                      ${LCMS2_LDFLAGS})
+                      Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(tests
                       PRIVATE
                       Qt${QT_VERSION_MAJOR}::Core
-                      Qt${QT_VERSION_MAJOR}::Test
-                      ${MAGICK_LIBRARIES}
-                      ${LCMS2_LIBRARIES}
-                      ${MAGICK_LDFLAGS}
-                      ${LCMS2_LDFLAGS})
+                      Qt${QT_VERSION_MAJOR}::Test)
+
+if(${STATIC_PKGCONF})
+    target_link_libraries(${PROJECT_NAME}
+                          PRIVATE
+                          ${MAGICK_STATIC_LIBRARIES}
+                          ${LCMS2_STATIC_LIBRARIES}
+                          ${MAGICK_STATIC_LDFLAGS}
+                          ${LCMS2_STATIC_LDFLAGS}
+                          OpenMP::OpenMP_CXX)
+    if(APPLE)
+        target_link_libraries(${PROJECT_NAME} PRIVATE iconv)
+    endif()
+    target_link_libraries(tests
+                          PRIVATE
+                          ${MAGICK_STATIC_LIBRARIES}
+                          ${LCMS2_STATIC_LIBRARIES}
+                          ${MAGICK_STATIC_LDFLAGS}
+                          ${LCMS2_STATIC_LDFLAGS}
+                          OpenMP::OpenMP_CXX)
+    if(APPLE)
+        target_link_libraries(tests PRIVATE iconv)
+    endif()
+else()
+    target_link_libraries(${PROJECT_NAME}
+                          PRIVATE
+                          ${MAGICK_LIBRARIES}
+                          ${LCMS2_LIBRARIES}
+                          ${MAGICK_LDFLAGS}
+                          ${LCMS2_LDFLAGS})
+    target_link_libraries(tests
+                          PRIVATE
+                          ${MAGICK_LIBRARIES}
+                          ${LCMS2_LIBRARIES}
+                          ${MAGICK_LDFLAGS}
+                          ${LCMS2_LDFLAGS})
+endif()
 
 add_test(NAME tests COMMAND tests)

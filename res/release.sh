@@ -32,6 +32,11 @@ ARCH="x86_64"
 LEGACY_OSX=${LEGACY_OSX:-0}
 MAC_TAG=macOS
 DMG_FORMAT=UDBZ
+V3=${V3:-0}
+
+if [ "${V3}" = 1 ]; then
+    VERSION=`cat v3/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
+fi
 
 if [ "${LEGACY_OSX}" = 1 ]; then
     OSX_MIN=10.10
@@ -71,8 +76,20 @@ sleep 5
 rm -rf "${BUILD_DIR}" || true
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
-${QMAKE} ../cyan.pro OSX_MIN=${OSX_MIN}
-make -j${MKJOBS}
+if [ "${V3}" = 1 ]; then
+    ${CMAKE} \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_MIN} \
+    -DSTATIC_PKGCONF=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/ \
+    -DCMAKE_PREFIX_PATH=${SDK} ../v3
+    make -j${MKJOBS}
+    exit 0
+else
+    ${QMAKE} ../cyan.pro OSX_MIN=${OSX_MIN}
+    make -j${MKJOBS}
+fi
+
 AEXE=build/Cyan
 if [ "${OS}" = "Windows" ]; then
     AEXE=build/Cyan.exe
