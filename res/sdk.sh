@@ -42,8 +42,8 @@ if [ "${IM7}" = 1 ]; then
 fi
 
 # on macOS we target High Sierra (10.13) with clang (MP) from macports
-OSX_MIN=10.13
-CLANG=9.0
+OSX_MIN=${OSX_MIN:-10.13}
+CLANG=${CLANG:-12} # 9.0
 CLANG_ROOT="/opt/local"
 
 # on OSX we target Yosemite (10.10) with Qt 5.9 and clang (MP) from macports
