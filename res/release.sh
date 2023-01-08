@@ -33,6 +33,7 @@ LEGACY_OSX=${LEGACY_OSX:-0}
 MAC_TAG=macOS
 DMG_FORMAT=UDBZ
 V3=${V3:-0}
+CLANG_MP=${CLANG_MP:-1}
 
 if [ "${V3}" = 1 ]; then
     VERSION=`cat v3/CMakeLists.txt | sed '/Cyan VERSION/!d;s/)//' | awk '{print $3}'`
@@ -61,8 +62,13 @@ elif [ "${OS}" = "Darwin" ]; then
     STRIP="strip -u -r"
     WINE=""
     QMAKE="${SDK}/bin/qmake"
-    export CC="$CLANG_ROOT/bin/clang-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
-    export CXX="$CLANG_ROOT/bin/clang++-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+    if [ "${CLANG_MP}" = 1 ]; then
+        export CC="$CLANG_ROOT/bin/clang-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+        export CXX="$CLANG_ROOT/bin/clang++-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+    else
+        export CC="/usr/bin/clang -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+        export CXX="/usr/bin/clang++ -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+    fi
     export PATH=$SDK/bin:/usr/bin:/usr/sbin:/bin:/sbin
 fi
 

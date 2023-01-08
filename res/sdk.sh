@@ -15,6 +15,10 @@ KEEP_TMP=${KEEP_TMP:-0}
 SDK=$CWD/${OS}
 SRC=$CWD/3rdparty
 LEGACY_OSX=${LEGACY_OSX:-0}
+HDRI=${HDRI:-1}
+MP=${MP:-1}
+CLANG_MP=${CLANG_MP:-1}
+NO_QT=${NO_QT:-0}
 
 # components
 XKB=0.7.1
@@ -66,8 +70,14 @@ SHARED_CONFIGURE="--prefix=${SDK} --disable-static --enable-shared"
 # setup clang on OSX
 if [ "$OS" = "Darwin" ]; then
   # sudo port install clang-$CLANG ld64
-  export CC="$CLANG_ROOT/bin/clang-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
-  export CXX="$CLANG_ROOT/bin/clang++-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+  if [ "${CLANG_MP}" = 1 ]; then
+    export CC="$CLANG_ROOT/bin/clang-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+    export CXX="$CLANG_ROOT/bin/clang++-mp-$CLANG -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+  else
+    MP=0
+    export CC="/usr/bin/clang -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+    export CXX="/usr/bin/clang++ -stdlib=libc++ -mmacosx-version-min=$OSX_MIN"
+  fi
   export PATH=$SDK/bin:/usr/bin:/usr/sbin:/bin:/sbin
 else
     export PATH="${SDK}/bin:${PATH}"
@@ -219,6 +229,16 @@ if [ ! -f "$SDK/lib/pkgconfig/libxml-2.0.pc" ]; then
 fi
 
 # imagemagick
+REBUILD_MAGICK=${REBUILD_MAGICK:-0}
+if [ "${REBUILD_MAGICK}" = 1 ]; then
+    rm -rf \
+    ${SDK}/include/ImageMagick* \
+    ${SDK}/lib/ImageMagick* \
+    ${SDK}/lib/libMagick* \
+    ${SDK}/lib/pkgconfig/ImageMagick* \
+    ${SDK}/lib/pkgconfig/Magick* \
+    ${SDK}/bin/Magick*
+fi
 if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
     cd $WRK || exit 1
     rm -rf ImageMagick* || true
@@ -230,6 +250,16 @@ if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
         fi
         patch -p1 < "${SRC}/imagemagick-3-gimp_2_10.patch"
     fi
+    if [ "${MP}" = 1 ]; then
+        MAGICK_MP="--enable-openmp"
+    else
+        MAGICK_MP="--disable-openmp"
+    fi
+    if [ "${HDRI}" = 1 ]; then
+        MAGICK_HDRI="--enable-hdri"
+    else
+        MAGICK_HDRI="--disable-hdri"
+    fi
     MAGICK_LDFLAGS=""
     if [ "$OS" = "Darwin" ]; then
         MAGICK_LDFLAGS="-mmacosx-version-min=$OSX_MIN"
@@ -237,11 +267,11 @@ if [ ! -f "$SDK/lib/pkgconfig/Magick++.pc" ]; then
     sed -i '' 's#-ltiff#-ltiff -llzma -ljpeg -lz#g' configure
     LDFLAGS="$MAGICK_LDFLAGS" LIBS="-lz -llzma -lbz2" CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" ./configure --prefix=$SDK \
     --enable-static --disable-shared \
-    --with-x=no --disable-docs --disable-modules --without-modules --with-xml --without-gslib \
-    --with-zlib --with-lzma --without-jasper --enable-hdri --with-quantum-depth=16 \
+    --with-x=no --disable-docs --with-xml --without-gslib \
+    --with-zlib --with-lzma --without-jasper --with-quantum-depth=16 \
     --enable-largefile --without-pango --without-webp --without-fftw --without-lqr \
     --without-freetype --without-openexr --without-fontconfig \
-    --enable-zero-configuration \
+    --enable-zero-configuration ${MAGICK_MP} ${MAGICK_HDRI} \
   || exit 1
   make -j$JOBS || exit 1
   make install || exit 1
@@ -260,6 +290,11 @@ if [ "$OS" = "Linux" ] && [ ! -f "$SDK/lib/pkgconfig/xkbcommon.pc" ]; then
     CFLAGS="$DEFAULT_FLAGS" CXXFLAGS="$DEFAULT_FLAGS" CPPFLAGS="$DEFAULT_FLAGS" ./configure $DEFAULT_CONFIGURE || exit 1
     make -j$JOBS || exit
     make install || exit 1
+fi
+
+if [ "${NO_QT}" = 1 ]; then
+    echo "==> Done with Cyan SDK!"
+    exit 0
 fi
 
 # qtbase

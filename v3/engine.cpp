@@ -29,6 +29,7 @@
 #include <QDebug>
 #include <QUuid>
 #include <QStandardPaths>
+#include <QElapsedTimer>
 
 #include "Magick++.h"
 
@@ -263,6 +264,9 @@ Engine::readImage(const QString &filename,
                   bool blackPoint,
                   bool identify)
 {
+    QElapsedTimer timer;
+    timer.start();
+
     Image result;
     result.success = false;
     result.filename = filename;
@@ -357,6 +361,7 @@ Engine::readImage(const QString &filename,
         result.warnings.append( warn.what() );
     }
 
+    qWarning() << "elapsed" << timer.elapsed();
     return result;
 }
 
@@ -422,6 +427,9 @@ Engine::convertImage(const QByteArray &inputFileData,
                      bool display,
                      const QSize &scale)
 {
+    QElapsedTimer timer;
+    timer.start();
+
     Image result;
     result.success = false;
     if (inputFileData.size() <= 0) {
@@ -529,6 +537,8 @@ Engine::convertImage(const QByteArray &inputFileData,
         if ( checkifValidResult &&
              isValidImage(result.buffer) ) { result.success = true; }
     }
+
+    qWarning() << "elapsed" << timer.elapsed();
     return result;
 }
 

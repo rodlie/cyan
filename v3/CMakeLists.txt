@@ -48,7 +48,7 @@ pkg_search_module(LCMS2 REQUIRED lcms2)
 
 if(${STATIC_PKGCONF})
     add_compile_options(${MAGICK_STATIC_CFLAGS})
-    find_package(OpenMP REQUIRED)
+    find_package(OpenMP)
 else()
     add_compile_options(${MAGICK_CFLAGS})
 endif()
@@ -95,8 +95,10 @@ if(${STATIC_PKGCONF})
                           ${MAGICK_STATIC_LIBRARIES}
                           ${LCMS2_STATIC_LIBRARIES}
                           ${MAGICK_STATIC_LDFLAGS}
-                          ${LCMS2_STATIC_LDFLAGS}
-                          OpenMP::OpenMP_CXX)
+                          ${LCMS2_STATIC_LDFLAGS})
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
+    endif()
     if(APPLE)
         target_link_libraries(${PROJECT_NAME} PRIVATE iconv)
     endif()
@@ -105,8 +107,10 @@ if(${STATIC_PKGCONF})
                           ${MAGICK_STATIC_LIBRARIES}
                           ${LCMS2_STATIC_LIBRARIES}
                           ${MAGICK_STATIC_LDFLAGS}
-                          ${LCMS2_STATIC_LDFLAGS}
-                          OpenMP::OpenMP_CXX)
+                          ${LCMS2_STATIC_LDFLAGS})
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(tests PRIVATE OpenMP::OpenMP_CXX)
+    endif()
     if(APPLE)
         target_link_libraries(tests PRIVATE iconv)
     endif()
