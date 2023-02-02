@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(CYAN_VERSION);
 
     Magick::InitializeMagick(nullptr);
-    Engine::setDiskResource(0);
-    Engine::setMemoryResource( Engine::getTotalRam(75) );
+    //Engine::setDiskResource(0); // issues with ubuntu 22.04
+    Engine::setMemoryResource( Engine::getTotalRam(75) ); // TODO: setting
 
     Window window;
 

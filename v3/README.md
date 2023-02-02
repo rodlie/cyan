@@ -6,7 +6,7 @@ Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image vie
 
 ## Requirements
 
-System requirements for official releases.
+System requirements for official binary releases.
 
 * x86_64 SSE 4.1 compatible CPU
 * 4GB RAM
@@ -45,10 +45,10 @@ ICC color profiles are essential for using Cyan. It's recommended that you insta
 
 ### Requirements
 
- * C++11
+ * C++11 (GCC/Clang/MSVC)
  * CMake *(3.9+)*
  * Qt *(5.9+/6.x)*
-   * Core/Concurrent/Gui/Widgets
+   * Core/Concurrent/Gui/Widgets/Test
  * LCMS *(2+)*
  * (Image)Magick++ *(6.9+)*
    * Q16/HDRI/OpenMP/LCMS/TIFF/JPEG/PNG
@@ -56,6 +56,7 @@ ICC color profiles are essential for using Cyan. It's recommended that you insta
 ### Build
 
 ```
+cd cyan
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ../v3

@@ -171,22 +171,42 @@ Window::readImage(const QString &filename,
 
 void
 Window::applyDisplayProfile(const QString &filename,
-                            const QString &srcProfile,
-                            const QString &dstProfile,
-                            const Engine::RenderingIntent intent,
-                            bool blackPoint)
+                            const Engine::ColorProfiles &profiles)
 {
-    auto image = Engine::convertImage(Engine::fileToByteArray(filename),
-                                      Engine::fileToByteArray(srcProfile),
-                                      Engine::fileToByteArray(dstProfile),
-                                      intent,
-                                      blackPoint,
+    QByteArray src = Engine::fileToByteArray(filename);
+    QByteArray fallbackProfile = Engine::fileToByteArray(profiles.source);
+    QByteArray displayProfile = Engine::fileToByteArray(profiles.display);
+
+    if ( !profiles.print.isEmpty() ) {
+        auto print = Engine::convertImage(src,
+                                          fallbackProfile,
+                                          Engine::fileToByteArray(profiles.print),
+                                          profiles.intent,
+                                          profiles.blackpoint,
+                                          false,
+                                          false,
+                                          true,
+                                          true,
+                                          true,
+                                          false);
+        fallbackProfile = Engine::fileToByteArray(profiles.print);
+        src = print.buffer;
+    } else {
+        fallbackProfile = Engine::fileToByteArray(profiles.source);
+    }
+
+    auto image = Engine::convertImage(src,
+                                      fallbackProfile,
+                                      displayProfile,
+                                      profiles.intent,
+                                      profiles.blackpoint,
                                       false,
                                       false,
                                       true,
                                       true,
                                       true,
                                       true);
+
     image.filename = filename;
     emit applyDisplayProfileReady(image);
 }
@@ -204,21 +224,25 @@ void
 Window::updateDisplayProfile(const QString &filename,
                              const Engine::ColorSpace &colorspace)
 {
-    emit showStatusMessage(tr("Update display profile ..."), 0);
+    emit showStatusMessage(tr("Applying display profile ..."), 0);
     auto cs = getColorSettings();
-    QString profile;
+    Engine::ColorProfiles args = cs.profiles;
+
     switch(colorspace) {
     case Engine::ColorSpaceRGB:
-        profile = cs.profiles.rgb;
+        args.source = args.rgb;
         break;
     case Engine::ColorSpaceCMYK:
-        profile = cs.profiles.cmyk;
+        args.source = args.cmyk;
         break;
     case Engine::ColorSpaceGRAY:
-        profile = cs.profiles.gray;
+        args.source = args.gray;
         break;
     default:;
     }
+
+    args.intent = cs.intent;
+    args.blackpoint = cs.blackpoint;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QFuture f = QtConcurrent::run(
@@ -230,10 +254,7 @@ Window::updateDisplayProfile(const QString &filename,
                                   &Window::applyDisplayProfile,
 #endif
                                   filename,
-                                  profile,
-                                  cs.profiles.display,
-                                  cs.intent,
-                                  cs.blackpoint);
+                                  args);
 }
 
 void
@@ -284,6 +305,7 @@ Window::applyPrintProfile(const QString &filename,
                           const Engine::RenderingIntent intent,
                           bool blackpoint)
 {
+    // TODO
     qDebug() << "applyPrintProfile" << filename << srcProfile << dstProfile << intent << blackpoint;
 }
 
@@ -292,6 +314,7 @@ Window::updatePrintProfile()
 {
     // TODO
     qDebug() << "updatePrintProfile";
+    updateDisplayProfile();
 }
 
 void

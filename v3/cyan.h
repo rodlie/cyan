@@ -80,10 +80,7 @@ namespace Cyan
                        const Engine::ColorSettings &cs);
 
         void applyDisplayProfile(const QString &filename,
-                                 const QString &srcProfile,
-                                 const QString &dstProfile,
-                                 const Engine::RenderingIntent intent,
-                                 bool blackPoint);
+                                 const Engine::ColorProfiles &profiles);
         void updateDisplayProfile();
         void updateDisplayProfile(const QString &filename,
                                   const Engine::ColorSpace &colorspace);

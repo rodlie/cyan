@@ -62,6 +62,7 @@ namespace Cyan
             bool success = false;
             int width = 0;
             int height = 0;
+            QByteArray source;
             QByteArray buffer;
             QByteArray profile;
             ColorSpace colorspace;
@@ -76,6 +77,10 @@ namespace Cyan
             QString gray;
             QString display;
             QString print;
+            QString source;
+            QString destination;
+            RenderingIntent intent = PerceptualRenderingIntent;
+            bool blackpoint = true;
         };
         struct ColorSettings {
             ColorSpace colorspace = ColorSpaceUnknown;
