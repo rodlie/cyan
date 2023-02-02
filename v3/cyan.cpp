@@ -848,6 +848,8 @@ Window::handleOpenImageReady(const Engine::Image &image)
 void
 Window::handleUpdateImageReady(const Engine::Image &image)
 {
+    if ( !isFileOpen(image.filename) ) { return; }
+
     if (!image.success || image.buffer.length() <= 0 || image.width <= 0 || image.height <= 0) {
         emit showStatusMessage(tr("Failed"), 500);
         QFileInfo info(image.filename);
