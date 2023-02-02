@@ -821,9 +821,17 @@ Window::getTab(const QString &filename)
 void
 Window::handleOpenImageReady(const Engine::Image &image)
 {
-    if (isFileOpen(image.filename) ||
-        !image.success ||
-        image.buffer.length() < 1) { return; }
+    if ( isFileOpen(image.filename) ) { return; }
+
+    if (!image.success || image.buffer.length() <= 0 || image.width <= 0 || image.height <= 0) {
+        emit showStatusMessage(tr("Failed"), 500);
+        QFileInfo info(image.filename);
+        QMessageBox::warning( this,
+                              tr("Failed"),
+                              tr("Failed to read image %1.\n\n%2").arg(info.baseName(),
+                                                                       image.errors) );
+        return;
+    }
 
     auto cs = getColorSettings();
     cs.colorspace = image.colorspace;
@@ -863,10 +871,20 @@ Window::handleOpenImageReady(const Engine::Image &image)
 void
 Window::handleUpdateImageReady(const Engine::Image &image)
 {
+    if ( !isFileOpen(image.filename) ) { return; }
+
+    if (!image.success || image.buffer.length() <= 0 || image.width <= 0 || image.height <= 0) {
+        emit showStatusMessage(tr("Failed"), 500);
+        QFileInfo info(image.filename);
+        QMessageBox::warning( this,
+                              tr("Failed"),
+                              tr("Failed to process %1.\n\n%2").arg(info.baseName(),
+                                                                    image.errors) );
+        return;
+    }
+
     emit showStatusMessage(tr("Done"), 500);
-    if (!isFileOpen(image.filename) ||
-        !image.success ||
-        image.buffer.length() < 1) { return; }
+
     MdiSubWindow *tab = getTab(image.filename);
     if (!tab) { return; }
     tab->getView()->setImage(image, false, false);
