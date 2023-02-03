@@ -173,6 +173,15 @@ void
 Window::applyDisplayProfile(const QString &filename,
                             const Engine::ColorProfiles &profiles)
 {
+    if ( profiles.display.isEmpty() && profiles.print.isEmpty() ) {
+        Engine::Image image;
+        image.filename = filename;
+        image.success = false;
+        image.errors = tr("Missing display and print profile.");
+        emit applyDisplayProfileReady(image);
+        return;
+    }
+
     QByteArray src = Engine::fileToByteArray(filename);
     QByteArray fallbackProfile = Engine::fileToByteArray(profiles.source);
     QByteArray displayProfile = Engine::fileToByteArray(profiles.display);
@@ -188,27 +197,33 @@ Window::applyDisplayProfile(const QString &filename,
                                           true,
                                           true,
                                           true,
-                                          false);
+                                          profiles.display.isEmpty() ? true : false);
         fallbackProfile = Engine::fileToByteArray(profiles.print);
         src = print.buffer;
+        //qDebug() << Engine::identify(src);
+        if ( profiles.display.isEmpty() ) {
+            print.filename = filename;
+            emit applyDisplayProfileReady(print);
+        }
     } else {
         fallbackProfile = Engine::fileToByteArray(profiles.source);
     }
 
-    auto image = Engine::convertImage(src,
-                                      fallbackProfile,
-                                      displayProfile,
-                                      profiles.intent,
-                                      profiles.blackpoint,
-                                      false,
-                                      false,
-                                      true,
-                                      true,
-                                      true,
-                                      true);
-
-    image.filename = filename;
-    emit applyDisplayProfileReady(image);
+    if ( !profiles.display.isEmpty() ) {
+        auto image = Engine::convertImage(src,
+                                          fallbackProfile,
+                                          displayProfile,
+                                          profiles.intent,
+                                          profiles.blackpoint,
+                                          false,
+                                          false,
+                                          true,
+                                          true,
+                                          true,
+                                          true);
+        image.filename = filename;
+        emit applyDisplayProfileReady(image);
+    }
 }
 
 void
@@ -243,6 +258,9 @@ Window::updateDisplayProfile(const QString &filename,
 
     args.intent = cs.intent;
     args.blackpoint = cs.blackpoint;
+
+    if ( !canApplyDisplayProfile() ) { args.display.clear(); }
+    if ( !canApplyPrintProfile() ) { args.print.clear(); }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QFuture f = QtConcurrent::run(
@@ -781,7 +799,10 @@ Window::handleColorDisplayButtonTriggered(bool checked)
     }
     saveColorSettings(true);
     if ( checked && canApplyDisplayProfile() ) { updateDisplayProfile(); }
-    else if (!checked) { resetDisplayProfile(); }
+    else if (!checked) {
+        if ( canApplyPrintProfile() ) { updateDisplayProfile(); }
+        else { resetDisplayProfile(); }
+    }
 }
 
 void Window::handleColorPrintButtonTriggered(bool checked)
