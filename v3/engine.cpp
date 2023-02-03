@@ -261,6 +261,25 @@ Engine::readImage(const QString &filename,
                   bool blackPoint,
                   bool identify)
 {
+    // TODO: we might need to add support for other "backends"
+    return readImageIM(filename,
+                       fallbackProfileRGB,
+                       fallbackProfileCMYK,
+                       fallbackProfileGRAY,
+                       intent,
+                       blackPoint,
+                       identify);
+}
+
+const Engine::Image
+Engine::readImageIM(const QString &filename,
+                    const QString &fallbackProfileRGB,
+                    const QString &fallbackProfileCMYK,
+                    const QString &fallbackProfileGRAY,
+                    const RenderingIntent intent,
+                    bool blackPoint,
+                    bool identify)
+{
     QElapsedTimer timer;
     timer.start();
 

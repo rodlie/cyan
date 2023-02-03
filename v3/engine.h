@@ -117,6 +117,13 @@ namespace Cyan
                                      const RenderingIntent intent = PerceptualRenderingIntent,
                                      bool blackPoint = true,
                                      bool identify = false);
+        static const Image readImageIM(const QString &filename,
+                                       const QString &fallbackProfileRGB = QString(),
+                                       const QString &fallbackProfileCMYK = QString(),
+                                       const QString &fallbackProfileGRAY = QString(),
+                                       const RenderingIntent intent = PerceptualRenderingIntent,
+                                       bool blackPoint = true,
+                                       bool identify = false);
         static bool compareImages( const QByteArray image1,
                                    const QByteArray image2,
                                    const QString &tmpPath = QString() );
