@@ -89,22 +89,8 @@ namespace Cyan
         void resetDisplayProfile();
         void resetDisplayProfile(const QString &filename);
 
-        void applyPrintProfile(const QString &filename,
-                               const QString &srcProfile,
-                               const QString &dstProfile,
-                               const Engine::RenderingIntent intent,
-                               bool blackpoint);
-        void updatePrintProfile();
-        void updatePrintProfile(const QString &filename,
-                                const Engine::ColorSpace &colorspace);
-        void clearPrintProfile(const QString &filename,
-                               const Engine::ColorSettings &cs);
-        void resetPrintProfile();
-        void resetPrintProfile(const QString &filename);
-
     signals:
         void openImageReady(const Engine::Image &image);
-        //void convertImageReady(const Engine::Image &image);
         void applyDisplayProfileReady(const Engine::Image &image);
         void clearDisplayProfileReady(const Engine::Image &image);
         void applyPrintProfileReady(const Engine::Image &image);

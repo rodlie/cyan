@@ -317,55 +317,6 @@ Window::resetDisplayProfile(const QString &filename)
 }
 
 void
-Window::applyPrintProfile(const QString &filename,
-                          const QString &srcProfile,
-                          const QString &dstProfile,
-                          const Engine::RenderingIntent intent,
-                          bool blackpoint)
-{
-    // TODO
-    qDebug() << "applyPrintProfile" << filename << srcProfile << dstProfile << intent << blackpoint;
-}
-
-void
-Window::updatePrintProfile()
-{
-    // TODO
-    qDebug() << "updatePrintProfile";
-    updateDisplayProfile();
-}
-
-void
-Window::updatePrintProfile(const QString &filename,
-                           const Engine::ColorSpace &colorspace)
-{
-    // TODO
-    qDebug() << "updatePrintProfile" << filename << colorspace;
-}
-
-void
-Window::clearPrintProfile(const QString &filename,
-                          const Engine::ColorSettings &cs)
-{
-    // TODO
-    qDebug() << "clearPrintProfile" << filename;
-}
-
-void
-Window::resetPrintProfile()
-{
-    // TODO
-    qDebug() << "resetPrintProfile";
-}
-
-void
-Window::resetPrintProfile(const QString &filename)
-{
-    // TODO
-    qDebug() << "resetPrintProfile" << filename;
-}
-
-void
 Window::setupUi()
 {
  #ifdef Q_OS_DARWIN
@@ -769,22 +720,21 @@ Window::handleColorProfileDisplayTriggered()
 void
 Window::handleColorProfilePrintTriggered()
 {
-    qDebug() << "handleColorProfilePrintTriggered";
     saveColorSettings(true);
-    if ( canApplyPrintProfile() ) { updatePrintProfile(); }
+    if ( canApplyPrintProfile() ) { updateDisplayProfile(); }
 }
 
 void
 Window::handleColorIntentTriggered()
 {
-    if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
+    if ( canApplyDisplayProfile() || canApplyPrintProfile() ) { updateDisplayProfile(); }
     saveColorSettings(true);
 }
 
 void
 Window::handleColorBlackPointTriggered()
 {
-    if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
+    if ( canApplyDisplayProfile() || canApplyPrintProfile() ) { updateDisplayProfile(); }
     saveColorSettings(true);
 }
 
@@ -796,6 +746,7 @@ Window::handleColorDisplayButtonTriggered(bool checked)
                               tr("No display profile"),
                               tr("Select a display profile from the color settings.") );
         _menuColorDisplayButton->setChecked(false);
+        return;
     }
     saveColorSettings(true);
     if ( checked && canApplyDisplayProfile() ) { updateDisplayProfile(); }
@@ -807,16 +758,19 @@ Window::handleColorDisplayButtonTriggered(bool checked)
 
 void Window::handleColorPrintButtonTriggered(bool checked)
 {
-    qDebug() << "handleColorPrintButtonTriggered";
     if ( checked && !canApplyPrintProfile() ) {
         QMessageBox::warning( this,
                               tr("No print profile"),
                               tr("Select a print profile from the color settings.") );
         _menuColorPrintButton->setChecked(false);
+        return;
     }
     saveColorSettings(true);
-    if ( checked && canApplyPrintProfile() ) { updatePrintProfile(); }
-    else if (!checked) { resetPrintProfile(); }
+    if ( checked && canApplyPrintProfile() ) { updateDisplayProfile(); }
+    else if (!checked) {
+        if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
+        else { resetDisplayProfile(); }
+    }
 }
 
 bool
@@ -883,10 +837,8 @@ Window::handleOpenImageReady(const Engine::Image &image)
 
     emit showStatusMessage(tr("Done"), 500);
 
-    if ( canApplyDisplayProfile() ) { updateDisplayProfile(image.filename,
-                                                           image.colorspace); }
-    else if ( canApplyPrintProfile() ) { updatePrintProfile(image.filename,
-                                                            image.colorspace); }
+    if ( canApplyDisplayProfile() || canApplyPrintProfile() ) { updateDisplayProfile(image.filename,
+                                                                                     image.colorspace); }
 }
 
 void
