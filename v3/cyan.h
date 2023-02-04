@@ -131,7 +131,8 @@ namespace Cyan
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
         QTabWidget *_tabs;
-        QTreeWidget *_tabDetails;
+        QTreeWidget *_tabImageDetails;
+        QTreeWidget *_tabPrintDetails;
         QString _lastTab;
 
     private slots:
@@ -160,7 +161,8 @@ namespace Cyan
         void handleOpenImageReady(const Engine::Image &image);
         void handleUpdateImageReady(const Engine::Image &image);
         void handleWindowActivated(QMdiSubWindow *window);
-        void setImageSourceDetails(const QString &info);
+        void setDetails(QTreeWidget *tree,
+                        const QString &info);
         void handleClosedWindow(const QString &filename);
         void setDefaultColorProfile(const Engine::ColorSpace &colorspace,
                                     const QString &filename,

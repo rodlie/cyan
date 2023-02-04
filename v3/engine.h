@@ -69,6 +69,7 @@ namespace Cyan
             QString errors;
             QString warnings;
             QString information;
+            QString printInformation;
             QString filename;
         };
         struct ColorProfiles {
@@ -138,6 +139,7 @@ namespace Cyan
                                    bool applyOutputProfile = true,
                                    bool checkifValidResult = true,
                                    bool display = false,
+                                   bool identify = false,
                                    const QSize &scale = QSize() );
         static bool hasDelegate(const QString &delegate);
         static bool hasFeature(const QString &feature);

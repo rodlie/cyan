@@ -161,6 +161,18 @@ BasicView::getSourceDetails()
     return _sourceDetails;
 }
 
+const QString
+BasicView::getPrintDetails()
+{
+    return _printDetails;
+}
+
+void
+BasicView::setPrintDetails(QString details)
+{
+    _printDetails = details;
+}
+
 const QByteArray
 BasicView::getSourceProfile()
 {

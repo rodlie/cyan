@@ -63,12 +63,15 @@ namespace Cyan
                       bool getDetails = true,
                       bool getProfile = true);
         const QString getSourceDetails();
+        const QString getPrintDetails();
+        void setPrintDetails(QString details);
         const QByteArray getSourceProfile();
 
     private:
         bool _fit;
         bool _native;
         QString _sourceDetails;
+        QString _printDetails;
         QByteArray _sourceProfile;
 
     protected:

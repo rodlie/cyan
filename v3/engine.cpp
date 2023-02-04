@@ -57,6 +57,7 @@ Engine::Engine(QObject *parent)
 const QByteArray
 Engine::fileToByteArray(const QString &filename)
 {
+    if ( !QFile::exists(filename) ) { return QByteArray(); }
     QFile file(filename);
     if ( file.open(QIODevice::ReadOnly) ) {
         QByteArray fileData =  file.readAll();
@@ -441,6 +442,7 @@ Engine::convertImage(const QByteArray &inputFileData,
                      bool applyOutputProfile,
                      bool checkifValidResult,
                      bool display,
+                     bool identify,
                      const QSize &scale)
 {
     QElapsedTimer timer;
@@ -529,6 +531,11 @@ Engine::convertImage(const QByteArray &inputFileData,
         result.warnings.append( QString::fromStdString( warn.what() ) );
     }
     try {
+        if (identify) {
+            auto wand = NewMagickWandFromImage( image.constImage() );
+            result.information = MagickIdentifyImage(wand);
+            wand = DestroyMagickWand(wand);
+        }
         result.width = image.columns();
         result.height = image.rows();
         if (display) {
@@ -547,7 +554,6 @@ Engine::convertImage(const QByteArray &inputFileData,
     catch(Magick::Warning &warn) {
         qWarning() << warn.what();
     }
-
     if (display) { result.success = result.buffer.length() > 0; }
     else {
         if ( checkifValidResult &&

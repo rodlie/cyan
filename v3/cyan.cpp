@@ -79,7 +79,8 @@ Cyan::Window::Window(QWidget *parent)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
     , _tabs(nullptr)
-    , _tabDetails(nullptr)
+    , _tabImageDetails(nullptr)
+    , _tabPrintDetails(nullptr)
 {
     setupUi();
     setupMenus();
@@ -173,6 +174,7 @@ void
 Window::applyDisplayProfile(const QString &filename,
                             const Engine::ColorProfiles &profiles)
 {
+    qDebug() << "applyDisplayProfile" << filename << profiles.source << profiles.display << profiles.print;
     if ( profiles.display.isEmpty() && profiles.print.isEmpty() ) {
         Engine::Image image;
         image.filename = filename;
@@ -186,6 +188,7 @@ Window::applyDisplayProfile(const QString &filename,
     QByteArray fallbackProfile = Engine::fileToByteArray(profiles.source);
     QByteArray displayProfile = Engine::fileToByteArray(profiles.display);
 
+    QString printDetails;
     if ( !profiles.print.isEmpty() ) {
         auto print = Engine::convertImage(src,
                                           fallbackProfile,
@@ -197,11 +200,13 @@ Window::applyDisplayProfile(const QString &filename,
                                           true,
                                           true,
                                           true,
-                                          profiles.display.isEmpty() ? true : false);
+                                          profiles.display.isEmpty() ? true : false,
+                                          true);
         fallbackProfile = Engine::fileToByteArray(profiles.print);
         src = print.buffer;
-        //qDebug() << Engine::identify(src);
+        printDetails = print.information;
         if ( profiles.display.isEmpty() ) {
+            print.printInformation = print.information;
             print.filename = filename;
             emit applyDisplayProfileReady(print);
         }
@@ -220,8 +225,10 @@ Window::applyDisplayProfile(const QString &filename,
                                           true,
                                           true,
                                           true,
-                                          true);
+                                          true,
+                                          false);
         image.filename = filename;
+        image.printInformation = printDetails;
         emit applyDisplayProfileReady(image);
     }
 }
@@ -344,14 +351,25 @@ Window::setupUi()
     _tabs->setTabPosition(QTabWidget::East);
 
     // tab details
-    _tabDetails = new QTreeWidget(this);
-    _tabDetails->setColumnCount(2);
-    _tabDetails->setHeaderHidden(true);
-    _tabDetails->header()->setStretchLastSection(true);
-    _tabDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    _tabs->addTab( _tabDetails,
+    _tabImageDetails = new QTreeWidget(this);
+    _tabImageDetails->setColumnCount(2);
+    _tabImageDetails->setHeaderHidden(true);
+    _tabImageDetails->header()->setStretchLastSection(true);
+    _tabImageDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    _tabPrintDetails = new QTreeWidget(this);
+    _tabPrintDetails->setColumnCount(2);
+    _tabPrintDetails->setHeaderHidden(true);
+    _tabPrintDetails->header()->setStretchLastSection(true);
+    _tabPrintDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    _tabs->addTab( _tabImageDetails,
                    QIcon::fromTheme(CYAN_ICON_IMAGE),
                    tr("Image Details") );
+
+    _tabs->addTab( _tabPrintDetails,
+                   QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR),
+                   tr("Print Details") );
 
     // splitters
     _splitter = new QSplitter(this);
@@ -861,6 +879,12 @@ Window::handleUpdateImageReady(const Engine::Image &image)
     MdiSubWindow *tab = getTab(image.filename);
     if (!tab) { return; }
     tab->getView()->setImage(image, false, false);
+    tab->getView()->setPrintDetails(image.printInformation);
+
+    if ( tab == qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() ) ) {
+        qDebug() << "update print details";
+        setDetails(_tabPrintDetails, image.printInformation);
+    }
     if ( colorSettingsDiffer(tab->getColorSettings(), false, true) ) {
         tab->setColorSettings( getColorSettings() );
     }
@@ -875,6 +899,9 @@ Window::handleWindowActivated(QMdiSubWindow *window)
     if (tab->getFilename() == _lastTab) { return; }
     _lastTab = tab->getFilename();
 
+    setDetails( _tabImageDetails, tab->getView()->getSourceDetails() );
+    setDetails( _tabPrintDetails, tab->getView()->getPrintDetails() );
+
     if ( colorSettingsDiffer(tab->getColorSettings(), false, true) ) {
         if ( canApplyDisplayProfile() ) {
             updateDisplayProfile( tab->getFilename(),
@@ -883,13 +910,15 @@ Window::handleWindowActivated(QMdiSubWindow *window)
             clearDisplayProfile( tab->getFilename(), getColorSettings() );
         }
     }
-    setImageSourceDetails( tab->getView()->getSourceDetails() );
 }
 
 // TODO: cleanup
-void Window::setImageSourceDetails(const QString &info)
+void
+Window::setDetails(QTreeWidget *tree,
+                   const QString &info)
 {
-    _tabDetails->clear();
+    if (!tree) { return; }
+    tree->clear();
     if ( info.isEmpty() ) { return; }
     QStringList list = info.split("\n", QT_SKIP_EMPTY);
     QVector<QTreeWidgetItem*> level1items;
@@ -947,15 +976,15 @@ void Window::setImageSourceDetails(const QString &info)
             continue;
         }
     }
-    _tabDetails->addTopLevelItems( level1items.toList() );
+    tree->addTopLevelItems( level1items.toList() );
     level2items.clear();
-    _tabDetails->expandAll();
+    tree->expandAll();
 }
 
 void
 Window::handleClosedWindow(const QString &filename)
 {
-    if (_lastTab == filename) { _tabDetails->clear(); }
+    if (_lastTab == filename) { _tabImageDetails->clear(); }
 }
 
 void
