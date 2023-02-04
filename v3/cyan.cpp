@@ -1009,7 +1009,10 @@ Window::setDetails(QTreeWidget *tree,
 void
 Window::handleClosedWindow(const QString &filename)
 {
-    if (_lastTab == filename) { _tabImageDetails->clear(); }
+    if (_lastTab == filename) {
+        _tabImageDetails->clear();
+        _tabPrintDetails->clear();
+    }
 }
 
 void
