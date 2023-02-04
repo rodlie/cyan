@@ -27,8 +27,11 @@ endif()
 
 add_definitions(-DCYAN_VERSION="${PROJECT_VERSION}")
 
+add_compile_options(-Wall -Wextra)
 if(CMAKE_BUILD_TYPE MATCHES "^(release|Release|RELEASE)$")
     add_definitions(-DQT_NO_DEBUG_OUTPUT)
+else()
+    add_definitions(-DQT_MESSAGELOGCONTEXT)
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -38,6 +41,24 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "Magick++ pkg-config")
 option(STATIC_PKGCONF "Use pkg-config static" OFF)
+
+set(COMPANY "Cyan")
+set(COPYRIGHT "Copyright Ole-Andre Rodlie")
+set(IDENTIFIER "graphics.cyan")
+
+if(APPLE)
+    set(ICON_FILE ${CMAKE_CURRENT_SOURCE_DIR}/share/icons/${PROJECT_NAME}.icns)
+    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
+    set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
+    set(MACOSX_BUNDLE_COPYRIGHT ${COPYRIGHT})
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER ${IDENTIFIER})
+    set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_NAME})
+    set_source_files_properties(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
+endif()
+
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} 5.9 COMPONENTS Concurrent Widgets Test REQUIRED)
@@ -77,8 +98,16 @@ set(TEST_SOURCES
     engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../res/tests.qrc)
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+add_executable(${PROJECT_NAME} ${ICON_FILE} ${PROJECT_SOURCES})
 add_executable(tests ${TEST_SOURCES})
+
+if(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE TRUE)
+endif()
+
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
 
 target_link_libraries(${PROJECT_NAME}
                       PRIVATE

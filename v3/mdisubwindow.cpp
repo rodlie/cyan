@@ -55,7 +55,7 @@ MdiSubWindow::setColorSpace(const Engine::ColorSpace &colorspace)
     _colorSettings.colorspace = colorspace;
 }
 
-const Engine::ColorSpace
+Engine::ColorSpace
 MdiSubWindow::getColorSpace()
 {
     return _colorSettings.colorspace;
@@ -67,7 +67,7 @@ MdiSubWindow::setColorIntent(const Engine::RenderingIntent &intent)
     _colorSettings.intent = intent;
 }
 
-const Engine::RenderingIntent
+Engine::RenderingIntent
 MdiSubWindow::getColorIntent()
 {
     return _colorSettings.intent;
