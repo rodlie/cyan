@@ -78,6 +78,7 @@ Cyan::Window::Window(QWidget *parent)
     , _menuZoomButton(nullptr)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
+    , _actionSaveImage(nullptr)
     , _tabs(nullptr)
     , _tabImageDetails(nullptr)
     , _tabPrintDetails(nullptr)
@@ -154,6 +155,15 @@ Window::openImage(bool showDialog,
         MdiSubWindow *tab = getTab(filename);
         if (tab) { _mdi->setActiveSubWindow(tab); }
     }
+}
+
+void
+Window::saveImage()
+{
+    MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() );
+    if (!tab) { return; }
+    qDebug() << "saveImage" << tab->getFilename();
+    // TODO
 }
 
 void
@@ -499,6 +509,18 @@ Window::setupActions()
              SLOT( handleActionOpenImage() ) );
     _menuFile->addAction(_actionOpenImage);
 
+    // save image
+    _actionSaveImage = new QAction(QIcon::fromTheme(CYAN_ICON_SAVE_IMAGE),
+                                   tr("Save image"),
+                                   this);
+    _actionSaveImage->setShortcut( QKeySequence( tr("Ctrl+S") ) );
+    _actionSaveImage->setDisabled(true);
+    connect( _actionSaveImage,
+             SIGNAL( triggered() ),
+             this,
+             SLOT( saveImage() ) );
+    _menuFile->addAction(_actionSaveImage);
+
     // toolbar spacer
     QWidget *toolbarSpacer = new QWidget(this);
     toolbarSpacer->setSizePolicy(QSizePolicy::Expanding,
@@ -506,6 +528,7 @@ Window::setupActions()
 
     // toolbar
     _toolbar->addAction(_actionOpenImage);
+    _toolbar->addAction(_actionSaveImage);
     _toolbar->addWidget(_menuColorButton);
     _toolbar->addWidget(toolbarSpacer);
     _toolbar->addWidget(_menuColorDisplayButton);
@@ -892,7 +915,11 @@ void
 Window::handleWindowActivated(QMdiSubWindow *window)
 {
     MdiSubWindow *tab = qobject_cast<MdiSubWindow*>(window);
-    if (!tab) { return; }
+    if (!tab) {
+        _actionSaveImage->setEnabled(false);
+        return;
+    }
+    _actionSaveImage->setEnabled(true);
     qDebug() << "handle window activated" << tab->getFilename() << _lastTab;
     if (tab->getFilename() == _lastTab) { return; }
     _lastTab = tab->getFilename();

@@ -44,6 +44,7 @@
 
 #define THEME_ICON_APPLICATIONS_GRAPHICS "applications-graphics"
 #define THEME_ICON_DOCUMENT_OPEN "document-open"
+#define THEME_ICON_DOCUMENT_SAVE "document-save"
 #define THEME_ICON_VIDEO_DISPLAY "video-display"
 #define THEME_ICON_PREFERENCES_COLOR "preferences-color"
 
@@ -53,6 +54,7 @@
 #define CYAN_ICON_COLOR_WHEEL "colors"
 #define CYAN_ICON_COLOR_MAN "color_management"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
+#define CYAN_ICON_SAVE_IMAGE THEME_ICON_DOCUMENT_SAVE
 #define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
 #define CYAN_ICON_ZOOM "zoom"
 #define CYAN_ICON_IMAGES "images"
@@ -76,6 +78,7 @@ namespace Cyan
     public slots:
         void openImage( bool showDialog = true,
                         const QString &filename = QString() );
+        void saveImage();
         void readImage(const QString &filename,
                        const Engine::ColorSettings &cs);
 
@@ -130,6 +133,7 @@ namespace Cyan
         QToolButton *_menuZoomButton;
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
+        QAction *_actionSaveImage;
         QTabWidget *_tabs;
         QTreeWidget *_tabImageDetails;
         QTreeWidget *_tabPrintDetails;
