@@ -177,6 +177,7 @@ namespace Cyan
         void saveSettings();
         bool canApplyDisplayProfile();
         bool canApplyPrintProfile();
+        void setPrintDetailsVisibility(bool visible);
         bool colorSettingsDiffer(const Engine::ColorSettings &cs,
                                  bool checkColorspace = false,
                                  bool checkDisplay = false,

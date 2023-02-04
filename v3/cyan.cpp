@@ -362,14 +362,11 @@ Window::setupUi()
     _tabPrintDetails->setHeaderHidden(true);
     _tabPrintDetails->header()->setStretchLastSection(true);
     _tabPrintDetails->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    _tabPrintDetails->setVisible(false);
 
     _tabs->addTab( _tabImageDetails,
                    QIcon::fromTheme(CYAN_ICON_IMAGE),
                    tr("Image Details") );
-
-    _tabs->addTab( _tabPrintDetails,
-                   QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR),
-                   tr("Print Details") );
 
     // splitters
     _splitter = new QSplitter(this);
@@ -789,6 +786,7 @@ void Window::handleColorPrintButtonTriggered(bool checked)
         if ( canApplyDisplayProfile() ) { updateDisplayProfile(); }
         else { resetDisplayProfile(); }
     }
+    setPrintDetailsVisibility(checked);
 }
 
 bool
@@ -1178,10 +1176,29 @@ Window::canApplyDisplayProfile()
 bool Window::canApplyPrintProfile()
 {
     QAction *action = _menuColorPrintGroup->checkedAction();
-    if (!action) { return false; }
+    if (!action) {
+        setPrintDetailsVisibility(false);
+        return false;
+    }
     QString filename = action->data().toString();
-    if ( !filename.isEmpty() && _menuColorPrintButton->isChecked() ) { return true; }
-    return false;
+    bool canApply = false;
+    if ( !filename.isEmpty() && _menuColorPrintButton->isChecked() ) { canApply = true; }
+    setPrintDetailsVisibility(canApply);
+    return canApply;
+}
+
+void
+Window::setPrintDetailsVisibility(bool visible)
+{
+    _tabPrintDetails->setVisible(visible);
+    int index = _tabs->indexOf(_tabPrintDetails);
+    qDebug() << "setPrintDetailsVisibility" << visible << index;
+    if (visible && index == -1) {
+        _tabs->addTab( _tabPrintDetails,
+                       QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR),
+                       tr("Print Details") );
+    }
+    else if (!visible && index >= 0) { _tabs->removeTab(index); }
 }
 
 bool
