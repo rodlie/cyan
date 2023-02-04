@@ -257,6 +257,7 @@ void
 Window::updateDisplayProfile(const QString &filename,
                              const Engine::ColorSpace &colorspace)
 {
+    setColorActionsEnabled(false);
     emit showStatusMessage(tr("Applying display profile ..."), 0);
     auto cs = getColorSettings();
     Engine::ColorProfiles args = cs.profiles;
@@ -318,6 +319,7 @@ Window::resetDisplayProfile()
 void
 Window::resetDisplayProfile(const QString &filename)
 {
+    setColorActionsEnabled(false);
     emit showStatusMessage(tr("Clear display profile ..."), 0);
     auto cs = getColorSettings();
 
@@ -884,6 +886,7 @@ Window::handleOpenImageReady(const Engine::Image &image)
 void
 Window::handleUpdateImageReady(const Engine::Image &image)
 {
+    setColorActionsEnabled(true);
     if ( !isFileOpen(image.filename) ) { return; }
 
     if (!image.success || image.buffer.length() <= 0 || image.width <= 0 || image.height <= 0) {
@@ -1287,4 +1290,13 @@ Window::colorSettingsDiffer(const Engine::ColorSettings &cs,
         }
     }
     return false;
+}
+
+void
+Window::setColorActionsEnabled(bool enabled)
+{
+    _menuColor->setEnabled(enabled);
+    _menuColorButton->setEnabled(enabled);
+    _menuColorDisplayButton->setEnabled(enabled);
+    _menuColorPrintButton->setEnabled(enabled);
 }

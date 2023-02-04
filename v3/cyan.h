@@ -186,6 +186,7 @@ namespace Cyan
                                  bool checkColorspace = false,
                                  bool checkDisplay = false,
                                  bool checkPrint = false);
+        void setColorActionsEnabled(bool enabled);
     };
 }
 
