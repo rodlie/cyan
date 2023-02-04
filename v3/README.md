@@ -1,23 +1,33 @@
 # Cyan Graphics
 
-Cyan is an advanced [prepress](https://en.wikipedia.org/wiki/Prepress) image viewer.
+Cyan is an [prepress](https://en.wikipedia.org/wiki/Prepress) image processing application.
 
-**v3 is a complete rewrite of Cyan, ETA early 2023.**
+**This is a complete rewrite of Cyan, ETA Q1 2023.**
 
 ## Requirements
 
 System requirements for official binary releases.
 
 * x86_64 SSE 4.1 compatible CPU
-* 4GB RAM
+* 4GB+ RAM
 * Windows 7+
 * OS X 10.10+
-* macOS 10.12+
+* macOS 10.13+
 * GNU/Linux X11 libgcc 4.8.5+/glibc 2.17+
 
 ## Color profiles
 
-ICC color profiles are essential for using Cyan. It's recommended that you install a basic set of color profiles before using Cyan.
+[ICC color profiles](https://en.wikipedia.org/wiki/ICC_profile) are essential for using Cyan. It's recommended that you install a basic set of color profiles before using Cyan.
+
+### Search paths
+
+* ``HOME``/.icc
+* ``HOME``/.color/icc
+* ``HOME``/Library/ColorSync/Profiles
+*  /Library/ColorSync/Profiles
+* /WINDOWS/System32/spool/drivers/color
+
+*Other paths may also be searched depending on your OS.*
 
 ### Resources:
 
@@ -31,15 +41,11 @@ ICC color profiles are essential for using Cyan. It's recommended that you insta
 
 ## Roadmap
 
-### v3.0
+### v3.0.0
 
 * ``[ 90% ]`` **New backend**
-* ``[ 70% ]`` **New frontend**
+* ``[ 75% ]`` **New frontend**
 * ``[ --- ]`` **Queue**
-
-### Beyond
-
-* ``[ --- ]`` **Basic image editing features**
 
 ## Source
 
@@ -53,7 +59,7 @@ ICC color profiles are essential for using Cyan. It's recommended that you insta
  * (Image)Magick++ *(6.9+)*
    * Q16/HDRI/OpenMP/LCMS/TIFF/JPEG/PNG
 
-### Build
+### Build (generic)
 
 ```
 cd cyan
