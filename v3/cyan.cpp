@@ -164,6 +164,7 @@ Window::saveImage()
     if (!tab) { return; }
     qDebug() << "saveImage" << tab->getFilename();
     // TODO
+    QMessageBox::information( this, tr("N/A"), tr("Function not implemented yet.") );
 }
 
 void
@@ -927,11 +928,12 @@ Window::handleWindowActivated(QMdiSubWindow *window)
     setDetails( _tabImageDetails, tab->getView()->getSourceDetails() );
     setDetails( _tabPrintDetails, tab->getView()->getPrintDetails() );
 
-    if ( colorSettingsDiffer(tab->getColorSettings(), false, true) ) {
-        if ( canApplyDisplayProfile() ) {
+    if ( colorSettingsDiffer(tab->getColorSettings(), false, true, true) ) {
+        if ( canApplyDisplayProfile() || canApplyPrintProfile() ) {
             updateDisplayProfile( tab->getFilename(),
                                   tab->getColorSpace() );
-        } else if ( tab->getColorSettings().applyDisplayProfile ) {
+        } else if ( tab->getColorSettings().applyDisplayProfile ||
+                    tab->getColorSettings().applyPrintProfile) {
             clearDisplayProfile( tab->getFilename(), getColorSettings() );
         }
     }
