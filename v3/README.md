@@ -1,6 +1,8 @@
 # Cyan Graphics
 
-Cyan is an [prepress](https://en.wikipedia.org/wiki/Prepress) image processing application.
+[Prepress](https://en.wikipedia.org/wiki/Prepress) image processing application.
+
+![Screenshot](docs/images/cyan-v3_0-screenshot-01.png)
 
 **This is a complete rewrite of Cyan, ETA Q1 2023.**
 
