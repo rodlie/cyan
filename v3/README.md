@@ -2,7 +2,9 @@
 
 [Prepress](https://en.wikipedia.org/wiki/Prepress) image processing application.
 
-![Screenshot](docs/images/cyan-v3_0-screenshot-01.png)
+![Screenshot 1](docs/images/cyan-v3_0-screenshot-01.png)
+
+![Screenshot 2](docs/images/cyan-v3_0-screenshot-02.png)
 
 **This is a complete rewrite of Cyan, ETA Q1 2023.**
 
