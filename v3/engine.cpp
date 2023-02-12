@@ -730,3 +730,30 @@ const QStringList Engine::supportedWriteFormats()
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
     return formats;
 }
+
+const QString
+Engine::humanFileSize(float num,
+                      bool mp,
+                      bool are)
+{
+    float byte = 1024.0;
+    QStringList list;
+    list << "KB";
+
+    if (are) {
+        byte = 1000.0;
+        list << "MP" << "GP";
+    } else if (mp) {
+        byte = 1000.0;
+        list << "MP";
+    } else { list << "MB" << "GB" << "TB"; }
+
+    QStringListIterator i(list);
+    QString unit("bytes");
+
+    while(num >= byte && i.hasNext()) {
+        unit = i.next();
+        num /= byte;
+    }
+    return QString().setNum(num,'f',2)+" "+unit;
+}

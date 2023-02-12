@@ -36,6 +36,8 @@
 
 #include <vector>
 
+#include "aboutdialog.h"
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 #define QT_SKIP_EMPTY QString::SkipEmptyParts
 #else
@@ -79,6 +81,7 @@ Cyan::Window::Window(QWidget *parent)
     , _menuWindows(nullptr)
     , _actionOpenImage(nullptr)
     , _actionSaveImage(nullptr)
+    , _actionAbout(nullptr)
     , _tabs(nullptr)
     , _tabImageDetails(nullptr)
     , _tabPrintDetails(nullptr)
@@ -523,6 +526,16 @@ Window::setupActions()
              this,
              SLOT( saveImage() ) );
     _menuFile->addAction(_actionSaveImage);
+
+    // about
+    _actionAbout = new QAction(QIcon::fromTheme(CYAN_ICON),
+                               tr("About"),
+                               this);
+    connect( _actionAbout,
+             SIGNAL( triggered() ),
+             this,
+             SLOT( openAboutDialog() ) );
+    _menuHelp->addAction(_actionAbout);
 
     // toolbar spacer
     QWidget *toolbarSpacer = new QWidget(this);
@@ -1299,4 +1312,11 @@ Window::setColorActionsEnabled(bool enabled)
     _menuColorButton->setEnabled(enabled);
     _menuColorDisplayButton->setEnabled(enabled);
     _menuColorPrintButton->setEnabled(enabled);
+}
+
+void
+Window::openAboutDialog()
+{
+    AboutDialog dialog;
+    dialog.exec();
 }

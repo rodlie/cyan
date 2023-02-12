@@ -134,6 +134,7 @@ namespace Cyan
         QtWindowListMenu *_menuWindows;
         QAction *_actionOpenImage;
         QAction *_actionSaveImage;
+        QAction *_actionAbout;
         QTabWidget *_tabs;
         QTreeWidget *_tabImageDetails;
         QTreeWidget *_tabPrintDetails;
@@ -187,6 +188,7 @@ namespace Cyan
                                  bool checkDisplay = false,
                                  bool checkPrint = false);
         void setColorActionsEnabled(bool enabled);
+        void openAboutDialog();
     };
 }
 
