@@ -31,6 +31,30 @@
 #define CMS_NO_REGISTER_KEYWORD
 #include <lcms2.h>
 
+#define THEME_ICON_APPLICATIONS_GRAPHICS "applications-graphics"
+#define THEME_ICON_DOCUMENT_OPEN "document-open"
+#define THEME_ICON_DOCUMENT_SAVE "document-save"
+#define THEME_ICON_VIDEO_DISPLAY "video-display"
+#define THEME_ICON_PREFERENCES_COLOR "preferences-color"
+
+#define CYAN_ICON "Cyan"
+#define CYAN_ICON_IMAGE "image-x-generic"
+#define CYAN_ICON_SUBWINDOW CYAN_ICON_IMAGE
+#define CYAN_ICON_COLOR_WHEEL "colors"
+#define CYAN_ICON_COLOR_MAN "color_management"
+#define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
+#define CYAN_ICON_SAVE_IMAGE THEME_ICON_DOCUMENT_SAVE
+#define CYAN_ICON_DISPLAY THEME_ICON_VIDEO_DISPLAY
+#define CYAN_ICON_ZOOM "zoom"
+#define CYAN_ICON_IMAGES "images"
+#define CYAN_ICON_PRINTER "printer"
+#define CYAN_ICON_PRINTER_COLOR "printer_color"
+#define CYAN_ICON_STOP "process-stop"
+
+#define CYAN_PROFILE_FALLBACK_RGB ":/icc/rgb.icc"
+#define CYAN_PROFILE_FALLBACK_CMYK ":/icc/cmyk.icc"
+#define CYAN_PROFILE_FALLBACK_GRAY ":/icc/gray.icc"
+
 namespace Cyan
 {
     class Engine : public QObject

@@ -37,6 +37,7 @@
 #include <vector>
 
 #include "aboutdialog.h"
+#include "convertdialog.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 #define QT_SKIP_EMPTY QString::SkipEmptyParts
@@ -163,11 +164,12 @@ Window::openImage(bool showDialog,
 void
 Window::saveImage()
 {
-    MdiSubWindow *tab = qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() );
-    if (!tab) { return; }
-    qDebug() << "saveImage" << tab->getFilename();
-    // TODO
-    QMessageBox::information( this, tr("N/A"), tr("Function not implemented yet.") );
+    QString filename = QFileDialog::getSaveFileName( this,
+                                                     tr("Save image"),
+                                                     QDir::homePath(),
+                                                     Engine::supportedWriteFormats().join(" ") );
+    if ( filename.isEmpty() ) { return; }
+    openConvertDialog(filename);
 }
 
 void
@@ -848,6 +850,12 @@ Window::getTab(const QString &filename)
     return nullptr;
 }
 
+MdiSubWindow *
+Window::getCurrentTab()
+{
+    return qobject_cast<MdiSubWindow*>( _mdi->currentSubWindow() );
+}
+
 void
 Window::handleOpenImageReady(const Engine::Image &image)
 {
@@ -1318,5 +1326,18 @@ void
 Window::openAboutDialog()
 {
     AboutDialog dialog;
+    dialog.exec();
+}
+
+void Window::openConvertDialog(const QString &filename)
+{
+    MdiSubWindow* tab = getCurrentTab();
+    if (!tab) { return; }
+
+    ConvertDialog dialog( this,
+                          tab->getColorSettings(),
+                          tab->getFilename(),
+                          filename,
+                          tr("Options") );
     dialog.exec();
 }

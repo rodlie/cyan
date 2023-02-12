@@ -92,6 +92,8 @@ set(PROJECT_SOURCES
     qtwindowlistmenu.h
     aboutdialog.cpp
     aboutdialog.h
+    convertdialog.cpp
+    convertdialog.h
     share/icons.qrc
     ${CMAKE_CURRENT_SOURCE_DIR}/../res/icc.qrc)
 set(TEST_SOURCES
