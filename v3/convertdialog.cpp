@@ -25,6 +25,9 @@
 #include <QLabel>
 #include <QApplication>
 #include <QDebug>
+#include <QTimer>
+#include <QMapIterator>
+#include <QGroupBox>
 
 using namespace Cyan;
 
@@ -38,7 +41,7 @@ ConvertDialog::ConvertDialog(QWidget *parent,
   , _cs(cs)
   , _inFilename(inFilename)
   , _outFilename(outFilename)
-  , _boxSource(nullptr)
+  , _boxCategory(nullptr)
   , _boxDestination(nullptr)
   , _boxIntent(nullptr)
   , _checkBlackPoint(nullptr)
@@ -63,19 +66,6 @@ ConvertDialog::ConvertDialog(QWidget *parent,
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    QWidget *headerWidget = new QWidget(this);
-    headerWidget->setContentsMargins(0, 0, 0, 0);
-    headerWidget->setSizePolicy(QSizePolicy::Expanding,
-                                QSizePolicy::Expanding);
-    QHBoxLayout *headerLayout = new QHBoxLayout(headerWidget);
-    headerLayout->setContentsMargins(0, 0, 0, 0);
-
-    QLabel *textLabel = new QLabel(this);
-    textLabel->setWordWrap(true);
-    textLabel->setOpenExternalLinks(true);
-    textLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
-                             QSizePolicy::MinimumExpanding);
-
     QWidget *footerWidget = new QWidget(this);
     footerWidget->setContentsMargins(0, 0, 0, 0);
     footerWidget->setSizePolicy(QSizePolicy::Expanding,
@@ -85,7 +75,7 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     _progress = new QProgressBar(this);
     _progress->setRange(0, 100);
     _progress->setValue(100);
-    _progress->setFormat("");
+    _progress->setFormat( tr("Ready") );
 
     _buttonSave = new QPushButton(QIcon::fromTheme(CYAN_ICON_SAVE_IMAGE),
                                   tr("Save"),
@@ -94,36 +84,63 @@ ConvertDialog::ConvertDialog(QWidget *parent,
                                     tr("Cancel"),
                                     this);
 
-    QWidget *renderWidget = new QWidget(this);
-    renderWidget->setContentsMargins(0, 0, 0, 0);
-    renderWidget->setSizePolicy(QSizePolicy::Expanding,
+    QGroupBox *destWidget = new QGroupBox(tr("Output Profile"), this);
+    QHBoxLayout *destLayout = new QHBoxLayout(destWidget);
+
+    _boxCategory = new QComboBox(this);
+    _boxCategory->setMinimumWidth(75);
+    _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_DISPLAY), tr("RGB") );
+    _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR), tr("CMYK") );
+    _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_CONVERT_TO_GRAY), tr("GRAY") );
+
+    _boxDestination = new QComboBox(this);
+    _boxDestination->setMinimumWidth(250);
+
+    _boxCategory->setSizePolicy(QSizePolicy::Fixed,
                                 QSizePolicy::Fixed);
+    _boxDestination->setSizePolicy(QSizePolicy::Expanding,
+                                  QSizePolicy::Fixed);
+
+    QGroupBox *renderWidget = new QGroupBox(tr("Rendering Intent"), this);
     QHBoxLayout *renderLayout = new QHBoxLayout(renderWidget);
 
     _boxIntent = new QComboBox(this);
-    _checkBlackPoint = new QCheckBox(tr("Black Point"), this);
+    _boxIntent->setMinimumWidth(100);
+
+    _checkBlackPoint = new QCheckBox(tr("Black Point Compensation"), this);
     _checkBlackPoint->setCheckable(true);
     _checkBlackPoint->setChecked(_cs.blackpoint);
 
-    QLabel *intentLabel = new QLabel(tr("Rendering intent"), this);
+    destLayout->addWidget(_boxCategory);
+    destLayout->addWidget(_boxDestination);
 
-    renderLayout->addWidget(intentLabel);
     renderLayout->addWidget(_boxIntent);
     renderLayout->addWidget(_checkBlackPoint);
 
-    headerLayout->addWidget(textLabel);
-    headerLayout->addStretch();
-
     footerLayout->addWidget(_progress);
-    footerLayout->addStretch();
     footerLayout->addWidget(_buttonSave);
     footerLayout->addWidget(_buttonCancel);
 
-    mainLayout->addWidget(headerWidget);
+    mainLayout->addWidget(destWidget);
     mainLayout->addWidget(renderWidget);
+    mainLayout->addStretch();
     mainLayout->addWidget(footerWidget);
 
+    connect( _boxCategory,
+             SIGNAL( currentIndexChanged(int) ),
+             this,
+             SLOT( handleCategoryChanged(int) ) );
+
+    QTimer::singleShot( 0,
+                        this,
+                        SLOT( init() ) );
+}
+
+void ConvertDialog::init()
+{
     populateColorIntentMenu();
+    if (_cs.applyPrintProfile) { _boxCategory->setCurrentIndex(1); }
+    populateProfiles();
 }
 
 void
@@ -140,19 +157,27 @@ ConvertDialog::populateColorIntentMenu()
     for (auto &intent : intents) {
         switch (intent) {
         case Engine::SaturationRenderingIntent:
-            _boxIntent->addItem(tr("Saturation"), Engine::SaturationRenderingIntent);
+            _boxIntent->addItem(QIcon::fromTheme(CYAN_ICON_COLORS),
+                                tr("Saturation"),
+                                Engine::SaturationRenderingIntent);
             break;
         case Engine::PerceptualRenderingIntent:
-            _boxIntent->addItem(tr("Perceptual"), Engine::PerceptualRenderingIntent);
+            _boxIntent->addItem(QIcon::fromTheme(CYAN_ICON_COLORS),
+                                tr("Perceptual"),
+                                Engine::PerceptualRenderingIntent);
             break;
         case Engine::AbsoluteRenderingIntent:
-            _boxIntent->addItem(tr("Absolute"), Engine::AbsoluteRenderingIntent);
+            _boxIntent->addItem(QIcon::fromTheme(CYAN_ICON_COLORS),
+                                tr("Absolute"),
+                                Engine::AbsoluteRenderingIntent);
             break;
         case Engine::RelativeRenderingIntent:
-            _boxIntent->addItem(tr("Relative"), Engine::RelativeRenderingIntent);
+            _boxIntent->addItem(QIcon::fromTheme(CYAN_ICON_COLORS),
+                                tr("Relative"),
+                                Engine::RelativeRenderingIntent);
             break;
         default:
-            _boxIntent->addItem( tr("Undefined") );
+            _boxIntent->addItem( QIcon::fromTheme(CYAN_ICON_COLORS), tr("Undefined") );
         }
     }
     for (int i = 0; i < _boxIntent->count() ; i++) {
@@ -161,6 +186,61 @@ ConvertDialog::populateColorIntentMenu()
             break;
         }
     }
+}
+
+void
+ConvertDialog::populateProfiles()
+{
+    int index  = _boxCategory->currentIndex();
+    QString fallback;
+    QString selected;
+    if (index < 0) { return; }
+    Engine::ColorSpace space;
+    switch(index) {
+    case 1:
+        space = Engine::ColorSpaceCMYK;
+        fallback = CYAN_PROFILE_FALLBACK_CMYK;
+        selected = ( _cs.applyPrintProfile && !_cs.profiles.print.isEmpty() ) ? _cs.profiles.print : _cs.profiles.cmyk;
+        break;
+    case 2:
+        space = Engine::ColorSpaceGRAY;
+        fallback = CYAN_PROFILE_FALLBACK_GRAY;
+        selected = _cs.profiles.gray;
+        break;
+    default:
+        space = Engine::ColorSpaceRGB;
+        fallback = CYAN_PROFILE_FALLBACK_RGB;
+        selected = ( _cs.applyDisplayProfile && !_cs.profiles.display.isEmpty() ) ? _cs.profiles.display : _cs.profiles.rgb;
+    }
+
+    _boxDestination->clear();
+
+    QMapIterator<QString, QString> i( Engine::getProfiles(space,
+                                                          false,
+                                                          fallback,
+                                                          true) );
+    while ( i.hasNext() ) {
+        i.next();
+        _boxDestination->addItem( QIcon::fromTheme(CYAN_ICON_COLOR_WHEEL),
+                                  i.key(),
+                                  i.value() );
+    }
+
+    if ( !selected.isEmpty() ) {
+        for (int i = 0; i < _boxDestination->count(); ++i) {
+            if (_boxDestination->itemData(i).toString() == selected) {
+                _boxDestination->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
+}
+
+void
+ConvertDialog::handleCategoryChanged(int index)
+{
+    Q_UNUSED(index)
+    populateProfiles();
 }
 
 void

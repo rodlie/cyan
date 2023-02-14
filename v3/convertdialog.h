@@ -49,7 +49,7 @@ namespace Cyan {
         Engine::ColorSettings _cs;
         QString _inFilename;
         QString _outFilename;
-        QComboBox *_boxSource;
+        QComboBox *_boxCategory;
         QComboBox *_boxDestination;
         QComboBox *_boxIntent;
         QCheckBox *_checkBlackPoint;
@@ -58,7 +58,10 @@ namespace Cyan {
         QProgressBar *_progress;
 
     private slots:
+        void init();
         void populateColorIntentMenu();
+        void populateProfiles();
+        void handleCategoryChanged(int index);
 
     protected:
         void closeEvent(QCloseEvent *e) override;

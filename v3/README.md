@@ -42,12 +42,13 @@ System requirements for official binary releases.
 * [GRACoL profiles](https://www.colormanagement.org/en/gracolprofile.html)
 * [SWOP Profiles](https://www.colormanagement.org/en/swopprofile.html)
 * [OpenICC profiles](https://sourceforge.net/projects/openicc/files/OpenICC-Profiles/)
+* [Elle Stone's ICC Profiles](https://github.com/ellelstone/elles_icc_profiles)
 
 ## Roadmap
 
 ### v3.0.0
 
-* ``[ 90% ]`` **New backend**
+* ``[ 90% ]`` **New backend (still using ImageMagick)**
 * ``[ 75% ]`` **New frontend**
 * ``[ --- ]`` **Queue**
 

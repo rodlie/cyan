@@ -41,6 +41,7 @@
 #define CYAN_ICON_IMAGE "image-x-generic"
 #define CYAN_ICON_SUBWINDOW CYAN_ICON_IMAGE
 #define CYAN_ICON_COLOR_WHEEL "colors"
+#define CYAN_ICON_COLORS "color-wheel"
 #define CYAN_ICON_COLOR_MAN "color_management"
 #define CYAN_ICON_OPEN_IMAGE THEME_ICON_DOCUMENT_OPEN
 #define CYAN_ICON_SAVE_IMAGE THEME_ICON_DOCUMENT_SAVE
@@ -50,6 +51,7 @@
 #define CYAN_ICON_PRINTER "printer"
 #define CYAN_ICON_PRINTER_COLOR "printer_color"
 #define CYAN_ICON_STOP "process-stop"
+#define CYAN_ICON_CONVERT_TO_GRAY "convert_color_to_gray"
 
 #define CYAN_PROFILE_FALLBACK_RGB ":/icc/rgb.icc"
 #define CYAN_PROFILE_FALLBACK_CMYK ":/icc/cmyk.icc"
