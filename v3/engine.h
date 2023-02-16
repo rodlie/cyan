@@ -31,6 +31,8 @@
 #define CMS_NO_REGISTER_KEYWORD
 #include <lcms2.h>
 
+#include <vector>
+
 #define THEME_ICON_APPLICATIONS_GRAPHICS "applications-graphics"
 #define THEME_ICON_DOCUMENT_OPEN "document-open"
 #define THEME_ICON_DOCUMENT_SAVE "document-save"
@@ -83,6 +85,30 @@ namespace Cyan
             PerceptualRenderingIntent,
             AbsoluteRenderingIntent,
             RelativeRenderingIntent
+        };
+        enum ImageFormat {
+            ImageFormatDefault,
+            ImageFormatTIFF,
+            ImageFormatJPEG,
+            ImageFormatPNG,
+            ImageFormatPSD,
+            ImageFormatMIFF
+        };
+        enum ImageCompression {
+            ImageCompressionDefault,
+            ImageCompressionNone,
+            ImageCompressionZIP,
+            ImageCompressionLZW
+        };
+        struct ImageProperties {
+            QString key;
+            QString value;
+        };
+        struct ImageOptions {
+            std::vector<ImageProperties> properties;
+            ImageFormat format;
+            ImageCompression compression;
+            int quality;
         };
         struct Image {
             bool success = false;
@@ -166,6 +192,7 @@ namespace Cyan
                                    bool checkifValidResult = true,
                                    bool display = false,
                                    bool identify = false,
+                                   const ImageOptions &options = ImageOptions(),
                                    const QSize &scale = QSize() );
         static bool hasDelegate(const QString &delegate);
         static bool hasFeature(const QString &feature);

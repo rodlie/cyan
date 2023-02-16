@@ -443,8 +443,11 @@ Engine::convertImage(const QByteArray &inputFileData,
                      bool checkifValidResult,
                      bool display,
                      bool identify,
+                     const ImageOptions &options,
                      const QSize &scale)
 {
+    qDebug() << "convert output options" << options.properties.size() << options.compression << options.format << options.quality;
+
     QElapsedTimer timer;
     timer.start();
 

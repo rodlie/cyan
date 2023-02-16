@@ -131,6 +131,11 @@ ConvertDialog::ConvertDialog(QWidget *parent,
              this,
              SLOT( handleCategoryChanged(int) ) );
 
+    connect( _buttonCancel,
+             SIGNAL( clicked() ),
+             this,
+             SLOT( reject() ) );
+
     QTimer::singleShot( 0,
                         this,
                         SLOT( init() ) );
