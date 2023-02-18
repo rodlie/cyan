@@ -28,6 +28,7 @@
 #include <QTimer>
 #include <QMapIterator>
 #include <QGroupBox>
+#include <QFileInfo>
 
 using namespace Cyan;
 
@@ -123,6 +124,16 @@ ConvertDialog::ConvertDialog(QWidget *parent,
 
     mainLayout->addWidget(destWidget);
     mainLayout->addWidget(renderWidget);
+
+    QWidget *optWidget = getOptionsWidget();
+    bool addOptions = (optWidget);
+    if (addOptions) {
+        QGroupBox *optionsWidget = new QGroupBox(tr("Options"), this);
+        QHBoxLayout *optionsLayout = new QHBoxLayout(optionsWidget);
+        optionsLayout->addWidget(optWidget);
+        mainLayout->addWidget(optionsWidget);
+    }
+
     mainLayout->addStretch();
     mainLayout->addWidget(footerWidget);
 
@@ -277,6 +288,47 @@ ConvertDialog::getJPEGOptWidget()
 QWidget*
 ConvertDialog::getTIFFOptWidget()
 {
+    QWidget *widget = new QWidget(this);
+    QHBoxLayout *widgetLayout = new QHBoxLayout(widget);
+    QLabel *widgetLabel = new QLabel(widget);
+    QComboBox *widgetBox = new QComboBox(widget);
+
+    widget->setContentsMargins(0, 0, 0, 0);
+    widgetLayout->setContentsMargins(0, 0, 0, 0);
+
+    widgetLabel->setText( tr("Compression") );
+
+    widgetBox->addItem(tr("None"), Engine::ImageCompressionNone);
+    widgetBox->addItem(tr("ZIP"), Engine::ImageCompressionZIP);
+    widgetBox->addItem(tr("LZW"), Engine::ImageCompressionLZW);
+
+    connect( widgetBox,
+             SIGNAL( currentIndexChanged(int) ),
+             this,
+             SLOT( setImageCompression(int) ) );
+
+    widgetLayout->addWidget(widgetLabel);
+    widgetLayout->addWidget(widgetBox);
+
+    return widget;
+}
+
+QWidget*
+ConvertDialog::getOptionsWidget()
+{
+    QFileInfo info(_outFilename);
+    QString suffix = info.suffix().toLower();
+    if ( suffix == QString("tif") || suffix == QString("tiff") ) {
+        _opt.format = Engine::ImageFormatTIFF;
+        return getTIFFOptWidget();
+    } else if ( suffix == QString("jpg") || suffix == QString("jpeg") ) {
+        _opt.format = Engine::ImageFormatJPEG;
+        return getJPEGOptWidget();
+    }
+    else if ( suffix == QString("png") ) { _opt.format = Engine::ImageFormatPNG; }
+    else if ( suffix == QString("psd") ) { _opt.format = Engine::ImageFormatPSD; }
+    else if ( suffix == QString("miff") ) { _opt.format = Engine::ImageFormatTIFF; }
+
     return nullptr;
 }
 

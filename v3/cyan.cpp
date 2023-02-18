@@ -1338,6 +1338,6 @@ void Window::openConvertDialog(const QString &filename)
                           tab->getColorSettings(),
                           tab->getFilename(),
                           filename,
-                          tr("Options") );
+                          tr("Save to file") );
     dialog.exec();
 }

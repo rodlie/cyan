@@ -87,7 +87,7 @@ Engine::isValidImage(const QByteArray &buffer)
     try {
         Magick::Blob blob( buffer.data(),
                            buffer.length() );
-        image.read(blob);
+        image.ping(blob);
     }
     catch(Magick::Error &error) {
         qWarning() << error.what();

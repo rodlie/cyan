@@ -95,7 +95,6 @@ namespace Cyan
             ImageFormatMIFF
         };
         enum ImageCompression {
-            ImageCompressionDefault,
             ImageCompressionNone,
             ImageCompressionZIP,
             ImageCompressionLZW

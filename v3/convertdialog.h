@@ -68,6 +68,7 @@ namespace Cyan {
         void setImageQuality(int quality);
         QWidget* getJPEGOptWidget();
         QWidget* getTIFFOptWidget();
+        QWidget* getOptionsWidget();
 
     protected:
         void closeEvent(QCloseEvent *e) override;
