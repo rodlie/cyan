@@ -69,6 +69,7 @@ namespace Cyan {
         QWidget* getJPEGOptWidget();
         QWidget* getTIFFOptWidget();
         QWidget* getOptionsWidget();
+        void prepareSave();
 
     protected:
         void closeEvent(QCloseEvent *e) override;

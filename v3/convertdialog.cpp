@@ -146,6 +146,10 @@ ConvertDialog::ConvertDialog(QWidget *parent,
              SIGNAL( clicked() ),
              this,
              SLOT( reject() ) );
+    connect( _buttonSave,
+             SIGNAL( clicked() ),
+             this,
+             SLOT( prepareSave() ) );
 
     QTimer::singleShot( 0,
                         this,
@@ -307,6 +311,8 @@ ConvertDialog::getTIFFOptWidget()
              this,
              SLOT( setImageCompression(int) ) );
 
+    widgetBox->setCurrentIndex(1); // set ZIP as default
+
     widgetLayout->addWidget(widgetLabel);
     widgetLayout->addWidget(widgetBox);
 
@@ -316,8 +322,13 @@ ConvertDialog::getTIFFOptWidget()
 QWidget*
 ConvertDialog::getOptionsWidget()
 {
+    _opt.quality = 0;
+    _opt.compression = Engine::ImageCompressionNone;
+    _opt.format = Engine::ImageFormatDefault;
+
     QFileInfo info(_outFilename);
     QString suffix = info.suffix().toLower();
+
     if ( suffix == QString("tif") || suffix == QString("tiff") ) {
         _opt.format = Engine::ImageFormatTIFF;
         return getTIFFOptWidget();
@@ -327,9 +338,18 @@ ConvertDialog::getOptionsWidget()
     }
     else if ( suffix == QString("png") ) { _opt.format = Engine::ImageFormatPNG; }
     else if ( suffix == QString("psd") ) { _opt.format = Engine::ImageFormatPSD; }
-    else if ( suffix == QString("miff") ) { _opt.format = Engine::ImageFormatTIFF; }
+    else if ( suffix == QString("miff") ) { _opt.format = Engine::ImageFormatMIFF; }
 
     return nullptr;
+}
+
+void
+ConvertDialog::prepareSave()
+{
+    qDebug() << "prepare save" << _inFilename << _outFilename;
+    qDebug() << _boxDestination->currentData();
+    qDebug() << _boxIntent->currentData() << _checkBlackPoint->isChecked();
+    qDebug() << _opt.format << _opt.compression << _opt.quality << _opt.properties.size();
 }
 
 void

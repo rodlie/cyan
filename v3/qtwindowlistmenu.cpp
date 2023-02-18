@@ -122,8 +122,8 @@ QtWindowListMenu::QtWindowListMenu(QWidget *parent)
     : QMenu(parent)
 {
     mdi = nullptr;
-    setTitle(   tr("Images") );
-    setIcon( QIcon::fromTheme("images") );
+    setTitle(   tr("Windows") );
+    //setIcon( QIcon::fromTheme("images") );
     connect(this, SIGNAL(aboutToShow()), SLOT(syncWithMdiArea()));
     stdGroup = new QActionGroup(this);
     stdGroup->setExclusive(false);

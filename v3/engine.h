@@ -193,6 +193,8 @@ namespace Cyan
                                    bool identify = false,
                                    const ImageOptions &options = ImageOptions(),
                                    const QSize &scale = QSize() );
+        static int getImageQuality(const QString &filename);
+        static ImageCompression getImageCompression(const QString &filename);
         static bool hasDelegate(const QString &delegate);
         static bool hasFeature(const QString &feature);
         static const QString supportedQuantumDepth();

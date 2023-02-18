@@ -565,6 +565,48 @@ Engine::convertImage(const QByteArray &inputFileData,
     return result;
 }
 
+int
+Engine::getImageQuality(const QString &filename)
+{
+    Magick::Image image;
+    int value = 0;
+    try {
+        image.ping( filename.toStdString() );
+        value = image.quality();
+    }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        return 0;
+    }
+    catch(Magick::Warning &warn) { qWarning() << warn.what(); }
+    return value;
+}
+
+Engine::ImageCompression
+Engine::getImageCompression(const QString &filename)
+{
+    Magick::Image image;
+    ImageCompression compression = ImageCompressionNone;
+    try {
+        image.ping( filename.toStdString() );
+        switch( image.compressType() ) {
+        case Magick::CompressionType::ZipCompression:
+            compression = ImageCompressionZIP;
+            break;
+        case Magick::CompressionType::LZWCompression:
+            compression = ImageCompressionLZW;
+            break;
+        default:;
+        }
+    }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        return ImageCompressionNone;
+    }
+    catch(Magick::Warning &warn) { qWarning() << warn.what(); }
+    return compression;
+}
+
 bool
 Engine::hasDelegate(const QString &delegate)
 {

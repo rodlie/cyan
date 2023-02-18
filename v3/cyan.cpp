@@ -350,11 +350,10 @@ Window::setupUi()
 
     // mdi
     _mdi = new Mdi(this);
-#ifdef Q_OS_DARWIN
     _mdi->setViewMode(QMdiArea::TabbedView);
     _mdi->setTabsClosable(true);
     _mdi->setTabsMovable(true);
-#endif
+
     connect( _mdi,
              SIGNAL( dropped(QList<QUrl>) ),
              this,
@@ -496,10 +495,10 @@ Window::setupMenus()
 
     _menuWindows = new QtWindowListMenu(this);
     _menuWindows->attachToMdiArea(_mdi);
-    _menuView->addMenu(_menuWindows);
 
     _menubar->addMenu(_menuFile);
     _menubar->addMenu(_menuView);
+    _menubar->addMenu(_menuWindows);
     _menubar->addMenu(_menuHelp);
 }
 
