@@ -69,33 +69,32 @@ bool
 Engine::isValidImage(const QString &filename)
 {
     if ( !QFile::exists(filename) ) { return false; }
-    try {
-        Magick::Image image;
-        image.ping( filename.toStdString() );
-        if (image.rows() > 0 && image.columns() > 0) { return true; }
+    Magick::Image image;
+    try { image.ping( filename.toStdString() ); }
+    catch(Magick::Error &error) {
+        qWarning() << error.what();
+        return false;
     }
-    catch(Magick::Error &error) { qWarning() << error.what(); }
     catch(Magick::Warning &warn) { qWarning() << warn.what(); }
-    return false;
+    return (image.rows() > 0 && image.columns() > 0);
 }
 
-bool Engine::isValidImage(const QByteArray &buffer)
+bool
+Engine::isValidImage(const QByteArray &buffer)
 {
+    if (buffer.size() <= 0) { return false; }
+    Magick::Image image;
     try {
         Magick::Blob blob( buffer.data(),
                            buffer.length() );
-        Magick::Image image;
         image.read(blob);
-        return image.isValid();
     }
     catch(Magick::Error &error) {
         qWarning() << error.what();
         return false;
     }
-    catch(Magick::Warning &warn) {
-        qWarning() << warn.what();
-    }
-    return false;
+    catch(Magick::Warning &warn) { qWarning() << warn.what(); }
+    return (image.rows() > 0 && image.columns() > 0);
 }
 
 bool
