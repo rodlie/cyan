@@ -21,8 +21,6 @@
 
 #include "engine.h"
 
-#include <QMimeDatabase>
-#include <QMimeType>
 #include <QFile>
 #include <QDir>
 #include <QDirIterator>
@@ -70,13 +68,14 @@ Engine::fileToByteArray(const QString &filename)
 bool
 Engine::isValidImage(const QString &filename)
 {
-    // TODO: should probably just use IM for this
-    QStringList supported;
-    supported << "image/jpeg" << "image/png" << "image/tiff";
-    if ( QFile::exists(filename) ) {
-        QMimeDatabase db;
-        if ( supported.contains( db.mimeTypeForFile(filename).name() ) ) { return true; }
+    if ( !QFile::exists(filename) ) { return false; }
+    try {
+        Magick::Image image;
+        image.ping( filename.toStdString() );
+        if (image.rows() > 0 && image.columns() > 0) { return true; }
     }
+    catch(Magick::Error &error) { qWarning() << error.what(); }
+    catch(Magick::Warning &warn) { qWarning() << warn.what(); }
     return false;
 }
 
@@ -610,6 +609,18 @@ Engine::hasTIFF()
 }
 
 bool
+Engine::hasHEIC()
+{
+    return hasDelegate("heic");
+}
+
+bool
+Engine::hasWEBP()
+{
+    return hasDelegate("webp");
+}
+
+bool
 Engine::hasLCMS()
 {
     return hasDelegate("lcms");
@@ -721,6 +732,8 @@ Engine::supportedReadFormats()
     if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
     if ( hasPNG() ) { formats << "*.png"; }
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
+    if ( hasHEIC() ) { formats << "*.heic"; }
+    if ( hasWEBP() ) { formats << "*.webp"; }
     return formats;
 }
 

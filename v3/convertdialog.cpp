@@ -88,7 +88,7 @@ ConvertDialog::ConvertDialog(QWidget *parent,
     QHBoxLayout *destLayout = new QHBoxLayout(destWidget);
 
     _boxCategory = new QComboBox(this);
-    _boxCategory->setMinimumWidth(75);
+    _boxCategory->setMinimumWidth(100);
     _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_DISPLAY), tr("RGB") );
     _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_PRINTER_COLOR), tr("CMYK") );
     _boxCategory->addItem( QIcon::fromTheme(CYAN_ICON_CONVERT_TO_GRAY), tr("GRAY") );
@@ -246,6 +246,38 @@ ConvertDialog::handleCategoryChanged(int index)
 {
     Q_UNUSED(index)
     populateProfiles();
+}
+
+void
+ConvertDialog::setImageCompression(QVariant compression)
+{
+    setImageCompression( compression.toInt() );
+}
+
+void
+ConvertDialog::setImageCompression(int compression)
+{
+    qDebug() << "set compression" << compression;
+    _opt.compression = static_cast<Engine::ImageCompression>(compression);
+}
+
+void
+ConvertDialog::setImageQuality(int quality)
+{
+    qDebug() << "set quality" << quality;
+    _opt.quality = quality;
+}
+
+QWidget*
+ConvertDialog::getJPEGOptWidget()
+{
+    return nullptr;
+}
+
+QWidget*
+ConvertDialog::getTIFFOptWidget()
+{
+    return nullptr;
 }
 
 void

@@ -36,22 +36,24 @@ using namespace Cyan;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QGuiApplication::setApplicationDisplayName("Cyan");
-    QCoreApplication::setApplicationName("Cyan");
-    QCoreApplication::setOrganizationName("Cyan");
-    QCoreApplication::setOrganizationDomain("cyan.graphics");
-    QCoreApplication::setApplicationVersion(CYAN_VERSION);
+    QGuiApplication::setApplicationDisplayName( QString("Cyan") );
+    QCoreApplication::setApplicationName( QString("Cyan") );
+    QCoreApplication::setOrganizationName( QString("Cyan") );
+    QCoreApplication::setOrganizationDomain( QString("cyan.graphics") );
+    QCoreApplication::setApplicationVersion( QString(CYAN_VERSION) );
 
     Magick::InitializeMagick(nullptr);
-    //Engine::setDiskResource(0); // issues with ubuntu 22.04
+#ifdef DISABLE_DISK_RESOURCE
+    Engine::setDiskResource(0);
+#endif
     Engine::setMemoryResource( Engine::getTotalRam(75) ); // TODO: setting
 
     Window window;
 
 #ifdef BUNDLE_FONT
-    int fontId = QFontDatabase::addApplicationFont(":/fonts/DejaVuSans.ttf");
+    int fontId = QFontDatabase::addApplicationFont( QString(":/fonts/DejaVuSans.ttf") );
     if (fontId != -1) {
-        QFont font("DejaVuSans");
+        QFont font( QString("DejaVuSans") );
         if (font.pointSize() == 12) { font.setPointSize(10); }
         a.setFont(font);
     }

@@ -62,7 +62,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
                          .arg(CYAN_VERSION);
     textString.append(QString("<p style=\"text-align:center;font-size:small;\">"
                               "Cyan is free software; you can redistribute it and/or modify it under the terms of<br>the GNU General Public License as published by the Free Software Foundation;<br>either version 3 of the License, or (at your option) any later version."
-                              "<br>Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br>without even the implied warranty of MERCHANTABILITY<br>or FITNESS FOR A PARTICULAR PURPOSE."
+                              "<br><br>"
+                              "Cyan is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;<br>without even the implied warranty of MERCHANTABILITY<br>or FITNESS FOR A PARTICULAR PURPOSE."
                               "<br><br>"
                               "Cyan %1 &copy; <a href=\"https://github.com/rodlie\" style=\"text-decoration:none;\">Ole-André Rodlie</a>. %2.<br><br>"
                               "%7 <a href=\"%3\" style=\"text-decoration:none;\">%4</a> %5<br>[ %12 ]<br>%6.<br>"

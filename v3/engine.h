@@ -200,6 +200,8 @@ namespace Cyan
         static bool hasJPEG();
         static bool hasPNG();
         static bool hasTIFF();
+        static bool hasHEIC();
+        static bool hasWEBP();
         static bool hasLCMS();
         static bool hasHDRI();
         static bool hasMP();

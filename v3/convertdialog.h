@@ -47,6 +47,7 @@ namespace Cyan {
     private:
         bool _working;
         Engine::ColorSettings _cs;
+        Engine::ImageOptions _opt;
         QString _inFilename;
         QString _outFilename;
         QComboBox *_boxCategory;
@@ -62,6 +63,11 @@ namespace Cyan {
         void populateColorIntentMenu();
         void populateProfiles();
         void handleCategoryChanged(int index);
+        void setImageCompression(QVariant compression);
+        void setImageCompression(int compression);
+        void setImageQuality(int quality);
+        QWidget* getJPEGOptWidget();
+        QWidget* getTIFFOptWidget();
 
     protected:
         void closeEvent(QCloseEvent *e) override;

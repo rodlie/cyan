@@ -41,6 +41,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(MAGICK_PKG_CONFIG "Magick++" CACHE STRING "Magick++ pkg-config")
 option(STATIC_PKGCONF "Use pkg-config static" OFF)
+option(DISK_RESOURCE "Magick++ Disk Resource" ON)
 
 set(COMPANY "Cyan")
 set(COPYRIGHT "Copyright Ole-Andre Rodlie")
@@ -72,6 +73,10 @@ if(${STATIC_PKGCONF})
     find_package(OpenMP)
 else()
     add_compile_options(${MAGICK_CFLAGS})
+endif()
+
+if(!${DISK_RESOURCE})
+    add_definitions(-DDISABLE_DISK_RESOURCE)
 endif()
 
 include_directories(${MAGICK_INCLUDE_DIRS} ${LCMS2_INCLUDE_DIRS})
