@@ -769,22 +769,31 @@ const QStringList
 Engine::supportedReadFormats()
 {
     QStringList formats;
-    formats << "*.psd" << "*.xcf" <<  "*.miff" << "*.bmp";
+
+    if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
     if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
     if ( hasPNG() ) { formats << "*.png"; }
-    if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
     if ( hasHEIC() ) { formats << "*.heic"; }
     if ( hasWEBP() ) { formats << "*.webp"; }
+
+    formats << "*.psd" << "*.xcf" <<  "*.miff" << "*.bmp";
+
     return formats;
 }
 
-const QStringList Engine::supportedWriteFormats()
+const QStringList
+Engine::supportedWriteFormats()
 {
     QStringList formats;
-    formats << "*.psd";
-    if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
-    //if ( hasPNG() ) { formats << "*.png"; } // can we store an ICC with IM?
+
+    // we only want to support known good formats
+    // "good" means that they support RGB/CMYK/GRAY + ICC and is compatible with an prepress workflow
+
     if ( hasTIFF() ) { formats << "*.tif" << "*.tiff"; }
+    if ( hasJPEG() ) { formats << "*.jpg" << "*.jpeg"; }
+
+    formats << "*.psd";
+
     return formats;
 }
 
