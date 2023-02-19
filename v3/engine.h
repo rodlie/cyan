@@ -215,6 +215,9 @@ namespace Cyan
         static int getTotalRam(int percent);
         static const QStringList supportedReadFormats();
         static const QStringList supportedWriteFormats();
+        static const QStringList supportedRGBWriteFormats();
+        static const QStringList supportedCMYKWriteFormats();
+        static const QStringList supportedGRAYWriteFormats();
         static const QString humanFileSize(float num,
                                            bool mp = false,
                                            bool are = false);

@@ -797,6 +797,24 @@ Engine::supportedWriteFormats()
     return formats;
 }
 
+const QStringList
+Engine::supportedRGBWriteFormats()
+{
+    return supportedWriteFormats();
+}
+
+const QStringList
+Engine::supportedCMYKWriteFormats()
+{
+    return supportedWriteFormats();
+}
+
+const QStringList
+Engine::supportedGRAYWriteFormats()
+{
+    return supportedWriteFormats();
+}
+
 const QString
 Engine::humanFileSize(float num,
                       bool mp,
