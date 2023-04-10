@@ -133,6 +133,7 @@ namespace Cyan
             QString destination;
             RenderingIntent intent = PerceptualRenderingIntent;
             bool blackpoint = true;
+            int proxy = 100;
         };
         struct ColorSettings {
             ColorSpace colorspace = ColorSpaceUnknown;
@@ -141,6 +142,7 @@ namespace Cyan
             bool applyDisplayProfile = false;
             bool applyPrintProfile = false;
             ColorProfiles profiles;
+            int proxy = 100;
         };
 
         Engine(QObject *parent = nullptr);
@@ -168,14 +170,16 @@ namespace Cyan
                                      const QString &fallbackProfileGRAY = QString(),
                                      const RenderingIntent intent = PerceptualRenderingIntent,
                                      bool blackPoint = true,
-                                     bool identify = false);
+                                     bool identify = false,
+                                     int proxy = 100);
         static const Image readImageIM(const QString &filename,
                                        const QString &fallbackProfileRGB = QString(),
                                        const QString &fallbackProfileCMYK = QString(),
                                        const QString &fallbackProfileGRAY = QString(),
                                        const RenderingIntent intent = PerceptualRenderingIntent,
                                        bool blackPoint = true,
-                                       bool identify = false);
+                                       bool identify = false,
+                                       int proxy = 100);
         static bool compareImages( const QByteArray image1,
                                    const QByteArray image2,
                                    const QString &tmpPath = QString() );
@@ -192,7 +196,7 @@ namespace Cyan
                                    bool display = false,
                                    bool identify = false,
                                    const ImageOptions &options = ImageOptions(),
-                                   const QSize &scale = QSize() );
+                                   int proxy = 100 );
         static int getImageQuality(const QString &filename);
         static ImageCompression getImageCompression(const QString &filename);
         static bool hasDelegate(const QString &delegate);

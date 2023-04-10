@@ -258,7 +258,8 @@ Engine::readImage(const QString &filename,
                   const QString &fallbackProfileGRAY,
                   const Engine::RenderingIntent intent,
                   bool blackPoint,
-                  bool identify)
+                  bool identify,
+                  int proxy)
 {
     // TODO: we might need to add support for other "backends"
     return readImageIM(filename,
@@ -267,7 +268,8 @@ Engine::readImage(const QString &filename,
                        fallbackProfileGRAY,
                        intent,
                        blackPoint,
-                       identify);
+                       identify,
+                       proxy);
 }
 
 const Engine::Image
@@ -277,7 +279,8 @@ Engine::readImageIM(const QString &filename,
                     const QString &fallbackProfileGRAY,
                     const RenderingIntent intent,
                     bool blackPoint,
-                    bool identify)
+                    bool identify,
+                    int proxy)
 {
     QElapsedTimer timer;
     timer.start();
@@ -304,6 +307,9 @@ Engine::readImageIM(const QString &filename,
         wand = DestroyMagickWand(wand);
     }
     try {
+        if ( proxy != 100 ) {
+            image.scale( Magick::Geometry(QString("%1%").arg(proxy).toStdString()) );
+        }
         bool hasProfile = (image.iccColorProfile().length() > 0);
         result.profile = QByteArray( (char*)image.iccColorProfile().data(),
                                      image.iccColorProfile().length() );
@@ -442,7 +448,7 @@ Engine::convertImage(const QByteArray &inputFileData,
                      bool display,
                      bool identify,
                      const ImageOptions &options,
-                     const QSize &scale)
+                     int proxy)
 {
     qDebug() << "convert output options" << options.properties.size() << options.compression << options.format << options.quality;
 
@@ -480,9 +486,8 @@ Engine::convertImage(const QByteArray &inputFileData,
         result.warnings.append( QString::fromStdString( warn.what() ) );
     }
     try {
-        if ( scale.isValid() ) {
-            image.scale( Magick::Geometry( scale.width(),
-                                           scale.height() ) );
+        if ( proxy != 100 ) {
+            image.scale( Magick::Geometry(QString("%1%").arg(proxy).toStdString()) );
         }
         switch (intent) {
         case SaturationRenderingIntent:

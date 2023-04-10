@@ -35,6 +35,7 @@
 #include <QMdiSubWindow>
 #include <QTabWidget>
 #include <QTreeWidget>
+#include <QComboBox>
 
 #include "qtwindowlistmenu.h"
 
@@ -116,6 +117,7 @@ namespace Cyan
         QTreeWidget *_tabImageDetails;
         QTreeWidget *_tabPrintDetails;
         QString _lastTab;
+        QComboBox *_proxy;
 
     private slots:
         void setupUi();
@@ -168,6 +170,7 @@ namespace Cyan
         void setColorActionsEnabled(bool enabled);
         void openAboutDialog();
         void openConvertDialog(const QString &filename);
+        void handleProxyChanged(int index);
     };
 }
 

@@ -33,6 +33,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QMessageBox>
+#include <QLabel>
 
 #include <vector>
 
@@ -86,6 +87,7 @@ Cyan::Window::Window(QWidget *parent)
     , _tabs(nullptr)
     , _tabImageDetails(nullptr)
     , _tabPrintDetails(nullptr)
+    , _proxy(nullptr)
 {
     setupUi();
     setupMenus();
@@ -143,6 +145,7 @@ Window::openImage(bool showDialog,
     if ( !isOpen && Engine::isValidImage(filePath) ) {
         emit showStatusMessage(tr("Reading image %1 ...").arg(filePath), 0);
         auto cs = getColorSettings();
+        cs.proxy = _proxy->currentData().toInt();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         QFuture f = QtConcurrent::run(
@@ -182,7 +185,8 @@ Window::readImage(const QString &filename,
                                    cs.profiles.gray,
                                    cs.intent,
                                    cs.blackpoint,
-                                   true);
+                                   true,
+                                   cs.proxy);
     emit openImageReady(image);
 }
 
@@ -217,7 +221,9 @@ Window::applyDisplayProfile(const QString &filename,
                                           true,
                                           true,
                                           profiles.display.isEmpty() ? true : false,
-                                          true);
+                                          true,
+                                          Engine::ImageOptions(),
+                                          profiles.proxy);
         fallbackProfile = Engine::fileToByteArray(profiles.print);
         src = print.buffer;
         printDetails = print.information;
@@ -229,6 +235,9 @@ Window::applyDisplayProfile(const QString &filename,
     } else {
         fallbackProfile = Engine::fileToByteArray(profiles.source);
     }
+
+    int proxy = profiles.proxy;
+    if ( !profiles.print.isEmpty() && profiles.proxy != 100) { proxy = 100; }
 
     if ( !profiles.display.isEmpty() ) {
         auto image = Engine::convertImage(src,
@@ -242,7 +251,9 @@ Window::applyDisplayProfile(const QString &filename,
                                           true,
                                           true,
                                           true,
-                                          false);
+                                          false,
+                                          Engine::ImageOptions(),
+                                          proxy);
         image.filename = filename;
         image.printInformation = printDetails;
         emit applyDisplayProfileReady(image);
@@ -266,6 +277,7 @@ Window::updateDisplayProfile(const QString &filename,
     emit showStatusMessage(tr("Applying display profile ..."), 0);
     auto cs = getColorSettings();
     Engine::ColorProfiles args = cs.profiles;
+    args.proxy = _proxy->currentData().toInt();
 
     switch(colorspace) {
     case Engine::ColorSpaceRGB:
@@ -309,7 +321,8 @@ Window::clearDisplayProfile(const QString &filename,
                                    cs.profiles.gray,
                                    cs.intent,
                                    cs.blackpoint,
-                                   false);
+                                   false,
+                                   cs.proxy);
     emit clearDisplayProfileReady(image);
 }
 
@@ -327,6 +340,7 @@ Window::resetDisplayProfile(const QString &filename)
     setColorActionsEnabled(false);
     emit showStatusMessage(tr("Clear display profile ..."), 0);
     auto cs = getColorSettings();
+    cs.proxy = _proxy->currentData().toInt();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QFuture f = QtConcurrent::run(
@@ -408,6 +422,14 @@ Window::setupUi()
     _toolbar->setMovable(false);
     //_toolbar->setIconSize( QSize(32, 32) );
     addToolBar(Qt::TopToolBarArea, _toolbar);
+
+    // proxy
+    _proxy = new QComboBox(this);
+    _proxy->setToolTip(tr("Adjust proxy"));
+    _proxy->addItem(tr("100%"), 100);
+    _proxy->addItem(tr("75%"), 75);
+    _proxy->addItem(tr("50%"), 50);
+    _proxy->addItem(tr("25%"), 25);
 
     // statusbar
     _statusbar = new QStatusBar(this);
@@ -551,6 +573,17 @@ Window::setupActions()
     _toolbar->addWidget(_menuColorDisplayButton);
     _toolbar->addWidget(_menuColorPrintButton);
     //_toolbar->addWidget(_menuZoomButton);
+
+    // proxy
+    connect( _proxy,
+             SIGNAL( currentIndexChanged(int) ),
+             this,
+             SLOT( handleProxyChanged(int) ) );
+
+    QLabel *proxyLabel = new QLabel(tr("Proxy"), this);
+    proxyLabel->setToolTip( tr("Adjust proxy. Lower values will increase performance.") );
+    _statusbar->addPermanentWidget(proxyLabel);
+    _statusbar->addPermanentWidget(_proxy);
 
     // default profiles
     _menuColorRGBGroup = new QActionGroup(this);
@@ -1185,6 +1218,7 @@ Window::loadUISettings()
     _splitterRight->restoreState( settings.value("splitter_right_state").toByteArray() );
     _splitterMiddle->restoreState( settings.value("splitter_middle_state").toByteArray() );
     bool maximized = settings.value("window_maximized", false).toBool();
+    _proxy->setCurrentIndex( settings.value("proxy", 2).toInt() );
     settings.endGroup();
     if (maximized) { showMaximized(); }
 }
@@ -1201,6 +1235,7 @@ Window::saveUISettings()
     settings.setValue( "splitter_left_state", _splitterLeft->saveState() );
     settings.setValue( "splitter_right_state", _splitterRight->saveState() );
     settings.setValue( "splitter_middle_state", _splitterMiddle->saveState() );
+    settings.setValue( "proxy", _proxy->currentIndex() );
     settings.endGroup();
 }
 
@@ -1339,4 +1374,10 @@ void Window::openConvertDialog(const QString &filename)
                           filename,
                           tr("Save to file") );
     dialog.exec();
+}
+
+void Window::handleProxyChanged(int index)
+{
+    qDebug() << "handle proxy changed" << index;
+    updateDisplayProfile();
 }
