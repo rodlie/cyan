@@ -277,7 +277,7 @@ Window::updateDisplayProfile(const QString &filename,
     emit showStatusMessage(tr("Applying display profile ..."), 0);
     auto cs = getColorSettings();
     Engine::ColorProfiles args = cs.profiles;
-    args.proxy = _proxy->currentData().toInt();
+    args.proxy = cs.proxy; //_proxy->currentData().toInt();
 
     switch(colorspace) {
     case Engine::ColorSpaceRGB:
@@ -340,7 +340,7 @@ Window::resetDisplayProfile(const QString &filename)
     setColorActionsEnabled(false);
     emit showStatusMessage(tr("Clear display profile ..."), 0);
     auto cs = getColorSettings();
-    cs.proxy = _proxy->currentData().toInt();
+    //cs.proxy = _proxy->currentData().toInt();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QFuture f = QtConcurrent::run(
@@ -844,7 +844,8 @@ Window::handleColorDisplayButtonTriggered(bool checked)
     }
 }
 
-void Window::handleColorPrintButtonTriggered(bool checked)
+void
+Window::handleColorPrintButtonTriggered(bool checked)
 {
     if ( checked && !canApplyPrintProfile() ) {
         QMessageBox::warning( this,
@@ -905,6 +906,7 @@ Window::handleOpenImageReady(const Engine::Image &image)
 
     auto cs = getColorSettings();
     cs.colorspace = image.colorspace;
+    //cs.proxy = _proxy->currentData().toInt();
 
     bool isLastTabMaximized = true;
     if ( getTab(_lastTab) && !getTab(_lastTab)->isMaximized() ) { isLastTabMaximized = false; }
@@ -1106,6 +1108,13 @@ Window::loadColorSettings()
 {
     auto cs = getColorSettings();
 
+    for (int i = 0; i < _proxy->count() ; ++i) {
+        if (_proxy->itemData(i).toInt() == cs.proxy) {
+            _proxy->setCurrentIndex(i);
+            break;
+        }
+    }
+
     _menuColorBlackPoint->setChecked(cs.blackpoint);
 
     for ( auto &profile : _menuColorRGB->actions() ) {
@@ -1180,6 +1189,7 @@ Window::saveColorSettings(bool forceSync)
     settings.setValue( "black_point", _menuColorBlackPoint->isChecked() );
     settings.setValue( "apply_display_profile", _menuColorDisplayButton->isChecked() );
     settings.setValue( "apply_print_profile", _menuColorPrintButton->isChecked() );
+    settings.setValue( "proxy", _proxy->currentData().toInt() );
     settings.endGroup();
     if (forceSync) { settings.sync(); }
 }
@@ -1201,6 +1211,7 @@ Window::getColorSettings()
     cs.blackpoint = settings.value("black_point", true).toBool();
     cs.applyDisplayProfile = settings.value("apply_display_profile", false).toBool();
     cs.applyPrintProfile = settings.value("apply_print_profile", false).toBool();
+    cs.proxy = settings.value("proxy", 100).toInt();
     settings.endGroup();
 
     return cs;
@@ -1218,7 +1229,6 @@ Window::loadUISettings()
     _splitterRight->restoreState( settings.value("splitter_right_state").toByteArray() );
     _splitterMiddle->restoreState( settings.value("splitter_middle_state").toByteArray() );
     bool maximized = settings.value("window_maximized", false).toBool();
-    _proxy->setCurrentIndex( settings.value("proxy", 2).toInt() );
     settings.endGroup();
     if (maximized) { showMaximized(); }
 }
@@ -1235,7 +1245,6 @@ Window::saveUISettings()
     settings.setValue( "splitter_left_state", _splitterLeft->saveState() );
     settings.setValue( "splitter_right_state", _splitterRight->saveState() );
     settings.setValue( "splitter_middle_state", _splitterMiddle->saveState() );
-    settings.setValue( "proxy", _proxy->currentIndex() );
     settings.endGroup();
 }
 
@@ -1263,7 +1272,8 @@ Window::canApplyDisplayProfile()
     return false;
 }
 
-bool Window::canApplyPrintProfile()
+bool
+Window::canApplyPrintProfile()
 {
     QAction *action = _menuColorPrintGroup->checkedAction();
     if (!action) {
@@ -1298,6 +1308,10 @@ Window::colorSettingsDiffer(const Engine::ColorSettings &cs,
                             bool checkPrint)
 {
     auto config = getColorSettings();
+    if (config.proxy != cs.proxy) {
+        qDebug() << "====> proxy" << config.proxy << cs.proxy;
+        return true;
+    }
     if (config.blackpoint != cs.blackpoint) {
         qDebug() << "====> blackpoint" << config.blackpoint << cs.blackpoint;
         return true;
@@ -1363,7 +1377,8 @@ Window::openAboutDialog()
     dialog.exec();
 }
 
-void Window::openConvertDialog(const QString &filename)
+void
+Window::openConvertDialog(const QString &filename)
 {
     MdiSubWindow* tab = getCurrentTab();
     if (!tab) { return; }
@@ -1376,8 +1391,10 @@ void Window::openConvertDialog(const QString &filename)
     dialog.exec();
 }
 
-void Window::handleProxyChanged(int index)
+void
+Window::handleProxyChanged(int index)
 {
-    qDebug() << "handle proxy changed" << index;
+    Q_UNUSED(index)
+    saveColorSettings();
     updateDisplayProfile();
 }

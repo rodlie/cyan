@@ -53,10 +53,12 @@ namespace Cyan
         void setColorProfileCMYK(const QString &profile);
         void setColorProfileGRAY(const QString &profile);
         void setColorProfileDisplay(const QString &profile);
+        void setProxy(int proxy);
         const QString getColorProfileRGB();
         const QString getColorProfileCMYK();
         const QString getColorProfileGRAY();
         const QString getColorProfileDisplay();
+        int getProxy();
         void setColorSettings(const Engine::ColorSettings &settings,
                               bool forceColorspace = false);
         const Engine::ColorSettings getColorSettings();

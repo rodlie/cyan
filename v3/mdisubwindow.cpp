@@ -109,6 +109,12 @@ MdiSubWindow::setColorProfileDisplay(const QString &profile)
     _colorSettings.profiles.display = profile;
 }
 
+void
+MdiSubWindow::setProxy(int proxy)
+{
+    _colorSettings.proxy = proxy;
+}
+
 const QString
 MdiSubWindow::getColorProfileRGB()
 {
@@ -131,6 +137,12 @@ const QString
 MdiSubWindow::getColorProfileDisplay()
 {
     return _colorSettings.profiles.display;
+}
+
+int
+MdiSubWindow::getProxy()
+{
+    return _colorSettings.proxy;
 }
 
 void
