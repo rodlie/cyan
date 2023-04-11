@@ -137,12 +137,13 @@ Window::openImage(bool showDialog,
     if (showDialog) {
         dialogFilename = QFileDialog::getOpenFileName( this,
                                                        tr("Open image"),
-                                                       QDir::homePath(),
+                                                       getRecentLoadDirectory(),
                                                        Engine::supportedReadFormats().join(" ") );
     }
     QString filePath = showDialog ? dialogFilename : filename;
     bool isOpen = isFileOpen(filePath);
     if ( !isOpen && Engine::isValidImage(filePath) ) {
+        updateRecentLoadDirectory(filePath);
         emit showStatusMessage(tr("Reading image %1 ...").arg(filePath), 0);
         auto cs = getColorSettings();
         cs.proxy = _proxy->currentData().toInt();
@@ -169,7 +170,7 @@ Window::saveImage()
 {
     QString filename = QFileDialog::getSaveFileName( this,
                                                      tr("Save image"),
-                                                     QDir::homePath(),
+                                                     getRecentSaveDirectory(),
                                                      Engine::supportedWriteFormats().join(" ") );
     if ( filename.isEmpty() ) { return; }
     openConvertDialog(filename);
@@ -1389,6 +1390,7 @@ Window::openConvertDialog(const QString &filename)
                           filename,
                           tr("Save to file") );
     dialog.exec();
+    updateRecentSaveDirectory(filename);
 }
 
 void
@@ -1397,4 +1399,65 @@ Window::handleProxyChanged(int index)
     Q_UNUSED(index)
     saveColorSettings();
     updateDisplayProfile();
+}
+
+void
+Window::updateRecentLoadDirectory(const QString &path)
+{
+   updateConfigPath(QString::fromUtf8("files"),
+                    QString::fromUtf8("lastLoadDir"),
+                    path);
+}
+
+const QString
+Window::getRecentLoadDirectory()
+{
+    return getConfig( QString::fromUtf8("files"),
+                      QString::fromUtf8("lastLoadDir"),
+                      QDir::homePath() );
+}
+
+void
+Window::updateRecentSaveDirectory(const QString &path)
+{
+    updateConfigPath(QString::fromUtf8("files"),
+                     QString::fromUtf8("lastSaveDir"),
+                     path);
+}
+
+const QString
+Window::getRecentSaveDirectory()
+{
+    return getConfig( QString::fromUtf8("files"),
+                      QString::fromUtf8("lastSaveDir"),
+                      QDir::homePath() );
+}
+
+void
+Window::updateConfigPath(const QString &grp,
+                         const QString &key,
+                         const QString &val)
+{
+    QFileInfo info(val);
+    if ( info.absoluteDir().absolutePath() == getConfig( grp,
+                                                         key,
+                                                         QDir::homePath() ) ) { return; }
+    QSettings settings;
+    settings.beginGroup(grp);
+    settings.setValue( key,
+                       info.absoluteDir().absolutePath() );
+    settings.endGroup();
+}
+
+const QString
+Window::getConfig(const QString &grp,
+                  const QString &key,
+                  const QString &def)
+{
+    QString value;
+    QSettings settings;
+    settings.beginGroup(grp);
+    value = settings.value(key, def).toString();
+    settings.endGroup();
+    return value;
 }

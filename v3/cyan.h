@@ -171,6 +171,12 @@ namespace Cyan
         void openAboutDialog();
         void openConvertDialog(const QString &filename);
         void handleProxyChanged(int index);
+        void updateRecentLoadDirectory(const QString &path);
+        const QString getRecentLoadDirectory();
+        void updateRecentSaveDirectory(const QString &path);
+        const QString getRecentSaveDirectory();
+        void updateConfigPath(const QString &grp, const QString &key, const QString &val);
+        const QString getConfig(const QString &grp, const QString &key, const QString &def);
     };
 }
 
